@@ -6,7 +6,8 @@ import './styles.css';
 const TWO_PI = Math.PI * 2;
 const TWELVE = -Math.PI / 2;
 const TICK_EASE_SECONDS = 0.14;
-const BIRTH_HIGHLIGHT_SECONDS = 0.95;
+const BIRTH_HIGHLIGHT_SECONDS = 1.25;
+const BIRTH_HIGHLIGHT_HOLD_SECONDS = 0.33;
 
 function isPrime(value) {
   if (value < 2) return false;
@@ -30,7 +31,7 @@ function colorForPrime(prime) {
 }
 
 function formatElapsed(seconds) {
-  return String(Math.floor(seconds)).padStart(6, '0');
+  return String(Math.floor(seconds));
 }
 
 function angleDistance(a, b) {
@@ -217,6 +218,9 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
   function drawPrimeHands(ctx, cx, cy, radius, innerRadius, elapsed, currentWholeSecond, pointer) {
     let nextHovered = null;
     ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 0.965, 0, TWO_PI);
+    ctx.clip();
     ctx.globalCompositeOperation = 'lighter';
     primesRef.current.forEach((hand, index) => {
       const age = Math.max(0, elapsed - hand.bornAt);
@@ -232,7 +236,11 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
       const birthPulse = isFresh ? 1 + (1 - age / 1.2) * 0.9 : 1;
       const alpha = Math.min(0.72, 0.12 + ageFade * 0.3) * birthPulse;
       const outerRadius = radius * 0.965;
-      const birthProgress = Math.min(1, age / BIRTH_HIGHLIGHT_SECONDS);
+      const birthProgress = Math.min(
+        1,
+        Math.max(0, age - BIRTH_HIGHLIGHT_HOLD_SECONDS) /
+          (BIRTH_HIGHLIGHT_SECONDS - BIRTH_HIGHLIGHT_HOLD_SECONDS)
+      );
       const birthIntensity = 1 - easeOutSine(birthProgress);
       const isLatest = index === primesRef.current.length - 1;
       const latestBoost = isLatest ? birthIntensity : 0;
@@ -290,11 +298,12 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
       ctx.fill();
       ctx.filter = 'none';
 
-      ctx.globalAlpha = Math.min(0.98, alpha + latestBoost * 0.5);
+      const handFlashAlpha = Math.min(1, alpha + 0.14 + latestBoost * 0.48);
+      ctx.globalAlpha = handFlashAlpha;
       const sectorGradient = ctx.createRadialGradient(cx, cy, innerRadius, cx, cy, outerRadius);
-      sectorGradient.addColorStop(0, `hsla(${hand.color.hue}, 98%, ${70 + latestBoost * 8}%, ${0.72 + latestBoost * 0.18})`);
-      sectorGradient.addColorStop(0.38, `hsla(${hand.color.hue}, 94%, ${62 + latestBoost * 8}%, ${0.34 + latestBoost * 0.2})`);
-      sectorGradient.addColorStop(1, `hsla(${hand.color.hue}, 92%, 56%, ${0.04 + latestBoost * 0.06})`);
+      sectorGradient.addColorStop(0, `hsla(${hand.color.hue}, 98%, ${70 + latestBoost * 8}%, ${0.72 + latestBoost * 0.24})`);
+      sectorGradient.addColorStop(0.38, `hsla(${hand.color.hue}, 94%, ${62 + latestBoost * 8}%, ${0.34 + latestBoost * 0.42})`);
+      sectorGradient.addColorStop(1, `hsla(${hand.color.hue}, 92%, 56%, ${0.04 + latestBoost * 0.24})`);
       ctx.fillStyle = sectorGradient;
       ctx.shadowColor = hand.color.glow;
       ctx.shadowBlur = (isFresh ? 42 : 22) + latestBoost * 82;
@@ -306,25 +315,22 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
       ctx.closePath();
       ctx.fill();
 
-      ctx.globalAlpha = latestBoost > 0 ? Math.min(0.82, latestBoost * 0.72) : Math.min(0.055, alpha * 0.16);
+      ctx.globalAlpha = handFlashAlpha;
       ctx.strokeStyle = hand.color.stroke;
-      ctx.lineWidth = Math.max(0.55, radius * 0.0012) + latestBoost * 1.8;
-      ctx.shadowBlur = latestBoost > 0 ? 14 + latestBoost * 44 : 0;
+      ctx.lineWidth = (isFresh ? 2.2 : 1.05) + latestBoost * 3.6;
+      ctx.shadowBlur = (isFresh ? 28 : 10) + latestBoost * 62;
       ctx.stroke();
 
       if (latestBoost > 0) {
-        ctx.globalAlpha = 0.46 + latestBoost * 0.54;
+        ctx.globalAlpha = latestBoost * 0.34;
         ctx.strokeStyle = `hsla(${hand.color.hue}, 98%, 74%, 0.96)`;
-        ctx.lineWidth = Math.max(3.2, radius * (0.005 + latestBoost * 0.009));
+        ctx.lineWidth = Math.max(2, radius * 0.004);
         ctx.shadowColor = hand.color.glow;
-        ctx.shadowBlur = 48 + latestBoost * 86;
+        ctx.shadowBlur = 20 + latestBoost * 42;
         ctx.beginPath();
         ctx.arc(cx, cy, outerRadius, centerAngle - halfWidth, centerAngle + halfWidth);
         ctx.stroke();
 
-        ctx.globalAlpha = latestBoost * 0.34;
-        ctx.lineWidth = Math.max(2, radius * 0.004);
-        ctx.shadowBlur = 20 + latestBoost * 42;
         ctx.beginPath();
         ctx.moveTo(cx + Math.cos(centerAngle - halfWidth) * innerRadius, cy + Math.sin(centerAngle - halfWidth) * innerRadius);
         ctx.lineTo(cx + Math.cos(centerAngle - halfWidth) * outerRadius, cy + Math.sin(centerAngle - halfWidth) * outerRadius);
@@ -332,13 +338,7 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
         ctx.lineTo(cx + Math.cos(centerAngle + halfWidth) * outerRadius, cy + Math.sin(centerAngle + halfWidth) * outerRadius);
         ctx.stroke();
 
-        ctx.globalAlpha = latestBoost * 0.34;
-        ctx.lineWidth = Math.max(14, radius * 0.034);
-        ctx.beginPath();
-        ctx.arc(cx, cy, outerRadius, centerAngle - halfWidth, centerAngle + halfWidth);
-        ctx.stroke();
-
-        ctx.globalAlpha = latestBoost * 0.3;
+        ctx.globalAlpha = latestBoost * 0.42;
         ctx.fillStyle = sectorGradient;
         ctx.beginPath();
         ctx.moveTo(cx + Math.cos(centerAngle - halfWidth) * innerRadius, cy + Math.sin(centerAngle - halfWidth) * innerRadius);
@@ -357,7 +357,7 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
 
   function drawTwelveSlit(ctx, cx, cy, radius) {
     const topY = cy - radius;
-    const innerY = cy - radius * 0.075;
+    const innerY = cy + radius * 0.035;
     const beamWidth = Math.max(20, radius * 0.068);
     ctx.save();
     ctx.beginPath();
