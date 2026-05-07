@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { RotateCcw } from 'lucide-react';
+import { Pause, Play, RotateCcw } from 'lucide-react';
 import './styles.css';
 
 const TWO_PI = Math.PI * 2;
@@ -69,13 +69,13 @@ function PrimeClockCanvas({ running, resetKey, onStatsChange }) {
   const [hovered, setHovered] = useState(null);
 
   const resetClock = useCallback(() => {
-    startTimeRef.current = running ? performance.now() : null;
+    startTimeRef.current = null;
     elapsedRef.current = 0;
     lastSecondRef.current = -1;
     primesRef.current = [];
     setHovered(null);
     onStatsChange({ elapsed: 0, latestPrime: null, primeCount: 0 });
-  }, [onStatsChange, running]);
+  }, [onStatsChange]);
 
   useEffect(() => {
     resetClock();
@@ -469,7 +469,12 @@ function App() {
   const [resetKey, setResetKey] = useState(0);
   const [stats, setStats] = useState({ elapsed: 0, latestPrime: null, primeCount: 0 });
 
-  const controlsLabel = running ? 'running' : 'start';
+  const hasStarted = stats.elapsed > 0 || stats.primeCount > 0;
+  const controlsLabel = running
+    ? 'Pause prime clock'
+    : hasStarted
+      ? 'Resume prime clock'
+      : 'Start prime clock';
   const statsItems = useMemo(
     () => [
       ['elapsed', formatElapsed(stats.elapsed)],
@@ -491,7 +496,9 @@ function App() {
       </div>
 
       <div className="control-strip" aria-label="Prime clock controls">
-        <button className="start-button" type="button" onClick={() => setRunning(true)} disabled={running} aria-label={controlsLabel} />
+        <button className="start-button" type="button" onClick={() => setRunning((value) => !value)} aria-label={controlsLabel} title={controlsLabel}>
+          {running ? <Pause size={18} strokeWidth={1.8} /> : <Play size={18} strokeWidth={1.8} />}
+        </button>
         <button className="icon-button" type="button" onClick={reset} aria-label="Reset prime clock" title="Reset">
           <RotateCcw size={15} strokeWidth={1.8} />
         </button>

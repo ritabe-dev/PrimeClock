@@ -163,28 +163,15 @@ button {
 }
 
 .start-button {
-  min-width: 82px;
-  padding: 0 24px;
+  display: grid;
+  width: 74px;
+  min-width: 74px;
+  padding: 0;
   font-size: 0;
   font-weight: 600;
   letter-spacing: 0;
+  place-items: center;
   text-transform: lowercase;
-}
-
-.start-button::before {
-  display: block;
-  width: 0;
-  height: 0;
-  margin: 0 auto;
-  content: "";
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  border-left: 18px solid currentColor;
-  transform: translateX(2px);
-}
-
-.start-button:disabled::before {
-  opacity: 0.5;
 }
 
 .icon-button {
@@ -194,17 +181,12 @@ button {
   place-items: center;
 }
 
-.start-button:hover:not(:disabled),
+.start-button:hover,
 .icon-button:hover {
   color: #ffffff;
   background: rgba(226, 239, 255, 0.1);
   border-color: rgba(218, 233, 255, 0.3);
   transform: translateY(-1px);
-}
-
-.start-button:disabled {
-  color: rgba(220, 234, 255, 0.5);
-  cursor: default;
 }
 
 .stat {
