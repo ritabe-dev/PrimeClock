@@ -1,0 +1,2 @@
+start,stop,complete_count,run_count,longest_run_length,length2_run_count,length3_start_count,p_c0,p_next_given_c0,independent_adjacent_expectation,c0_mod_6_counts,length2_start_mod_6_counts,small_gap_counts_1_to_10
+2,1000000,23571,23561,2,10,0,0.023571023571023572,0.0004242501378812948,555.5925965925966,0:9 1:76 2:9331 3:4768 4:9320 5:67,0:0 1:0 2:5 3:5 4:0 5:0,1:10 2:652 3:11 4:5032 5:141 6:49 7:1509 8:22 9:22 10:38

@@ -15,6 +15,24 @@ from .cluster_scan import (
     write_cluster_sensitivity_csv,
 )
 from .covering_metrics import covering_table, write_covering_csv
+from .covering_runs import (
+    complete_covering_runs_from_cluster_csv,
+    exact_complete_runs_in_range,
+    prefiltered_exact_complete_values_in_range,
+    consecutive_runs,
+    default_prefilter_validation_windows,
+    length2_neighborhood_rows,
+    length2_pair_forensics,
+    prefilter_validation_windows,
+    read_complete_covering_runs_csv,
+    summarize_runs,
+    transition_stats_from_runs,
+    write_complete_covering_runs_csv,
+    write_length2_neighborhoods_csv,
+    write_length2_pair_forensics_csv,
+    write_prefilter_validation_windows_csv,
+    write_run_transition_stats_csv,
+)
 from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
     generate_prc_cluster_figures,
@@ -154,6 +172,66 @@ def main(argv: list[str] | None = None) -> int:
         "--out", default="data/summaries/prc_cluster_sensitivity_v0.csv"
     )
 
+    covering_runs = subparsers.add_parser(
+        "covering-runs",
+        help="summarize consecutive exact complete-covering runs from a cluster scan CSV",
+    )
+    covering_runs.add_argument("--input", default="data/summaries/prc_cluster_scan_v0.csv")
+    covering_runs.add_argument("--out", default="data/summaries/prc_complete_runs_v0.csv")
+
+    covering_run_scan = subparsers.add_parser(
+        "covering-run-scan",
+        help="exact-check a contiguous N range and write consecutive complete-covering runs",
+    )
+    covering_run_scan.add_argument("--start", type=int, required=True)
+    covering_run_scan.add_argument("--stop", type=int, required=True)
+    covering_run_scan.add_argument("--out", default="data/summaries/prc_exact_runs.csv")
+
+    covering_run_prefilter_scan = subparsers.add_parser(
+        "covering-run-prefilter-scan",
+        help=(
+            "numeric-prefilter a contiguous N range, exact-check candidates, "
+            "and write consecutive complete-covering runs"
+        ),
+    )
+    covering_run_prefilter_scan.add_argument("--start", type=int, required=True)
+    covering_run_prefilter_scan.add_argument("--stop", type=int, required=True)
+    covering_run_prefilter_scan.add_argument("--tolerance", type=float, default=1e-12)
+    covering_run_prefilter_scan.add_argument("--workers", type=int, default=1)
+    covering_run_prefilter_scan.add_argument("--chunk-size", type=int, default=100000)
+    covering_run_prefilter_scan.add_argument(
+        "--allow-unguaranteed-prefilter",
+        action="store_true",
+        help="allow exploratory prefilter scans outside the documented v0 guarantee range",
+    )
+    covering_run_prefilter_scan.add_argument(
+        "--out", default="data/summaries/prc_prefilter_exact_runs.csv"
+    )
+
+    covering_run_forensics = subparsers.add_parser(
+        "covering-run-forensics",
+        help="generate PRC consecutive-run forensic CSVs from combined run rows",
+    )
+    covering_run_forensics.add_argument(
+        "--input", default="data/summaries/prc_combined_runs_2_1000000.csv"
+    )
+    covering_run_forensics.add_argument("--start", type=int, default=2)
+    covering_run_forensics.add_argument("--stop", type=int, default=1000000)
+    covering_run_forensics.add_argument(
+        "--transition-out", default="data/summaries/prc_run_transition_stats_2_1000000.csv"
+    )
+    covering_run_forensics.add_argument(
+        "--pair-out", default="data/summaries/prc_length2_pair_forensics_2_1000000.csv"
+    )
+    covering_run_forensics.add_argument(
+        "--neighborhood-out",
+        default="data/summaries/prc_length2_neighborhoods_2_1000000.csv",
+    )
+    covering_run_forensics.add_argument(
+        "--validation-out",
+        default="data/summaries/prc_prefilter_validation_windows.csv",
+    )
+
     args = parser.parse_args(argv)
     if args.command == "figures":
         generate_v0_figures(args.out, n=args.n, bins=args.bins)
@@ -223,6 +301,66 @@ def main(argv: list[str] | None = None) -> int:
             "covering-cluster-sensitivity: "
             f"rows={len(rows)}, thresholds={len(set(args.ratio_threshold))}, "
             f"radii={len(set(args.radius))}"
+        )
+        return 0
+    if args.command == "covering-runs":
+        runs = complete_covering_runs_from_cluster_csv(args.input)
+        write_complete_covering_runs_csv(runs, args.out)
+        summary = summarize_runs(runs)
+        print(
+            "covering-runs: "
+            f"values={summary.value_count}, runs={summary.run_count}, "
+            f"longest={summary.longest_run_length}"
+        )
+        return 0
+    if args.command == "covering-run-scan":
+        runs = exact_complete_runs_in_range(args.start, args.stop)
+        write_complete_covering_runs_csv(runs, args.out)
+        summary = summarize_runs(runs)
+        print(
+            "covering-run-scan: "
+            f"values={summary.value_count}, runs={summary.run_count}, "
+            f"longest={summary.longest_run_length}"
+        )
+        return 0
+    if args.command == "covering-run-prefilter-scan":
+        result = prefiltered_exact_complete_values_in_range(
+            args.start,
+            args.stop,
+            tolerance=args.tolerance,
+            workers=args.workers,
+            chunk_size=args.chunk_size,
+            require_guarantee=not args.allow_unguaranteed_prefilter,
+        )
+        runs = consecutive_runs(result.values)
+        write_complete_covering_runs_csv(runs, args.out)
+        summary = summarize_runs(runs)
+        print(
+            "covering-run-prefilter-scan: "
+            f"checked={result.checked_count}, "
+            f"numeric_candidates={result.numeric_candidate_count}, "
+            f"exact_values={result.exact_complete_count}, "
+            f"runs={summary.run_count}, longest={summary.longest_run_length}"
+        )
+        return 0
+    if args.command == "covering-run-forensics":
+        runs = read_complete_covering_runs_csv(args.input)
+        transition = transition_stats_from_runs(runs, start=args.start, stop=args.stop)
+        pair_rows = length2_pair_forensics(runs)
+        neighborhood_rows = length2_neighborhood_rows(runs)
+        validation_rows = prefilter_validation_windows(
+            default_prefilter_validation_windows(runs, start=args.start, stop=args.stop)
+        )
+        write_run_transition_stats_csv(transition, args.transition_out)
+        write_length2_pair_forensics_csv(pair_rows, args.pair_out)
+        write_length2_neighborhoods_csv(neighborhood_rows, args.neighborhood_out)
+        write_prefilter_validation_windows_csv(validation_rows, args.validation_out)
+        print(
+            "covering-run-forensics: "
+            f"complete={transition.complete_count}, "
+            f"length2={transition.length2_run_count}, "
+            f"length3={transition.length3_start_count}, "
+            f"validation_windows={len(validation_rows)}"
         )
         return 0
     parser.error(f"unknown command: {args.command}")

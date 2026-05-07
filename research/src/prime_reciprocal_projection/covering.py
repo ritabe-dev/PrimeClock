@@ -216,6 +216,21 @@ def uncovered_measure(
     return sum(_interval_length(gap) for gap in gaps)
 
 
+def is_completely_covered_numeric(
+    n: int,
+    primes: Iterable[int] | None = None,
+    *,
+    tolerance: float = 1e-12,
+) -> bool:
+    """Return whether floating-point PRC intervals cover the circle.
+
+    This is a fast prefilter, not an exact mathematical certificate. Exact
+    claims should still call ``exact_is_completely_covered``.
+    """
+    covered = covered_intervals(n, primes=primes, tolerance=tolerance)
+    return len(covered) == 1 and covered[0] == (0.0, 1.0)
+
+
 def exact_uncovered_measure(
     n: int,
     primes: Iterable[int] | None = None,

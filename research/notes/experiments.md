@@ -218,6 +218,34 @@ Main columns:
 - `median_baseline_ratio`: median `A(N) / random_arc_baseline(N)`.
 - `certified_values`: exact complete-covering values in the window.
 
+## PRC Consecutive Runs and Prefilter Guardrail
+
+The contiguous run scan to `10^6` uses:
+
+```text
+numeric prefilter -> exact rational certification of every numeric candidate
+```
+
+The prefilter is guarded for the v0 range by:
+
+```text
+PREFILTER_GUARANTEE_MAX_N = 1,000,000
+DEFAULT_PREFILTER_TOLERANCE = 1e-12
+required_prefilter_tolerance = 4096 * eps ~= 9.09e-13
+```
+
+This is an implementation-level binary64 guardrail, not a PRC theorem. It says
+the default numeric merge tolerance is larger than the documented endpoint
+rounding budget, so exact complete-covering values should not be rejected by
+the prefilter within `N <= 10^6`. All reported values are still exact-certified.
+
+See:
+
+```text
+notes/prc_prefilter_guarantee.md
+notes/prc_consecutive_runs.md
+```
+
 Current v0 command found:
 
 ```text
@@ -260,4 +288,99 @@ Output:
 
 ```text
 data/summaries/prc_cluster_sensitivity_v0.csv
+```
+
+## PRC Consecutive Complete-Covering Runs
+
+This subproblem asks whether exact complete covering can persist at consecutive
+integers:
+
+```text
+C0(N)=C0(N+1)=1.
+```
+
+Exact contiguous scan:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-run-scan \
+  --start 2 \
+  --stop 100000 \
+  --out data/summaries/prc_exact_runs_2_100000.csv
+```
+
+Current exact result:
+
+```text
+2 <= N <= 100000:
+2369 exact complete-covering values
+2368 consecutive runs
+longest run length = 2
+longest run = [92229, 92230]
+```
+
+Selected-window cluster run decomposition:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-runs \
+  --input data/summaries/prc_cluster_scan_v0.csv \
+  --out data/summaries/prc_complete_runs_v0.csv
+```
+
+Current selected-window result:
+
+```text
+260 exact complete-covering values
+260 consecutive runs
+longest run length = 1
+```
+
+See `notes/prc_consecutive_runs.md`.
+
+Prefiltered extension:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-run-prefilter-scan \
+  --start 100001 \
+  --stop 200000 \
+  --workers 10 \
+  --chunk-size 10000 \
+  --out data/summaries/prc_prefilter_exact_runs_100001_200000.csv
+```
+
+The same `100000`-wide block command was repeated up to `1000000`. The
+reported values are exact-certified after the numeric prefilter. The prefilter
+matched the all-exact run scan on `2 <= N <= 100000`.
+
+Combined result:
+
+```text
+2 <= N <= 1000000:
+23571 exact-certified complete-covering values
+23561 consecutive runs
+longest run length = 2
+length-2 runs = 10
+length-3 starts = 0
+```
+
+Forensic tables:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-run-forensics \
+  --input data/summaries/prc_combined_runs_2_1000000.csv \
+  --start 2 \
+  --stop 1000000 \
+  --transition-out data/summaries/prc_run_transition_stats_2_1000000.csv \
+  --pair-out data/summaries/prc_length2_pair_forensics_2_1000000.csv \
+  --neighborhood-out data/summaries/prc_length2_neighborhoods_2_1000000.csv \
+  --validation-out data/summaries/prc_prefilter_validation_windows.csv
+```
+
+Forensic result:
+
+```text
+transition stats rows: 1
+length-2 pair rows: 10
+length-2 neighborhood rows: 40
+prefilter validation windows: 20
+validation mismatches: 0
 ```

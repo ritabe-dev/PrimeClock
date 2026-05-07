@@ -37,6 +37,10 @@ Every statement in this research track should be assigned one of these statuses.
 | The v0 two-stage scan exact-checked every integer in the selected local windows and found 262 exact complete-covering window memberships, representing 260 unique `N` values, in 21 `R=250` windows from `10^3` to `10^6` | Experiment |
 | The v0 two-stage scan found `float_positive_exact_count=0` on the regenerated `R=250`, threshold `0.05` data | Experiment |
 | The v0 sensitivity table shows center-weighted mean `D_R` remains near `0.024` to `0.027` for `R=100,250,500` on the tested seed-conditioned window sets | Experiment |
+| The all-exact contiguous scan found `L(100000)=2`, with the only length-2 run `[92229,92230]` | Experiment |
+| The guarded prefiltered-and-exact-certified scan to `10^6` found longest run length `2` and no length-3 starts under the documented binary64 prefilter tolerance guarantee | Experiment / implementation-certified |
+| In the v0 forensic validation set, all 20 all-exact windows matched the numeric-prefilter exact-certified values | Experiment |
+| In the `10^6` forensic table, all length-2 runs start in residue `2` or `3` modulo `6` | Experiment |
 | Branch-1 `G1(N)` is compared to transformed adjacent prime gaps | Experiment |
 
 ## Non-Claims
@@ -50,6 +54,9 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim complete covering from floating-point `C0` checks alone; exact or certified interval checking is required.
 - This project does not claim the selected `D_R` windows are an unbiased sample
   of all `N`; current cluster results are conditional on the seed rule.
+- The prefilter guarantee is only an implementation-level binary64 guardrail
+  for the documented v0 range `N <= 10^6`; it is not a theorem about PRC and
+  does not extend to larger scans without renewed justification.
 - This project does not claim `G1(N)` is exactly the largest raw prime gap divided by `N`; the transformed gap and arc radii must be used.
 
 ## Known-Result Check
