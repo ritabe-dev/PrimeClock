@@ -1,0 +1,13 @@
+{
+  "name": "Prime Reciprocal Projection",
+  "generated_at_utc": "2026-05-07T11:43:06.735379+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "0543c7b4fb2e4f1bcf437b5eea2041f7c7939b56",
+  "command": "python -m prime_reciprocal_projection.cli figures --out figures/v0 --n 100000 --bins 100",
+  "generated_files": [
+    "distribution_N100000_bins100.png",
+    "branches_N100000_k20.png",
+    "fourier_N100000_m20.png"
+  ]
+}

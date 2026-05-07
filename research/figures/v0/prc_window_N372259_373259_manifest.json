@@ -1,0 +1,11 @@
+{
+  "name": "Prime Reciprocal Covering local window",
+  "generated_at_utc": "2026-05-07T14:20:14.002533+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "0543c7b4fb2e4f1bcf437b5eea2041f7c7939b56",
+  "command": "python -m prime_reciprocal_projection.cli covering-window-figure --center 372759 --radius 500",
+  "generated_files": [
+    "prc_window_N372259_373259.png"
+  ]
+}

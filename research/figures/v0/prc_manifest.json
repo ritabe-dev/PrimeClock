@@ -1,0 +1,13 @@
+{
+  "name": "Prime Reciprocal Covering",
+  "generated_at_utc": "2026-05-07T14:19:02.543132+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "0543c7b4fb2e4f1bcf437b5eea2041f7c7939b56",
+  "command": "python -m prime_reciprocal_projection.cli covering-figures",
+  "generated_files": [
+    "prc_covering_trend_N1000_1000000.png",
+    "prc_gap_fill_N1000_1000000.png",
+    "prc_branch1_gap_N1000_1000000.png"
+  ]
+}

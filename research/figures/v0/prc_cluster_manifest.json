@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering cluster scan",
+  "generated_at_utc": "2026-05-07T14:18:56.984255+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "0543c7b4fb2e4f1bcf437b5eea2041f7c7939b56",
+  "command": "python -m prime_reciprocal_projection.cli covering-cluster-figures --input data/summaries/prc_cluster_scan_v0.csv --out figures/v0",
+  "generated_files": [
+    "prc_cluster_density_N1839_986252.png",
+    "prc_cluster_efficiency_N1839_986252.png"
+  ]
+}

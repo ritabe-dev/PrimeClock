@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -10,13 +11,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .branches import branch_decomposition, limit_branch_mass
+from .cluster_scan import ClusterScanRow, read_cluster_scan_csv, unique_certified_values
+from .covering_metrics import covering_table
 from .experiments import histogram_masses, limit_bin_masses
 from .fourier import fourier_coefficient, limit_fourier_coefficient
 from .projection import fractional_parts
 
 
 def _require_matplotlib():
+    cache_dir = Path(".matplotlib-cache").resolve()
+    cache_dir.mkdir(exist_ok=True)
+    os.environ.setdefault("MPLCONFIGDIR", str(cache_dir))
+    os.environ.setdefault("MPLBACKEND", "Agg")
     try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
         import matplotlib.pyplot as plt
     except ModuleNotFoundError as exc:
         raise RuntimeError("matplotlib is required for figure generation") from exc
@@ -36,10 +46,17 @@ def _git_sha() -> str | None:
     return result.stdout.strip()
 
 
-def write_manifest(output_dir: Path, *, command: str, generated_files: list[str]) -> None:
+def write_manifest(
+    output_dir: Path,
+    *,
+    command: str,
+    generated_files: list[str],
+    name: str = "Prime Reciprocal Projection",
+    filename: str = "manifest.json",
+) -> None:
     """Write a reproducibility manifest for generated figures."""
     payload = {
-        "name": "Prime Reciprocal Projection",
+        "name": name,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "python": sys.version,
         "platform": platform.platform(),
@@ -47,7 +64,7 @@ def write_manifest(output_dir: Path, *, command: str, generated_files: list[str]
         "command": command,
         "generated_files": generated_files,
     }
-    (output_dir / "manifest.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    (output_dir / filename).write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 def distribution_figure(n: int, output_dir: Path, *, bins: int = 100) -> str:
@@ -103,7 +120,7 @@ def fourier_figure(n: int, output_dir: Path, *, max_m: int = 20) -> str:
     plt = _require_matplotlib()
     modes = list(range(0, max_m + 1))
     residuals = [
-        abs(fourier_coefficient(n, m) - limit_fourier_coefficient(m, samples=1024, k_max=2000))
+        abs(fourier_coefficient(n, m) - limit_fourier_coefficient(m, samples=256, k_max=500))
         for m in modes
     ]
 
@@ -131,8 +148,338 @@ def generate_v0_figures(output_dir: str | Path, *, n: int = 100000, bins: int = 
     ]
     write_manifest(
         output_path,
-        command=f"python -m prime_reciprocal_projection.cli figures --out {output_path}",
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"figures --out {output_path} --n {n} --bins {bins}"
+        ),
         generated_files=generated,
     )
     return generated
 
+
+def covering_trend_figure(ns: list[int], output_dir: Path) -> str:
+    """Generate PRC uncovered-measure trend figure."""
+    plt = _require_matplotlib()
+    rows = covering_table(ns)
+    x_values = [row.n for row in rows]
+    uncovered = [row.uncovered_measure for row in rows]
+    scaled = [row.uncovered_measure_times_log_n for row in rows]
+    baseline = [row.random_arc_baseline for row in rows]
+
+    fig, (ax_top, ax_bottom) = plt.subplots(2, 1, figsize=(9, 7.2), sharex=True)
+    ax_top.plot(x_values, uncovered, marker="o", label="A(N)")
+    ax_top.plot(x_values, baseline, marker="x", label="random arc baseline")
+    ax_top.set_xscale("log")
+    ax_top.set_ylabel("uncovered measure")
+    ax_top.set_title("PRC uncovered measure")
+    ax_top.legend()
+    ax_top.grid(alpha=0.25)
+
+    ax_bottom.plot(x_values, scaled, marker="o", color="black", label="A(N) log N")
+    ax_bottom.set_xscale("log")
+    ax_bottom.set_xlabel("N")
+    ax_bottom.set_ylabel("A(N) log N")
+    ax_bottom.legend()
+    ax_bottom.grid(alpha=0.25)
+
+    output_path = output_dir / f"prc_covering_trend_N{x_values[0]}_{x_values[-1]}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def covering_gap_fill_figure(ns: list[int], output_dir: Path) -> str:
+    """Generate PRC branch-1 gap fill-in figure."""
+    plt = _require_matplotlib()
+    rows = covering_table(ns)
+    x_values = [row.n for row in rows]
+    ratios = [row.gap_fill_ratio if row.gap_fill_ratio is not None else 0.0 for row in rows]
+    drops = [row.gap_fill_drop for row in rows]
+    components = [row.uncovered_component_count for row in rows]
+
+    fig, (ax_top, ax_bottom) = plt.subplots(2, 1, figsize=(9, 7.2), sharex=True)
+    ax_top.plot(x_values, ratios, marker="o", label="G(N)/G1(N)")
+    ax_top.set_xscale("log")
+    ax_top.set_ylabel("gap fill ratio")
+    ax_top.set_title("PRC branch-1 gap fill-in")
+    ax_top.legend()
+    ax_top.grid(alpha=0.25)
+
+    ax_bottom.plot(x_values, drops, marker="o", label="G1(N)-G(N)")
+    ax_bottom_twin = ax_bottom.twinx()
+    ax_bottom_twin.plot(
+        x_values,
+        components,
+        marker="x",
+        color="tab:orange",
+        label="uncovered components",
+    )
+    ax_bottom.set_xscale("log")
+    ax_bottom.set_xlabel("N")
+    ax_bottom.set_ylabel("gap drop")
+    ax_bottom_twin.set_ylabel("component count")
+    lines, labels = ax_bottom.get_legend_handles_labels()
+    twin_lines, twin_labels = ax_bottom_twin.get_legend_handles_labels()
+    ax_bottom.legend(lines + twin_lines, labels + twin_labels, loc="best")
+    ax_bottom.grid(alpha=0.25)
+
+    output_path = output_dir / f"prc_gap_fill_N{x_values[0]}_{x_values[-1]}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def covering_branch1_gap_figure(ns: list[int], output_dir: Path) -> str:
+    """Generate branch-1 G1 versus transformed prime-gap estimate figure."""
+    plt = _require_matplotlib()
+    rows = covering_table(ns)
+    estimates = [row.branch1_exposed_gap_estimate for row in rows]
+    observed = [row.branch1_max_uncovered_gap for row in rows]
+    colors = [row.n for row in rows]
+    max_value = max([*estimates, *observed, 0.0])
+
+    fig, ax = plt.subplots(figsize=(7.2, 6.4))
+    scatter = ax.scatter(estimates, observed, c=colors, cmap="viridis", s=38)
+    ax.plot([0, max_value], [0, max_value], color="black", linewidth=1.0, label="y=x")
+    ax.set_xlabel("branch-1 exposed gap estimate")
+    ax.set_ylabel("observed G1(N)")
+    ax.set_title("PRC branch-1 gap check")
+    ax.legend()
+    ax.grid(alpha=0.25)
+    fig.colorbar(scatter, ax=ax, label="N")
+    output_path = output_dir / f"prc_branch1_gap_N{rows[0].n}_{rows[-1].n}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def generate_prc_v0_figures(
+    output_dir: str | Path,
+    *,
+    ns: list[int] | None = None,
+) -> list[str]:
+    """Generate the PRC v0 figure set and manifest."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    grid = ns or [1000, 10000, 100000, 1000000]
+    generated = [
+        covering_trend_figure(grid, output_path),
+        covering_gap_fill_figure(grid, output_path),
+        covering_branch1_gap_figure(grid, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command="python -m prime_reciprocal_projection.cli covering-figures",
+        generated_files=generated,
+        name="Prime Reciprocal Covering",
+        filename="prc_manifest.json",
+    )
+    return generated
+
+
+def generate_prc_window_figure(
+    output_dir: str | Path,
+    *,
+    center: int,
+    radius: int = 500,
+) -> list[str]:
+    """Generate a local PRC window figure around one center N."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    ns = list(range(max(2, center - radius), center + radius + 1))
+    generated = [covering_local_window_figure(ns, output_path, center=center)]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-window-figure --center {center} --radius {radius}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering local window",
+        filename=f"prc_window_N{ns[0]}_{ns[-1]}_manifest.json",
+    )
+    return generated
+
+
+def generate_prc_cluster_figures(
+    input_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC cluster-density figures from a cluster scan CSV."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    rows = read_cluster_scan_csv(input_csv)
+    generated = [
+        cluster_density_figure(rows, output_path),
+        cluster_efficiency_figure(rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-cluster-figures --input {input_csv} --out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering cluster scan",
+        filename="prc_cluster_manifest.json",
+    )
+    return generated
+
+
+def cluster_density_figure(rows: list[ClusterScanRow], output_dir: Path) -> str:
+    """Generate a D_R cluster-density overview figure."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    centers = [row.center for row in rows]
+    counts = [row.exact_complete_count for row in rows]
+    unique_count = len(unique_certified_values(rows))
+    memberships = sum(counts)
+    known_rows = [row for row in rows if row.seed_baseline_ratio is not None]
+    missing_rows = [row for row in rows if row.seed_baseline_ratio is None]
+
+    fig, ax = plt.subplots(figsize=(10, 5.8))
+    scatter = None
+    if known_rows:
+        scatter = ax.scatter(
+            [row.center for row in known_rows],
+            [row.d_r for row in known_rows],
+            c=[row.seed_baseline_ratio for row in known_rows],
+            s=[40 + 10 * row.exact_complete_count for row in known_rows],
+            cmap="magma_r",
+            edgecolors="black",
+            linewidths=0.4,
+            alpha=0.88,
+            label="coarse seed center",
+        )
+    if missing_rows:
+        ax.scatter(
+            [row.center for row in missing_rows],
+            [row.d_r for row in missing_rows],
+            s=[40 + 10 * row.exact_complete_count for row in missing_rows],
+            color="lightgray",
+            edgecolors="black",
+            linewidths=0.4,
+            marker="D",
+            alpha=0.88,
+            label="manual center",
+        )
+    ax.set_xscale("log")
+    ax.set_xlabel("cluster center N")
+    ax.set_ylabel("D_R")
+    ax.set_title(
+        "PRC local complete-covering density "
+        f"(memberships={memberships}, unique={unique_count})"
+    )
+    ax.grid(alpha=0.25)
+    if scatter is not None:
+        fig.colorbar(scatter, ax=ax, label="seed A(N) / random baseline")
+    if missing_rows:
+        ax.legend()
+    output_path = output_dir / f"prc_cluster_density_N{min(centers)}_{max(centers)}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def cluster_efficiency_figure(rows: list[ClusterScanRow], output_dir: Path) -> str:
+    """Generate a D_R versus local-window efficiency figure."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    densities = [row.d_r for row in rows]
+    median_ratios = [row.median_baseline_ratio for row in rows]
+    max_measures = [row.max_uncovered_measure for row in rows]
+    centers = [row.center for row in rows]
+    counts = [row.exact_complete_count for row in rows]
+
+    fig, ax = plt.subplots(figsize=(8.6, 6.2))
+    scatter = ax.scatter(
+        median_ratios,
+        densities,
+        c=max_measures,
+        s=[45 + 10 * count for count in counts],
+        cmap="viridis",
+        edgecolors="black",
+        linewidths=0.4,
+        alpha=0.88,
+    )
+    for center, x_value, y_value in zip(centers, median_ratios, densities):
+        if y_value >= max(densities) * 0.94:
+            ax.annotate(str(center), (x_value, y_value), xytext=(5, 5), textcoords="offset points")
+    ax.set_xlabel("median A(N) / random baseline in window")
+    ax.set_ylabel("D_R")
+    ax.set_title("PRC cluster density versus local uncovered mass")
+    ax.grid(alpha=0.25)
+    fig.colorbar(scatter, ax=ax, label="max A(N) in window")
+    output_path = output_dir / f"prc_cluster_efficiency_N{min(centers)}_{max(centers)}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def covering_local_window_figure(ns: list[int], output_dir: Path, *, center: int) -> str:
+    """Generate a focused local-window PRC diagnostic figure."""
+    plt = _require_matplotlib()
+    rows = covering_table(ns)
+    x_values = [row.n for row in rows]
+    uncovered = [row.uncovered_measure for row in rows]
+    baseline_ratio = [
+        row.uncovered_measure / row.random_arc_baseline if row.random_arc_baseline > 0 else 0.0
+        for row in rows
+    ]
+    gaps = [row.max_uncovered_gap for row in rows]
+    ratios = [row.gap_fill_ratio if row.gap_fill_ratio is not None else 0.0 for row in rows]
+    components = [row.uncovered_component_count for row in rows]
+
+    fig, axes = plt.subplots(3, 1, figsize=(10, 9.2), sharex=True)
+    axes[0].plot(x_values, uncovered, linewidth=1.2, label="A(N)")
+    axes[0].axvline(center, color="black", linewidth=1.0, alpha=0.6)
+    axes[0].set_ylabel("A(N)")
+    axes[0].set_title(f"PRC local window around N={center}")
+    axes[0].legend()
+    axes[0].grid(alpha=0.25)
+
+    axes[1].plot(x_values, baseline_ratio, linewidth=1.2, color="tab:green", label="A/baseline")
+    axes[1].axhline(1.0, color="black", linewidth=1.0, alpha=0.45)
+    axes[1].axvline(center, color="black", linewidth=1.0, alpha=0.6)
+    axes[1].set_ylabel("A / baseline")
+    axes[1].legend()
+    axes[1].grid(alpha=0.25)
+
+    axes[2].plot(x_values, gaps, linewidth=1.1, label="G(N)")
+    axes_twin = axes[2].twinx()
+    axes_twin.plot(
+        x_values,
+        ratios,
+        linewidth=1.1,
+        color="tab:orange",
+        label="G/G1",
+    )
+    axes[2].scatter(
+        x_values,
+        [0.0 for _ in x_values],
+        s=[4 + min(component, 2000) / 40 for component in components],
+        color="tab:purple",
+        alpha=0.25,
+        label="component count scale",
+    )
+    axes[2].axvline(center, color="black", linewidth=1.0, alpha=0.6)
+    axes[2].set_xlabel("N")
+    axes[2].set_ylabel("G(N)")
+    axes_twin.set_ylabel("G/G1")
+    lines, labels = axes[2].get_legend_handles_labels()
+    twin_lines, twin_labels = axes_twin.get_legend_handles_labels()
+    axes[2].legend(lines + twin_lines, labels + twin_labels, loc="best")
+    axes[2].grid(alpha=0.25)
+
+    output_path = output_dir / f"prc_window_N{x_values[0]}_{x_values[-1]}.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name

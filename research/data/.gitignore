@@ -1,3 +1,4 @@
 *
 !.gitignore
-
+!summaries/
+!summaries/*.csv
