@@ -392,6 +392,37 @@ Current reading:
 - The next step should describe the anchor-neighborhood structure of `C_4` and
   `C_5` inside the `C_8` residue ring.
 
+## v0.12 Modulo-210 Anchor Neighborhood in C8
+
+Goal: classify selected modulo-210 classes directly inside the `C_8` residue
+ring by nearest shallow covered anchor.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md`
+- `data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-mod210-anchor-neighborhood \
+  --max-k 8 \
+  --source-max-k 5 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv
+```
+
+Current reading:
+
+- `4`, `206`, and `201` remain clean `C_4` boundary classes in the full `C_8`
+  geometry.
+- `111`, `99`, `118`, `88`, and `62` are mixed shallow-anchor neighborhoods.
+- v0.11's apparent `C_5` dominance is partly an observed sample-weighting
+  effect, not purely the geometry of the whole `C_8` residue ring.
+- The next step should compare observed complete/control rows against this
+  direct ring geometry within each anchor neighborhood.
+
 ## v0.3 Fixed Axis
 
 Primary object:

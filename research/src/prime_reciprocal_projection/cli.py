@@ -20,8 +20,10 @@ from .covering_prime_prefix import (
     write_prime_prefix_profile_csv,
 )
 from .covering_prime_prefix_certificates import (
+    DEFAULT_SELECTED_MOD210_CLASSES,
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
+    prime_prefix_mod210_anchor_neighborhood_rows,
     prime_prefix_uncertified_mod210_audit_rows,
     prime_prefix_uncertified_mod210_class_boundary_summary_rows,
     prime_prefix_uncertified_mod210_class_detail_rows,
@@ -42,6 +44,7 @@ from .covering_prime_prefix_certificates import (
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_mod210_anchor_neighborhood_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
     write_prime_prefix_uncertified_mod210_class_boundary_summary_csv,
     write_prime_prefix_uncertified_mod210_class_detail_csv,
@@ -449,6 +452,42 @@ def main(argv: list[str] | None = None) -> int:
         default=(
             "data/summaries/"
             "prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv"
+        ),
+    )
+
+    covering_prime_prefix_mod210_anchor_neighborhood = subparsers.add_parser(
+        "covering-prime-prefix-mod210-anchor-neighborhood",
+        help="classify selected modulo-210 residues by nearest shallow C_k anchor",
+    )
+    covering_prime_prefix_mod210_anchor_neighborhood.add_argument(
+        "--mod210",
+        type=int,
+        action="append",
+        default=[],
+        help="selected modulo-210 class; may be repeated",
+    )
+    covering_prime_prefix_mod210_anchor_neighborhood.add_argument(
+        "--max-k",
+        type=int,
+        default=8,
+        help="checked residue-filtration depth",
+    )
+    covering_prime_prefix_mod210_anchor_neighborhood.add_argument(
+        "--source-max-k",
+        type=int,
+        default=5,
+        help="largest nearest C_k source depth to use as an anchor",
+    )
+    covering_prime_prefix_mod210_anchor_neighborhood.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow max-k above the safe default filtration guardrail",
+    )
+    covering_prime_prefix_mod210_anchor_neighborhood.add_argument(
+        "--out",
+        default=(
+            "data/summaries/"
+            "prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv"
         ),
     )
 
@@ -1035,6 +1074,20 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "covering-prime-prefix-uncertified-lift-boundary: "
             f"rows={len(rows)}, source_max_k={args.source_max_k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-mod210-anchor-neighborhood":
+        rows = prime_prefix_mod210_anchor_neighborhood_rows(
+            selected_mod210=args.mod210 or DEFAULT_SELECTED_MOD210_CLASSES,
+            max_k=args.max_k,
+            source_max_k=args.source_max_k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_mod210_anchor_neighborhood_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-mod210-anchor-neighborhood: "
+            f"rows={len(rows)}, max_k={args.max_k}, "
+            f"source_max_k={args.source_max_k}, out={args.out}"
         )
         return 0
     if args.command == "covering-window-figure":

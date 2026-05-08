@@ -53,11 +53,13 @@ Read in this order:
    the selected-class boundary-anchor summary.
 13. `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md` for the
    shallow-anchor lift-boundary table.
-14. `notes/claims.md` for claim categories and non-claims.
-15. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+14. `notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md` for the direct
+   `C_8` residue-ring anchor-neighborhood table.
+15. `notes/claims.md` for claim categories and non-claims.
+16. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-16. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-17. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+17. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+18. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -79,6 +81,7 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv`
+- `data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -244,4 +247,10 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-lift
   --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
   --source-max-k 5 \
   --out data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-mod210-anchor-neighborhood \
+  --max-k 8 \
+  --source-max-k 5 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv
 ```

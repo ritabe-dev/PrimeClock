@@ -9,6 +9,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows,
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
+    prime_prefix_mod210_anchor_neighborhood_rows,
     prime_prefix_uncertified_mod210_audit_rows,
     prime_prefix_uncertified_mod210_class_boundary_summary_rows,
     prime_prefix_uncertified_mod210_class_detail_rows,
@@ -29,6 +30,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_mod210_anchor_neighborhood_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
     write_prime_prefix_uncertified_mod210_class_boundary_summary_csv,
     write_prime_prefix_uncertified_mod210_class_detail_csv,
@@ -851,3 +853,61 @@ def test_covering_prime_prefix_uncertified_lift_boundary_cli_writes_csv(
         == 0
     )
     assert len(out.read_text(encoding="utf-8").splitlines()) >= 2
+
+
+def test_prime_prefix_mod210_anchor_neighborhood_headers(tmp_path: Path):
+    rows = prime_prefix_mod210_anchor_neighborhood_rows(
+        selected_mod210=[4, 206],
+        max_k=4,
+        source_max_k=4,
+    )
+    out = tmp_path / "anchor.csv"
+    write_prime_prefix_mod210_anchor_neighborhood_csv(rows, out)
+
+    assert out.read_text(encoding="utf-8").splitlines()[0] == (
+        "checked_max_k,checked_max_prime,residue_modulus,source_max_k,"
+        "target_mod210,nearest_covered_source_k,nearest_covered_source_prime,"
+        "nearest_covered_mod210,mod210_signed_delta,residue_count,"
+        "share_within_target_mod210,nearest_shallow_distance_median,"
+        "nearest_shallow_distance_p90,nearest_shallow_distance_max"
+    )
+    by_target = {row.target_mod210: row for row in rows}
+    assert by_target[4].nearest_covered_mod210 == 2
+    assert by_target[4].mod210_signed_delta == 2
+    assert by_target[206].nearest_covered_mod210 == 208
+    assert by_target[206].mod210_signed_delta == -2
+
+
+def test_prime_prefix_mod210_anchor_neighborhood_rejects_guarded_large_k():
+    with pytest.raises(ValueError, match="allow_large_k=True"):
+        prime_prefix_mod210_anchor_neighborhood_rows(
+            selected_mod210=[4],
+            max_k=8,
+            source_max_k=5,
+        )
+
+
+def test_covering_prime_prefix_mod210_anchor_neighborhood_cli_writes_csv(
+    tmp_path: Path,
+):
+    out = tmp_path / "anchor.csv"
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-mod210-anchor-neighborhood",
+                "--mod210",
+                "4",
+                "--mod210",
+                "206",
+                "--max-k",
+                "4",
+                "--source-max-k",
+                "4",
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    assert len(out.read_text(encoding="utf-8").splitlines()) == 3

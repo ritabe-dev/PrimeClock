@@ -18,6 +18,7 @@ from .covering_runs import read_complete_covering_runs_csv, values_from_runs
 
 PREFIX_CERTIFICATE_STATUS = "prefix_certificate"
 NO_PREFIX_CERTIFICATE_STATUS = "no_prefix_certificate_within_max_k"
+DEFAULT_SELECTED_MOD210_CLASSES = (111, 4, 99, 206, 118, 88, 201, 62)
 
 
 @dataclass(frozen=True)
@@ -277,6 +278,26 @@ class PrimePrefixUncertifiedMod210LiftBoundaryRow:
     circular_residue_distance_max: int
     distance_minus_complete_median: float
     sample_seed_n: str
+
+
+@dataclass(frozen=True)
+class PrimePrefixMod210AnchorNeighborhoodRow:
+    """Exact residue-ring neighborhood row for selected modulo-210 classes."""
+
+    checked_max_k: int
+    checked_max_prime: int
+    residue_modulus: int
+    source_max_k: int
+    target_mod210: int
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    nearest_covered_mod210: int
+    mod210_signed_delta: int
+    residue_count: int
+    share_within_target_mod210: float
+    nearest_shallow_distance_median: float
+    nearest_shallow_distance_p90: int
+    nearest_shallow_distance_max: int
 
 
 def prime_prefix_certificate_rows(
@@ -1342,6 +1363,114 @@ def prime_prefix_uncertified_mod210_lift_boundary_rows(
     return rows
 
 
+def prime_prefix_mod210_anchor_neighborhood_rows(
+    *,
+    selected_mod210: Iterable[int] = DEFAULT_SELECTED_MOD210_CLASSES,
+    max_k: int = 8,
+    source_max_k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixMod210AnchorNeighborhoodRow]:
+    """Classify selected modulo-210 residues by nearest shallow covered anchor."""
+    if source_max_k < 1:
+        raise ValueError("source_max_k must be >= 1")
+    if source_max_k > max_k:
+        raise ValueError("source_max_k must be <= max_k")
+    selected_classes = list(dict.fromkeys(selected_mod210))
+    if not selected_classes:
+        raise ValueError("selected_mod210 must not be empty")
+    for residue_class in selected_classes:
+        if residue_class < 0 or residue_class >= 210:
+            raise ValueError("selected_mod210 values must be in [0, 209]")
+
+    summary_rows, _, covered_sets = prime_prefix_residue_filtration_data(
+        max_k=max_k,
+        birth_sample_limit=0,
+        allow_large_k=allow_large_k,
+    )
+    max_summary = summary_rows[-1]
+    modulus = max_summary.primorial
+    covered_all = covered_sets[-1]
+    source_k_by_residue = _covered_source_depth_map(summary_rows, covered_sets)
+    shallow_covered = sorted(
+        residue
+        for residue in covered_all
+        if source_k_by_residue[residue] <= source_max_k
+    )
+    if not shallow_covered:
+        raise ValueError("source_max_k produced no shallow covered residues")
+
+    target_totals: dict[int, int] = {target: 0 for target in selected_classes}
+    groups: dict[tuple[int, int, int, int, int], list[int]] = {}
+    for target_mod210 in selected_classes:
+        for residue in range(target_mod210, modulus, 210):
+            if residue in covered_all:
+                continue
+            nearest_residue, distance = _nearest_circular_residue(
+                residue,
+                shallow_covered,
+                modulus,
+            )
+            nearest_source_k = source_k_by_residue[nearest_residue]
+            nearest_source_prime = summary_rows[nearest_source_k - 1].new_prime
+            nearest_mod210 = nearest_residue % 210
+            signed_delta = _signed_circular_delta(
+                start=nearest_mod210,
+                end=target_mod210,
+                modulus=210,
+            )
+            key = (
+                target_mod210,
+                nearest_source_k,
+                nearest_source_prime,
+                nearest_mod210,
+                signed_delta,
+            )
+            groups.setdefault(key, []).append(distance)
+            target_totals[target_mod210] += 1
+
+    rows: list[PrimePrefixMod210AnchorNeighborhoodRow] = []
+    for (
+        target_mod210,
+        source_k,
+        source_prime,
+        nearest_mod210,
+        signed_delta,
+    ), distances in sorted(
+        groups.items(),
+        key=lambda item: (
+            selected_classes.index(item[0][0]),
+            item[0][1],
+            item[0][3],
+            item[0][4],
+        ),
+    ):
+        sorted_distances = sorted(distances)
+        rows.append(
+            PrimePrefixMod210AnchorNeighborhoodRow(
+                checked_max_k=max_k,
+                checked_max_prime=max_summary.new_prime,
+                residue_modulus=modulus,
+                source_max_k=source_max_k,
+                target_mod210=target_mod210,
+                nearest_covered_source_k=source_k,
+                nearest_covered_source_prime=source_prime,
+                nearest_covered_mod210=nearest_mod210,
+                mod210_signed_delta=signed_delta,
+                residue_count=len(sorted_distances),
+                share_within_target_mod210=(
+                    len(sorted_distances) / target_totals[target_mod210]
+                ),
+                nearest_shallow_distance_median=statistics.median(sorted_distances),
+                nearest_shallow_distance_p90=_nearest_rank_quantile(
+                    sorted_distances,
+                    0.9,
+                ),
+                nearest_shallow_distance_max=max(sorted_distances),
+            )
+        )
+    return rows
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -1471,6 +1600,18 @@ def write_prime_prefix_uncertified_mod210_lift_boundary_csv(
         rows,
         output_path,
         PrimePrefixUncertifiedMod210LiftBoundaryRow,
+    )
+
+
+def write_prime_prefix_mod210_anchor_neighborhood_csv(
+    rows: Iterable[PrimePrefixMod210AnchorNeighborhoodRow],
+    output_path: str | Path,
+) -> None:
+    """Write exact modulo-210 anchor-neighborhood rows as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        PrimePrefixMod210AnchorNeighborhoodRow,
     )
 
 

@@ -1235,3 +1235,48 @@ First reading for complete rows:
 Reading: the selected classes are now readable as neighborhoods of a few
 shallow anchors. The next exact target is the anchor-neighborhood structure of
 `C_4` and `C_5` inside the `C_8` residue ring.
+
+## PRC Prime-Prefix Modulo-210 Anchor Neighborhood v0.12
+
+The v0.12 table scans the selected modulo-210 classes directly inside the
+`C_8` residue ring. It excludes residues already covered by `C_8`, then assigns
+each remaining residue to the nearest shallow covered anchor with source depth
+`k <= 5`.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-mod210-anchor-neighborhood \
+  --max-k 8 \
+  --source-max-k 5 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| anchor-neighborhood rows | 47 |
+| checked ring | `C_8`, `M_8=9699690` |
+| shallow anchor source depth | `k <= 5` |
+
+First reading:
+
+| target mod 210 | largest direct-geometry anchor | share |
+|---:|---|---:|
+| 4 | `C_4` anchor `2`, signed delta `+2` | `1.0` |
+| 206 | `C_4` anchor `208`, signed delta `-2` | `1.0` |
+| 201 | `C_4` anchor `208`, signed delta `-7` | `1.0` |
+| 111 | `C_4` anchor `208`, signed delta `-97` | `0.1827` |
+| 99 | `C_4` anchor `2`, signed delta `+97` | `0.1827` |
+| 118 | `C_4` anchor `208`, signed delta `-90` | `0.2000` |
+| 88 | `C_4` anchor `2`, signed delta `+86` | `0.3000` |
+| 62 | `C_4` anchor `2`, signed delta `+60` | `0.4000` |
+
+Reading: the direct `C_8` geometry is more symmetric than the v0.11 observed
+sample. The clean classes `4`, `206`, and `201` remain pure `C_4` boundary
+classes, while the other selected classes are mixed shallow-anchor
+neighborhoods. This separates the geometry question from the sample-weighting
+question.

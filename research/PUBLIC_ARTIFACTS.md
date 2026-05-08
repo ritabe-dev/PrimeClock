@@ -56,6 +56,7 @@ research/notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md
 research/notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md
 research/notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md
 research/notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md
+research/notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_main_v0_9.md
@@ -90,4 +91,5 @@ research/data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.cs
 research/data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv
 research/data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv
 research/data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv
+research/data/summaries/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.csv
 ```
