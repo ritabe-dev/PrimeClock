@@ -203,6 +203,9 @@ shows representative open-gap boundary endpoints from the row-level witness
 table. These endpoints are not claimed to be uncovered points themselves; the
 certified uncovered set is the open interval between the endpoints, and the
 v1.6 row-level CSV additionally gives an interior rational `witness_point`.
+When more than one boundary string appears in the representative column, those
+strings are samples from different residues in the same class, not multiple
+closed intervals to be read as one uncovered set.
 
 | components | measure | count | residues | representative gap boundaries |
 |---:|---:|---:|---|---|
@@ -242,6 +245,14 @@ v1.6 row-level CSV additionally gives an interior rational `witness_point`.
 | 2 | `3/10` | 8 | `18 42 48 78 132 162 168 192` | `1/4-1/2 1/4-3/10` |
 | 2 | `43/140` | 4 | `24 66 144 186` | `1/4-1/2 1/4-5/14 3/10-1/2 3/10-5/14` |
 | 2 | `5/14` | 2 | `60 150` | `1/4-1/2 1/4-5/14` |
+
+The formal certificate for an excluded residue is the row-level v1.6 witness:
+take the listed `witness_point`, check that it lies strictly between the first
+open-gap boundary endpoints on the circle, and check that it is outside every
+closed arc for `p=2,3,5,7`. The independent verifier performs exactly this
+rational check for all `208` excluded residues. The appendix table above is
+therefore a reading aid and compression of the certificate, not a replacement
+for the row-level rational witnesses.
 
 ## C5 and B5
 
