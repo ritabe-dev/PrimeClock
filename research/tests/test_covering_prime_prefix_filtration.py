@@ -13,6 +13,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
 )
+from prime_reciprocal_projection.primes import primes_up_to
 
 
 def test_residue_exact_coverage_for_first_birth_class():
@@ -52,6 +53,38 @@ def test_prime_prefix_filtration_k7_regeneration_counts():
     assert row.inherited_count == 8670
     assert row.birth_count == 714
     assert len(birth_rows) == 258
+
+
+def test_prime_prefix_filtration_invariants_hold_through_k7():
+    rows, birth_rows = prime_prefix_residue_filtration_tables(
+        max_k=7,
+        birth_sample_limit=200,
+    )
+    previous_count = 0
+    for row in rows:
+        assert row.covered_residue_count == row.inherited_count + row.birth_count
+        assert row.inherited_count == previous_count * row.new_prime
+        previous_count = row.covered_residue_count
+
+    for birth in birth_rows:
+        prefix_primes = primes_up_to(birth.new_prime)
+        previous_primes = prefix_primes[:-1]
+        assert not residue_is_exactly_covered(birth.residue, previous_primes)
+        assert residue_is_exactly_covered(birth.residue, prefix_primes)
+
+
+def test_prime_prefix_filtration_rejects_unguarded_large_k():
+    with pytest.raises(ValueError, match="primorial-scale"):
+        prime_prefix_residue_filtration_tables(max_k=8)
+
+
+def test_prime_prefix_filtration_rejects_invalid_prime_lists():
+    with pytest.raises(ValueError, match="distinct prime"):
+        residue_is_exactly_covered(0, [1])
+    with pytest.raises(ValueError, match="distinct prime"):
+        residue_is_exactly_covered(0, [4])
+    with pytest.raises(ValueError, match="distinct prime"):
+        residue_is_exactly_covered(0, [2, 2])
 
 
 def test_prime_prefix_filtration_birth_previous_measure():
@@ -126,3 +159,45 @@ def test_covering_prime_prefix_filtration_cli_writes_csvs(tmp_path: Path):
     assert len(summary_lines) == 5
     assert len(birth_lines) == 3
     assert summary_lines[-1].startswith("4,7,210,2,")
+
+
+def test_covering_prime_prefix_filtration_cli_rejects_large_k_without_flag(tmp_path: Path):
+    with pytest.raises(ValueError, match="primorial-scale"):
+        main(
+            [
+                "covering-prime-prefix-filtration",
+                "--max-k",
+                "8",
+                "--summary-out",
+                str(tmp_path / "summary.csv"),
+                "--birth-samples-out",
+                str(tmp_path / "birth.csv"),
+            ]
+        )
+
+
+def test_covering_prime_prefix_filtration_cli_regenerates_committed_csvs(tmp_path: Path):
+    summary_out = tmp_path / "summary.csv"
+    birth_out = tmp_path / "birth.csv"
+    assert (
+        main(
+            [
+                "covering-prime-prefix-filtration",
+                "--max-k",
+                "7",
+                "--birth-sample-limit",
+                "200",
+                "--summary-out",
+                str(summary_out),
+                "--birth-samples-out",
+                str(birth_out),
+            ]
+        )
+        == 0
+    )
+    assert summary_out.read_bytes() == Path(
+        "data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv"
+    ).read_bytes()
+    assert birth_out.read_bytes() == Path(
+        "data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv"
+    ).read_bytes()

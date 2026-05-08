@@ -5,3 +5,4 @@ dist
 *.tar
 *.tar.gz
 *.tgz
+review_packages/

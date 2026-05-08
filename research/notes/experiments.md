@@ -130,6 +130,7 @@ Initial PRC reading should be conservative:
 Generate the prime-prefix residual profile with:
 
 ```bash
+cd research
 python -m prime_reciprocal_projection.cli covering-prime-prefix-profile \
   --n 1000 10000 100000 1000000 39069 372759 \
   --out data/summaries/prc_prime_prefix_profile_v0_1.csv
@@ -164,6 +165,7 @@ C_k = {r in Z/M_kZ : union_{i<=k} I_{p_i}(r)=T}
 Generate the exact filtration tables with:
 
 ```bash
+cd research
 python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
   --max-k 7 \
   --birth-sample-limit 200 \
@@ -194,6 +196,8 @@ Current table:
 This is stronger than a numeric prefix-complete flag: it is a finite exact
 classification problem over primorial residue rings. The CLI uses lift
 monotonicity to avoid exact-rechecking inherited covered classes.
+Membership and count columns are exact; density and previous-uncovered
+median/max columns are decimal summaries derived from exact rational measures.
 
 ## PRC Candidate Windows
 
@@ -459,7 +463,7 @@ See `notes/prc_broad_cluster_scan.md`.
 
 ## PRC Two-Stage Cluster Scan
 
-The dedicated scanner implements the current main workflow:
+The dedicated scanner implements a historical C0 forensic workflow:
 
 ```text
 coarse float scan -> selected local windows -> exact certification for every M in each window -> D_R table

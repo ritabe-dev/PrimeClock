@@ -10,10 +10,11 @@ from functools import cmp_to_key
 from pathlib import Path
 from typing import Iterable
 
-from .primes import primes_up_to
+from .primes import is_prime, primes_up_to
 
 ExactInterval = tuple[Fraction, Fraction]
 ExactRawInterval = tuple[int, int, int, int]
+MAX_DEFAULT_FILTRATION_K = 7
 
 
 @dataclass(frozen=True)
@@ -47,10 +48,16 @@ def prime_prefix_residue_filtration_tables(
     *,
     max_k: int = 7,
     birth_sample_limit: int = 200,
+    allow_large_k: bool = False,
 ) -> tuple[list[PrimePrefixResidueFiltrationRow], list[PrimePrefixResidueBirthSampleRow]]:
     """Return exact summary and birth-sample rows for the residue filtration."""
     if max_k < 1:
         raise ValueError("max_k must be >= 1")
+    if max_k > MAX_DEFAULT_FILTRATION_K and not allow_large_k:
+        raise ValueError(
+            f"max_k>{MAX_DEFAULT_FILTRATION_K} requires allow_large_k=True; "
+            "k=8 and higher are primorial-scale scans"
+        )
     if birth_sample_limit < 0:
         raise ValueError("birth_sample_limit must be >= 0")
 
@@ -122,7 +129,7 @@ def prime_prefix_residue_filtration_tables(
 
 def residue_is_exactly_covered(residue: int, primes: Iterable[int]) -> bool:
     """Return whether the given residue is exactly covered by the prime arcs."""
-    prime_values = list(primes)
+    prime_values = _validated_prime_list(primes)
     if not prime_values:
         return False
     intervals = [
@@ -170,12 +177,25 @@ def residue_uncovered_intervals(residue: int, primes: Iterable[int]) -> list[Exa
 
 def residue_covered_intervals(residue: int, primes: Iterable[int]) -> list[ExactInterval]:
     """Return exact merged covered intervals for a residue and prime prefix."""
+    prime_values = _validated_prime_list(primes)
     intervals = [
         interval
-        for p in primes
+        for p in prime_values
         for interval in _exact_arc_intervals_for_residue(residue, p)
     ]
     return _merge_exact_intervals(intervals)
+
+
+def _validated_prime_list(primes: Iterable[int]) -> list[int]:
+    values = list(primes)
+    seen: set[int] = set()
+    for p in values:
+        if isinstance(p, bool) or not isinstance(p, int) or p < 2 or not is_prime(p):
+            raise ValueError("primes must contain distinct prime integers >= 2")
+        if p in seen:
+            raise ValueError("primes must contain distinct prime integers >= 2")
+        seen.add(p)
+    return values
 
 
 def write_prime_prefix_residue_filtration_csv(

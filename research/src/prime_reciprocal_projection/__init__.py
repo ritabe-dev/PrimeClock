@@ -50,6 +50,7 @@ from .covering_prime_prefix import (
     write_prime_prefix_profile_csv,
 )
 from .covering_prime_prefix_filtration import (
+    MAX_DEFAULT_FILTRATION_K,
     PrimePrefixResidueBirthSampleRow,
     PrimePrefixResidueFiltrationRow,
     prime_prefix_residue_filtration_tables,
@@ -162,6 +163,7 @@ __all__ = [
     "limit_fourier_coefficient",
     "length2_pair_forensics",
     "max_uncovered_gap",
+    "MAX_DEFAULT_FILTRATION_K",
     "normalized_gap_entropy",
     "phi",
     "poisson_arc_baseline",

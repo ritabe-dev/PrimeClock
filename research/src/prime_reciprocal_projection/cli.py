@@ -193,6 +193,11 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_filtration.add_argument("--max-k", type=int, default=7)
     covering_prime_prefix_filtration.add_argument("--birth-sample-limit", type=int, default=200)
     covering_prime_prefix_filtration.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exploratory primorial-scale scans beyond the v0.1 max-k=7 guardrail",
+    )
+    covering_prime_prefix_filtration.add_argument(
         "--summary-out",
         default="data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv",
     )
@@ -649,6 +654,7 @@ def main(argv: list[str] | None = None) -> int:
         summary_rows, birth_rows = prime_prefix_residue_filtration_tables(
             max_k=args.max_k,
             birth_sample_limit=args.birth_sample_limit,
+            allow_large_k=args.allow_large_k,
         )
         write_prime_prefix_residue_filtration_csv(summary_rows, args.summary_out)
         write_prime_prefix_residue_birth_samples_csv(birth_rows, args.birth_samples_out)

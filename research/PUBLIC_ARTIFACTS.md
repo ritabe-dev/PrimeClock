@@ -32,6 +32,7 @@ when the reviewer wants the origin artifact:
 - `.ruff_cache/`
 - `.matplotlib-cache/`
 - `dist/`
+- `review_packages/`
 - `__pycache__/`
 - `.DS_Store`
 - generated local zip/tar archives
@@ -43,6 +44,8 @@ For research review, start with:
 ```text
 research/README.md
 research/notes/prc_research_note_v1_0_ja.md
+research/notes/prc_prime_prefix_profile_v0_1.md
+research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_main_v0_9.md
@@ -51,3 +54,11 @@ research/notes/prc_main_v0_9.md
 The current project should be read as a finite-`N` experimental mathematics
 artifact. It does not claim a new theorem about prime distribution or a law for
 complete covering.
+
+Current prime-prefix artifacts to include in the summaries directory:
+
+```text
+research/data/summaries/prc_prime_prefix_profile_v0_1.csv
+research/data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv
+research/data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+```
