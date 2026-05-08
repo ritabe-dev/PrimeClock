@@ -3,7 +3,41 @@
 Use this manifest when preparing a review zip for Prime Reciprocal Projection /
 Prime Reciprocal Covering.
 
-## Include
+## Minimal External Review Package
+
+Use this smaller package for first-pass external review. It emphasizes the
+finite theorem note and keeps modulo-210 diagnostics out of the main path.
+
+- `README.md`
+- `pyproject.toml`
+- `uv.lock`
+- `src/prime_reciprocal_projection/`
+- `tests/`
+- `notes/prc_prime_prefix_finite_note_v1_1.md`
+- `notes/claims.md`
+- `notes/known-results.md`
+- `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`
+- `notes/prc_prime_prefix_certificate_depth_v0_2.md`
+- `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
+- `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
+- `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
+
+The existing `review_packages/` directory contains stale archived snapshots.
+Do not send those as the current review package; regenerate a new package from
+this minimal manifest instead.
+
+Scouting notes are excluded unless explicitly promoted into the main review
+path.
+
+## Full Reproducibility Archive
+
+Use this broader archive when the reviewer wants all historical diagnostics and
+figures, including modulo-210 and branch-uniform experiments.
 
 - `README.md`
 - `pyproject.toml`
@@ -39,15 +73,22 @@ when the reviewer wants the origin artifact:
 
 ## Review Entry Point
 
-For research review, start with:
+For a minimal research review, start with:
 
 ```text
 research/README.md
+research/notes/prc_prime_prefix_finite_note_v1_1.md
+research/notes/claims.md
+research/notes/known-results.md
+research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
+research/notes/prc_prime_prefix_certificate_depth_v0_2.md
+```
+
+For a full reproducibility review, continue with appendix/internal diagnostics:
+
+```text
 research/notes/prc_research_note_v1_0_ja.md
 research/notes/prc_prime_prefix_profile_v0_1.md
-research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
-research/notes/prc_prime_prefix_finite_note_v1_1.md
-research/notes/prc_prime_prefix_certificate_depth_v0_2.md
 research/notes/prc_prime_prefix_k8_extension_v0_3.md
 research/notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md
 research/notes/prc_prime_prefix_uncertified_control_profile_v0_5.md
@@ -58,8 +99,6 @@ research/notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md
 research/notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md
 research/notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md
 research/notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md
-research/notes/claims.md
-research/notes/known-results.md
 research/notes/prc_main_v0_9.md
 ```
 

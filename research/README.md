@@ -31,37 +31,24 @@ Read in this order:
 
 1. `notes/prc_prime_prefix_finite_note_v1_1.md` for the finite theorem framing,
    closed-arc convention, `C_4`, and `B_5` witnesses.
-2. `notes/prc_research_note_v1_0_ja.md` for the integrated PRC background note.
-3. `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
+2. `notes/claims.md` for claim categories and non-claims.
+3. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+   fractional-parts results.
 4. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
    exact `C_k` residue filtration.
 5. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
    `C_k` to exact-certified complete-covering values.
-6. `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
-   extension.
-7. `notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md` for the
-   residual class left after `C_8`.
-8. `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md` for the local
-   non-complete control check.
-9. `notes/prc_prime_prefix_uncertified_control_audit_v0_6.md` for the
-   modulo-210/source-depth audit of the v0.5 controls.
-10. `notes/prc_prime_prefix_uncertified_mod210_class_review_v0_7.md` for the
-   ranked modulo-210 class review table.
-11. `notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md` for the
-   expanded seed/control rows in the top classes.
-12. `notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md` for the
-   selected-class source-depth summary.
-13. `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md` for
-   the selected-class boundary-anchor summary.
-14. `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md` for the
-   shallow-anchor lift-boundary table.
-15. `notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md` for the direct
-   `C_8` residue-ring anchor-neighborhood table.
-16. `notes/claims.md` for claim categories and non-claims.
-17. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
-   fractional-parts results.
-18. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-19. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+
+Appendix / diagnostic notes:
+
+- `notes/prc_research_note_v1_0_ja.md` for the integrated PRC background note.
+- `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
+- `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
+  extension.
+- `notes/prc_prime_prefix_uncertified_*.md` and
+  `notes/prc_prime_prefix_mod210_*.md` for v0.4-v0.12 internal diagnostics.
+- `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+- `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 

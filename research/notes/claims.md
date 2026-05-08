@@ -37,6 +37,7 @@ Every statement in this research track should be assigned one of these statuses.
 | Prefix coverage by the first `k` primes depends only on `N mod M_k` | Exact identity |
 | If `r in C_k`, then every lift of `r` modulo `M_{k+1}` belongs to `C_{k+1}` | Exact identity |
 | With `B_k=C_k \\ Lift_k(C_{k-1})` and `alpha_k=|C_k|/M_k`, `alpha_k=alpha_{k-1}+|B_k|/M_k`; therefore `alpha_k` is nondecreasing | Exact identity |
+| If `r in C_k`, then `-r mod M_k in C_k` by circle reflection symmetry | Exact identity |
 | The scouting exact table finds `C_1=C_2=C_3=empty`, `C_4={2,208} mod 210`, and `|C_7|=9384` with `714` new births at `p=17` | Experiment / theorem target |
 | The v1.1 full export gives all covered rows through `k=5`: `C_5` has `36` rows, split into `22` inherited lifts and `14` births | Exact generated artifact |
 | The v1.1 `B_5` birth-witness table gives rational previous-gap and new-arc intervals for the `14` births at `p=11` | Exact generated artifact |
