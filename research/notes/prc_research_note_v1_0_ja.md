@@ -136,14 +136,17 @@ M_k = product_{i<=k} p_i
 とし、剰余 `r mod M_k` に対して
 
 ```text
+I_p(r) = [(r mod p)/p - 1/(2p), (r mod p)/p + 1/(2p)]
 U_k(r) = union_{i<=k} I_{p_i}(r)
 C_k = {r in Z/M_kZ : U_k(r)=T}
 ```
 
 を定義する。これは「最初の `k` 個の素数セルだけで円周が完全に覆われる
-剰余類」の集合である。`U_k(N)` は `N mod M_k` だけで決まり、`r in C_k`
-なら、その全ての lift は次の `C_{k+1}` に残る。したがって `C_k` は単なる
-サンプル列ではなく、primorial residue ring 上の lifted filtration になる。
+剰余類」の集合である。定理レベルの被覆では `I_p(r)` を閉弧として扱う。
+`U_k(N)` は `N mod M_k` だけで決まり、`r in C_k` なら、その全ての lift は
+次の `C_{k+1}` に残る。したがって `C_k` は単なるサンプル列ではなく、
+primorial residue ring 上の lifted filtration になる。さらに
+`alpha_k=|C_k|/M_k` は birth layer を足すたびに非減少である。
 
 現在のscouting tableでは、coverage は `k=4` で初めて現れ、
 

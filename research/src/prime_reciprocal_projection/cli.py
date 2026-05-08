@@ -60,7 +60,11 @@ from .covering_prime_prefix_certificates import (
     write_prime_prefix_uncertified_source_depth_summary_csv,
 )
 from .covering_prime_prefix_filtration import (
+    prime_prefix_birth_witness_rows,
+    prime_prefix_residue_full_rows,
     prime_prefix_residue_filtration_tables,
+    write_prime_prefix_birth_witness_csv,
+    write_prime_prefix_residue_full_csv,
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
 )
@@ -244,6 +248,36 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_filtration.add_argument(
         "--birth-samples-out",
         default="data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv",
+    )
+
+    covering_prime_prefix_filtration_full = subparsers.add_parser(
+        "covering-prime-prefix-filtration-full",
+        help="export all covered residues with inherited/birth status for small k",
+    )
+    covering_prime_prefix_filtration_full.add_argument("--max-k", type=int, default=5)
+    covering_prime_prefix_filtration_full.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow proof-oriented full exports beyond the small-k guardrail",
+    )
+    covering_prime_prefix_filtration_full.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
+    )
+
+    covering_prime_prefix_birth_witnesses = subparsers.add_parser(
+        "covering-prime-prefix-birth-witnesses",
+        help="export rational interval witnesses for birth residues",
+    )
+    covering_prime_prefix_birth_witnesses.add_argument("--k", type=int, default=5)
+    covering_prime_prefix_birth_witnesses.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow birth witnesses beyond the small-k guardrail",
+    )
+    covering_prime_prefix_birth_witnesses.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_birth_witness_v1_1.csv",
     )
 
     covering_prime_prefix_certificates = subparsers.add_parser(
@@ -947,6 +981,28 @@ def main(argv: list[str] | None = None) -> int:
             "covering-prime-prefix-filtration: "
             f"summary_rows={len(summary_rows)}, birth_sample_rows={len(birth_rows)}, "
             f"summary_out={args.summary_out}, birth_samples_out={args.birth_samples_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-filtration-full":
+        rows = prime_prefix_residue_full_rows(
+            max_k=args.max_k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_residue_full_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-filtration-full: "
+            f"rows={len(rows)}, max_k={args.max_k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-birth-witnesses":
+        rows = prime_prefix_birth_witness_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_birth_witness_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-birth-witnesses: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
         )
         return 0
     if args.command == "covering-prime-prefix-certificates":

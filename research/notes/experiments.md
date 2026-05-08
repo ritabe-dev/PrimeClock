@@ -199,6 +199,23 @@ monotonicity to avoid exact-rechecking inherited covered classes.
 Membership and count columns are exact; density and previous-uncovered
 median/max columns are decimal summaries derived from exact rational measures.
 
+The v1.1 finite-theorem pivot adds two proof-oriented small-k exports:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full \
+  --max-k 5 \
+  --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+```
+
+These artifacts make the exact small-k structure auditable: `C_5` has `36`
+covered rows, split into `22` inherited lifts and `14` births, and the birth
+witness table records the old rational gap closed by the new `p=11` arc.
+
 ## PRC Candidate Windows
 
 The first exact-complete candidates from the v0 log grid are:

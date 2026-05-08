@@ -15,6 +15,7 @@ from .primes import is_prime, primes_up_to
 ExactInterval = tuple[Fraction, Fraction]
 ExactRawInterval = tuple[int, int, int, int]
 MAX_DEFAULT_FILTRATION_K = 7
+MAX_DEFAULT_FULL_EXPORT_K = 6
 
 
 @dataclass(frozen=True)
@@ -44,6 +45,37 @@ class PrimePrefixResidueBirthSampleRow:
     previous_prefix_uncovered_measure: float
 
 
+@dataclass(frozen=True)
+class PrimePrefixResidueFullRow:
+    """One covered residue classified as inherited or newly born."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    residue_mod_previous: int | None
+    status: str
+    reflection_residue: int
+    previous_prefix_uncovered_measure: float | None
+
+
+@dataclass(frozen=True)
+class PrimePrefixBirthWitnessRow:
+    """Proof-oriented witness for one birth residue."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    residue_mod_previous: int | None
+    reflection_residue: int
+    previous_uncovered_interval_count: int
+    previous_prefix_uncovered_measure: float
+    previous_uncovered_intervals: str
+    new_prime_arc_intervals: str
+    uses_endpoint_touching: bool
+
+
 def prime_prefix_residue_filtration_tables(
     *,
     max_k: int = 7,
@@ -57,6 +89,96 @@ def prime_prefix_residue_filtration_tables(
         allow_large_k=allow_large_k,
     )
     return summary_rows, birth_sample_rows
+
+
+def prime_prefix_residue_full_rows(
+    *,
+    max_k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixResidueFullRow]:
+    """Return all covered residues through max_k with inherited/birth status."""
+    _validate_small_export_k(max_k, allow_large_k=allow_large_k)
+    summary_rows, _, covered_sets = prime_prefix_residue_filtration_data(
+        max_k=max_k,
+        birth_sample_limit=0,
+        allow_large_k=allow_large_k,
+    )
+    primes = _first_primes(max_k)
+    rows: list[PrimePrefixResidueFullRow] = []
+    for index, summary in enumerate(summary_rows):
+        previous_covered = covered_sets[index - 1] if index > 0 else set()
+        previous_primorial = summary_rows[index - 1].primorial if index > 0 else 1
+        previous_primes = primes[:index]
+        for residue in sorted(covered_sets[index]):
+            inherited = bool(previous_covered) and residue % previous_primorial in previous_covered
+            previous_measure = (
+                None
+                if inherited
+                else float(residue_uncovered_measure(residue, previous_primes))
+            )
+            rows.append(
+                PrimePrefixResidueFullRow(
+                    k=summary.k,
+                    new_prime=summary.new_prime,
+                    primorial=summary.primorial,
+                    residue=residue,
+                    residue_mod_previous=(
+                        residue % previous_primorial if index > 0 else None
+                    ),
+                    status="inherited" if inherited else "birth",
+                    reflection_residue=(-residue) % summary.primorial,
+                    previous_prefix_uncovered_measure=previous_measure,
+                )
+            )
+    return rows
+
+
+def prime_prefix_birth_witness_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthWitnessRow]:
+    """Return rational interval witnesses for birth residues at one level."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    full_rows = [
+        row
+        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=allow_large_k)
+        if row.k == k and row.status == "birth"
+    ]
+    primes = _first_primes(k)
+    previous_primes = primes[:-1]
+    new_prime = primes[-1]
+    previous_primorial = 1
+    for p in previous_primes:
+        previous_primorial *= p
+
+    rows: list[PrimePrefixBirthWitnessRow] = []
+    for row in full_rows:
+        previous_gaps = residue_uncovered_intervals(row.residue, previous_primes)
+        new_arc_intervals = _exact_arc_intervals_for_residue(row.residue, new_prime)
+        rows.append(
+            PrimePrefixBirthWitnessRow(
+                k=row.k,
+                new_prime=row.new_prime,
+                primorial=row.primorial,
+                residue=row.residue,
+                residue_mod_previous=(
+                    row.residue % previous_primorial if previous_primes else None
+                ),
+                reflection_residue=row.reflection_residue,
+                previous_uncovered_interval_count=len(previous_gaps),
+                previous_prefix_uncovered_measure=float(
+                    residue_uncovered_measure(row.residue, previous_primes)
+                ),
+                previous_uncovered_intervals=_format_intervals(previous_gaps),
+                new_prime_arc_intervals=_format_intervals(new_arc_intervals),
+                uses_endpoint_touching=_uses_endpoint_touching(
+                    previous_gaps,
+                    new_arc_intervals,
+                ),
+            )
+        )
+    return rows
 
 
 def prime_prefix_residue_filtration_data(
@@ -235,6 +357,32 @@ def write_prime_prefix_residue_birth_samples_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixResidueBirthSampleRow)
 
 
+def write_prime_prefix_residue_full_csv(
+    rows: Iterable[PrimePrefixResidueFullRow],
+    output_path: str | Path,
+) -> None:
+    """Write all covered residue rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixResidueFullRow)
+
+
+def write_prime_prefix_birth_witness_csv(
+    rows: Iterable[PrimePrefixBirthWitnessRow],
+    output_path: str | Path,
+) -> None:
+    """Write birth witness rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthWitnessRow)
+
+
+def _validate_small_export_k(max_k: int, *, allow_large_k: bool) -> None:
+    if max_k < 1:
+        raise ValueError("max_k must be >= 1")
+    if max_k > MAX_DEFAULT_FULL_EXPORT_K and not allow_large_k:
+        raise ValueError(
+            f"max_k>{MAX_DEFAULT_FULL_EXPORT_K} requires allow_large_k=True; "
+            "full exports are proof-oriented small-k artifacts"
+        )
+
+
 def _first_primes(count: int) -> list[int]:
     limit = 32
     while True:
@@ -311,6 +459,48 @@ def _exact_interval_length(interval: ExactInterval) -> Fraction:
     if end >= start:
         return end - start
     return Fraction(1) - start + end
+
+
+def _format_fraction(value: Fraction) -> str:
+    if value.denominator == 1:
+        return str(value.numerator)
+    return f"{value.numerator}/{value.denominator}"
+
+
+def _format_intervals(intervals: Iterable[ExactInterval]) -> str:
+    return ";".join(
+        f"{_format_fraction(start)}-{_format_fraction(end)}"
+        for start, end in intervals
+    )
+
+
+def _split_interval(interval: ExactInterval) -> list[ExactInterval]:
+    start, end = interval
+    one = Fraction(1)
+    if end >= start:
+        return [(start, end)]
+    return [(start, one), (Fraction(0), end)]
+
+
+def _uses_endpoint_touching(
+    previous_gaps: Iterable[ExactInterval],
+    new_arc_intervals: Iterable[ExactInterval],
+) -> bool:
+    arc_segments = [
+        segment
+        for interval in new_arc_intervals
+        for segment in _split_interval(interval)
+    ]
+    for gap in previous_gaps:
+        for gap_start, gap_end in _split_interval(gap):
+            for arc_start, arc_end in arc_segments:
+                if arc_start <= gap_start and gap_end <= arc_end:
+                    if gap_start == arc_start or gap_end == arc_end:
+                        return True
+                    break
+            else:
+                raise ValueError("birth gap is not contained in the new prime arc")
+    return False
 
 
 def _write_dataclass_csv(

@@ -33,39 +33,43 @@ Read in this order:
 2. `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
 3. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
    exact `C_k` residue filtration.
-4. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
+4. `notes/prc_prime_prefix_finite_note_v1_1.md` for the finite theorem framing,
+   closed-arc convention, `C_4`, and `B_5` witnesses.
+5. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
    `C_k` to exact-certified complete-covering values.
-5. `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
+6. `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
    extension.
-6. `notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md` for the
+7. `notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md` for the
    residual class left after `C_8`.
-7. `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md` for the local
+8. `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md` for the local
    non-complete control check.
-8. `notes/prc_prime_prefix_uncertified_control_audit_v0_6.md` for the
+9. `notes/prc_prime_prefix_uncertified_control_audit_v0_6.md` for the
    modulo-210/source-depth audit of the v0.5 controls.
-9. `notes/prc_prime_prefix_uncertified_mod210_class_review_v0_7.md` for the
+10. `notes/prc_prime_prefix_uncertified_mod210_class_review_v0_7.md` for the
    ranked modulo-210 class review table.
-10. `notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md` for the
+11. `notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md` for the
    expanded seed/control rows in the top classes.
-11. `notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md` for the
+12. `notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md` for the
    selected-class source-depth summary.
-12. `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md` for
+13. `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md` for
    the selected-class boundary-anchor summary.
-13. `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md` for the
+14. `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md` for the
    shallow-anchor lift-boundary table.
-14. `notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md` for the direct
+15. `notes/prc_prime_prefix_mod210_anchor_neighborhood_v0_12.md` for the direct
    `C_8` residue-ring anchor-neighborhood table.
-15. `notes/claims.md` for claim categories and non-claims.
-16. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+16. `notes/claims.md` for claim categories and non-claims.
+17. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-17. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-18. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+18. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+19. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
 - `data/summaries/prc_prime_prefix_profile_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
+- `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
@@ -149,7 +153,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `159 passed`.
+Expected smoke-test result for the current suite is `173 passed`.
 
 ## First Experiments
 
@@ -213,6 +217,14 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
   --birth-sample-limit 200 \
   --summary-out data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv \
   --birth-samples-out data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full \
+  --max-k 5 \
+  --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --complete-source data/summaries/prc_combined_runs_2_1000000.csv \

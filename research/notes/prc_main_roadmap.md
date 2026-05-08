@@ -20,8 +20,9 @@ C_{p,r} = [(2r-1)/(2p), (2r+1)/(2p)] mod 1
 I_p(N)  = C_{p, N mod p}
 ```
 
-Endpoints do not affect measure-level statements. Exact `C0` certification
-uses rational interval arithmetic rather than floating-point zero tests.
+Endpoints do not affect measure-level statements. Exact theorem-level coverage
+uses **closed arcs** and rational interval arithmetic rather than
+floating-point zero tests.
 
 The roadmap distinguishes three hierarchies:
 
@@ -90,6 +91,17 @@ I_p(r) = [(r mod p)/p - 1/(2p), (r mod p)/p + 1/(2p)] on T.
 This is the exact primorial-residue version of the prime-prefix hierarchy.
 Unlike the descriptive `numeric_complete_prefix` flag, membership in `C_k` is
 a finite rational interval question.
+The `C_k` are a lifted filtration over primorial residue rings, not nested
+subsets of one fixed finite set:
+
+```text
+Lift_k(C_{k-1}) = pi_{k,k-1}^{-1}(C_{k-1})
+B_k = C_k \ Lift_k(C_{k-1})
+alpha_k = |C_k|/M_k = alpha_{k-1} + |B_k|/M_k.
+```
+
+So `alpha_k` is nondecreasing; the meaningful growth question is whether new
+births eventually stop or continue.
 
 Generated outputs:
 
@@ -118,6 +130,40 @@ Current reading:
   including `714` new births at `p=17`.
 
 The current implementation regenerates this table exactly through the CLI.
+
+## v1.1 Finite Theorem Artifacts
+
+Goal: pivot from selected modulo-210 diagnostics to a theorem-oriented finite
+note around `C_k`, lift monotonicity, `C_4`, and `B_5/C_5`.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_finite_note_v1_1.md`
+- `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
+
+Commands:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full \
+  --max-k 5 \
+  --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+```
+
+Current reading:
+
+- `C_4={2,208} mod 210` is the first nonempty layer. The coverage chain for
+  `r=2` uses closed-arc endpoint touching at `1/2`; `208` is its reflection.
+- `C_5` has `36` residues: `22` inherited lifts from `C_4` and `14` births.
+- The `B_5` witness table records the previous uncovered interval and the
+  `p=11` arc that closes it. This is the next theorem-building object.
+- v0.9--v0.12 selected modulo-210 diagnostics are retained as appendix-style
+  applications/diagnostics, not the main proof spine.
 
 ## v0.2 Prime-Prefix Certificate Depth
 
@@ -175,7 +221,9 @@ Current reading:
 ## v0.4 Uncertified Residue Profile
 
 Goal: inspect the `4,495` complete-covering values left uncertified after
-`C_8` before attempting the much larger `k=9` scan.
+`C_8` before attempting the much larger `k=9` scan. In the v1.1 framing, this
+and v0.5--v0.12 are appendix-style diagnostics of selected complete rows, not
+the main theorem spine.
 
 Deliverables:
 

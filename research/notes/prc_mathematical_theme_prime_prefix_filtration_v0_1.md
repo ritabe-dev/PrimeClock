@@ -32,8 +32,13 @@ U_k(r) = union_{i<=k} I_{p_i}(r)
 where
 
 ```text
-I_p(r) = [(r mod p)/p - 1/(2p), (r mod p)/p + 1/(2p)] on R/Z.
+I_p(r) = [(r mod p)/p - 1/(2p), (r mod p)/p + 1/(2p)] on R/Z
 ```
+
+For theorem-level coverage these are **closed arcs**. This matters at endpoint
+touching; for example the `r=2 mod 210` coverage chain touches at `1/2`.
+Endpoint convention does not change measures, but it does change whether a
+finite exact covering statement is literally true.
 
 Then define the covered residue set
 
@@ -43,6 +48,17 @@ C_k = {r in Z/M_kZ : U_k(r) = R/Z}.
 
 This is finite and exact. It has no floating-point component and does not
 require a large scan over `N`.
+
+Strictly speaking, the `C_k` are not nested subsets of one fixed finite set.
+They form a lifted filtration over the primorial inverse system. With
+
+```text
+pi_{k,k-1}: Z/M_kZ -> Z/M_{k-1}Z
+Lift_k(C_{k-1}) = pi_{k,k-1}^{-1}(C_{k-1})
+B_k = C_k \ Lift_k(C_{k-1})
+```
+
+the inherited classes are the cylinder lifts and `B_k` is the exact birth layer.
 
 ## Basic Lemmas
 
@@ -79,7 +95,26 @@ inherited lifts from C_k
 new births created by p_{k+1}
 ```
 
-This gives a genuine filtration, not just a list of examples.
+This gives a genuine lifted filtration, not just a list of examples.
+
+### Lemma 3: Density Monotonicity
+
+Let
+
+```text
+alpha_k = |C_k| / M_k.
+```
+
+Lift monotonicity gives
+
+```text
+|Lift_k(C_{k-1})| = p_k |C_{k-1}|
+alpha_k = alpha_{k-1} + |B_k| / M_k.
+```
+
+Therefore `alpha_k` is nondecreasing. Questions about later decay are not
+well-posed for this exact filtration; the meaningful questions are whether
+births eventually stop, and how large the monotone limit becomes.
 
 ## First Exact Table
 
@@ -107,6 +142,20 @@ Data:
 ```text
 data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv
 data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+```
+
+For theorem-oriented small-k inspection, also regenerate the full `C_k/B_k`
+rows and the `B_5` rational witness table:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full \
+  --max-k 5 \
+  --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
 ```
 
 Summary:
@@ -276,8 +325,9 @@ alpha_7 ~= 0.01838
 Questions:
 
 - Does `alpha_k` approach a positive limit?
-- Does it decay after some point?
-- Is the observed growth only an early-prefix artifact?
+- Do births continue infinitely often, or does the lifted filtration eventually
+  become purely inherited?
+- Is the observed additional growth only an early-prefix artifact?
 - Can `alpha_k` be bounded using total arc length and gap combinatorics?
 
 ### Step 4: Nontrivial `C0`

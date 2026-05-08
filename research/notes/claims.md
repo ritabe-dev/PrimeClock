@@ -36,7 +36,10 @@ Every statement in this research track should be assigned one of these statuses.
 | `M_k=prod_{i<=k}p_i` and `C_k={r in Z/M_kZ : union_{i<=k}I_{p_i}(r)=T}` define the exact prime-prefix residue-covering filtration | Definition |
 | Prefix coverage by the first `k` primes depends only on `N mod M_k` | Exact identity |
 | If `r in C_k`, then every lift of `r` modulo `M_{k+1}` belongs to `C_{k+1}` | Exact identity |
+| With `B_k=C_k \\ Lift_k(C_{k-1})` and `alpha_k=|C_k|/M_k`, `alpha_k=alpha_{k-1}+|B_k|/M_k`; therefore `alpha_k` is nondecreasing | Exact identity |
 | The scouting exact table finds `C_1=C_2=C_3=empty`, `C_4={2,208} mod 210`, and `|C_7|=9384` with `714` new births at `p=17` | Experiment / theorem target |
+| The v1.1 full export gives all covered rows through `k=5`: `C_5` has `36` rows, split into `22` inherited lifts and `14` births | Exact generated artifact |
+| The v1.1 `B_5` birth-witness table gives rational previous-gap and new-arc intervals for the `14` births at `p=11` | Exact generated artifact |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |
@@ -84,6 +87,12 @@ Every statement in this research track should be assigned one of these statuses.
   experiments.
 - This project does not claim an asymptotic law for `|C_k|/M_k`; the current
   prime-prefix residue filtration table is a finite exact generated artifact.
+- This project does not ask whether `|C_k|/M_k` decays; lift monotonicity makes
+  the density nondecreasing. The open questions are about birth persistence and
+  the monotone limit.
+- This project does not claim `C_4={2,208}` has a polished handwritten
+  exclusion proof yet; the exclusion is currently supported by exact finite
+  enumeration and tests.
 - This project does not claim `k<=7` certificate coverage explains all
   complete-covering values; rows without a prefix certificate are only
   uncertified within the checked filtration range.
