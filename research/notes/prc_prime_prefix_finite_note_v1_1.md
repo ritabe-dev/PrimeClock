@@ -207,7 +207,7 @@ residue modulo `210`, the new residue modulo `11`, and the old gap template.
 This is the first small theorem-classification artifact rather than just a
 witness list.
 
-For the paper-facing table, the same rows can be compressed into one row per
+For the paper-facing table, the same rows are compressed into one row per
 reflection pair:
 
 ```bash
@@ -217,8 +217,13 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
   --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
 ```
 
-This gives `7` rows. It is the preferred source for the displayed `B_5` table;
-the row-level classification and witness CSVs remain the audit trail.
+This gives `7` rows. It is the preferred source for the displayed `B_5` table.
+The row-level classification and witness CSVs remain the audit trail. In other
+words, the note now has three layers for `B_5`:
+
+1. `birth_witness`: rational interval proof data.
+2. `birth_classification`: one row per birth residue.
+3. `birth_pair_summary`: one row per reflection pair for the written table.
 
 ## Relation to PRC complete covering
 
@@ -243,7 +248,8 @@ Rows without a certificate through checked `k` should be called
 ## Next theorem targets
 
 1. Turn the `C_4` exclusion witness CSV into a compact handwritten exclusion
-   table.
-2. Summarize `B_5` into parent-gap templates rather than row-level witnesses.
-3. Extend the same witness/classification format to `B_6`, before chasing
-   larger `k`.
+   table, using the 36-row exclusion summary as the index.
+2. Write the `B_5` section from the 7-row pair summary rather than maintaining
+   a hand-copied table.
+3. Extend the same witness/classification/pair-summary format to `B_6`,
+   before chasing larger `k`.
