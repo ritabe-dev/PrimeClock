@@ -1,0 +1,4 @@
+control_role,pair_count,unique_control_n_count,reused_control_count,reused_pair_excess_count
+local_mod6_control,33,33,0,0
+band_mod6_control,33,25,8,8
+band_ordinary_control,33,16,11,17

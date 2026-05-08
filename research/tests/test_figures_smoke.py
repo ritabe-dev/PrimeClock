@@ -249,3 +249,35 @@ def test_prc_residual_gap_pair_figures_smoke(tmp_path):
     for filename in generated:
         assert (tmp_path / filename).exists()
     assert (tmp_path / "prc_residual_gap_pairs_manifest.json").exists()
+
+
+def test_prc_residual_gap_count_test_figures_smoke(tmp_path):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
+    except ModuleNotFoundError:
+        pytest.skip("matplotlib is not installed in this environment")
+
+    from prime_reciprocal_projection.figures import generate_prc_residual_gap_count_test_figures
+
+    test_csv = tmp_path / "count_tests.csv"
+    test_csv.write_text(
+        "\n".join(
+            [
+                "control_role,metric,pair_count,non_tie_pair_count,complete_smaller_count,complete_larger_count,tie_count,complete_smaller_rate_all_pairs,complete_smaller_rate_non_tie,median_delta,mean_delta,sign_test_p_two_sided,bh_q_value,bootstrap_median_delta_ci_low,bootstrap_median_delta_ci_high,bootstrap_iterations,bootstrap_seed",
+                "local_mod6_control,residual_gap_count,33,33,22,11,0,0.6666666667,0.6666666667,-11,-8.1,0.080,0.120,-30,2,10000,1729",
+                "band_mod6_control,residual_gap_count,33,31,19,12,2,0.5757575758,0.6129032258,-9,-6.0,0.281,0.281,-20,4,10000,1729",
+                "band_ordinary_control,residual_gap_count,33,33,26,7,0,0.7878787879,0.7878787879,-37,-26.4,0.0018,0.0054,-50,-4,10000,1729",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    generated = generate_prc_residual_gap_count_test_figures(test_csv, tmp_path)
+    assert set(generated) == {
+        "prc_residual_gap_count_test_v0_7.png",
+        "prc_residual_gap_count_ci_v0_7.png",
+    }
+    for filename in generated:
+        assert (tmp_path / filename).exists()
+    assert (tmp_path / "prc_residual_gap_count_tests_manifest.json").exists()

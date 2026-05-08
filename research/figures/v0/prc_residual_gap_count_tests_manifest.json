@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering residual gap count tests",
+  "generated_at_utc": "2026-05-08T01:57:19.196624+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "c671852b400084b5c8cd42afda2fa325468140fd",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gap-count-test --out data/summaries/prc_residual_gap_count_tests_v0_7.csv --figures-out figures/v0",
+  "generated_files": [
+    "prc_residual_gap_count_test_v0_7.png",
+    "prc_residual_gap_count_ci_v0_7.png"
+  ]
+}

@@ -32,13 +32,18 @@ from .covering_branch_fill_cohorts import (
     write_cohort_manifest_csv,
 )
 from .covering_residual_gaps import (
+    read_residual_gap_pair_delta_csv,
     read_residual_gap_csv,
+    residual_gap_count_test_rows,
     residual_gap_effect_summary_rows,
     residual_gap_pair_delta_rows,
     residual_gap_rows_from_manifest_csv,
+    residual_gap_secondary_direction_rows,
+    write_residual_gap_count_test_csv,
     write_residual_gap_effect_summary_csv,
     write_residual_gap_csv,
     write_residual_gap_pair_delta_csv,
+    write_residual_gap_secondary_direction_csv,
 )
 from .covering_runs import (
     benchmark_prefilter_windows,
@@ -65,6 +70,7 @@ from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
     generate_prc_branch_fill_cohort_figures,
     generate_prc_branch_fill_figures,
+    generate_prc_residual_gap_count_test_figures,
     generate_prc_residual_gap_pair_figures,
     generate_prc_residual_gap_figures,
     generate_prc_cluster_figures,
@@ -279,6 +285,33 @@ def main(argv: list[str] | None = None) -> int:
         "--skip-figures",
         action="store_true",
         help="write only the v0.6 paired CSVs",
+    )
+
+    covering_branch_fill_residual_gap_count_test = subparsers.add_parser(
+        "covering-branch-fill-residual-gap-count-test",
+        help="generate v0.7 residual gap count sign-test diagnostics",
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--input", default="data/summaries/prc_residual_gap_pair_deltas_v0_6.csv"
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--out", default="data/summaries/prc_residual_gap_count_tests_v0_7.csv"
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--secondary-out",
+        default="data/summaries/prc_residual_gap_secondary_direction_v0_7.csv",
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--bootstrap-iterations", type=int, default=10000
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--bootstrap-seed", type=int, default=1729
+    )
+    covering_branch_fill_residual_gap_count_test.add_argument("--figures-out", default="figures/v0")
+    covering_branch_fill_residual_gap_count_test.add_argument(
+        "--skip-figures",
+        action="store_true",
+        help="write only the v0.7 CSVs",
     )
 
     covering_certify = subparsers.add_parser(
@@ -563,6 +596,30 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "covering-branch-fill-residual-gap-pairs: "
             f"delta_rows={len(delta_rows)}, summary_rows={len(summary_rows)}, "
+            f"figures={len(generated)}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-residual-gap-count-test":
+        delta_rows = read_residual_gap_pair_delta_csv(args.input)
+        test_rows = residual_gap_count_test_rows(
+            delta_rows,
+            bootstrap_iterations=args.bootstrap_iterations,
+            bootstrap_seed=args.bootstrap_seed,
+        )
+        secondary_rows = residual_gap_secondary_direction_rows(delta_rows)
+        write_residual_gap_count_test_csv(test_rows, args.out)
+        write_residual_gap_secondary_direction_csv(secondary_rows, args.secondary_out)
+        generated = (
+            []
+            if args.skip_figures
+            else generate_prc_residual_gap_count_test_figures(
+                args.out,
+                args.figures_out,
+            )
+        )
+        print(
+            "covering-branch-fill-residual-gap-count-test: "
+            f"test_rows={len(test_rows)}, secondary_rows={len(secondary_rows)}, "
             f"figures={len(generated)}"
         )
         return 0

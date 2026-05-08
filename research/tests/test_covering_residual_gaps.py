@@ -5,11 +5,16 @@ import pytest
 from prime_reciprocal_projection.cli import main
 from prime_reciprocal_projection.covering_branch_fill_cohorts import CohortManifestRow
 from prime_reciprocal_projection.covering_residual_gaps import (
+    benjamini_hochberg_q_values,
+    bootstrap_median_delta_ci,
+    exact_two_sided_sign_test_p,
     gap_quantile,
     normalized_gap_entropy,
+    residual_gap_count_test_rows,
     residual_gap_effect_summary_rows,
     residual_gap_pair_delta_rows,
     residual_gap_rows,
+    residual_gap_secondary_direction_rows,
     top_gap_share,
 )
 
@@ -189,3 +194,96 @@ def test_residual_gap_pairs_cli_writes_outputs(tmp_path):
     summary_rows = list(csv.DictReader(summary_out.open(encoding="utf-8")))
     assert len(summary_rows) == 18
     assert summary_rows[0]["eligible_pair_count"] == "1"
+
+
+def test_exact_sign_test_handles_ties_via_non_tie_count():
+    assert exact_two_sided_sign_test_p(4, 5) == pytest.approx(0.375)
+    assert exact_two_sided_sign_test_p(0, 0) == 1.0
+
+
+def test_benjamini_hochberg_q_values_are_stable():
+    assert benjamini_hochberg_q_values([0.03, 0.20, 0.01]) == pytest.approx(
+        [0.045, 0.20, 0.03]
+    )
+
+
+def test_bootstrap_median_delta_ci_is_seeded():
+    first = bootstrap_median_delta_ci([-3.0, -2.0, 1.0, 4.0], iterations=50, seed=1729)
+    second = bootstrap_median_delta_ci([-3.0, -2.0, 1.0, 4.0], iterations=50, seed=1729)
+    assert first == second
+
+
+def test_gap_count_test_rows_and_secondary_rows():
+    rows = residual_gap_rows(
+        [
+            CohortManifestRow(5000, "complete", 5000, 0, 4500, 5500, 2, True, ""),
+            CohortManifestRow(5000, "local_mod6_control", 5006, 0, 4500, 5500, 2, True, ""),
+            CohortManifestRow(5000, "band_mod6_control", 5012, 0, 4500, 5500, 2, True, ""),
+            CohortManifestRow(5000, "band_ordinary_control", 5018, 0, 4500, 5500, 2, True, ""),
+        ],
+        max_branch=100,
+    )
+    deltas = residual_gap_pair_delta_rows(rows)
+    test_rows = residual_gap_count_test_rows(
+        deltas,
+        bootstrap_iterations=25,
+        bootstrap_seed=1729,
+    )
+    assert len(test_rows) == 3
+    for row in test_rows:
+        assert row.metric == "residual_gap_count"
+        assert row.complete_smaller_count + row.complete_larger_count + row.tie_count == row.pair_count
+        assert row.non_tie_pair_count == row.complete_smaller_count + row.complete_larger_count
+        assert 0.0 <= row.sign_test_p_two_sided <= 1.0
+        assert 0.0 <= row.bh_q_value <= 1.0
+    secondary = residual_gap_secondary_direction_rows(deltas)
+    assert len(secondary) == 18
+
+
+def test_residual_gap_count_test_cli_writes_outputs(tmp_path):
+    deltas = tmp_path / "deltas.csv"
+    deltas.write_text(
+        "\n".join(
+            [
+                "seed_n,control_role,metric,complete_n,control_n,complete_value,control_value,delta_complete_minus_control",
+                "1,local_mod6_control,residual_gap_count,10,11,3,4,-1",
+                "2,local_mod6_control,residual_gap_count,20,21,3,2,1",
+                "3,local_mod6_control,residual_gap_count,30,31,3,3,0",
+                "1,band_mod6_control,residual_gap_count,10,12,3,4,-1",
+                "2,band_mod6_control,residual_gap_count,20,22,3,4,-1",
+                "3,band_mod6_control,residual_gap_count,30,32,3,2,1",
+                "1,band_ordinary_control,residual_gap_count,10,13,3,4,-1",
+                "2,band_ordinary_control,residual_gap_count,20,23,3,4,-1",
+                "3,band_ordinary_control,residual_gap_count,30,33,3,4,-1",
+                "1,local_mod6_control,residual_gap_max,10,11,0.1,0.2,-0.1",
+                "1,band_mod6_control,residual_gap_max,10,12,0.1,0.2,-0.1",
+                "1,band_ordinary_control,residual_gap_max,10,13,0.1,0.2,-0.1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "tests.csv"
+    secondary = tmp_path / "secondary.csv"
+    assert (
+        main(
+            [
+                "covering-branch-fill-residual-gap-count-test",
+                "--input",
+                str(deltas),
+                "--out",
+                str(out),
+                "--secondary-out",
+                str(secondary),
+                "--bootstrap-iterations",
+                "25",
+                "--skip-figures",
+            ]
+        )
+        == 0
+    )
+    test_rows = list(csv.DictReader(out.open(encoding="utf-8")))
+    secondary_rows = list(csv.DictReader(secondary.open(encoding="utf-8")))
+    assert len(test_rows) == 3
+    assert len(secondary_rows) == 6
+    assert test_rows[0]["metric"] == "residual_gap_count"
+    assert test_rows[0]["non_tie_pair_count"] == "2"

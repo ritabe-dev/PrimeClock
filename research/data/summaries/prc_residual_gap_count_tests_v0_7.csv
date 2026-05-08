@@ -1,0 +1,4 @@
+control_role,metric,pair_count,non_tie_pair_count,complete_smaller_count,complete_larger_count,tie_count,complete_smaller_rate_all_pairs,complete_smaller_rate_non_tie,median_delta,mean_delta,sign_test_p_two_sided,bh_q_value,bootstrap_median_delta_ci_low,bootstrap_median_delta_ci_high,bootstrap_iterations,bootstrap_seed
+local_mod6_control,residual_gap_count,33,33,22,11,0,0.6666666666666666,0.6666666666666666,-11.0,-27.545454545454547,0.08014331245794892,0.12021496868692338,-35.0,-2.0,10000,1729
+band_mod6_control,residual_gap_count,33,31,19,12,2,0.5757575757575758,0.6129032258064516,-9.0,-28.606060606060606,0.28104151505976915,0.28104151505976915,-42.0,3.0,10000,1729
+band_ordinary_control,residual_gap_count,33,33,26,7,0,0.7878787878787878,0.7878787878787878,-37.0,-60.60606060606061,0.0013187271542847157,0.003956181462854147,-51.0,-12.0,10000,1729

@@ -731,6 +731,125 @@ def residual_gap_effect_summary_figure(rows: list[dict[str, str]], output_dir: P
     return output_path.name
 
 
+def generate_prc_residual_gap_count_test_figures(
+    test_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.7 residual gap count test figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    rows = _read_csv_rows(test_csv)
+    generated = [
+        residual_gap_count_test_figure(rows, output_path),
+        residual_gap_count_ci_figure(rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-residual-gap-count-test --out {test_csv} "
+            f"--figures-out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering residual gap count tests",
+        filename="prc_residual_gap_count_tests_manifest.json",
+    )
+    return generated
+
+
+def residual_gap_count_test_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate complete-smaller rate bars for the v0.7 count test."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _control_roles(rows)
+    rates = [
+        next(
+            float(row["complete_smaller_rate_non_tie"])
+            for row in rows
+            if row["control_role"] == role
+        )
+        for role in roles
+    ]
+    q_values = [
+        next(float(row["bh_q_value"]) for row in rows if row["control_role"] == role)
+        for role in roles
+    ]
+    x_values = list(range(len(roles)))
+    fig, ax = plt.subplots(figsize=(8.8, 5.2))
+    bars = ax.bar(x_values, rates, color="#4a7bc2", alpha=0.82)
+    ax.axhline(0.5, color="black", linewidth=1.0, alpha=0.6)
+    ax.set_ylim(0.0, 1.0)
+    ax.set_ylabel("complete smaller rate, excluding ties")
+    ax.set_title("PRC residual gap count paired sign direction")
+    ax.set_xticks(x_values, roles, rotation=18, ha="right")
+    ax.grid(axis="y", alpha=0.25)
+    for bar, q_value in zip(bars, q_values):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            min(0.98, bar.get_height() + 0.035),
+            f"q={q_value:.3g}",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
+    output_path = output_dir / "prc_residual_gap_count_test_v0_7.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def residual_gap_count_ci_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate median delta bootstrap CI figure for the v0.7 count test."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _control_roles(rows)
+    medians = [
+        next(float(row["median_delta"]) for row in rows if row["control_role"] == role)
+        for role in roles
+    ]
+    lows = [
+        next(
+            float(row["bootstrap_median_delta_ci_low"])
+            for row in rows
+            if row["control_role"] == role
+        )
+        for role in roles
+    ]
+    highs = [
+        next(
+            float(row["bootstrap_median_delta_ci_high"])
+            for row in rows
+            if row["control_role"] == role
+        )
+        for role in roles
+    ]
+    lower_errors = [median_value - low for median_value, low in zip(medians, lows)]
+    upper_errors = [high - median_value for median_value, high in zip(medians, highs)]
+    x_values = list(range(len(roles)))
+    fig, ax = plt.subplots(figsize=(8.8, 5.2))
+    ax.errorbar(
+        x_values,
+        medians,
+        yerr=[lower_errors, upper_errors],
+        fmt="o",
+        capsize=5,
+        color="#2d5f8f",
+    )
+    ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
+    ax.set_ylabel("median delta: complete - control")
+    ax.set_title("PRC residual gap count median delta with bootstrap CI")
+    ax.set_xticks(x_values, roles, rotation=18, ha="right")
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_residual_gap_count_ci_v0_7.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
 def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
     with Path(path).open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))

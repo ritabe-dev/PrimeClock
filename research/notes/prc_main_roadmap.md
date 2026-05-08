@@ -65,7 +65,7 @@ Cohorts:
 - exact-complete cohort from certified `N<=10^6` results
 - local matched controls near each complete-covering value
 - controls matched by log-N band and `N mod 6`
-- ordinary random controls from the same broad range
+- band-center non-complete controls from the same broad range
 
 Planned outputs:
 
@@ -85,12 +85,12 @@ Current v0.4 reading:
   median residual at `K=1000` is slightly higher than the three control groups.
 - This is an experiment-level observation, not a general explanation.
 
-## v0.5/v0.6 Modeling
+## v0.5/v0.6/v0.7 Modeling
 
 Goal: compare the residual gap structure after the common branch prefix
 `K=1000`, correct for prefix-exhausted small `N`, then use paired
-complete-minus-control deltas to decide which null/control model is worth
-building.
+complete-minus-control deltas and a focused residual-gap-count test to decide
+which null/control model is worth building.
 
 Current v0.5 outputs:
 
@@ -107,12 +107,24 @@ Current v0.6 outputs:
 - `figures/v0/prc_residual_gap_effect_summary_v0_6.png`
 - `notes/prc_main_v0_6.md`
 
-Current v0.5/v0.6 reading:
+Current v0.7 outputs:
+
+- `data/summaries/prc_residual_gap_count_tests_v0_7.csv`
+- `data/summaries/prc_residual_gap_secondary_direction_v0_7.csv`
+- `figures/v0/prc_residual_gap_count_test_v0_7.png`
+- `figures/v0/prc_residual_gap_count_ci_v0_7.png`
+- `notes/prc_main_v0_7.md`
+
+Current v0.5/v0.6/v0.7 reading:
 
 - v0.5.1 excludes 3 prefix-exhausted seeds (`1258`, `1262`, `1329`) from the
   main reading, leaving 33 eligible seeds.
 - Complete rows tend to have fewer residual components in paired v0.6
   comparisons.
+- v0.7 shows the residual-gap-count signal is strongest against
+  `band_ordinary_control`, but this role is a band-center non-complete control
+  rather than a random control. The signal is weaker against local mod-6
+  controls and not clear against band mod-6 controls.
 - Top-gap dominance is mixed across control designs, so a simple "one dominant
   surviving gap" explanation is not yet supported.
 - The next model should target residual component structure and matched nulls,
@@ -123,13 +135,31 @@ Candidate later models:
 - independent random arcs with matched total residual measure
 - branch-wise shuffled centers with fixed branch sizes
 - local-window controls that preserve nearby prime-count fluctuations
+- true seeded random non-complete controls, separate from current band-center
+  controls
+
+## v0.8 Direction
+
+Goal: test whether the residual-gap-count signal survives stricter control and
+null designs.
+
+Priority order:
+
+1. seed-cluster audit and cluster-level sign direction
+2. branch-wise shuffled centers with fixed branch sizes
+3. larger local/mod-6 matched complete cohort
+4. true seeded random controls
+
+Until v0.8, `residual_gap_count` should be treated as an exploratory diagnostic,
+not as an explanation of `A(N)=0`.
 
 Non-claims until v0.5:
 
 - no claim that complete events are explained by branch fill-in speed
 - no claim that the six v0.3 anchors are representative
 - no claim that `K90/K99` has a stable asymptotic law
-- no claim that v0.5/v0.6 residual gap differences are a general law
+- no claim that v0.5/v0.6/v0.7 residual gap differences are a general law
+- no claim that v0.7 p-values are confirmatory
 
 ## Canonical Data Scope
 

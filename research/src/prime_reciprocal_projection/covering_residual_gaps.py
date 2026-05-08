@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import math
+import random
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -66,6 +67,43 @@ class ResidualGapEffectSummaryRow:
     complete_smaller_rate: float
 
 
+@dataclass(frozen=True)
+class ResidualGapCountTestRow:
+    """v0.7 paired test summary for residual gap count."""
+
+    control_role: str
+    metric: str
+    pair_count: int
+    non_tie_pair_count: int
+    complete_smaller_count: int
+    complete_larger_count: int
+    tie_count: int
+    complete_smaller_rate_all_pairs: float
+    complete_smaller_rate_non_tie: float
+    median_delta: float
+    mean_delta: float
+    sign_test_p_two_sided: float
+    bh_q_value: float
+    bootstrap_median_delta_ci_low: float
+    bootstrap_median_delta_ci_high: float
+    bootstrap_iterations: int
+    bootstrap_seed: int
+
+
+@dataclass(frozen=True)
+class ResidualGapSecondaryDirectionRow:
+    """Direction-only summary for secondary residual gap metrics."""
+
+    control_role: str
+    metric: str
+    pair_count: int
+    complete_smaller_count: int
+    complete_larger_count: int
+    tie_count: int
+    median_delta: float
+    complete_smaller_rate_all_pairs: float
+
+
 PAIRED_DELTA_METRICS = (
     "residual_top_gap_share",
     "residual_gap_max",
@@ -74,6 +112,7 @@ PAIRED_DELTA_METRICS = (
     "residual_gap_count",
     "residual_uncovered_measure",
 )
+PRIMARY_COUNT_METRIC = "residual_gap_count"
 CONTROL_ROLES = (
     "local_mod6_control",
     "band_mod6_control",
@@ -230,6 +269,115 @@ def residual_gap_effect_summary_rows(
     return summaries
 
 
+def residual_gap_count_test_rows(
+    rows: list[ResidualGapPairDeltaRow],
+    *,
+    bootstrap_iterations: int = 10000,
+    bootstrap_seed: int = 1729,
+) -> list[ResidualGapCountTestRow]:
+    """Return v0.7 exact sign-test and bootstrap summaries for gap count."""
+    if bootstrap_iterations < 1:
+        raise ValueError("bootstrap_iterations must be >= 1")
+
+    pending: list[dict[str, float | int | str]] = []
+    p_values: list[float] = []
+    for role in CONTROL_ROLES:
+        values = [
+            row.delta_complete_minus_control
+            for row in rows
+            if row.control_role == role and row.metric == PRIMARY_COUNT_METRIC
+        ]
+        if not values:
+            continue
+        smaller = sum(1 for value in values if value < 0)
+        larger = sum(1 for value in values if value > 0)
+        ties = len(values) - smaller - larger
+        non_tie = smaller + larger
+        p_value = exact_two_sided_sign_test_p(smaller, non_tie)
+        ci_low, ci_high = bootstrap_median_delta_ci(
+            values,
+            iterations=bootstrap_iterations,
+            seed=bootstrap_seed + CONTROL_ROLES.index(role),
+        )
+        p_values.append(p_value)
+        pending.append(
+            {
+                "control_role": role,
+                "metric": PRIMARY_COUNT_METRIC,
+                "pair_count": len(values),
+                "non_tie_pair_count": non_tie,
+                "complete_smaller_count": smaller,
+                "complete_larger_count": larger,
+                "tie_count": ties,
+                "complete_smaller_rate_all_pairs": smaller / len(values),
+                "complete_smaller_rate_non_tie": smaller / non_tie if non_tie else 0.0,
+                "median_delta": median(values),
+                "mean_delta": sum(values) / len(values),
+                "sign_test_p_two_sided": p_value,
+                "bootstrap_median_delta_ci_low": ci_low,
+                "bootstrap_median_delta_ci_high": ci_high,
+                "bootstrap_iterations": bootstrap_iterations,
+                "bootstrap_seed": bootstrap_seed,
+            }
+        )
+
+    q_values = benjamini_hochberg_q_values(p_values)
+    return [
+        ResidualGapCountTestRow(
+            control_role=str(row["control_role"]),
+            metric=str(row["metric"]),
+            pair_count=int(row["pair_count"]),
+            non_tie_pair_count=int(row["non_tie_pair_count"]),
+            complete_smaller_count=int(row["complete_smaller_count"]),
+            complete_larger_count=int(row["complete_larger_count"]),
+            tie_count=int(row["tie_count"]),
+            complete_smaller_rate_all_pairs=float(row["complete_smaller_rate_all_pairs"]),
+            complete_smaller_rate_non_tie=float(row["complete_smaller_rate_non_tie"]),
+            median_delta=float(row["median_delta"]),
+            mean_delta=float(row["mean_delta"]),
+            sign_test_p_two_sided=float(row["sign_test_p_two_sided"]),
+            bh_q_value=q_value,
+            bootstrap_median_delta_ci_low=float(row["bootstrap_median_delta_ci_low"]),
+            bootstrap_median_delta_ci_high=float(row["bootstrap_median_delta_ci_high"]),
+            bootstrap_iterations=int(row["bootstrap_iterations"]),
+            bootstrap_seed=int(row["bootstrap_seed"]),
+        )
+        for row, q_value in zip(pending, q_values)
+    ]
+
+
+def residual_gap_secondary_direction_rows(
+    rows: list[ResidualGapPairDeltaRow],
+) -> list[ResidualGapSecondaryDirectionRow]:
+    """Return direction-only summaries for every v0.6 residual metric."""
+    summaries: list[ResidualGapSecondaryDirectionRow] = []
+    for control_role in CONTROL_ROLES:
+        for metric in PAIRED_DELTA_METRICS:
+            values = [
+                row.delta_complete_minus_control
+                for row in rows
+                if row.control_role == control_role and row.metric == metric
+            ]
+            if not values:
+                continue
+            smaller = sum(1 for value in values if value < 0)
+            larger = sum(1 for value in values if value > 0)
+            ties = len(values) - smaller - larger
+            summaries.append(
+                ResidualGapSecondaryDirectionRow(
+                    control_role=control_role,
+                    metric=metric,
+                    pair_count=len(values),
+                    complete_smaller_count=smaller,
+                    complete_larger_count=larger,
+                    tie_count=ties,
+                    median_delta=median(values),
+                    complete_smaller_rate_all_pairs=smaller / len(values),
+                )
+            )
+    return summaries
+
+
 def read_summary_lookup(path: str | Path) -> dict[tuple[int, str, int], tuple[float, bool]]:
     """Read v0.4 cohort summary rows as a lookup by seed, role, and N."""
     lookup: dict[tuple[int, str, int], tuple[float, bool]] = {}
@@ -258,6 +406,12 @@ def read_residual_gap_csv(path: str | Path) -> list[ResidualGapRow]:
         return [_residual_gap_row_from_csv(row) for row in csv.DictReader(handle)]
 
 
+def read_residual_gap_pair_delta_csv(path: str | Path) -> list[ResidualGapPairDeltaRow]:
+    """Read paired residual gap delta rows from CSV."""
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        return [_residual_gap_pair_delta_row_from_csv(row) for row in csv.DictReader(handle)]
+
+
 def write_residual_gap_pair_delta_csv(
     rows: list[ResidualGapPairDeltaRow],
     output_path: str | Path,
@@ -272,6 +426,26 @@ def write_residual_gap_effect_summary_csv(
 ) -> None:
     """Write residual gap effect summaries as CSV."""
     _write_dataclass_csv(rows, output_path, list(ResidualGapEffectSummaryRow.__dataclass_fields__))
+
+
+def write_residual_gap_count_test_csv(
+    rows: list[ResidualGapCountTestRow],
+    output_path: str | Path,
+) -> None:
+    """Write v0.7 residual gap count test rows as CSV."""
+    _write_dataclass_csv(rows, output_path, list(ResidualGapCountTestRow.__dataclass_fields__))
+
+
+def write_residual_gap_secondary_direction_csv(
+    rows: list[ResidualGapSecondaryDirectionRow],
+    output_path: str | Path,
+) -> None:
+    """Write secondary direction summaries as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        list(ResidualGapSecondaryDirectionRow.__dataclass_fields__),
+    )
 
 
 def gap_quantile(lengths: list[float], q: float) -> float:
@@ -311,6 +485,57 @@ def median(values: list[float]) -> float:
     return (ordered[midpoint - 1] + ordered[midpoint]) / 2
 
 
+def exact_two_sided_sign_test_p(success_count: int, trial_count: int) -> float:
+    """Return the exact two-sided sign-test p-value under p=0.5."""
+    if trial_count < 0:
+        raise ValueError("trial_count must be non-negative")
+    if not 0 <= success_count <= trial_count:
+        raise ValueError("success_count must satisfy 0 <= success_count <= trial_count")
+    if trial_count == 0:
+        return 1.0
+    lower_tail = sum(math.comb(trial_count, k) for k in range(0, success_count + 1))
+    upper_tail = sum(math.comb(trial_count, k) for k in range(success_count, trial_count + 1))
+    return min(1.0, 2.0 * min(lower_tail, upper_tail) / (2**trial_count))
+
+
+def benjamini_hochberg_q_values(p_values: list[float]) -> list[float]:
+    """Return Benjamini-Hochberg adjusted q-values in original order."""
+    count = len(p_values)
+    if count == 0:
+        return []
+    indexed = sorted(enumerate(p_values), key=lambda item: item[1])
+    adjusted = [1.0] * count
+    running = 1.0
+    for rank_from_end, (index, p_value) in enumerate(reversed(indexed), start=1):
+        rank = count - rank_from_end + 1
+        running = min(running, p_value * count / rank)
+        adjusted[index] = min(1.0, running)
+    return adjusted
+
+
+def bootstrap_median_delta_ci(
+    values: list[float],
+    *,
+    iterations: int = 10000,
+    seed: int = 1729,
+) -> tuple[float, float]:
+    """Return a deterministic percentile 95% CI for the median paired delta."""
+    if not values:
+        raise ValueError("values must not be empty")
+    if iterations < 1:
+        raise ValueError("iterations must be >= 1")
+    rng = random.Random(seed)
+    sample_size = len(values)
+    bootstrapped = [
+        median([values[rng.randrange(sample_size)] for _ in range(sample_size)])
+        for _ in range(iterations)
+    ]
+    bootstrapped.sort()
+    low_index = max(0, math.ceil(0.025 * iterations) - 1)
+    high_index = min(iterations - 1, math.ceil(0.975 * iterations) - 1)
+    return bootstrapped[low_index], bootstrapped[high_index]
+
+
 def _residual_gap_row_from_csv(row: dict[str, str]) -> ResidualGapRow:
     return ResidualGapRow(
         seed_n=int(row["seed_n"]),
@@ -332,6 +557,19 @@ def _residual_gap_row_from_csv(row: dict[str, str]) -> ResidualGapRow:
         residual_gap_entropy=float(row["residual_gap_entropy"]),
         residual_top_gap_share=float(row["residual_top_gap_share"]),
         residual_gap_near_zero_count=int(row["residual_gap_near_zero_count"]),
+    )
+
+
+def _residual_gap_pair_delta_row_from_csv(row: dict[str, str]) -> ResidualGapPairDeltaRow:
+    return ResidualGapPairDeltaRow(
+        seed_n=int(row["seed_n"]),
+        control_role=row["control_role"],
+        metric=row["metric"],
+        complete_n=int(row["complete_n"]),
+        control_n=int(row["control_n"]),
+        complete_value=float(row["complete_value"]),
+        control_value=float(row["control_value"]),
+        delta_complete_minus_control=float(row["delta_complete_minus_control"]),
     )
 
 

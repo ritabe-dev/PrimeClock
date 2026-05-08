@@ -300,6 +300,44 @@ Initial v0.6 result:
 
 See `notes/prc_main_v0_6.md`.
 
+Generate v0.7 residual gap count tests:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gap-count-test \
+  --input data/summaries/prc_residual_gap_pair_deltas_v0_6.csv \
+  --out data/summaries/prc_residual_gap_count_tests_v0_7.csv \
+  --secondary-out data/summaries/prc_residual_gap_secondary_direction_v0_7.csv \
+  --figures-out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_residual_gap_count_tests_v0_7.csv
+data/summaries/prc_residual_gap_secondary_direction_v0_7.csv
+data/summaries/prc_residual_gap_control_reuse_audit_v0_7_1.csv
+figures/v0/prc_residual_gap_count_test_v0_7.png
+figures/v0/prc_residual_gap_count_ci_v0_7.png
+figures/v0/prc_residual_gap_count_tests_manifest.json
+```
+
+Initial v0.7.1 result:
+
+- 3 primary test rows and 18 secondary direction rows were generated in about
+  `0.79s`.
+- For `local_mod6_control`, complete rows are smaller in `22/33` pairs,
+  with exploratory sign-test `p=0.0801` and BH `q=0.1202`.
+- For `band_mod6_control`, complete rows are smaller in `19/31` non-tie pairs,
+  with exploratory `p=q=0.2810`.
+- For `band_ordinary_control`, complete rows are smaller in `26/33` pairs,
+  with exploratory `p=0.00132` and BH `q=0.00396`.
+- `band_ordinary_control` is a band-center non-complete control, not a random
+  control. It is the weakest control and has more reuse than the mod-6 controls.
+- The hard-control reading is not confirmed; v0.8 should use cluster/block
+  checks and better null models before strengthening the claim.
+
+See `notes/prc_main_v0_7.md`.
+
 Generate local window figures with:
 
 ```bash

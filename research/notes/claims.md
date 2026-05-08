@@ -50,6 +50,7 @@ Every statement in this research track should be assigned one of these statuses.
 | The v0.5.1 residual-gap table generated 144 raw rows after the common prefix `K=1000`; 3 prefix-exhausted seeds (`1258`, `1262`, `1329`) are marked ineligible, leaving 33 eligible seeds and 132 eligible rows for the main reading | Experiment |
 | In the v0.5.1 eligible rows, complete rows have median residual max gap `0.001555` and median top-gap share `0.004218`; the three control groups have median max gaps `0.001531..0.001805` and median top-gap shares `0.004384..0.005354` | Experiment |
 | In the v0.6 paired residual-gap summary, complete rows have fewer residual components than matched controls in `22/33`, `19/33`, and `26/33` pairs for the three control roles; top-gap-share direction is mixed across controls | Experiment |
+| In the exploratory v0.7 residual-gap-count test, the weaker `band_ordinary_control` comparison has sign-test `p=0.00132` and BH `q=0.00396`, while the harder `local_mod6_control` and `band_mod6_control` comparisons have BH `q=0.1202` and `0.2810`; this is discovery evidence only | Experiment |
 
 ## Non-Claims
 
@@ -75,6 +76,11 @@ Every statement in this research track should be assigned one of these statuses.
   have smaller residual gaps; the result is only a matched-cohort observation.
 - This project does not claim from v0.6 that residual component count explains
   exact complete covering; it is only a paired observation on 33 eligible seeds.
+- This project does not claim from v0.7 that the tested residual-gap-count
+  signal is stable outside the 33 eligible-seed matched cohort.
+- This project does not claim v0.7 p-values are confirmatory; the metric was
+  chosen after v0.6 exploration and the cohort has possible clustering/control
+  reuse.
 
 ## Known-Result Check
 
