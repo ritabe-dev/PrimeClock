@@ -15,6 +15,10 @@ from .cluster_scan import (
     write_cluster_sensitivity_csv,
 )
 from .covering_metrics import covering_table, write_covering_csv
+from .covering_prime_prefix import (
+    prime_prefix_profile_rows,
+    write_prime_prefix_profile_csv,
+)
 from .covering_branch_fill import (
     branch_fill_summary_table,
     branch_fill_summary_rows,
@@ -160,6 +164,21 @@ def main(argv: list[str] | None = None) -> int:
         nargs=3,
         metavar=("START", "STOP", "COUNT"),
         help="add COUNT log-spaced integer N values from START to STOP",
+    )
+
+    covering_prime_prefix_profile = subparsers.add_parser(
+        "covering-prime-prefix-profile",
+        help="generate PRC prime-prefix residual profile diagnostics",
+    )
+    covering_prime_prefix_profile.add_argument(
+        "--n",
+        type=int,
+        nargs="+",
+        default=[1000, 10000, 100000, 1000000, 39069, 372759],
+        help="N values",
+    )
+    covering_prime_prefix_profile.add_argument(
+        "--out", default="data/summaries/prc_prime_prefix_profile_v0_1.csv"
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -597,6 +616,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "covering-figures":
         ns = sorted({*args.n, *_log_grid(*args.log_grid)}) if args.log_grid else sorted(set(args.n))
         generate_prc_v0_figures(args.out, ns=ns)
+        return 0
+    if args.command == "covering-prime-prefix-profile":
+        rows = prime_prefix_profile_rows(args.n)
+        write_prime_prefix_profile_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-profile: "
+            f"n_values={len(set(args.n))}, rows={len(rows)}, out={args.out}"
+        )
         return 0
     if args.command == "covering-window-figure":
         generate_prc_window_figure(args.out, center=args.center, radius=args.radius)

@@ -125,6 +125,33 @@ Initial PRC reading should be conservative:
 - `G/G1` should be read with `G1-G` and gap quantiles because the ratio can be
   unstable when `G1` is small.
 
+## PRC Prime-Prefix Profile v0.1
+
+Generate the prime-prefix residual profile with:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-prime-prefix-profile \
+  --n 1000 10000 100000 1000000 39069 372759 \
+  --out data/summaries/prc_prime_prefix_profile_v0_1.csv
+```
+
+This is the first artifact for the finite residue-covering hierarchy:
+
+```text
+U_P(N) = union_{p<=P} I_p(N)
+A_P(N) = |T \ U_P(N)|
+R_P(N) = T \ U_P(N)
+```
+
+Current output:
+
+- 125 data rows across 6 `N` values.
+- Checkpoints with `P > N` are omitted.
+- `A_P(N)` is tracked together with product/Poisson prefix baselines,
+  component count, gap quantiles, and top-gap share.
+- `numeric_complete_prefix` is a descriptive floating-point flag, not an exact
+  certificate.
+
 ## PRC Candidate Windows
 
 The first exact-complete candidates from the v0 log grid are:

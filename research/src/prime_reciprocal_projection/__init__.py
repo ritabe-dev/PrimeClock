@@ -43,6 +43,12 @@ from .covering_metrics import (
     product_arc_baseline,
     random_arc_baseline,
 )
+from .covering_prime_prefix import (
+    DEFAULT_PREFIX_CHECKPOINTS,
+    PrimePrefixProfileRow,
+    prime_prefix_profile_rows,
+    write_prime_prefix_profile_csv,
+)
 from .covering_null_model import (
     branch_uniform_arc_template,
     branch_uniform_null_rows,
@@ -130,6 +136,7 @@ __all__ = [
     "cluster_level_gap_count_direction_rows",
     "control_reuse_detail_rows",
     "DEFAULT_PREFILTER_TOLERANCE",
+    "DEFAULT_PREFIX_CHECKPOINTS",
     "discover_seed_rows",
     "discover_seed_values",
     "exact_is_completely_covered",
@@ -149,6 +156,8 @@ __all__ = [
     "normalized_gap_entropy",
     "phi",
     "poisson_arc_baseline",
+    "PrimePrefixProfileRow",
+    "prime_prefix_profile_rows",
     "prefiltered_exact_complete_values_in_range",
     "prefilter_validation_windows",
     "PREFILTER_GUARANTEE_MAX_N",
@@ -191,6 +200,7 @@ __all__ = [
     "write_cohort_branch_fill_summary_csv",
     "write_cohort_manifest_csv",
     "write_fast_scan_benchmark_csv",
+    "write_prime_prefix_profile_csv",
     "write_residual_gap_count_test_csv",
     "write_residual_gap_effect_summary_csv",
     "write_residual_gap_csv",

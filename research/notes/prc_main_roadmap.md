@@ -44,6 +44,32 @@ Residual component count, gap quantiles, and max gap are diagnostics of
 `R_P(N)`. Complete covering `C0(N)` and certificate depth are boundary outputs,
 not replacements for the residual-set program.
 
+## Prime-Prefix Profile v0.1
+
+Goal: turn the main hierarchy `U_P(N)` into the next canonical descriptive
+artifact.
+
+Output:
+
+- `data/summaries/prc_prime_prefix_profile_v0_1.csv`
+- `notes/prc_prime_prefix_profile_v0_1.md`
+
+Command:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-prime-prefix-profile \
+  --n 1000 10000 100000 1000000 39069 372759 \
+  --out data/summaries/prc_prime_prefix_profile_v0_1.csv
+```
+
+Current reading:
+
+- `A_P(N)` is monotone decreasing by construction and is the primary profile.
+- Component count, gap quantiles, and top-gap share describe the residual
+  geometry of `R_P(N)`.
+- `numeric_complete_prefix` is descriptive only. Exact certificate depth is a
+  later phase.
+
 ## v0.3 Fixed Axis
 
 Primary object:
