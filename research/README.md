@@ -15,9 +15,15 @@ mu_N = (1 / pi(N)) * sum_{p<=N, p prime} delta_{Phi_N(p)}
 where `N >= 2` is an integer and `{x}` is the fractional part in `[0, 1)`.
 
 The current external-review focus is Prime Reciprocal Covering (PRC), not the
-clock artwork and not a novelty claim for the PRP limiting density. PRC places
-an arc of width `1/p` at each phase `{N/p}` and studies the uncovered measure
-`A(N)` and residual gap structure as finite-`N` experimental objects.
+clock artwork and not a novelty claim for the PRP limiting density. PRC is now
+framed as a finite-`N` hierarchy of prime residue-cell coverings: each prime
+`p <= N` selects the cell indexed by `N mod p` on the `p`-partitioned circle and
+places an arc of width `1/p` there.
+
+The main object is the residual uncovered set left by this finite hierarchy:
+the uncovered measure `A(N)`, residual components, and gap shape. Complete
+covering is a boundary/certificate case of this process, not the external
+claim by itself.
 
 ## External Review Entry Point
 
@@ -41,9 +47,11 @@ Canonical PRC v1 artifacts:
 - `figures/v0/prc_branch_uniform_null_percentile_v0_9.png`
 - `figures/v0/prc_branch_uniform_null_deviation_v0_9.png`
 
-Conservative summary: PRC residual sets look more fragmented than the first
-coarse branch-uniform null on the current finite cohort. This is not a theorem
-about primes, not a complete-covering law, and not a final null model.
+Conservative summary: PRC is best read as a finite residue-covering hierarchy.
+The current finite cohort suggests that its residual sets look more fragmented
+than the first coarse branch-uniform null. This is not a theorem about primes,
+not a complete-covering law, and not a final null model. Complete covering and
+anti-clustering remain useful forensic subproblems, not the main PRC axis.
 
 ## Scope
 
@@ -59,6 +67,21 @@ v0 is intentionally conservative:
 The v0 goal is a small, testable Python package plus notes that separate
 definitions, exact identities, models, experiments, conjectures, rejected
 claims, and non-claims.
+
+## Current Research Frame
+
+The hierarchy language separates three related layers:
+
+- **Prime-prefix hierarchy**: add arcs from primes `p <= P`. This is the main
+  finite residue-covering object.
+- **Branch hierarchy**: group arcs by `floor(N/p)=k`. This is an existing
+  diagnostic layer for fill-in behavior.
+- **Primorial / wheel hierarchy**: study residues modulo `Q_P = prod_{p<=P} p`.
+  This explains deterministic small-prime strata and certificate side cases.
+
+Residual fragmentation belongs to the main object as a diagnostic of the
+uncovered set. `C0`, certificate depth, and anti-clustering stay downstream as
+boundary/certificate or forensic analyses.
 
 ## Setup
 

@@ -63,7 +63,10 @@ For `N >= 100000`, 100-bin histogram figures are acceptable as visual evidence.
 ## PRC Covering Metrics
 
 Prime Reciprocal Covering (PRC) adds arc widths to the PRP centers and studies
-uncovered measure.
+uncovered measure. In the current framing, these metrics are diagnostics of a
+finite residue-covering hierarchy: each prime `p` selects the residue cell
+`N mod p` on the `p`-partitioned circle, and the prime-prefix process leaves a
+residual set whose measure, components, and gap shape are measured.
 
 Generate the v0 covering table with:
 
@@ -111,9 +114,13 @@ Main columns:
 
 Initial PRC reading should be conservative:
 
-- `A(N)` is the primary metric.
+- `A(N)` and prime-prefix residual structure are the primary metrics.
+- Residual fragmentation is a diagnostic of the finite hierarchy, not a
+  standalone theorem.
 - `C0(N)` is not a v0 numerical claim unless exact or certified arithmetic is
   added later.
+- Exact `C0`, certificate depth, and anti-clustering are boundary/forensic
+  side tracks.
 - Branch-1 gap comparisons must use transformed gaps, not raw prime gaps.
 - `G/G1` should be read with `G1-G` and gap quantiles because the ratio can be
   unstable when `G1` is small.
@@ -497,8 +504,8 @@ data/summaries/prc_cluster_sensitivity_v0.csv
 
 ## PRC Consecutive Complete-Covering Runs
 
-This subproblem asks whether exact complete covering can persist at consecutive
-integers:
+This is a forensic subproblem, not the main PRC axis. It asks whether exact
+complete covering can persist at consecutive integers:
 
 ```text
 C0(N)=C0(N+1)=1.

@@ -1,7 +1,48 @@
 # PRC Main Roadmap
 
-Objective: keep Prime Reciprocal Covering focused on reproducible covering
-metrics, not on selected-number interpretation.
+Objective: recast Prime Reciprocal Covering as a finite-`N` hierarchy of prime
+residue-cell coverings, while preserving the older `A(N)`, residual
+fragmentation, and `C0` work as classified layers of the same project.
+
+## Current Main Frame
+
+Main title:
+
+```text
+Prime Reciprocal Covering as a finite-N hierarchy of prime residue-cell coverings
+素数剰余セルによる有限N円周被覆の階層構造
+```
+
+Residue-cell formulation:
+
+```text
+C_{p,r} = [(2r-1)/(2p), (2r+1)/(2p)] mod 1
+I_p(N)  = C_{p, N mod p}
+```
+
+Endpoints do not affect measure-level statements. Exact `C0` certification
+uses rational interval arithmetic rather than floating-point zero tests.
+
+The roadmap distinguishes three hierarchies:
+
+- **Prime-prefix hierarchy**: `U_P(N)=union_{p<=P} I_p(N)`. This is the new
+  main object.
+- **Branch hierarchy**: `floor(N/p)=k`, used by the existing v0.3--v0.9 fill-in
+  and null-model diagnostics.
+- **Primorial / wheel hierarchy**: `Q_P=prod_{p<=P} p`, used for deterministic
+  small-prime residue strata and certificate side cases.
+
+Primary observables for the main line:
+
+```text
+U_P(N) = union_{p<=P} I_p(N)
+A_P(N) = |T \ U_P(N)|
+R_P(N) = T \ U_P(N)
+```
+
+Residual component count, gap quantiles, and max gap are diagnostics of
+`R_P(N)`. Complete covering `C0(N)` and certificate depth are boundary outputs,
+not replacements for the residual-set program.
 
 ## v0.3 Fixed Axis
 
@@ -185,9 +226,30 @@ Current v0.9 reading:
 - The stronger observation is broad: PRC residual sets are more fragmented than
   branch-uniform random placements with the same widths.
 
-## v1.0 Direction
+## C0 / Anti-Clustering Subproblem
 
-Goal: consolidate the PRC research artifact into a short readable note without
+Goal: keep exact complete covering and anti-clustering as a forensic side track,
+not as the main PRC axis.
+
+Current status:
+
+- `C0(N)=1` remains an important boundary event for `A(N)=0`.
+- Consecutive-run and anti-clustering diagnostics are useful because they test
+  how fragile complete coverage is under `N -> N+1`.
+- These diagnostics do not replace the main `A(N)` / residual fragmentation
+  program, and they should not be used to claim a complete-covering law.
+
+Candidate later work:
+
+- use the residue-cell formulation to separate deterministic wheel strata
+- implement a discrete residue null that randomizes `r_p in {0,...,p-1}`
+- compute `C0` autocorrelation for `h=1..100`
+- compare the anti-clustering signal after `mod 30` and `mod 210` correction
+
+## v1.0 / v1.1 Direction
+
+Goal: consolidate the PRC research artifact into a short readable note, then
+recast the next note around the finite residue-covering hierarchy without
 adding another exploratory metric.
 
 Current v1.0 output:
@@ -196,13 +258,14 @@ Current v1.0 output:
 
 Priority order:
 
-1. write a v1.0 Japanese/English research note around `A(N)` and residual
-   fragmentation
-2. explain the branch-uniform null and why it is intentionally loose
-3. separate complete-vs-control observations from PRC-vs-null observations
-4. list the next stricter nulls: local branch-bucket shuffle and arithmetic
-   order-preserving controls
-5. defer larger complete-cohort expansion and `N<=10^7` scan
+1. make the finite residue-cell hierarchy the organizing frame
+2. keep `A_P(N)`, residual components, and gap shape as the main diagnostics
+3. explain the branch-uniform null as the first intentionally loose null
+4. separate complete-vs-control observations from PRC-vs-null observations
+5. list the next stricter nulls: discrete residue null, local branch-bucket
+   shuffle, and arithmetic order-preserving controls
+6. defer larger complete-cohort expansion, anti-clustering autocorrelation, and
+   `N<=10^7` scan
 
 Until v1.0, `residual_gap_count` should be treated as an exploratory
 diagnostic, not as an explanation of `A(N)=0`.

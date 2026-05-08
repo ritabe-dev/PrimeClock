@@ -31,6 +31,8 @@ Every statement in this research track should be assigned one of these statuses.
 | `A(N)` is the total uncovered measure in Prime Reciprocal Covering | Definition |
 | `G(N)` is the largest uncovered gap in Prime Reciprocal Covering | Definition |
 | `C0(N)=1[A(N)=0]` is exact complete covering | Definition |
+| `C_{p,r}=[(2r-1)/(2p),(2r+1)/(2p)] mod 1` and `I_p(N)=C_{p,N mod p}` define the finite prime residue-cell covering view of PRC | Definition |
+| `U_P(N)=union_{p<=P} I_p(N)`, `A_P(N)=|T\\U_P(N)|`, and `R_P(N)=T\\U_P(N)` define the prime-prefix hierarchy | Definition |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |
@@ -63,6 +65,11 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not use the visual clock as proof.
 - This project does not assign number-theoretic meaning to individual Fourier residual peaks in v0.
 - This project does not claim complete covering from floating-point `C0` checks alone; exact or certified interval checking is required.
+- This project does not claim the finite residue-covering hierarchy is a new
+  prime distribution theorem; it is a framework for finite-`N` PRC covering
+  experiments.
+- This project does not treat complete covering or anti-clustering as the main
+  PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample
   of all `N`; current cluster results are conditional on the seed rule.
 - The prefilter guarantee is only an implementation-level binary64 guardrail
