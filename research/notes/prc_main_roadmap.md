@@ -70,6 +70,44 @@ Current reading:
 - `numeric_complete_prefix` is descriptive only. Exact certificate depth is a
   later phase.
 
+## Prime-Prefix Residue Filtration v0.1
+
+Goal: add the exact finite object behind prefix coverage. For the first `k`
+primes,
+
+```text
+M_k = product_{i<=k} p_i
+C_k = {r in Z/M_kZ : union_{i<=k} I_{p_i}(r) = T}
+```
+
+where
+
+```text
+I_p(r) = [(r mod p)/p - 1/(2p), (r mod p)/p + 1/(2p)] on T.
+```
+
+This is the exact primorial-residue version of the prime-prefix hierarchy.
+Unlike the descriptive `numeric_complete_prefix` flag, membership in `C_k` is
+a finite rational interval question.
+
+Current scouting outputs:
+
+- `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`
+- `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
+- `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
+
+Current reading:
+
+- Prefix coverage depends only on `N mod M_k`.
+- If `r in C_k`, all lifts of `r` modulo `M_{k+1}` remain covered, so `C_k`
+  forms a monotone lifted filtration.
+- Coverage first appears at `k=4`, with `C_4={2,208} mod 210`.
+- The current exact table reaches `k=7`, where `|C_7|=9384` modulo `510510`,
+  including `714` new births at `p=17`.
+
+Next implementation step: add a reproducible exact generator/CLI for this
+filtration before treating the CSVs as fully canonical generated artifacts.
+
 ## v0.3 Fixed Axis
 
 Primary object:

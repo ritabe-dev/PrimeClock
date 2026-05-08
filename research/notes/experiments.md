@@ -152,6 +152,39 @@ Current output:
 - `numeric_complete_prefix` is a descriptive floating-point flag, not an exact
   certificate.
 
+## PRC Prime-Prefix Residue Filtration v0.1
+
+The exact finite counterpart of the prime-prefix profile is:
+
+```text
+M_k = product_{i<=k} p_i
+C_k = {r in Z/M_kZ : union_{i<=k} I_{p_i}(r)=T}
+```
+
+Current scouting artifacts:
+
+```text
+notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
+data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv
+data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+```
+
+Current table:
+
+| k | new prime | M_k | covered residues | density | inherited | births |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 2 | 2 | 0 | 0.000000 | 0 | 0 |
+| 2 | 3 | 6 | 0 | 0.000000 | 0 | 0 |
+| 3 | 5 | 30 | 0 | 0.000000 | 0 | 0 |
+| 4 | 7 | 210 | 2 | 0.009524 | 0 | 2 |
+| 5 | 11 | 2,310 | 36 | 0.015584 | 22 | 14 |
+| 6 | 13 | 30,030 | 510 | 0.016983 | 468 | 42 |
+| 7 | 17 | 510,510 | 9,384 | 0.018382 | 8,670 | 714 |
+
+This is stronger than a numeric prefix-complete flag: it is a finite exact
+classification problem over primorial residue rings. The next implementation
+step is to add a reproducible generator/CLI for this table.
+
 ## PRC Candidate Windows
 
 The first exact-complete candidates from the v0 log grid are:

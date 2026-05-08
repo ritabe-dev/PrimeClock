@@ -125,6 +125,36 @@ R_P(N) = T \ U_P(N)
 `A_P(N)`、`R_P(N)` の component数、最大gap、gap分位点が、有限階層の主要な
 観測量である。完全被覆 `C0(N)` は `A_P(N)=0` に到達した境界事例として扱う。
 
+さらに、prime-prefix hierarchy には exact な有限版がある。最初の `k` 個の
+素数を
+
+```text
+p_1=2, p_2=3, ..., p_k
+M_k = product_{i<=k} p_i
+```
+
+とし、剰余 `r mod M_k` に対して
+
+```text
+U_k(r) = union_{i<=k} I_{p_i}(r)
+C_k = {r in Z/M_kZ : U_k(r)=T}
+```
+
+を定義する。これは「最初の `k` 個の素数セルだけで円周が完全に覆われる
+剰余類」の集合である。`U_k(N)` は `N mod M_k` だけで決まり、`r in C_k`
+なら、その全ての lift は次の `C_{k+1}` に残る。したがって `C_k` は単なる
+サンプル列ではなく、primorial residue ring 上の lifted filtration になる。
+
+現在のscouting tableでは、coverage は `k=4` で初めて現れ、
+
+```text
+C_4 = {2,208} mod 210
+```
+
+となる。`k=7` では `|C_7|=9384` modulo `510510` で、そのうち `p=17` に
+よって新しく生まれる birth residue が `714` 個ある。この filtration は、
+後で certificate depth を exact に定義するための自然な土台である。
+
 また、既存実験では分枝
 
 ```text

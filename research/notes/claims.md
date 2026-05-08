@@ -33,6 +33,10 @@ Every statement in this research track should be assigned one of these statuses.
 | `C0(N)=1[A(N)=0]` is exact complete covering | Definition |
 | `C_{p,r}=[(2r-1)/(2p),(2r+1)/(2p)] mod 1` and `I_p(N)=C_{p,N mod p}` define the finite prime residue-cell covering view of PRC | Definition |
 | `U_P(N)=union_{p<=P} I_p(N)`, `A_P(N)=|T\\U_P(N)|`, and `R_P(N)=T\\U_P(N)` define the prime-prefix hierarchy | Definition |
+| `M_k=prod_{i<=k}p_i` and `C_k={r in Z/M_kZ : union_{i<=k}I_{p_i}(r)=T}` define the exact prime-prefix residue-covering filtration | Definition |
+| Prefix coverage by the first `k` primes depends only on `N mod M_k` | Exact identity |
+| If `r in C_k`, then every lift of `r` modulo `M_{k+1}` belongs to `C_{k+1}` | Exact identity |
+| The scouting exact table finds `C_1=C_2=C_3=empty`, `C_4={2,208} mod 210`, and `|C_7|=9384` with `714` new births at `p=17` | Experiment / theorem target |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |
@@ -68,6 +72,8 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the finite residue-covering hierarchy is a new
   prime distribution theorem; it is a framework for finite-`N` PRC covering
   experiments.
+- This project does not claim an asymptotic law for `|C_k|/M_k`; the current
+  prime-prefix residue filtration table is a finite exact/scouting artifact.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample
