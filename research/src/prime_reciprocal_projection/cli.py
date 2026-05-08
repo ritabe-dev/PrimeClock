@@ -32,6 +32,8 @@ from .covering_branch_fill_cohorts import (
     write_cohort_manifest_csv,
 )
 from .covering_residual_gaps import (
+    cluster_level_gap_count_direction_rows,
+    control_reuse_detail_rows,
     read_residual_gap_pair_delta_csv,
     read_residual_gap_csv,
     residual_gap_count_test_rows,
@@ -39,11 +41,15 @@ from .covering_residual_gaps import (
     residual_gap_pair_delta_rows,
     residual_gap_rows_from_manifest_csv,
     residual_gap_secondary_direction_rows,
+    seed_cluster_audit_rows,
+    write_cluster_level_gap_count_direction_csv,
+    write_control_reuse_detail_csv,
     write_residual_gap_count_test_csv,
     write_residual_gap_effect_summary_csv,
     write_residual_gap_csv,
     write_residual_gap_pair_delta_csv,
     write_residual_gap_secondary_direction_csv,
+    write_seed_cluster_audit_csv,
 )
 from .covering_runs import (
     benchmark_prefilter_windows,
@@ -70,6 +76,7 @@ from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
     generate_prc_branch_fill_cohort_figures,
     generate_prc_branch_fill_figures,
+    generate_prc_cluster_audit_figures,
     generate_prc_residual_gap_count_test_figures,
     generate_prc_residual_gap_pair_figures,
     generate_prc_residual_gap_figures,
@@ -312,6 +319,35 @@ def main(argv: list[str] | None = None) -> int:
         "--skip-figures",
         action="store_true",
         help="write only the v0.7 CSVs",
+    )
+
+    covering_branch_fill_cluster_audit = subparsers.add_parser(
+        "covering-branch-fill-cluster-audit",
+        help="generate v0.8 cluster-robust residual gap count audit",
+    )
+    covering_branch_fill_cluster_audit.add_argument(
+        "--manifest", default="data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv"
+    )
+    covering_branch_fill_cluster_audit.add_argument(
+        "--deltas", default="data/summaries/prc_residual_gap_pair_deltas_v0_6.csv"
+    )
+    covering_branch_fill_cluster_audit.add_argument("--metric", default="residual_gap_count")
+    covering_branch_fill_cluster_audit.add_argument("--cluster-radius", type=int, default=250)
+    covering_branch_fill_cluster_audit.add_argument(
+        "--cluster-out", default="data/summaries/prc_seed_cluster_audit_v0_8.csv"
+    )
+    covering_branch_fill_cluster_audit.add_argument(
+        "--direction-out",
+        default="data/summaries/prc_cluster_level_gap_count_direction_v0_8.csv",
+    )
+    covering_branch_fill_cluster_audit.add_argument(
+        "--reuse-out", default="data/summaries/prc_control_reuse_detail_v0_8.csv"
+    )
+    covering_branch_fill_cluster_audit.add_argument("--figures-out", default="figures/v0")
+    covering_branch_fill_cluster_audit.add_argument(
+        "--skip-figures",
+        action="store_true",
+        help="write only the v0.8 CSVs",
     )
 
     covering_certify = subparsers.add_parser(
@@ -621,6 +657,34 @@ def main(argv: list[str] | None = None) -> int:
             "covering-branch-fill-residual-gap-count-test: "
             f"test_rows={len(test_rows)}, secondary_rows={len(secondary_rows)}, "
             f"figures={len(generated)}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-cluster-audit":
+        delta_rows = read_residual_gap_pair_delta_csv(args.deltas)
+        cluster_rows = seed_cluster_audit_rows(
+            read_cohort_manifest_csv(args.manifest),
+            delta_rows,
+            metric=args.metric,
+            cluster_radius=args.cluster_radius,
+        )
+        direction_rows = cluster_level_gap_count_direction_rows(cluster_rows, metric=args.metric)
+        reuse_rows = control_reuse_detail_rows(delta_rows, cluster_rows, metric=args.metric)
+        write_seed_cluster_audit_csv(cluster_rows, args.cluster_out)
+        write_cluster_level_gap_count_direction_csv(direction_rows, args.direction_out)
+        write_control_reuse_detail_csv(reuse_rows, args.reuse_out)
+        generated = (
+            []
+            if args.skip_figures
+            else generate_prc_cluster_audit_figures(
+                args.direction_out,
+                args.reuse_out,
+                args.figures_out,
+            )
+        )
+        print(
+            "covering-branch-fill-cluster-audit: "
+            f"cluster_rows={len(cluster_rows)}, direction_rows={len(direction_rows)}, "
+            f"reuse_rows={len(reuse_rows)}, figures={len(generated)}"
         )
         return 0
     if args.command == "covering-certify":

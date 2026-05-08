@@ -1,0 +1,4 @@
+control_role,metric,cluster_count,cluster_non_tie_count,complete_smaller_cluster_count,complete_larger_cluster_count,tie_cluster_count,complete_smaller_cluster_rate,median_cluster_delta,sign_test_p_two_sided
+local_mod6_control,residual_gap_count,11,11,9,2,0,0.8181818181818182,-24.0,0.0654296875
+band_mod6_control,residual_gap_count,11,9,6,3,2,0.6666666666666666,-27.0,0.5078125
+band_ordinary_control,residual_gap_count,11,11,10,1,0,0.9090909090909091,-37.0,0.01171875

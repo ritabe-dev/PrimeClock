@@ -138,20 +138,44 @@ Candidate later models:
 - true seeded random non-complete controls, separate from current band-center
   controls
 
-## v0.8 Direction
+## v0.8 Cluster Audit
 
-Goal: test whether the residual-gap-count signal survives stricter control and
-null designs.
+Goal: test whether the residual-gap-count signal survives seed clustering and
+control reuse scrutiny before building a full null model.
+
+Current v0.8 outputs:
+
+- `data/summaries/prc_seed_cluster_audit_v0_8.csv`
+- `data/summaries/prc_cluster_level_gap_count_direction_v0_8.csv`
+- `data/summaries/prc_control_reuse_detail_v0_8.csv`
+- `figures/v0/prc_cluster_level_gap_count_direction_v0_8.png`
+- `figures/v0/prc_control_reuse_v0_8.png`
+- `notes/prc_main_v0_8.md`
+
+Current v0.8 reading:
+
+- The 33 eligible seeds become 11 clusters with `cluster_radius=250`.
+- `local_mod6_control` remains suggestive at cluster level: complete has fewer
+  residual components in 9 of 11 clusters.
+- `band_mod6_control` remains unclear.
+- `band_ordinary_control` remains strong but is heavily reused and should stay
+  a weak-control diagnostic.
+
+## v0.9 Direction
+
+Goal: test whether the residual-gap-count signal survives a structure-preserving
+null model.
 
 Priority order:
 
-1. seed-cluster audit and cluster-level sign direction
-2. branch-wise shuffled centers with fixed branch sizes
-3. larger local/mod-6 matched complete cohort
-4. true seeded random controls
+1. branch-wise shuffled centers with fixed branch sizes
+2. local branch-bucket shuffled centers if full branch shuffling is too loose
+3. cluster-level statistic against the shuffled null
+4. larger local/mod-6 matched complete cohort
+5. true seeded random controls
 
-Until v0.8, `residual_gap_count` should be treated as an exploratory diagnostic,
-not as an explanation of `A(N)=0`.
+Until v0.9, `residual_gap_count` should be treated as an exploratory
+diagnostic, not as an explanation of `A(N)=0`.
 
 Non-claims until v0.5:
 
@@ -160,6 +184,8 @@ Non-claims until v0.5:
 - no claim that `K90/K99` has a stable asymptotic law
 - no claim that v0.5/v0.6/v0.7 residual gap differences are a general law
 - no claim that v0.7 p-values are confirmatory
+- no claim that v0.8 cluster-level p-values are confirmatory
+- no claim that the weak `band_ordinary_control` signal is robust
 
 ## Canonical Data Scope
 

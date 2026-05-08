@@ -850,6 +850,112 @@ def residual_gap_count_ci_figure(rows: list[dict[str, str]], output_dir: Path) -
     return output_path.name
 
 
+def generate_prc_cluster_audit_figures(
+    direction_csv: str | Path,
+    reuse_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.8 cluster/reuse audit figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    direction_rows = _read_csv_rows(direction_csv)
+    reuse_rows = _read_csv_rows(reuse_csv)
+    generated = [
+        cluster_level_gap_count_direction_figure(direction_rows, output_path),
+        control_reuse_figure(reuse_rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-cluster-audit --direction-out {direction_csv} "
+            f"--reuse-out {reuse_csv} --figures-out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering cluster-robust control audit",
+        filename="prc_cluster_audit_manifest.json",
+    )
+    return generated
+
+
+def cluster_level_gap_count_direction_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate v0.8 cluster-level sign direction figure."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _control_roles(rows)
+    rates = [
+        next(
+            float(row["complete_smaller_cluster_rate"])
+            for row in rows
+            if row["control_role"] == role
+        )
+        for role in roles
+    ]
+    counts = [
+        next(
+            f"{row['complete_smaller_cluster_count']}/{row['cluster_non_tie_count']}"
+            for row in rows
+            if row["control_role"] == role
+        )
+        for role in roles
+    ]
+    x_values = list(range(len(roles)))
+    fig, ax = plt.subplots(figsize=(9, 5.4))
+    bars = ax.bar(x_values, rates, color="#5578b8", alpha=0.82)
+    ax.axhline(0.5, color="black", linewidth=1.0, alpha=0.6)
+    ax.set_ylim(0.0, 1.0)
+    ax.set_ylabel("complete smaller cluster rate")
+    ax.set_title("PRC v0.8 cluster-level residual gap count direction")
+    ax.set_xticks(x_values, roles, rotation=18, ha="right")
+    ax.grid(axis="y", alpha=0.25)
+    for bar, label in zip(bars, counts):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            min(0.98, bar.get_height() + 0.035),
+            label,
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
+    output_path = output_dir / "prc_cluster_level_gap_count_direction_v0_8.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def control_reuse_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate v0.8 control reuse figure."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _control_roles(rows)
+    unique_counts = [
+        len({row["control_n"] for row in rows if row["control_role"] == role})
+        for role in roles
+    ]
+    reused_counts = [
+        sum(1 for row in rows if row["control_role"] == role and row["reused"] == "True")
+        for role in roles
+    ]
+    x_values = list(range(len(roles)))
+    width = 0.36
+    fig, ax = plt.subplots(figsize=(9, 5.4))
+    ax.bar([x - width / 2 for x in x_values], unique_counts, width=width, label="unique controls")
+    ax.bar([x + width / 2 for x in x_values], reused_counts, width=width, label="reused controls")
+    ax.set_ylabel("count")
+    ax.set_title("PRC v0.8 control reuse by role")
+    ax.set_xticks(x_values, roles, rotation=18, ha="right")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_control_reuse_v0_8.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
 def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
     with Path(path).open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))

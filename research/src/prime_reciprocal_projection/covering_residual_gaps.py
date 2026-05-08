@@ -104,6 +104,51 @@ class ResidualGapSecondaryDirectionRow:
     complete_smaller_rate_all_pairs: float
 
 
+@dataclass(frozen=True)
+class SeedClusterAuditRow:
+    """Seed-level cluster assignment for v0.8 audits."""
+
+    seed_n: int
+    bin_index: int
+    cluster_id: str
+    cluster_start_n: int
+    cluster_stop_n: int
+    cluster_size: int
+    cluster_radius: int
+    nearest_seed_distance: int | None
+    local_mod6_delta: float | None
+    band_mod6_delta: float | None
+    band_ordinary_delta: float | None
+
+
+@dataclass(frozen=True)
+class ClusterLevelGapCountDirectionRow:
+    """Cluster-level sign direction for one control role and metric."""
+
+    control_role: str
+    metric: str
+    cluster_count: int
+    cluster_non_tie_count: int
+    complete_smaller_cluster_count: int
+    complete_larger_cluster_count: int
+    tie_cluster_count: int
+    complete_smaller_cluster_rate: float
+    median_cluster_delta: float
+    sign_test_p_two_sided: float
+
+
+@dataclass(frozen=True)
+class ControlReuseDetailRow:
+    """Control reuse detail for v0.8 audits."""
+
+    control_role: str
+    control_n: int
+    reuse_count: int
+    reused: bool
+    seed_ns: str
+    cluster_ids: str
+
+
 PAIRED_DELTA_METRICS = (
     "residual_top_gap_share",
     "residual_gap_max",
@@ -378,6 +423,149 @@ def residual_gap_secondary_direction_rows(
     return summaries
 
 
+def seed_cluster_audit_rows(
+    manifest_rows: list[CohortManifestRow],
+    delta_rows: list[ResidualGapPairDeltaRow],
+    *,
+    metric: str = PRIMARY_COUNT_METRIC,
+    cluster_radius: int = 250,
+) -> list[SeedClusterAuditRow]:
+    """Assign eligible complete seeds to connected clusters within each bin."""
+    if cluster_radius < 0:
+        raise ValueError("cluster_radius must be >= 0")
+    seed_bins = {
+        row.seed_n: row.bin_index
+        for row in manifest_rows
+        if row.cohort_role == "complete" and row.eligible and row.n is not None
+    }
+    seeds = sorted({row.seed_n for row in delta_rows if row.metric == metric and row.seed_n in seed_bins})
+    deltas_by_seed_role = {
+        (row.seed_n, row.control_role): row.delta_complete_minus_control
+        for row in delta_rows
+        if row.metric == metric
+    }
+    clusters = _seed_clusters(seeds, seed_bins, cluster_radius=cluster_radius)
+    rows: list[SeedClusterAuditRow] = []
+    for cluster_id, cluster in clusters:
+        cluster_start = min(cluster)
+        cluster_stop = max(cluster)
+        for seed in cluster:
+            distances = [abs(seed - other) for other in cluster if other != seed]
+            rows.append(
+                SeedClusterAuditRow(
+                    seed_n=seed,
+                    bin_index=seed_bins[seed],
+                    cluster_id=cluster_id,
+                    cluster_start_n=cluster_start,
+                    cluster_stop_n=cluster_stop,
+                    cluster_size=len(cluster),
+                    cluster_radius=cluster_radius,
+                    nearest_seed_distance=min(distances) if distances else None,
+                    local_mod6_delta=deltas_by_seed_role.get((seed, "local_mod6_control")),
+                    band_mod6_delta=deltas_by_seed_role.get((seed, "band_mod6_control")),
+                    band_ordinary_delta=deltas_by_seed_role.get((seed, "band_ordinary_control")),
+                )
+            )
+    return sorted(rows, key=lambda row: (row.bin_index, row.cluster_start_n, row.seed_n))
+
+
+def cluster_level_gap_count_direction_rows(
+    cluster_rows: list[SeedClusterAuditRow],
+    *,
+    metric: str = PRIMARY_COUNT_METRIC,
+) -> list[ClusterLevelGapCountDirectionRow]:
+    """Summarize median cluster deltas by control role."""
+    summaries: list[ClusterLevelGapCountDirectionRow] = []
+    for control_role, field_name in (
+        ("local_mod6_control", "local_mod6_delta"),
+        ("band_mod6_control", "band_mod6_delta"),
+        ("band_ordinary_control", "band_ordinary_delta"),
+    ):
+        values_by_cluster: dict[str, list[float]] = {}
+        for row in cluster_rows:
+            value = getattr(row, field_name)
+            if value is None:
+                continue
+            values_by_cluster.setdefault(row.cluster_id, []).append(float(value))
+        cluster_deltas = [median(values) for _, values in sorted(values_by_cluster.items()) if values]
+        if not cluster_deltas:
+            continue
+        smaller = sum(1 for value in cluster_deltas if value < 0)
+        larger = sum(1 for value in cluster_deltas if value > 0)
+        ties = len(cluster_deltas) - smaller - larger
+        non_tie = smaller + larger
+        summaries.append(
+            ClusterLevelGapCountDirectionRow(
+                control_role=control_role,
+                metric=metric,
+                cluster_count=len(cluster_deltas),
+                cluster_non_tie_count=non_tie,
+                complete_smaller_cluster_count=smaller,
+                complete_larger_cluster_count=larger,
+                tie_cluster_count=ties,
+                complete_smaller_cluster_rate=smaller / non_tie if non_tie else 0.0,
+                median_cluster_delta=median(cluster_deltas),
+                sign_test_p_two_sided=exact_two_sided_sign_test_p(smaller, non_tie),
+            )
+        )
+    return summaries
+
+
+def control_reuse_detail_rows(
+    delta_rows: list[ResidualGapPairDeltaRow],
+    cluster_rows: list[SeedClusterAuditRow],
+    *,
+    metric: str = PRIMARY_COUNT_METRIC,
+) -> list[ControlReuseDetailRow]:
+    """Return per-control reuse details with seed and cluster membership."""
+    cluster_by_seed = {row.seed_n: row.cluster_id for row in cluster_rows}
+    rows: list[ControlReuseDetailRow] = []
+    for role in CONTROL_ROLES:
+        seeds_by_control: dict[int, list[int]] = {}
+        for row in delta_rows:
+            if row.metric == metric and row.control_role == role and row.seed_n in cluster_by_seed:
+                seeds_by_control.setdefault(row.control_n, []).append(row.seed_n)
+        for control_n, seed_ns in sorted(seeds_by_control.items()):
+            ordered_seeds = sorted(seed_ns)
+            cluster_ids = sorted({cluster_by_seed[seed] for seed in ordered_seeds})
+            rows.append(
+                ControlReuseDetailRow(
+                    control_role=role,
+                    control_n=control_n,
+                    reuse_count=len(ordered_seeds),
+                    reused=len(ordered_seeds) > 1,
+                    seed_ns=";".join(str(seed) for seed in ordered_seeds),
+                    cluster_ids=";".join(cluster_ids),
+                )
+            )
+    return rows
+
+
+def write_seed_cluster_audit_csv(rows: list[SeedClusterAuditRow], output_path: str | Path) -> None:
+    """Write seed cluster audit rows as CSV."""
+    _write_dataclass_csv(rows, output_path, list(SeedClusterAuditRow.__dataclass_fields__))
+
+
+def write_cluster_level_gap_count_direction_csv(
+    rows: list[ClusterLevelGapCountDirectionRow],
+    output_path: str | Path,
+) -> None:
+    """Write cluster-level direction rows as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        list(ClusterLevelGapCountDirectionRow.__dataclass_fields__),
+    )
+
+
+def write_control_reuse_detail_csv(
+    rows: list[ControlReuseDetailRow],
+    output_path: str | Path,
+) -> None:
+    """Write control reuse detail rows as CSV."""
+    _write_dataclass_csv(rows, output_path, list(ControlReuseDetailRow.__dataclass_fields__))
+
+
 def read_summary_lookup(path: str | Path) -> dict[tuple[int, str, int], tuple[float, bool]]:
     """Read v0.4 cohort summary rows as a lookup by seed, role, and N."""
     lookup: dict[tuple[int, str, int], tuple[float, bool]] = {}
@@ -534,6 +722,32 @@ def bootstrap_median_delta_ci(
     low_index = max(0, math.ceil(0.025 * iterations) - 1)
     high_index = min(iterations - 1, math.ceil(0.975 * iterations) - 1)
     return bootstrapped[low_index], bootstrapped[high_index]
+
+
+def _seed_clusters(
+    seeds: list[int],
+    seed_bins: dict[int, int],
+    *,
+    cluster_radius: int,
+) -> list[tuple[str, list[int]]]:
+    clusters: list[tuple[str, list[int]]] = []
+    cluster_index_by_bin: dict[int, int] = {}
+    for bin_index in sorted({seed_bins[seed] for seed in seeds}):
+        bin_seeds = sorted(seed for seed in seeds if seed_bins[seed] == bin_index)
+        active: list[int] = []
+        for seed in bin_seeds:
+            if not active or seed - active[-1] <= cluster_radius:
+                active.append(seed)
+            else:
+                cluster_number = cluster_index_by_bin.get(bin_index, 0) + 1
+                cluster_index_by_bin[bin_index] = cluster_number
+                clusters.append((f"bin{bin_index}_cluster{cluster_number}", active))
+                active = [seed]
+        if active:
+            cluster_number = cluster_index_by_bin.get(bin_index, 0) + 1
+            cluster_index_by_bin[bin_index] = cluster_number
+            clusters.append((f"bin{bin_index}_cluster{cluster_number}", active))
+    return clusters
 
 
 def _residual_gap_row_from_csv(row: dict[str, str]) -> ResidualGapRow:

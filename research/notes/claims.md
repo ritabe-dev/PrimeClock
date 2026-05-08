@@ -51,6 +51,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.5.1 eligible rows, complete rows have median residual max gap `0.001555` and median top-gap share `0.004218`; the three control groups have median max gaps `0.001531..0.001805` and median top-gap shares `0.004384..0.005354` | Experiment |
 | In the v0.6 paired residual-gap summary, complete rows have fewer residual components than matched controls in `22/33`, `19/33`, and `26/33` pairs for the three control roles; top-gap-share direction is mixed across controls | Experiment |
 | In the exploratory v0.7 residual-gap-count test, the weaker `band_ordinary_control` comparison has sign-test `p=0.00132` and BH `q=0.00396`, while the harder `local_mod6_control` and `band_mod6_control` comparisons have BH `q=0.1202` and `0.2810`; this is discovery evidence only | Experiment |
+| In the exploratory v0.8 cluster audit, the 33 eligible seeds collapse to 11 clusters; complete rows have fewer residual components in `9/11`, `6/11`, and `10/11` clusters for the three control roles, with the hard `local_mod6_control` result remaining suggestive but not confirmatory | Experiment |
 
 ## Non-Claims
 
@@ -80,6 +81,12 @@ Every statement in this research track should be assigned one of these statuses.
   signal is stable outside the 33 eligible-seed matched cohort.
 - This project does not claim v0.7 p-values are confirmatory; the metric was
   chosen after v0.6 exploration and the cohort has possible clustering/control
+  reuse.
+- This project does not claim v0.8 cluster-level p-values are confirmatory; the
+  cluster rule is an audit guardrail after earlier exploration, not a
+  preregistered design.
+- This project does not claim the `band_ordinary_control` signal is robust,
+  because that control role is a band-center non-complete control and has heavy
   reuse.
 
 ## Known-Result Check

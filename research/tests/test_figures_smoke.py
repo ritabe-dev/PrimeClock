@@ -281,3 +281,47 @@ def test_prc_residual_gap_count_test_figures_smoke(tmp_path):
     for filename in generated:
         assert (tmp_path / filename).exists()
     assert (tmp_path / "prc_residual_gap_count_tests_manifest.json").exists()
+
+
+def test_prc_cluster_audit_figures_smoke(tmp_path):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
+    except ModuleNotFoundError:
+        pytest.skip("matplotlib is not installed in this environment")
+
+    from prime_reciprocal_projection.figures import generate_prc_cluster_audit_figures
+
+    direction_csv = tmp_path / "direction.csv"
+    direction_csv.write_text(
+        "\n".join(
+            [
+                "control_role,metric,cluster_count,cluster_non_tie_count,complete_smaller_cluster_count,complete_larger_cluster_count,tie_cluster_count,complete_smaller_cluster_rate,median_cluster_delta,sign_test_p_two_sided",
+                "local_mod6_control,residual_gap_count,10,10,6,4,0,0.6,-3,0.75",
+                "band_mod6_control,residual_gap_count,10,10,5,5,0,0.5,0,1.0",
+                "band_ordinary_control,residual_gap_count,10,10,8,2,0,0.8,-10,0.1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    reuse_csv = tmp_path / "reuse.csv"
+    reuse_csv.write_text(
+        "\n".join(
+            [
+                "control_role,control_n,reuse_count,reused,seed_ns,cluster_ids",
+                "local_mod6_control,1001,1,False,1000,bin0_cluster1",
+                "band_mod6_control,1200,2,True,1000;1100,bin0_cluster1",
+                "band_ordinary_control,1300,3,True,1000;1100;1200,bin0_cluster1;bin0_cluster2",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    generated = generate_prc_cluster_audit_figures(direction_csv, reuse_csv, tmp_path)
+    assert set(generated) == {
+        "prc_cluster_level_gap_count_direction_v0_8.png",
+        "prc_control_reuse_v0_8.png",
+    }
+    for filename in generated:
+        assert (tmp_path / filename).exists()
+    assert (tmp_path / "prc_cluster_audit_manifest.json").exists()

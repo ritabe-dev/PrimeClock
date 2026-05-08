@@ -7,6 +7,8 @@ from prime_reciprocal_projection.covering_branch_fill_cohorts import CohortManif
 from prime_reciprocal_projection.covering_residual_gaps import (
     benjamini_hochberg_q_values,
     bootstrap_median_delta_ci,
+    cluster_level_gap_count_direction_rows,
+    control_reuse_detail_rows,
     exact_two_sided_sign_test_p,
     gap_quantile,
     normalized_gap_entropy,
@@ -15,6 +17,7 @@ from prime_reciprocal_projection.covering_residual_gaps import (
     residual_gap_pair_delta_rows,
     residual_gap_rows,
     residual_gap_secondary_direction_rows,
+    seed_cluster_audit_rows,
     top_gap_share,
 )
 
@@ -287,3 +290,146 @@ def test_residual_gap_count_test_cli_writes_outputs(tmp_path):
     assert len(secondary_rows) == 6
     assert test_rows[0]["metric"] == "residual_gap_count"
     assert test_rows[0]["non_tie_pair_count"] == "2"
+
+
+def test_seed_cluster_audit_groups_same_bin_with_radius():
+    manifest = [
+        CohortManifestRow(1000, "complete", 1000, 0, 900, 2000, 4, True, ""),
+        CohortManifestRow(1100, "complete", 1100, 0, 900, 2000, 2, True, ""),
+        CohortManifestRow(1401, "complete", 1401, 0, 900, 2000, 3, True, ""),
+        CohortManifestRow(1500, "complete", 1500, 1, 1400, 2500, 0, True, ""),
+    ]
+    deltas = [
+        _delta(1000, "local_mod6_control", 1001, -1),
+        _delta(1100, "local_mod6_control", 1101, 2),
+        _delta(1401, "local_mod6_control", 1402, -3),
+        _delta(1500, "local_mod6_control", 1501, -4),
+    ]
+    rows = seed_cluster_audit_rows(manifest, deltas, cluster_radius=250)
+    assert [(row.seed_n, row.cluster_id, row.cluster_size) for row in rows] == [
+        (1000, "bin0_cluster1", 2),
+        (1100, "bin0_cluster1", 2),
+        (1401, "bin0_cluster2", 1),
+        (1500, "bin1_cluster1", 1),
+    ]
+
+
+def test_cluster_level_direction_uses_cluster_medians():
+    cluster_rows = seed_cluster_audit_rows(
+        [
+            CohortManifestRow(1000, "complete", 1000, 0, 900, 2000, 4, True, ""),
+            CohortManifestRow(1100, "complete", 1100, 0, 900, 2000, 2, True, ""),
+            CohortManifestRow(1401, "complete", 1401, 0, 900, 2000, 3, True, ""),
+        ],
+        [
+            _delta(1000, "local_mod6_control", 1001, -10),
+            _delta(1100, "local_mod6_control", 1101, 14),
+            _delta(1401, "local_mod6_control", 1402, -5),
+        ],
+        cluster_radius=250,
+    )
+    summaries = cluster_level_gap_count_direction_rows(cluster_rows)
+    local = next(row for row in summaries if row.control_role == "local_mod6_control")
+    assert local.cluster_count == 2
+    assert local.complete_smaller_cluster_count == 1
+    assert local.complete_larger_cluster_count == 1
+    assert local.median_cluster_delta == pytest.approx(-1.5)
+
+
+def test_control_reuse_detail_rows_show_reused_controls():
+    cluster_rows = seed_cluster_audit_rows(
+        [
+            CohortManifestRow(1000, "complete", 1000, 0, 900, 2000, 4, True, ""),
+            CohortManifestRow(1100, "complete", 1100, 0, 900, 2000, 2, True, ""),
+        ],
+        [
+            _delta(1000, "band_mod6_control", 1200, -1),
+            _delta(1100, "band_mod6_control", 1200, -2),
+        ],
+        cluster_radius=250,
+    )
+    rows = control_reuse_detail_rows(
+        [
+            _delta(1000, "band_mod6_control", 1200, -1),
+            _delta(1100, "band_mod6_control", 1200, -2),
+        ],
+        cluster_rows,
+    )
+    assert len(rows) == 1
+    assert rows[0].reused is True
+    assert rows[0].reuse_count == 2
+    assert rows[0].seed_ns == "1000;1100"
+
+
+def test_cluster_audit_cli_writes_outputs(tmp_path):
+    manifest = tmp_path / "manifest.csv"
+    manifest.write_text(
+        "\n".join(
+            [
+                "seed_n,cohort_role,n,bin_index,bin_start,bin_stop,n_mod_6,eligible,exclusion_reason",
+                "1000,complete,1000,0,900,2000,4,True,",
+                "1100,complete,1100,0,900,2000,2,True,",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    deltas = tmp_path / "deltas.csv"
+    deltas.write_text(
+        "\n".join(
+            [
+                "seed_n,control_role,metric,complete_n,control_n,complete_value,control_value,delta_complete_minus_control",
+                "1000,local_mod6_control,residual_gap_count,1000,1001,3,4,-1",
+                "1100,local_mod6_control,residual_gap_count,1100,1101,3,2,1",
+                "1000,band_mod6_control,residual_gap_count,1000,1200,3,4,-1",
+                "1100,band_mod6_control,residual_gap_count,1100,1200,3,4,-1",
+                "1000,band_ordinary_control,residual_gap_count,1000,1300,3,4,-1",
+                "1100,band_ordinary_control,residual_gap_count,1100,1301,3,2,1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    cluster_out = tmp_path / "clusters.csv"
+    direction_out = tmp_path / "directions.csv"
+    reuse_out = tmp_path / "reuse.csv"
+    assert (
+        main(
+            [
+                "covering-branch-fill-cluster-audit",
+                "--manifest",
+                str(manifest),
+                "--deltas",
+                str(deltas),
+                "--cluster-out",
+                str(cluster_out),
+                "--direction-out",
+                str(direction_out),
+                "--reuse-out",
+                str(reuse_out),
+                "--skip-figures",
+            ]
+        )
+        == 0
+    )
+    assert len(list(csv.DictReader(cluster_out.open(encoding="utf-8")))) == 2
+    assert len(list(csv.DictReader(direction_out.open(encoding="utf-8")))) == 3
+    assert len(list(csv.DictReader(reuse_out.open(encoding="utf-8")))) == 5
+
+
+def _delta(
+    seed_n: int,
+    control_role: str,
+    control_n: int,
+    delta: float,
+):
+    from prime_reciprocal_projection.covering_residual_gaps import ResidualGapPairDeltaRow
+
+    return ResidualGapPairDeltaRow(
+        seed_n=seed_n,
+        control_role=control_role,
+        metric="residual_gap_count",
+        complete_n=seed_n,
+        control_n=control_n,
+        complete_value=0.0,
+        control_value=0.0,
+        delta_complete_minus_control=delta,
+    )

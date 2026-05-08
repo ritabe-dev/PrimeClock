@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering cluster-robust control audit",
+  "generated_at_utc": "2026-05-08T02:33:41.304540+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "001804fc5854d92b53a4c3155b380c8b13c29634",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-cluster-audit --direction-out data/summaries/prc_cluster_level_gap_count_direction_v0_8.csv --reuse-out data/summaries/prc_control_reuse_detail_v0_8.csv --figures-out figures/v0",
+  "generated_files": [
+    "prc_cluster_level_gap_count_direction_v0_8.png",
+    "prc_control_reuse_v0_8.png"
+  ]
+}

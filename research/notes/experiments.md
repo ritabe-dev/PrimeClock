@@ -632,3 +632,64 @@ length-3 starts = 0
 ```
 
 The full `N <= 10^7` scan has not been run.
+
+## PRC Main v0.8 Cluster Audit
+
+The v0.8 audit checks whether the v0.7 `residual_gap_count` direction survives
+seed clustering and control reuse scrutiny.
+
+Command:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-cluster-audit \
+  --manifest data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv \
+  --deltas data/summaries/prc_residual_gap_pair_deltas_v0_6.csv \
+  --metric residual_gap_count \
+  --cluster-radius 250 \
+  --cluster-out data/summaries/prc_seed_cluster_audit_v0_8.csv \
+  --direction-out data/summaries/prc_cluster_level_gap_count_direction_v0_8.csv \
+  --reuse-out data/summaries/prc_control_reuse_detail_v0_8.csv \
+  --figures-out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_seed_cluster_audit_v0_8.csv
+data/summaries/prc_cluster_level_gap_count_direction_v0_8.csv
+data/summaries/prc_control_reuse_detail_v0_8.csv
+figures/v0/prc_cluster_level_gap_count_direction_v0_8.png
+figures/v0/prc_control_reuse_v0_8.png
+figures/v0/prc_cluster_audit_manifest.json
+```
+
+Recorded local run:
+
+```text
+33 seed rows
+11 seed clusters
+3 cluster-direction rows
+74 control-reuse rows
+2 figures
+runtime about 0.50s
+```
+
+Cluster-level direction for `residual_gap_count`:
+
+| control | clusters | complete smaller clusters | median cluster delta | sign p |
+|---|---:|---:|---:|---:|
+| local_mod6_control | 11 | 9 | -24.0 | 0.0654 |
+| band_mod6_control | 11 | 6 | -27.0 | 0.5078 |
+| band_ordinary_control | 11 | 10 | -37.0 | 0.0117 |
+
+Control reuse:
+
+| control | pairs | unique controls | reused controls | reused pairs |
+|---|---:|---:|---:|---:|
+| local_mod6_control | 33 | 33 | 0 | 0 |
+| band_mod6_control | 33 | 25 | 8 | 16 |
+| band_ordinary_control | 33 | 16 | 11 | 28 |
+
+Reading: the local mod-6 result remains suggestive after clustering, but the
+hard controls do not confirm the signal. The strongest numeric result is still
+in `band_ordinary_control`, which is the weakest and most reused control role.
