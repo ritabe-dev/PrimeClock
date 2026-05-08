@@ -246,6 +246,35 @@ Current reading:
   global conclusion remains unchanged: nearest distance to `C_8` is mostly a
   local/wheel diagnostic, not a standalone complete-covering explanation.
 
+## v0.7 Modulo-210 Class Review
+
+Goal: pivot the v0.6 audit into one row per modulo-210 class so the next manual
+or null-model work has a stable target list.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_mod210_class_review_v0_7.md`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-review \
+  --audit data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv
+```
+
+Current reading:
+
+- The table has `98` rows, one per occupied modulo-210 class.
+- `16` large classes have mixed control direction, meaning the sign depends on
+  whether the control preserves modulo `210`.
+- The top priority classes include `111`, `4`, `99`, `206`, `118`, `88`, `201`,
+  and `62`.
+- This strengthens the view that this layer is a local wheel-residue diagnostic
+  rather than a complete-covering explanation.
+
 ## v0.3 Fixed Axis
 
 Primary object:

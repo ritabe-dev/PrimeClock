@@ -64,6 +64,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.4 uncertified-residue profile, the `4,495` values left uncertified after `C_8` occupy `98` modulo-210 classes; nearest distance to `C_8` has median `25`, p90 `56`, p99 `90`, and max `97` in residue units modulo `M_8` | Experiment / diagnostic |
 | In the v0.5 uncertified control profile, local non-complete controls have almost the same nearest-`C_8` distance distribution as the uncertified complete rows; the hard `local_mod210_control` comparison has median paired delta `0` | Experiment / diagnostic |
 | In the v0.6 uncertified control audit, the v0.5 matched profile splits into `196` modulo-210 audit rows and `15` source-depth rows; source-depth composition is similar across complete rows and local controls | Experiment / diagnostic |
+| In the v0.7 modulo-210 class review, `16` large classes have mixed control direction, so the sign of the nearest-`C_8` distance comparison often depends on whether the control preserves modulo `210` | Experiment / diagnostic |
 
 ## Non-Claims
 
@@ -94,6 +95,8 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the v0.6 modulo-210 audit explains the remaining
   uncertified complete-covering values; it is only a class-level diagnostic of
   the existing v0.5 control profile.
+- This project does not claim the v0.7 class review explains complete covering;
+  it is a ranking table for choosing modulo-210 classes to inspect next.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample

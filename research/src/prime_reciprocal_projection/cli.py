@@ -22,8 +22,9 @@ from .covering_prime_prefix import (
 from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
-    prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_review_rows,
+    prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows_from_csv,
     prime_prefix_uncertified_matched_summary_rows,
@@ -31,10 +32,12 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_uncertified_residue_rows,
     prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
+    read_prime_prefix_uncertified_mod210_audit_csv,
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
@@ -334,6 +337,20 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_uncertified_control_audit.add_argument(
         "--source-depth-out",
         default="data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv",
+    )
+
+    covering_prime_prefix_uncertified_class_review = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-class-review",
+        help="rank modulo-210 classes from the v0.6 uncertified control audit",
+    )
+    covering_prime_prefix_uncertified_class_review.add_argument(
+        "--audit",
+        default="data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv",
+        help="modulo-210 complete/control audit CSV",
+    )
+    covering_prime_prefix_uncertified_class_review.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -865,6 +882,16 @@ def main(argv: list[str] | None = None) -> int:
             f"profile_rows={len(rows)}, mod210_rows={len(mod210_rows)}, "
             f"source_depth_rows={len(source_depth_rows)}, "
             f"mod210_out={args.mod210_out}, source_depth_out={args.source_depth_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-class-review":
+        rows = prime_prefix_uncertified_mod210_class_review_rows(
+            read_prime_prefix_uncertified_mod210_audit_csv(args.audit)
+        )
+        write_prime_prefix_uncertified_mod210_class_review_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-uncertified-class-review: "
+            f"rows={len(rows)}, out={args.out}"
         )
         return 0
     if args.command == "covering-window-figure":

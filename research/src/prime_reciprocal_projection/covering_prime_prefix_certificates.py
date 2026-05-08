@@ -169,6 +169,27 @@ class PrimePrefixUncertifiedSourceDepthSummaryRow:
     nearest_distance_max: int
 
 
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMod210ClassReviewRow:
+    """Pivoted modulo-210 class review row for paired control audits."""
+
+    seed_mod210: int
+    max_pair_count: int
+    local_mod210_pair_count: int | None
+    local_any_pair_count: int | None
+    local_mod210_median_delta: float | None
+    local_any_median_delta: float | None
+    median_delta_difference_any_minus_mod210: float | None
+    local_mod210_complete_smaller_rate: float | None
+    local_any_complete_smaller_rate: float | None
+    smaller_rate_difference_any_minus_mod210: float | None
+    local_mod210_complete_larger_rate: float | None
+    local_any_complete_larger_rate: float | None
+    direction_label: str
+    priority_label: str
+    sample_seed_n: str
+
+
 def prime_prefix_certificate_rows(
     values: Iterable[int],
     *,
@@ -464,6 +485,34 @@ def read_prime_prefix_uncertified_matched_profile_csv(
     return rows
 
 
+def read_prime_prefix_uncertified_mod210_audit_csv(
+    path: str | Path,
+) -> list[PrimePrefixUncertifiedMod210AuditRow]:
+    """Read modulo-210 paired audit rows from CSV."""
+    rows: list[PrimePrefixUncertifiedMod210AuditRow] = []
+    with Path(path).open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            rows.append(
+                PrimePrefixUncertifiedMod210AuditRow(
+                    control_role=row["control_role"],
+                    seed_mod210=int(row["seed_mod210"]),
+                    pair_count=int(row["pair_count"]),
+                    complete_distance_median=float(row["complete_distance_median"]),
+                    control_distance_median=float(row["control_distance_median"]),
+                    median_delta_complete_minus_control=float(
+                        row["median_delta_complete_minus_control"]
+                    ),
+                    complete_smaller_count=int(row["complete_smaller_count"]),
+                    complete_larger_count=int(row["complete_larger_count"]),
+                    tie_count=int(row["tie_count"]),
+                    complete_smaller_rate=float(row["complete_smaller_rate"]),
+                    complete_larger_rate=float(row["complete_larger_rate"]),
+                    sample_seed_n=row["sample_seed_n"],
+                )
+            )
+    return rows
+
+
 def prime_prefix_uncertified_matched_profile_rows(
     uncertified_rows: Iterable[PrimePrefixUncertifiedResidueRow],
     *,
@@ -707,6 +756,85 @@ def prime_prefix_uncertified_source_depth_summary_rows(
     return summary
 
 
+def prime_prefix_uncertified_mod210_class_review_rows(
+    audit_rows: Iterable[PrimePrefixUncertifiedMod210AuditRow],
+) -> list[PrimePrefixUncertifiedMod210ClassReviewRow]:
+    """Return pivoted review rows for choosing modulo-210 classes to inspect."""
+    by_class_role = {(row.seed_mod210, row.control_role): row for row in audit_rows}
+    seed_classes = sorted({seed_mod210 for seed_mod210, _ in by_class_role})
+    rows: list[PrimePrefixUncertifiedMod210ClassReviewRow] = []
+    for seed_mod210 in seed_classes:
+        mod210_row = by_class_role.get((seed_mod210, "local_mod210_control"))
+        any_row = by_class_role.get((seed_mod210, "local_any_control"))
+        max_pair_count = max(
+            row.pair_count for row in (mod210_row, any_row) if row is not None
+        )
+        mod210_delta = (
+            mod210_row.median_delta_complete_minus_control
+            if mod210_row is not None
+            else None
+        )
+        any_delta = (
+            any_row.median_delta_complete_minus_control if any_row is not None else None
+        )
+        median_delta_difference = (
+            any_delta - mod210_delta
+            if mod210_delta is not None and any_delta is not None
+            else None
+        )
+        mod210_smaller_rate = (
+            mod210_row.complete_smaller_rate if mod210_row is not None else None
+        )
+        any_smaller_rate = any_row.complete_smaller_rate if any_row is not None else None
+        smaller_rate_difference = (
+            any_smaller_rate - mod210_smaller_rate
+            if mod210_smaller_rate is not None and any_smaller_rate is not None
+            else None
+        )
+        direction_label = _class_direction_label(mod210_delta, any_delta)
+        priority_label = _class_priority_label(
+            max_pair_count=max_pair_count,
+            direction_label=direction_label,
+            median_delta_difference=median_delta_difference,
+            smaller_rate_difference=smaller_rate_difference,
+        )
+        sample_source = any_row or mod210_row
+        rows.append(
+            PrimePrefixUncertifiedMod210ClassReviewRow(
+                seed_mod210=seed_mod210,
+                max_pair_count=max_pair_count,
+                local_mod210_pair_count=(
+                    mod210_row.pair_count if mod210_row is not None else None
+                ),
+                local_any_pair_count=any_row.pair_count if any_row is not None else None,
+                local_mod210_median_delta=mod210_delta,
+                local_any_median_delta=any_delta,
+                median_delta_difference_any_minus_mod210=median_delta_difference,
+                local_mod210_complete_smaller_rate=mod210_smaller_rate,
+                local_any_complete_smaller_rate=any_smaller_rate,
+                smaller_rate_difference_any_minus_mod210=smaller_rate_difference,
+                local_mod210_complete_larger_rate=(
+                    mod210_row.complete_larger_rate if mod210_row is not None else None
+                ),
+                local_any_complete_larger_rate=(
+                    any_row.complete_larger_rate if any_row is not None else None
+                ),
+                direction_label=direction_label,
+                priority_label=priority_label,
+                sample_seed_n=sample_source.sample_seed_n if sample_source else "",
+            )
+        )
+    return sorted(
+        rows,
+        key=lambda row: (
+            _priority_rank(row.priority_label),
+            -row.max_pair_count,
+            -abs(row.median_delta_difference_any_minus_mod210 or 0.0),
+            row.seed_mod210,
+        ),
+    )
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -785,6 +913,14 @@ def write_prime_prefix_uncertified_source_depth_summary_csv(
 ) -> None:
     """Write source-depth summary rows as CSV."""
     _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedSourceDepthSummaryRow)
+
+
+def write_prime_prefix_uncertified_mod210_class_review_csv(
+    rows: Iterable[PrimePrefixUncertifiedMod210ClassReviewRow],
+    output_path: str | Path,
+) -> None:
+    """Write pivoted modulo-210 class review rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMod210ClassReviewRow)
 
 
 def _optional_int(value: str) -> int | None:
@@ -885,6 +1021,63 @@ def _nearest_rank_quantile(values: list[int], q: float) -> int:
         return 0
     index = min(len(values) - 1, max(0, int(q * (len(values) - 1))))
     return values[index]
+
+
+def _delta_sign(value: float | None) -> str:
+    if value is None:
+        return "missing"
+    if value < 0:
+        return "complete_smaller"
+    if value > 0:
+        return "complete_larger"
+    return "tied"
+
+
+def _class_direction_label(
+    mod210_delta: float | None,
+    any_delta: float | None,
+) -> str:
+    mod210_sign = _delta_sign(mod210_delta)
+    any_sign = _delta_sign(any_delta)
+    if mod210_sign == any_sign:
+        return mod210_sign
+    return f"mod210_{mod210_sign}__any_{any_sign}"
+
+
+def _class_priority_label(
+    *,
+    max_pair_count: int,
+    direction_label: str,
+    median_delta_difference: float | None,
+    smaller_rate_difference: float | None,
+) -> str:
+    high_count = max_pair_count >= 100
+    large_delta_gap = (
+        median_delta_difference is not None and abs(median_delta_difference) >= 5
+    )
+    large_rate_gap = (
+        smaller_rate_difference is not None and abs(smaller_rate_difference) >= 0.2
+    )
+    if high_count and "__" in direction_label:
+        return "large_class_mixed_direction"
+    if high_count and (large_delta_gap or large_rate_gap):
+        return "large_class_large_control_gap"
+    if high_count:
+        return "large_class_baseline"
+    if "__" in direction_label:
+        return "small_class_mixed_direction"
+    return "small_class"
+
+
+def _priority_rank(label: str) -> int:
+    order = {
+        "large_class_mixed_direction": 0,
+        "large_class_large_control_gap": 1,
+        "large_class_baseline": 2,
+        "small_class_mixed_direction": 3,
+        "small_class": 4,
+    }
+    return order.get(label, 99)
 
 
 def _write_dataclass_csv(

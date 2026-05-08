@@ -10,6 +10,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows,
@@ -18,10 +19,12 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_uncertified_residue_rows,
     prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
+    read_prime_prefix_uncertified_mod210_audit_csv,
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
@@ -426,3 +429,76 @@ def test_covering_prime_prefix_uncertified_control_audit_cli_writes_csvs(tmp_pat
     )
     assert len(audit_out.read_text(encoding="utf-8").splitlines()) == 5
     assert len(source_out.read_text(encoding="utf-8").splitlines()) == 4
+
+
+def test_prime_prefix_uncertified_mod210_class_review_headers(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    audit_out = tmp_path / "audit.csv"
+    review_out = tmp_path / "review.csv"
+    write_prime_prefix_uncertified_mod210_audit_csv(
+        prime_prefix_uncertified_mod210_audit_rows(rows),
+        audit_out,
+    )
+
+    review = prime_prefix_uncertified_mod210_class_review_rows(
+        read_prime_prefix_uncertified_mod210_audit_csv(audit_out)
+    )
+    write_prime_prefix_uncertified_mod210_class_review_csv(review, review_out)
+
+    assert review_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "seed_mod210,max_pair_count,local_mod210_pair_count,local_any_pair_count,"
+        "local_mod210_median_delta,local_any_median_delta,"
+        "median_delta_difference_any_minus_mod210,"
+        "local_mod210_complete_smaller_rate,local_any_complete_smaller_rate,"
+        "smaller_rate_difference_any_minus_mod210,"
+        "local_mod210_complete_larger_rate,local_any_complete_larger_rate,"
+        "direction_label,priority_label,sample_seed_n"
+    )
+    assert {row.seed_mod210 for row in review} == {178, 201}
+    assert all(row.max_pair_count >= 1 for row in review)
+
+
+def test_covering_prime_prefix_uncertified_class_review_cli_writes_csv(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    audit_out = tmp_path / "audit.csv"
+    review_out = tmp_path / "review.csv"
+    write_prime_prefix_uncertified_mod210_audit_csv(
+        prime_prefix_uncertified_mod210_audit_rows(rows),
+        audit_out,
+    )
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-class-review",
+                "--audit",
+                str(audit_out),
+                "--out",
+                str(review_out),
+            ]
+        )
+        == 0
+    )
+    assert len(review_out.read_text(encoding="utf-8").splitlines()) == 3

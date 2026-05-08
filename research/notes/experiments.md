@@ -1040,3 +1040,44 @@ Reading: the source-depth split is close across roles. The modulo-210 audit is
 useful for choosing classes for hand inspection, but it does not change the
 v0.5 conclusion that nearest distance to `C_8` is not a complete-specific
 explanation.
+
+## PRC Prime-Prefix Modulo-210 Class Review v0.7
+
+The v0.7 class review pivots the v0.6 audit into one row per modulo-210 class.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-review \
+  --audit data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv
+```
+
+Summary:
+
+| priority label | class count |
+|---|---:|
+| `large_class_mixed_direction` | 16 |
+| `large_class_large_control_gap` | 1 |
+| `large_class_baseline` | 1 |
+| `small_class_mixed_direction` | 53 |
+| `small_class` | 27 |
+
+Top priority classes:
+
+| mod 210 | max pairs | direction label |
+|---:|---:|---|
+| 111 | 209 | `mod210_complete_smaller__any_complete_larger` |
+| 4 | 204 | `mod210_tied__any_complete_larger` |
+| 99 | 197 | `mod210_complete_larger__any_complete_smaller` |
+| 206 | 185 | `mod210_tied__any_complete_smaller` |
+| 118 | 162 | `mod210_tied__any_complete_larger` |
+| 88 | 153 | `mod210_tied__any_complete_smaller` |
+| 201 | 152 | `mod210_tied__any_complete_smaller` |
+| 62 | 151 | `mod210_complete_smaller__any_complete_larger` |
+
+Reading: many large classes change direction depending on whether the control
+preserves modulo `210`. This is useful for selecting classes to inspect, but it
+still points to a wheel/local-control effect rather than a complete-specific
+nearest-`C_8` effect.
