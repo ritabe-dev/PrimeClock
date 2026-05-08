@@ -153,3 +153,99 @@ def test_prc_branch_fill_cohort_figures_smoke(tmp_path):
     for filename in generated:
         assert (tmp_path / filename).exists()
     assert (tmp_path / "prc_branch_fill_cohort_manifest.json").exists()
+
+
+def test_prc_residual_gap_figures_smoke(tmp_path):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
+    except ModuleNotFoundError:
+        pytest.skip("matplotlib is not installed in this environment")
+
+    from prime_reciprocal_projection.figures import generate_prc_residual_gap_figures
+
+    csv_path = tmp_path / "residual.csv"
+    csv_path.write_text(
+        "\n".join(
+            [
+                "seed_n,cohort_role,n,bin_index,max_branch,full_uncovered_measure,exact_complete,residual_uncovered_measure,residual_gap_count,residual_gap_max,residual_gap_p50,residual_gap_p90,residual_gap_p99,residual_gap_entropy,residual_top_gap_share,residual_gap_near_zero_count",
+                "118,complete,118,0,1000,0.0,True,0.3,3,0.2,0.1,0.2,0.2,0.8,0.66,0",
+                "118,local_mod6_control,112,0,1000,0.1,False,0.4,4,0.2,0.1,0.2,0.2,0.9,0.50,1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    generated = generate_prc_residual_gap_figures(csv_path, tmp_path)
+    assert set(generated) == {
+        "prc_branch_fill_residual_gap_count_v0_5.png",
+        "prc_branch_fill_residual_gap_shape_v0_5.png",
+    }
+    for filename in generated:
+        assert (tmp_path / filename).exists()
+    assert (tmp_path / "prc_branch_fill_residual_gaps_manifest.json").exists()
+
+
+def test_prc_residual_gap_pair_figures_smoke(tmp_path):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
+    except ModuleNotFoundError:
+        pytest.skip("matplotlib is not installed in this environment")
+
+    from prime_reciprocal_projection.figures import generate_prc_residual_gap_pair_figures
+
+    delta_csv = tmp_path / "deltas.csv"
+    delta_csv.write_text(
+        "\n".join(
+            [
+                "seed_n,control_role,metric,complete_n,control_n,complete_value,control_value,delta_complete_minus_control",
+                "3000,local_mod6_control,residual_top_gap_share,3000,3006,0.4,0.5,-0.1",
+                "3000,local_mod6_control,residual_gap_max,3000,3006,0.1,0.2,-0.1",
+                "3000,local_mod6_control,residual_gap_p90,3000,3006,0.1,0.2,-0.1",
+                "3000,band_mod6_control,residual_top_gap_share,3000,3012,0.4,0.5,-0.1",
+                "3000,band_mod6_control,residual_gap_max,3000,3012,0.1,0.2,-0.1",
+                "3000,band_mod6_control,residual_gap_p90,3000,3012,0.1,0.2,-0.1",
+                "3000,band_ordinary_control,residual_top_gap_share,3000,3013,0.4,0.5,-0.1",
+                "3000,band_ordinary_control,residual_gap_max,3000,3013,0.1,0.2,-0.1",
+                "3000,band_ordinary_control,residual_gap_p90,3000,3013,0.1,0.2,-0.1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    summary_csv = tmp_path / "summary.csv"
+    summary_csv.write_text(
+        "\n".join(
+            [
+                "control_role,metric,eligible_pair_count,median_delta,complete_smaller_count,complete_larger_count,tie_count,complete_smaller_rate",
+                "local_mod6_control,residual_top_gap_share,1,-0.1,1,0,0,1.0",
+                "local_mod6_control,residual_gap_max,1,-0.1,1,0,0,1.0",
+                "local_mod6_control,residual_gap_p90,1,-0.1,1,0,0,1.0",
+                "local_mod6_control,residual_gap_entropy,1,0.1,0,1,0,0.0",
+                "local_mod6_control,residual_gap_count,1,1,0,1,0,0.0",
+                "local_mod6_control,residual_uncovered_measure,1,0.1,0,1,0,0.0",
+                "band_mod6_control,residual_top_gap_share,1,-0.1,1,0,0,1.0",
+                "band_mod6_control,residual_gap_max,1,-0.1,1,0,0,1.0",
+                "band_mod6_control,residual_gap_p90,1,-0.1,1,0,0,1.0",
+                "band_mod6_control,residual_gap_entropy,1,0.1,0,1,0,0.0",
+                "band_mod6_control,residual_gap_count,1,1,0,1,0,0.0",
+                "band_mod6_control,residual_uncovered_measure,1,0.1,0,1,0,0.0",
+                "band_ordinary_control,residual_top_gap_share,1,-0.1,1,0,0,1.0",
+                "band_ordinary_control,residual_gap_max,1,-0.1,1,0,0,1.0",
+                "band_ordinary_control,residual_gap_p90,1,-0.1,1,0,0,1.0",
+                "band_ordinary_control,residual_gap_entropy,1,0.1,0,1,0,0.0",
+                "band_ordinary_control,residual_gap_count,1,1,0,1,0,0.0",
+                "band_ordinary_control,residual_uncovered_measure,1,0.1,0,1,0,0.0",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    generated = generate_prc_residual_gap_pair_figures(delta_csv, summary_csv, tmp_path)
+    assert set(generated) == {
+        "prc_residual_gap_pair_delta_v0_6.png",
+        "prc_residual_gap_effect_summary_v0_6.png",
+    }
+    for filename in generated:
+        assert (tmp_path / filename).exists()
+    assert (tmp_path / "prc_residual_gap_pairs_manifest.json").exists()

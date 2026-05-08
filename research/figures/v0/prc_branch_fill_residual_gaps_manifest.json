@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering residual gap comparison",
+  "generated_at_utc": "2026-05-08T01:31:48.877648+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "d25143846078d5d9d38638d7833bd219926546a8",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gaps --out data/summaries/prc_branch_fill_residual_gaps_v0_5.csv --figures-out figures/v0",
+  "generated_files": [
+    "prc_branch_fill_residual_gap_count_v0_5.png",
+    "prc_branch_fill_residual_gap_shape_v0_5.png"
+  ]
+}

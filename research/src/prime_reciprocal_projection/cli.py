@@ -31,6 +31,15 @@ from .covering_branch_fill_cohorts import (
     write_cohort_branch_fill_summary_csv,
     write_cohort_manifest_csv,
 )
+from .covering_residual_gaps import (
+    read_residual_gap_csv,
+    residual_gap_effect_summary_rows,
+    residual_gap_pair_delta_rows,
+    residual_gap_rows_from_manifest_csv,
+    write_residual_gap_effect_summary_csv,
+    write_residual_gap_csv,
+    write_residual_gap_pair_delta_csv,
+)
 from .covering_runs import (
     benchmark_prefilter_windows,
     block_scan_prefilter_runs,
@@ -56,6 +65,8 @@ from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
     generate_prc_branch_fill_cohort_figures,
     generate_prc_branch_fill_figures,
+    generate_prc_residual_gap_pair_figures,
+    generate_prc_residual_gap_figures,
     generate_prc_cluster_figures,
     generate_prc_v0_figures,
     generate_prc_window_figure,
@@ -225,6 +236,50 @@ def main(argv: list[str] | None = None) -> int:
         default="data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv",
     )
     covering_branch_fill_cohort_figures.add_argument("--out", default="figures/v0")
+
+    covering_branch_fill_residual_gaps = subparsers.add_parser(
+        "covering-branch-fill-residual-gaps",
+        help="generate residual gap metrics after a fixed PRC branch prefix",
+    )
+    covering_branch_fill_residual_gaps.add_argument(
+        "--manifest", default="data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv"
+    )
+    covering_branch_fill_residual_gaps.add_argument(
+        "--summary", default="data/summaries/prc_branch_fill_cohort_summary_v0_4.csv"
+    )
+    covering_branch_fill_residual_gaps.add_argument("--max-branch", type=int, default=1000)
+    covering_branch_fill_residual_gaps.add_argument(
+        "--near-zero-threshold", type=float, default=1e-6
+    )
+    covering_branch_fill_residual_gaps.add_argument(
+        "--out", default="data/summaries/prc_branch_fill_residual_gaps_v0_5.csv"
+    )
+    covering_branch_fill_residual_gaps.add_argument("--figures-out", default="figures/v0")
+    covering_branch_fill_residual_gaps.add_argument(
+        "--skip-figures",
+        action="store_true",
+        help="write only the residual gap CSV",
+    )
+
+    covering_branch_fill_residual_gap_pairs = subparsers.add_parser(
+        "covering-branch-fill-residual-gap-pairs",
+        help="generate paired complete-control residual gap dominance diagnostics",
+    )
+    covering_branch_fill_residual_gap_pairs.add_argument(
+        "--input", default="data/summaries/prc_branch_fill_residual_gaps_v0_5.csv"
+    )
+    covering_branch_fill_residual_gap_pairs.add_argument(
+        "--delta-out", default="data/summaries/prc_residual_gap_pair_deltas_v0_6.csv"
+    )
+    covering_branch_fill_residual_gap_pairs.add_argument(
+        "--summary-out", default="data/summaries/prc_residual_gap_effect_summary_v0_6.csv"
+    )
+    covering_branch_fill_residual_gap_pairs.add_argument("--figures-out", default="figures/v0")
+    covering_branch_fill_residual_gap_pairs.add_argument(
+        "--skip-figures",
+        action="store_true",
+        help="write only the v0.6 paired CSVs",
+    )
 
     covering_certify = subparsers.add_parser(
         "covering-certify", help="check exact rational PRC coverage"
@@ -476,6 +531,40 @@ def main(argv: list[str] | None = None) -> int:
             args.out,
         )
         print(f"covering-branch-fill-cohort-figures: files={len(generated)}")
+        return 0
+    if args.command == "covering-branch-fill-residual-gaps":
+        rows = residual_gap_rows_from_manifest_csv(
+            args.manifest,
+            summary_csv=args.summary,
+            max_branch=args.max_branch,
+            near_zero_threshold=args.near_zero_threshold,
+        )
+        write_residual_gap_csv(rows, args.out)
+        generated = [] if args.skip_figures else generate_prc_residual_gap_figures(args.out, args.figures_out)
+        print(
+            "covering-branch-fill-residual-gaps: "
+            f"rows={len(rows)}, figures={len(generated)}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-residual-gap-pairs":
+        delta_rows = residual_gap_pair_delta_rows(read_residual_gap_csv(args.input))
+        summary_rows = residual_gap_effect_summary_rows(delta_rows)
+        write_residual_gap_pair_delta_csv(delta_rows, args.delta_out)
+        write_residual_gap_effect_summary_csv(summary_rows, args.summary_out)
+        generated = (
+            []
+            if args.skip_figures
+            else generate_prc_residual_gap_pair_figures(
+                args.delta_out,
+                args.summary_out,
+                args.figures_out,
+            )
+        )
+        print(
+            "covering-branch-fill-residual-gap-pairs: "
+            f"delta_rows={len(delta_rows)}, summary_rows={len(summary_rows)}, "
+            f"figures={len(generated)}"
+        )
         return 0
     if args.command == "covering-certify":
         for n in args.n:

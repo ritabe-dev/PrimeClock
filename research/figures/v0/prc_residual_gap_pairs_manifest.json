@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering residual gap paired diagnostics",
+  "generated_at_utc": "2026-05-08T01:31:56.072167+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "d25143846078d5d9d38638d7833bd219926546a8",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gap-pairs --delta-out data/summaries/prc_residual_gap_pair_deltas_v0_6.csv --summary-out data/summaries/prc_residual_gap_effect_summary_v0_6.csv --figures-out figures/v0",
+  "generated_files": [
+    "prc_residual_gap_pair_delta_v0_6.png",
+    "prc_residual_gap_effect_summary_v0_6.png"
+  ]
+}

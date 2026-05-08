@@ -85,13 +85,42 @@ Current v0.4 reading:
   median residual at `K=1000` is slightly higher than the three control groups.
 - This is an experiment-level observation, not a general explanation.
 
-## v0.5 Modeling
+## v0.5/v0.6 Modeling
 
-Goal: compare the observed fill-in curve against null/control models.
+Goal: compare the residual gap structure after the common branch prefix
+`K=1000`, correct for prefix-exhausted small `N`, then use paired
+complete-minus-control deltas to decide which null/control model is worth
+building.
 
-Candidate models:
+Current v0.5 outputs:
 
-- independent random arcs with matched total arc width
+- `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
+- `figures/v0/prc_branch_fill_residual_gap_count_v0_5.png`
+- `figures/v0/prc_branch_fill_residual_gap_shape_v0_5.png`
+- `notes/prc_main_v0_5.md`
+
+Current v0.6 outputs:
+
+- `data/summaries/prc_residual_gap_pair_deltas_v0_6.csv`
+- `data/summaries/prc_residual_gap_effect_summary_v0_6.csv`
+- `figures/v0/prc_residual_gap_pair_delta_v0_6.png`
+- `figures/v0/prc_residual_gap_effect_summary_v0_6.png`
+- `notes/prc_main_v0_6.md`
+
+Current v0.5/v0.6 reading:
+
+- v0.5.1 excludes 3 prefix-exhausted seeds (`1258`, `1262`, `1329`) from the
+  main reading, leaving 33 eligible seeds.
+- Complete rows tend to have fewer residual components in paired v0.6
+  comparisons.
+- Top-gap dominance is mixed across control designs, so a simple "one dominant
+  surviving gap" explanation is not yet supported.
+- The next model should target residual component structure and matched nulls,
+  not just total fill-in speed.
+
+Candidate later models:
+
+- independent random arcs with matched total residual measure
 - branch-wise shuffled centers with fixed branch sizes
 - local-window controls that preserve nearby prime-count fluctuations
 
@@ -100,6 +129,7 @@ Non-claims until v0.5:
 - no claim that complete events are explained by branch fill-in speed
 - no claim that the six v0.3 anchors are representative
 - no claim that `K90/K99` has a stable asymptotic law
+- no claim that v0.5/v0.6 residual gap differences are a general law
 
 ## Canonical Data Scope
 

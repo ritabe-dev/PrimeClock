@@ -233,6 +233,73 @@ Initial result:
 
 See `notes/prc_main_v0_4.md`.
 
+## PRC Main v0.5 Residual Gap Structure
+
+Generate residual gap metrics after the common branch prefix `K=1000`:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gaps \
+  --manifest data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv \
+  --summary data/summaries/prc_branch_fill_cohort_summary_v0_4.csv \
+  --max-branch 1000 \
+  --near-zero-threshold 1e-6 \
+  --out data/summaries/prc_branch_fill_residual_gaps_v0_5.csv \
+  --figures-out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_branch_fill_residual_gaps_v0_5.csv
+figures/v0/prc_branch_fill_residual_gap_count_v0_5.png
+figures/v0/prc_branch_fill_residual_gap_shape_v0_5.png
+figures/v0/prc_branch_fill_residual_gaps_manifest.json
+```
+
+Initial result:
+
+- 144 raw rows were generated in about `3.53s`.
+- Prefix censoring marks `1258`, `1262`, and `1329` ineligible because
+  `K=1000` exhausts all branches for at least one role in each seed.
+- The main v0.5.1 reading uses 33 eligible seeds and 132 eligible rows.
+- Complete rows have median residual max gap `0.001555`; controls range from
+  `0.001531` to `0.001805`.
+- Complete rows have median top-gap share `0.004218`; controls range from
+  `0.004384` to `0.005354`.
+- Residual entropy is similar across all groups.
+
+See `notes/prc_main_v0_5.md`.
+
+Generate v0.6 paired complete-minus-control residual gap deltas:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-residual-gap-pairs \
+  --input data/summaries/prc_branch_fill_residual_gaps_v0_5.csv \
+  --delta-out data/summaries/prc_residual_gap_pair_deltas_v0_6.csv \
+  --summary-out data/summaries/prc_residual_gap_effect_summary_v0_6.csv \
+  --figures-out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_residual_gap_pair_deltas_v0_6.csv
+data/summaries/prc_residual_gap_effect_summary_v0_6.csv
+figures/v0/prc_residual_gap_pair_delta_v0_6.png
+figures/v0/prc_residual_gap_effect_summary_v0_6.png
+figures/v0/prc_residual_gap_pairs_manifest.json
+```
+
+Initial v0.6 result:
+
+- 594 paired delta rows and 18 summary rows were generated in about `0.50s`.
+- For `residual_gap_count`, complete rows are smaller in `22/33`,
+  `19/33`, and `26/33` pairs across the three control roles.
+- For `residual_top_gap_share`, the direction is mixed: `19/33`, `15/33`,
+  and `16/33` complete-smaller pairs.
+
+See `notes/prc_main_v0_6.md`.
+
 Generate local window figures with:
 
 ```bash

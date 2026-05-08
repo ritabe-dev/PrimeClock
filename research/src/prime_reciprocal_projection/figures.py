@@ -532,6 +532,205 @@ def cohort_checkpoint_fill_figure(rows: list[dict[str, str]], output_dir: Path) 
     return output_path.name
 
 
+def generate_prc_residual_gap_figures(
+    input_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.5 residual gap comparison figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    rows = _read_csv_rows(input_csv)
+    generated = [
+        residual_gap_count_figure(rows, output_path),
+        residual_gap_shape_figure(rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-residual-gaps --out {input_csv} --figures-out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering residual gap comparison",
+        filename="prc_branch_fill_residual_gaps_manifest.json",
+    )
+    return generated
+
+
+def residual_gap_count_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate residual gap count comparison by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    data = [
+        [int(row["residual_gap_count"]) for row in rows if row["cohort_role"] == role]
+        for role in roles
+    ]
+    fig, ax = plt.subplots(figsize=(9, 5.6))
+    ax.boxplot(data, tick_labels=roles, showmeans=True)
+    ax.set_xticklabels(roles, rotation=18, ha="right")
+    ax.set_ylabel("residual gap count at K=1000")
+    ax.set_title("PRC residual component count after branch prefix")
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_residual_gap_count_v0_5.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def residual_gap_shape_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate residual gap shape comparison by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    entropy_data = [
+        [
+            value
+            for value in (
+                _optional_float(row["residual_gap_entropy"])
+                for row in rows
+                if row["cohort_role"] == role
+            )
+            if value is not None
+        ]
+        for role in roles
+    ]
+    share_data = [
+        [
+            value
+            for value in (
+                _optional_float(row["residual_top_gap_share"])
+                for row in rows
+                if row["cohort_role"] == role
+            )
+            if value is not None
+        ]
+        for role in roles
+    ]
+    fig, (ax_top, ax_bottom) = plt.subplots(2, 1, figsize=(9, 8.2), sharex=True)
+    ax_top.boxplot(entropy_data, tick_labels=roles, showmeans=True)
+    ax_top.set_xticks(range(1, len(roles) + 1), roles, rotation=18, ha="right")
+    ax_top.set_ylabel("normalized gap entropy")
+    ax_top.set_title("PRC residual gap shape after branch prefix")
+    ax_top.grid(axis="y", alpha=0.25)
+
+    ax_bottom.boxplot(share_data, tick_labels=roles, showmeans=True)
+    ax_bottom.set_xticks(range(1, len(roles) + 1), roles, rotation=18, ha="right")
+    ax_bottom.set_ylabel("top gap share")
+    ax_bottom.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_residual_gap_shape_v0_5.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def generate_prc_residual_gap_pair_figures(
+    delta_csv: str | Path,
+    summary_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.6 residual gap paired comparison figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    delta_rows = _read_csv_rows(delta_csv)
+    summary_rows = _read_csv_rows(summary_csv)
+    generated = [
+        residual_gap_pair_delta_figure(delta_rows, output_path),
+        residual_gap_effect_summary_figure(summary_rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-residual-gap-pairs --delta-out {delta_csv} "
+            f"--summary-out {summary_csv} --figures-out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering residual gap paired diagnostics",
+        filename="prc_residual_gap_pairs_manifest.json",
+    )
+    return generated
+
+
+def residual_gap_pair_delta_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate paired delta distributions for the primary residual metrics."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    metrics = ["residual_top_gap_share", "residual_gap_max", "residual_gap_p90"]
+    control_roles = _control_roles(rows)
+    fig, axes = plt.subplots(len(metrics), 1, figsize=(10, 9.4), sharex=True)
+    for ax, metric in zip(axes, metrics):
+        data = [
+            [
+                float(row["delta_complete_minus_control"])
+                for row in rows
+                if row["metric"] == metric and row["control_role"] == role
+            ]
+            for role in control_roles
+        ]
+        ax.boxplot(data, tick_labels=control_roles, showmeans=True)
+        ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.55)
+        ax.set_ylabel(metric.replace("residual_", ""))
+        ax.grid(axis="y", alpha=0.25)
+    axes[-1].set_xticks(range(1, len(control_roles) + 1), control_roles, rotation=18, ha="right")
+    axes[0].set_title("PRC paired delta: complete minus control")
+    output_path = output_dir / "prc_residual_gap_pair_delta_v0_6.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def residual_gap_effect_summary_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate complete-smaller rate summary by metric and control role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    metrics = [
+        "residual_top_gap_share",
+        "residual_gap_max",
+        "residual_gap_p90",
+        "residual_gap_entropy",
+        "residual_gap_count",
+        "residual_uncovered_measure",
+    ]
+    control_roles = _control_roles(rows)
+    fig, ax = plt.subplots(figsize=(10, 6.2))
+    width = 0.25
+    x_values = list(range(len(metrics)))
+    for role_index, role in enumerate(control_roles):
+        rates = [
+            next(
+                (
+                    float(row["complete_smaller_rate"])
+                    for row in rows
+                    if row["metric"] == metric and row["control_role"] == role
+                ),
+                0.0,
+            )
+            for metric in metrics
+        ]
+        xs = [x + (role_index - 1) * width for x in x_values]
+        ax.bar(xs, rates, width=width, label=role)
+    ax.axhline(0.5, color="black", linewidth=1.0, alpha=0.55)
+    ax.set_xticks(x_values, [metric.replace("residual_", "") for metric in metrics], rotation=25, ha="right")
+    ax.set_ylim(0.0, 1.0)
+    ax.set_ylabel("complete smaller rate")
+    ax.set_title("PRC residual gap paired direction")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_residual_gap_effect_summary_v0_6.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
 def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
     with Path(path).open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))
@@ -540,6 +739,12 @@ def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
 def _cohort_roles(rows: list[dict[str, str]]) -> list[str]:
     preferred = ["complete", "local_mod6_control", "band_mod6_control", "band_ordinary_control"]
     present = {row["cohort_role"] for row in rows}
+    return [role for role in preferred if role in present] + sorted(present - set(preferred))
+
+
+def _control_roles(rows: list[dict[str, str]]) -> list[str]:
+    preferred = ["local_mod6_control", "band_mod6_control", "band_ordinary_control"]
+    present = {row["control_role"] for row in rows}
     return [role for role in preferred if role in present] + sorted(present - set(preferred))
 
 

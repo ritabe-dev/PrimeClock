@@ -47,6 +47,9 @@ Every statement in this research track should be assigned one of these statuses.
 | The v0.3 branch fill-in summary shows `K50=27` for `N=1000`, `K50=126..885` for four tested anchors, and censored `K50` for `N=1000000`; `K90/K99` are censored at `K=1000` for all tested anchors except `N=1000` | Experiment |
 | The v0.4 matched cohort selected 36 complete seeds from `1000<=N<=1000000`, excluded 0 seeds, and generated 144 branch fill-in summary rows | Experiment |
 | In the v0.4 matched cohort, complete rows have median `K50=234` and median residual at `K=1000` of `0.371519`; the three control groups have median `K50` of `211`, `160`, and `195`, and median residuals around `0.332` to `0.340` | Experiment |
+| The v0.5.1 residual-gap table generated 144 raw rows after the common prefix `K=1000`; 3 prefix-exhausted seeds (`1258`, `1262`, `1329`) are marked ineligible, leaving 33 eligible seeds and 132 eligible rows for the main reading | Experiment |
+| In the v0.5.1 eligible rows, complete rows have median residual max gap `0.001555` and median top-gap share `0.004218`; the three control groups have median max gaps `0.001531..0.001805` and median top-gap shares `0.004384..0.005354` | Experiment |
+| In the v0.6 paired residual-gap summary, complete rows have fewer residual components than matched controls in `22/33`, `19/33`, and `26/33` pairs for the three control roles; top-gap-share direction is mixed across controls | Experiment |
 
 ## Non-Claims
 
@@ -68,6 +71,10 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim from v0.4 that complete-covering values are
   generally faster or slower branch fill-in cases; the matched cohort result is
   only an experiment-level comparison.
+- This project does not claim from v0.5 that complete-covering values generally
+  have smaller residual gaps; the result is only a matched-cohort observation.
+- This project does not claim from v0.6 that residual component count explains
+  exact complete covering; it is only a paired observation on 33 eligible seeds.
 
 ## Known-Result Check
 
