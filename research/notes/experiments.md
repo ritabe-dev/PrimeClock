@@ -239,10 +239,11 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
 
 The `C_4` exclusion witness table has `208` data rows, one for every residue
 outside `{2,208} mod 210`. The exclusion summary compresses these into `36`
-component/measure classes. The `B_5` classification table has `14` rows and
-records reflection pairs, parent residues modulo `210`, old gap templates, and
-new residues modulo `11`. The `B_5` pair summary compresses those rows into
-`7` reflection-pair rows for the paper-facing table.
+component/measure classes: `22` one-gap classes covering `143` residues and
+`14` two-gap classes covering `65` residues. The `B_5` classification table
+has `14` rows and records reflection pairs, parent residues modulo `210`, old
+gap templates, and new residues modulo `11`. The `B_5` pair summary compresses
+those rows into `7` reflection-pair rows for the paper-facing table.
 
 ## PRC Candidate Windows
 

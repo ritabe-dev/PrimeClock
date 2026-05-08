@@ -132,9 +132,8 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnes
 ```
 
 The witness CSV has `208` data rows. Each row gives a nonempty rational
-uncovered interval for a residue not in `C_4`. A compressed handwritten
-exclusion table remains a polishing target, but the finite certificate artifact
-is now auditable.
+uncovered interval for a residue not in `C_4`. This is the row-level exclusion
+certificate.
 
 The 208 witnesses can be compressed into 36 measure/component classes:
 
@@ -148,6 +147,19 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summar
 This summary is the working index for a short written exclusion proof. It
 groups residues by uncovered component count and exact uncovered measure, while
 retaining residue samples and representative gap intervals.
+
+The compressed index has the following shape:
+
+| uncovered components | classes | residues excluded |
+|---:|---:|---:|
+| 1 | 22 | 143 |
+| 2 | 14 | 65 |
+| total | 36 | 208 |
+
+Thus the `C_4` finite proof can be read in three layers: the two residues
+`2,208` have explicit coverage chains, the other `208` residues have row-level
+rational gap witnesses, and those witnesses collapse into `36` exact
+component/measure classes for a shorter appendix table.
 
 ## C5 and B5
 
@@ -247,9 +259,9 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Turn the `C_4` exclusion witness CSV into a compact handwritten exclusion
-   table, using the 36-row exclusion summary as the index.
-2. Write the `B_5` section from the 7-row pair summary rather than maintaining
+1. Write the `B_5` section from the 7-row pair summary rather than maintaining
    a hand-copied table.
-3. Extend the same witness/classification/pair-summary format to `B_6`,
+2. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.
+3. Decide whether the 36-row `C_4` exclusion summary belongs in the main note
+   or an appendix table.

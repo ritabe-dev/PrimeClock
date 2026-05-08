@@ -185,7 +185,8 @@ Current reading:
 - The `C_4` exclusion witness table gives one uncovered rational gap for every
   residue outside `{2,208}`.
 - The `C_4` exclusion summary compresses the 208 witnesses into 36
-  component/measure classes for a shorter written proof.
+  component/measure classes: 22 one-gap classes covering 143 residues and 14
+  two-gap classes covering 65 residues.
 - The `B_5` classification table turns the witness rows into reflection-pair
   and parent-gap templates.
 - The `B_5` pair summary compresses those `14` birth rows into `7`
