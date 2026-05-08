@@ -76,6 +76,41 @@ class PrimePrefixBirthWitnessRow:
     uses_endpoint_touching: bool
 
 
+@dataclass(frozen=True)
+class PrimePrefixExclusionWitnessRow:
+    """Gap witness for a residue that is not covered at a prefix level."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    reflection_residue: int
+    uncovered_interval_count: int
+    uncovered_measure: float
+    first_uncovered_interval: str
+    uncovered_intervals: str
+
+
+@dataclass(frozen=True)
+class PrimePrefixBirthClassificationRow:
+    """Template-oriented classification for one birth residue."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    reflection_residue: int
+    reflection_pair_min: int
+    reflection_pair_max: int
+    parent_residue_mod_previous: int
+    previous_uncovered_interval_count: int
+    previous_prefix_uncovered_measure: float
+    previous_uncovered_intervals: str
+    new_prime_remainder: int
+    new_prime_arc_intervals: str
+    uses_endpoint_touching: bool
+
+
 def prime_prefix_residue_filtration_tables(
     *,
     max_k: int = 7,
@@ -176,6 +211,73 @@ def prime_prefix_birth_witness_rows(
                     previous_gaps,
                     new_arc_intervals,
                 ),
+            )
+        )
+    return rows
+
+
+def prime_prefix_exclusion_witness_rows(
+    *,
+    k: int = 4,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixExclusionWitnessRow]:
+    """Return gap witnesses for residues not covered at one prefix level."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    primes = _first_primes(k)
+    primorial = _primorial(primes)
+    covered = {
+        row.residue
+        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=allow_large_k)
+        if row.k == k
+    }
+    rows: list[PrimePrefixExclusionWitnessRow] = []
+    for residue in range(primorial):
+        if residue in covered:
+            continue
+        gaps = residue_uncovered_intervals(residue, primes)
+        rows.append(
+            PrimePrefixExclusionWitnessRow(
+                k=k,
+                new_prime=primes[-1],
+                primorial=primorial,
+                residue=residue,
+                reflection_residue=(-residue) % primorial,
+                uncovered_interval_count=len(gaps),
+                uncovered_measure=float(residue_uncovered_measure(residue, primes)),
+                first_uncovered_interval=_format_intervals(gaps[:1]),
+                uncovered_intervals=_format_intervals(gaps),
+            )
+        )
+    return rows
+
+
+def prime_prefix_birth_classification_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthClassificationRow]:
+    """Return template-oriented classifications for birth residues."""
+    witness_rows = prime_prefix_birth_witness_rows(k=k, allow_large_k=allow_large_k)
+    rows: list[PrimePrefixBirthClassificationRow] = []
+    for row in witness_rows:
+        pair_min = min(row.residue, row.reflection_residue)
+        pair_max = max(row.residue, row.reflection_residue)
+        rows.append(
+            PrimePrefixBirthClassificationRow(
+                k=row.k,
+                new_prime=row.new_prime,
+                primorial=row.primorial,
+                residue=row.residue,
+                reflection_residue=row.reflection_residue,
+                reflection_pair_min=pair_min,
+                reflection_pair_max=pair_max,
+                parent_residue_mod_previous=row.residue_mod_previous or 0,
+                previous_uncovered_interval_count=row.previous_uncovered_interval_count,
+                previous_prefix_uncovered_measure=row.previous_prefix_uncovered_measure,
+                previous_uncovered_intervals=row.previous_uncovered_intervals,
+                new_prime_remainder=row.residue % row.new_prime,
+                new_prime_arc_intervals=row.new_prime_arc_intervals,
+                uses_endpoint_touching=row.uses_endpoint_touching,
             )
         )
     return rows
@@ -373,6 +475,22 @@ def write_prime_prefix_birth_witness_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixBirthWitnessRow)
 
 
+def write_prime_prefix_exclusion_witness_csv(
+    rows: Iterable[PrimePrefixExclusionWitnessRow],
+    output_path: str | Path,
+) -> None:
+    """Write exclusion witness rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixExclusionWitnessRow)
+
+
+def write_prime_prefix_birth_classification_csv(
+    rows: Iterable[PrimePrefixBirthClassificationRow],
+    output_path: str | Path,
+) -> None:
+    """Write birth classification rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthClassificationRow)
+
+
 def _validate_small_export_k(max_k: int, *, allow_large_k: bool) -> None:
     if max_k < 1:
         raise ValueError("max_k must be >= 1")
@@ -390,6 +508,13 @@ def _first_primes(count: int) -> list[int]:
         if len(primes) >= count:
             return primes[:count]
         limit *= 2
+
+
+def _primorial(primes: Iterable[int]) -> int:
+    value = 1
+    for p in primes:
+        value *= p
+    return value
 
 
 def _exact_arc_intervals_for_residue(residue: int, p: int) -> list[ExactInterval]:

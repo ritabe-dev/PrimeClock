@@ -121,9 +121,20 @@ They chain across the circle:
 ```
 
 The residue `208=-2 mod 210` is the reflection partner. The exclusion of the
-other 208 residues is currently certified by exact finite enumeration in the
-generator and tests; a compressed handwritten exclusion table remains a theorem
-polishing target.
+other 208 residues is certified by exact finite enumeration with one rational
+gap witness per residue:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+```
+
+The witness CSV has `208` data rows. Each row gives a nonempty rational
+uncovered interval for a residue not in `C_4`. A compressed handwritten
+exclusion table remains a polishing target, but the finite certificate artifact
+is now auditable.
 
 ## C5 and B5
 
@@ -169,6 +180,20 @@ Each row records the old uncovered interval(s), the new prime arc interval(s),
 and whether closure uses endpoint touching. For `B_5`, each birth closes one
 old gap, and none of these closures require endpoint touching.
 
+The classification CSV is generated with:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+```
+
+It keeps the same `14` births, but adds `reflection_pair_min/max`, the parent
+residue modulo `210`, the new residue modulo `11`, and the old gap template.
+This is the first small theorem-classification artifact rather than just a
+witness list.
+
 ## Relation to PRC complete covering
 
 For an original PRC integer `N`, a prefix certificate is sufficient:
@@ -191,6 +216,8 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Write a compact exclusion certificate for `C_4={2,208}`.
-2. Classify `B_5` by parent gap template and reflection symmetry.
-3. Extend the same witness format to `B_6`, before chasing larger `k`.
+1. Turn the `C_4` exclusion witness CSV into a compact handwritten exclusion
+   table.
+2. Summarize `B_5` into parent-gap templates rather than row-level witnesses.
+3. Extend the same witness/classification format to `B_6`, before chasing
+   larger `k`.

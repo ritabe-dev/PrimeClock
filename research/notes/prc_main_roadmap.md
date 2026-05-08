@@ -141,6 +141,8 @@ Deliverables:
 - `notes/prc_prime_prefix_finite_note_v1_1.md`
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
 - `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
 
 Commands:
 
@@ -153,6 +155,14 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
   --k 5 \
   --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
 ```
 
 Current reading:
@@ -162,6 +172,10 @@ Current reading:
 - `C_5` has `36` residues: `22` inherited lifts from `C_4` and `14` births.
 - The `B_5` witness table records the previous uncovered interval and the
   `p=11` arc that closes it. This is the next theorem-building object.
+- The `C_4` exclusion witness table gives one uncovered rational gap for every
+  residue outside `{2,208}`.
+- The `B_5` classification table turns the witness rows into reflection-pair
+  and parent-gap templates.
 - v0.9--v0.12 selected modulo-210 diagnostics are retained as appendix-style
   applications/diagnostics, not the main proof spine.
 

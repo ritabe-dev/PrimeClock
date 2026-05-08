@@ -5,16 +5,22 @@ import pytest
 
 from prime_reciprocal_projection.cli import main
 from prime_reciprocal_projection.covering_prime_prefix_filtration import (
+    PrimePrefixBirthClassificationRow,
     PrimePrefixBirthWitnessRow,
+    PrimePrefixExclusionWitnessRow,
     PrimePrefixResidueBirthSampleRow,
     PrimePrefixResidueFiltrationRow,
     PrimePrefixResidueFullRow,
+    prime_prefix_birth_classification_rows,
     prime_prefix_birth_witness_rows,
+    prime_prefix_exclusion_witness_rows,
     prime_prefix_residue_filtration_tables,
     prime_prefix_residue_full_rows,
     residue_is_exactly_covered,
     residue_uncovered_measure,
+    write_prime_prefix_birth_classification_csv,
     write_prime_prefix_birth_witness_csv,
+    write_prime_prefix_exclusion_witness_csv,
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
     write_prime_prefix_residue_full_csv,
@@ -138,6 +144,38 @@ def test_prime_prefix_birth_witness_rows_k5():
         assert residue_is_exactly_covered(row.residue, [2, 3, 5, 7, 11])
 
 
+def test_prime_prefix_c4_exclusion_witness_rows():
+    rows = prime_prefix_exclusion_witness_rows(k=4)
+    residues = {row.residue for row in rows}
+    assert len(rows) == 208
+    assert 2 not in residues
+    assert 208 not in residues
+    assert all(row.reflection_residue in residues for row in rows)
+    for row in rows:
+        assert row.uncovered_interval_count > 0
+        assert row.uncovered_measure > 0
+        assert row.first_uncovered_interval
+        assert row.uncovered_intervals
+        assert not residue_is_exactly_covered(row.residue, [2, 3, 5, 7])
+
+
+def test_prime_prefix_b5_birth_classification_rows():
+    rows = prime_prefix_birth_classification_rows(k=5)
+    residues = {row.residue for row in rows}
+    pair_keys = {(row.reflection_pair_min, row.reflection_pair_max) for row in rows}
+    assert len(rows) == 14
+    assert len(pair_keys) == 7
+    assert all(row.reflection_residue in residues for row in rows)
+    for row in rows:
+        assert row.new_prime_remainder == row.residue % 11
+        assert row.previous_uncovered_interval_count == 1
+        assert row.previous_prefix_uncovered_measure > 0
+        assert row.previous_uncovered_intervals
+        assert row.new_prime_arc_intervals
+        assert not residue_is_exactly_covered(row.residue, [2, 3, 5, 7])
+        assert residue_is_exactly_covered(row.residue, [2, 3, 5, 7, 11])
+
+
 def test_prime_prefix_full_export_rejects_unguarded_large_k():
     with pytest.raises(ValueError, match="full exports"):
         prime_prefix_residue_full_rows(max_k=7)
@@ -190,6 +228,8 @@ def test_write_prime_prefix_filtration_csv_headers(tmp_path: Path):
 def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
     full_out = tmp_path / "full.csv"
     witness_out = tmp_path / "witness.csv"
+    exclusion_out = tmp_path / "exclusion.csv"
+    classification_out = tmp_path / "classification.csv"
     write_prime_prefix_residue_full_csv(
         [
             PrimePrefixResidueFullRow(
@@ -223,6 +263,43 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
         ],
         witness_out,
     )
+    write_prime_prefix_exclusion_witness_csv(
+        [
+            PrimePrefixExclusionWitnessRow(
+                k=4,
+                new_prime=7,
+                primorial=210,
+                residue=0,
+                reflection_residue=0,
+                uncovered_interval_count=1,
+                uncovered_measure=0.1,
+                first_uncovered_interval="1/2-3/5",
+                uncovered_intervals="1/2-3/5",
+            )
+        ],
+        exclusion_out,
+    )
+    write_prime_prefix_birth_classification_csv(
+        [
+            PrimePrefixBirthClassificationRow(
+                k=5,
+                new_prime=11,
+                primorial=2310,
+                residue=118,
+                reflection_residue=2192,
+                reflection_pair_min=118,
+                reflection_pair_max=2192,
+                parent_residue_mod_previous=118,
+                previous_uncovered_interval_count=1,
+                previous_prefix_uncovered_measure=0.05,
+                previous_uncovered_intervals="7/10-3/4",
+                new_prime_remainder=8,
+                new_prime_arc_intervals="15/22-17/22",
+                uses_endpoint_touching=False,
+            )
+        ],
+        classification_out,
+    )
     assert full_out.read_text(encoding="utf-8").splitlines()[0] == (
         "k,new_prime,primorial,residue,residue_mod_previous,status,"
         "reflection_residue,previous_prefix_uncovered_measure"
@@ -231,6 +308,18 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
         "k,new_prime,primorial,residue,residue_mod_previous,reflection_residue,"
         "previous_uncovered_interval_count,previous_prefix_uncovered_measure,"
         "previous_uncovered_intervals,new_prime_arc_intervals,uses_endpoint_touching"
+    )
+    assert exclusion_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,residue,reflection_residue,"
+        "uncovered_interval_count,uncovered_measure,first_uncovered_interval,"
+        "uncovered_intervals"
+    )
+    assert classification_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,residue,reflection_residue,reflection_pair_min,"
+        "reflection_pair_max,parent_residue_mod_previous,"
+        "previous_uncovered_interval_count,previous_prefix_uncovered_measure,"
+        "previous_uncovered_intervals,new_prime_remainder,new_prime_arc_intervals,"
+        "uses_endpoint_touching"
     )
 
 
@@ -283,6 +372,44 @@ def test_covering_prime_prefix_birth_witnesses_cli_writes_csv(tmp_path: Path):
         main(
             [
                 "covering-prime-prefix-birth-witnesses",
+                "--k",
+                "5",
+                "--out",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 15
+    assert lines[0].startswith("k,new_prime,primorial,residue")
+
+
+def test_covering_prime_prefix_exclusion_witnesses_cli_writes_csv(tmp_path: Path):
+    output = tmp_path / "exclusion.csv"
+    assert (
+        main(
+            [
+                "covering-prime-prefix-exclusion-witnesses",
+                "--k",
+                "4",
+                "--out",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 209
+    assert lines[0].startswith("k,new_prime,primorial,residue")
+
+
+def test_covering_prime_prefix_birth_classification_cli_writes_csv(tmp_path: Path):
+    output = tmp_path / "classification.csv"
+    assert (
+        main(
+            [
+                "covering-prime-prefix-birth-classification",
                 "--k",
                 "5",
                 "--out",
