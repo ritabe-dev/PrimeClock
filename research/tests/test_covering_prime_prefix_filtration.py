@@ -1008,3 +1008,83 @@ def test_covering_prime_prefix_filtration_cli_regenerates_committed_csvs(tmp_pat
     assert birth_out.read_bytes() == Path(
         "data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv"
     ).read_bytes()
+
+
+def test_public_finite_theorem_csvs_regenerate_byte_identically(tmp_path: Path):
+    summary_out = tmp_path / "filtration.csv"
+    birth_samples_out = tmp_path / "birth_samples.csv"
+    full_out = tmp_path / "ck_full.csv"
+    c4_witness_out = tmp_path / "c4_witness.csv"
+    c4_summary_out = tmp_path / "c4_summary.csv"
+    b5_witness_out = tmp_path / "b5_witness.csv"
+    b5_classification_out = tmp_path / "b5_classification.csv"
+    b5_pair_out = tmp_path / "b5_pair.csv"
+    verification_out = tmp_path / "verification.csv"
+
+    summary_rows, birth_rows = prime_prefix_residue_filtration_tables(
+        max_k=7,
+        birth_sample_limit=200,
+    )
+    write_prime_prefix_residue_filtration_csv(summary_rows, summary_out)
+    write_prime_prefix_residue_birth_samples_csv(birth_rows, birth_samples_out)
+    write_prime_prefix_residue_full_csv(
+        prime_prefix_residue_full_rows(max_k=5),
+        full_out,
+    )
+    write_prime_prefix_exclusion_witness_v16_csv(
+        prime_prefix_exclusion_witness_v16_rows(k=4),
+        c4_witness_out,
+    )
+    write_prime_prefix_exclusion_summary_v15_csv(
+        prime_prefix_exclusion_summary_v15_rows(k=4),
+        c4_summary_out,
+    )
+    write_prime_prefix_birth_witness_v15_csv(
+        prime_prefix_birth_witness_v15_rows(k=5),
+        b5_witness_out,
+    )
+    write_prime_prefix_birth_classification_v15_csv(
+        prime_prefix_birth_classification_v15_rows(k=5),
+        b5_classification_out,
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        prime_prefix_birth_pair_summary_v15_rows(k=5),
+        b5_pair_out,
+    )
+    write_prime_prefix_certificate_verification_csv(
+        prime_prefix_certificate_verification_rows(
+            ck_full_csv=full_out,
+            c4_exclusion_witness_csv=c4_witness_out,
+            b5_birth_witness_csv=b5_witness_out,
+            b5_birth_pair_summary_csv=b5_pair_out,
+        ),
+        verification_out,
+    )
+
+    expected_paths = {
+        summary_out: "data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv",
+        birth_samples_out: (
+            "data/summaries/"
+            "prc_prime_prefix_residue_covering_birth_samples_v0_1.csv"
+        ),
+        full_out: "data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
+        c4_witness_out: (
+            "data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv"
+        ),
+        c4_summary_out: (
+            "data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv"
+        ),
+        b5_witness_out: "data/summaries/prc_prime_prefix_birth_witness_v1_5.csv",
+        b5_classification_out: (
+            "data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv"
+        ),
+        b5_pair_out: (
+            "data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv"
+        ),
+        verification_out: (
+            "data/summaries/"
+            "prc_prime_prefix_certificate_verification_v1_6.csv"
+        ),
+    }
+    for generated_path, committed_path in expected_paths.items():
+        assert generated_path.read_bytes() == Path(committed_path).read_bytes()
