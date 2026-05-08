@@ -112,6 +112,24 @@ class PrimePrefixBirthClassificationRow:
 
 
 @dataclass(frozen=True)
+class PrimePrefixBirthPairSummaryRow:
+    """Reflection-pair summary for birth residues."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    reflection_pair_min: int
+    reflection_pair_max: int
+    parent_residue_pair_mod_previous: str
+    previous_uncovered_interval_count_pair: str
+    previous_prefix_uncovered_measure_pair: str
+    previous_uncovered_intervals_pair: str
+    new_prime_remainder_pair: str
+    new_prime_arc_intervals_pair: str
+    uses_endpoint_touching_pair: str
+
+
+@dataclass(frozen=True)
 class PrimePrefixExclusionSummaryRow:
     """Compressed exclusion-witness group for one prefix level."""
 
@@ -334,6 +352,63 @@ def prime_prefix_birth_classification_rows(
     return rows
 
 
+def prime_prefix_birth_pair_summary_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthPairSummaryRow]:
+    """Return reflection-pair summaries for birth residues."""
+    classification_rows = prime_prefix_birth_classification_rows(
+        k=k,
+        allow_large_k=allow_large_k,
+    )
+    groups: dict[tuple[int, int], list[PrimePrefixBirthClassificationRow]] = {}
+    for row in classification_rows:
+        key = (row.reflection_pair_min, row.reflection_pair_max)
+        groups.setdefault(key, []).append(row)
+
+    rows: list[PrimePrefixBirthPairSummaryRow] = []
+    for (pair_min, pair_max), group in sorted(groups.items()):
+        ordered = sorted(group, key=lambda row: row.residue)
+        if len(ordered) != 2:
+            raise ValueError(
+                "birth pair summary expects two residues per reflection pair; "
+                f"got {len(ordered)} for {pair_min}/{pair_max}"
+            )
+        first = ordered[0]
+        rows.append(
+            PrimePrefixBirthPairSummaryRow(
+                k=first.k,
+                new_prime=first.new_prime,
+                primorial=first.primorial,
+                reflection_pair_min=pair_min,
+                reflection_pair_max=pair_max,
+                parent_residue_pair_mod_previous=_join_pair(
+                    [row.parent_residue_mod_previous for row in ordered]
+                ),
+                previous_uncovered_interval_count_pair=_join_pair(
+                    [row.previous_uncovered_interval_count for row in ordered]
+                ),
+                previous_prefix_uncovered_measure_pair=_join_pair(
+                    [row.previous_prefix_uncovered_measure for row in ordered]
+                ),
+                previous_uncovered_intervals_pair=_join_pair(
+                    [row.previous_uncovered_intervals for row in ordered]
+                ),
+                new_prime_remainder_pair=_join_pair(
+                    [row.new_prime_remainder for row in ordered]
+                ),
+                new_prime_arc_intervals_pair=_join_pair(
+                    [row.new_prime_arc_intervals for row in ordered]
+                ),
+                uses_endpoint_touching_pair=_join_pair(
+                    [row.uses_endpoint_touching for row in ordered]
+                ),
+            )
+        )
+    return rows
+
+
 def prime_prefix_residue_filtration_data(
     *,
     max_k: int = 7,
@@ -550,6 +625,14 @@ def write_prime_prefix_birth_classification_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixBirthClassificationRow)
 
 
+def write_prime_prefix_birth_pair_summary_csv(
+    rows: Iterable[PrimePrefixBirthPairSummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write birth reflection-pair summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthPairSummaryRow)
+
+
 def _validate_small_export_k(max_k: int, *, allow_large_k: bool) -> None:
     if max_k < 1:
         raise ValueError("max_k must be >= 1")
@@ -567,6 +650,10 @@ def _first_primes(count: int) -> list[int]:
         if len(primes) >= count:
             return primes[:count]
         limit *= 2
+
+
+def _join_pair(values: Iterable[object]) -> str:
+    return " / ".join(str(value) for value in values)
 
 
 def _primorial(primes: Iterable[int]) -> int:

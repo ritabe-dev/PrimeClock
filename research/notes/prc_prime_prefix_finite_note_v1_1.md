@@ -207,6 +207,19 @@ residue modulo `210`, the new residue modulo `11`, and the old gap template.
 This is the first small theorem-classification artifact rather than just a
 witness list.
 
+For the paper-facing table, the same rows can be compressed into one row per
+reflection pair:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+```
+
+This gives `7` rows. It is the preferred source for the displayed `B_5` table;
+the row-level classification and witness CSVs remain the audit trail.
+
 ## Relation to PRC complete covering
 
 For an original PRC integer `N`, a prefix certificate is sufficient:

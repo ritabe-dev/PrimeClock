@@ -6,6 +6,7 @@ import pytest
 from prime_reciprocal_projection.cli import main
 from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     PrimePrefixBirthClassificationRow,
+    PrimePrefixBirthPairSummaryRow,
     PrimePrefixBirthWitnessRow,
     PrimePrefixExclusionSummaryRow,
     PrimePrefixExclusionWitnessRow,
@@ -13,6 +14,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     PrimePrefixResidueFiltrationRow,
     PrimePrefixResidueFullRow,
     prime_prefix_birth_classification_rows,
+    prime_prefix_birth_pair_summary_rows,
     prime_prefix_birth_witness_rows,
     prime_prefix_exclusion_summary_rows,
     prime_prefix_exclusion_witness_rows,
@@ -21,6 +23,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     residue_is_exactly_covered,
     residue_uncovered_measure,
     write_prime_prefix_birth_classification_csv,
+    write_prime_prefix_birth_pair_summary_csv,
     write_prime_prefix_birth_witness_csv,
     write_prime_prefix_exclusion_summary_csv,
     write_prime_prefix_exclusion_witness_csv,
@@ -191,6 +194,19 @@ def test_prime_prefix_b5_birth_classification_rows():
         assert residue_is_exactly_covered(row.residue, [2, 3, 5, 7, 11])
 
 
+def test_prime_prefix_b5_birth_pair_summary_rows():
+    rows = prime_prefix_birth_pair_summary_rows(k=5)
+    assert len(rows) == 7
+    assert rows[0].reflection_pair_min == 118
+    assert rows[0].reflection_pair_max == 2192
+    assert rows[0].parent_residue_pair_mod_previous == "118 / 92"
+    assert rows[0].previous_uncovered_interval_count_pair == "1 / 1"
+    assert rows[0].previous_uncovered_intervals_pair == "7/10-3/4 / 1/4-3/10"
+    assert rows[0].new_prime_remainder_pair == "8 / 3"
+    assert rows[0].new_prime_arc_intervals_pair == "15/22-17/22 / 5/22-7/22"
+    assert rows[0].uses_endpoint_touching_pair == "False / False"
+
+
 def test_prime_prefix_full_export_rejects_unguarded_large_k():
     with pytest.raises(ValueError, match="full exports"):
         prime_prefix_residue_full_rows(max_k=7)
@@ -246,6 +262,7 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
     exclusion_out = tmp_path / "exclusion.csv"
     exclusion_summary_out = tmp_path / "exclusion_summary.csv"
     classification_out = tmp_path / "classification.csv"
+    pair_summary_out = tmp_path / "pair_summary.csv"
     write_prime_prefix_residue_full_csv(
         [
             PrimePrefixResidueFullRow(
@@ -332,6 +349,25 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
         ],
         classification_out,
     )
+    write_prime_prefix_birth_pair_summary_csv(
+        [
+            PrimePrefixBirthPairSummaryRow(
+                k=5,
+                new_prime=11,
+                primorial=2310,
+                reflection_pair_min=118,
+                reflection_pair_max=2192,
+                parent_residue_pair_mod_previous="118 / 92",
+                previous_uncovered_interval_count_pair="1 / 1",
+                previous_prefix_uncovered_measure_pair="0.05 / 0.05",
+                previous_uncovered_intervals_pair="7/10-3/4 / 1/4-3/10",
+                new_prime_remainder_pair="8 / 3",
+                new_prime_arc_intervals_pair="15/22-17/22 / 5/22-7/22",
+                uses_endpoint_touching_pair="False / False",
+            )
+        ],
+        pair_summary_out,
+    )
     assert full_out.read_text(encoding="utf-8").splitlines()[0] == (
         "k,new_prime,primorial,residue,residue_mod_previous,status,"
         "reflection_residue,previous_prefix_uncovered_measure"
@@ -357,6 +393,13 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
         "previous_uncovered_interval_count,previous_prefix_uncovered_measure,"
         "previous_uncovered_intervals,new_prime_remainder,new_prime_arc_intervals,"
         "uses_endpoint_touching"
+    )
+    assert pair_summary_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,reflection_pair_min,reflection_pair_max,"
+        "parent_residue_pair_mod_previous,previous_uncovered_interval_count_pair,"
+        "previous_prefix_uncovered_measure_pair,previous_uncovered_intervals_pair,"
+        "new_prime_remainder_pair,new_prime_arc_intervals_pair,"
+        "uses_endpoint_touching_pair"
     )
 
 
@@ -477,6 +520,25 @@ def test_covering_prime_prefix_birth_classification_cli_writes_csv(tmp_path: Pat
     lines = output.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 15
     assert lines[0].startswith("k,new_prime,primorial,residue")
+
+
+def test_covering_prime_prefix_birth_pair_summary_cli_writes_csv(tmp_path: Path):
+    output = tmp_path / "pair_summary.csv"
+    assert (
+        main(
+            [
+                "covering-prime-prefix-birth-pair-summary",
+                "--k",
+                "5",
+                "--out",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 8
+    assert lines[0].startswith("k,new_prime,primorial,reflection_pair_min")
 
 
 def test_covering_prime_prefix_filtration_cli_rejects_large_k_without_flag(tmp_path: Path):

@@ -1,0 +1,8 @@
+k,new_prime,primorial,reflection_pair_min,reflection_pair_max,parent_residue_pair_mod_previous,previous_uncovered_interval_count_pair,previous_prefix_uncovered_measure_pair,previous_uncovered_intervals_pair,new_prime_remainder_pair,new_prime_arc_intervals_pair,uses_endpoint_touching_pair
+5,11,2310,118,2192,118 / 92,1 / 1,0.05 / 0.05,7/10-3/4 / 1/4-3/10,8 / 3,15/22-17/22 / 5/22-7/22,False / False
+5,11,2310,448,1862,28 / 182,1 / 1,0.05 / 0.05,7/10-3/4 / 1/4-3/10,8 / 3,15/22-17/22 / 5/22-7/22,False / False
+5,11,2310,542,1768,122 / 88,1 / 1,0.05 / 0.05,1/4-3/10 / 7/10-3/4,3 / 8,5/22-7/22 / 15/22-17/22,False / False
+5,11,2310,778,1532,148 / 62,1 / 1,0.05 / 0.05,7/10-3/4 / 1/4-3/10,8 / 3,15/22-17/22 / 5/22-7/22,False / False
+5,11,2310,849,1461,9 / 201,1 / 1,0.047619047619047616 / 0.047619047619047616,1/6-3/14 / 11/14-5/6,2 / 9,3/22-5/22 / 17/22-19/22,False / False
+5,11,2310,872,1438,32 / 178,1 / 1,0.05 / 0.05,1/4-3/10 / 7/10-3/4,3 / 8,5/22-7/22 / 15/22-17/22,False / False
+5,11,2310,1108,1202,58 / 152,1 / 1,0.05 / 0.05,7/10-3/4 / 1/4-3/10,8 / 3,15/22-17/22 / 5/22-7/22,False / False

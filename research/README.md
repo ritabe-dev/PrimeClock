@@ -73,6 +73,7 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
@@ -156,7 +157,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `179 passed`.
+Expected smoke-test result for the current suite is `181 passed`.
 
 ## First Experiments
 
@@ -240,6 +241,10 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summar
 python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
   --k 5 \
   --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --complete-source data/summaries/prc_combined_runs_2_1000000.csv \

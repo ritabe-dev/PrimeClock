@@ -144,6 +144,7 @@ Deliverables:
 - `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
 
 Commands:
 
@@ -168,6 +169,10 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summar
 python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
   --k 5 \
   --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
 ```
 
 Current reading:
@@ -183,6 +188,8 @@ Current reading:
   component/measure classes for a shorter written proof.
 - The `B_5` classification table turns the witness rows into reflection-pair
   and parent-gap templates.
+- The `B_5` pair summary compresses those `14` birth rows into `7`
+  reflection-pair rows for the displayed finite theorem table.
 - v0.9--v0.12 selected modulo-210 diagnostics are retained as appendix-style
   applications/diagnostics, not the main proof spine.
 
