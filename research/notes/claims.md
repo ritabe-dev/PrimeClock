@@ -66,6 +66,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.6 uncertified control audit, the v0.5 matched profile splits into `196` modulo-210 audit rows and `15` source-depth rows; source-depth composition is similar across complete rows and local controls | Experiment / diagnostic |
 | In the v0.7 modulo-210 class review, `16` large classes have mixed control direction, so the sign of the nearest-`C_8` distance comparison often depends on whether the control preserves modulo `210` | Experiment / diagnostic |
 | The v0.8 modulo-210 class detail table expands the top `8` v0.7 classes into `4,227` seed/control rows for inspection | Experiment / diagnostic |
+| The v0.9 modulo-210 source summary shows that selected classes split into shallow `C_4`-adjacent classes (`4`, `206`, `201`) and mostly `C_5`-adjacent classes (`111`, `99`, with `118`, `88`, `62` more mixed) | Experiment / diagnostic |
 
 ## Non-Claims
 
@@ -100,6 +101,9 @@ Every statement in this research track should be assigned one of these statuses.
   it is a ranking table for choosing modulo-210 classes to inspect next.
 - This project does not claim the v0.8 class detail table is a null model; it
   is only an expanded inspection table for the highest-priority classes.
+- This project does not claim the v0.9 source-depth split explains complete
+  covering; it only identifies which shallow `C_k` layers the selected classes
+  sit near.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample

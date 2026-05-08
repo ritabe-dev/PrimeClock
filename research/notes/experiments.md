@@ -1117,3 +1117,41 @@ Selected classes:
 Reading: this artifact is for hand inspection. It confirms that the most useful
 next question is not "are complete rows closer to `C_8`?", but "which local
 wheel condition is being preserved by the control?".
+
+## PRC Prime-Prefix Modulo-210 Source Summary v0.9
+
+The v0.9 source summary compresses the selected-class detail rows by modulo-210
+class, cohort role, and nearest `C_k` source depth.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-source-summary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| source-summary rows | 93 |
+| selected classes | 8 |
+
+First reading for complete rows:
+
+| mod 210 | dominant source depth |
+|---:|---|
+| 4 | `C_4` only |
+| 206 | `C_4` only |
+| 201 | mostly `C_4` |
+| 111 | mostly `C_5` |
+| 99 | mostly `C_5` |
+| 118 | mixed, centered on `C_5` |
+| 88 | mixed, centered on `C_5` |
+| 62 | mixed, centered on `C_5` |
+
+Reading: several high-priority classes are lifted neighborhoods of shallow
+`C_4`/`C_5` layers. That is a main-line finite-filtration question and a better
+next target than an immediate `k=9` scan.

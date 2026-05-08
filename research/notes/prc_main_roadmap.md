@@ -305,6 +305,33 @@ Current reading:
 - The table is meant for targeted inspection before either a stricter discrete
   residue null or a much larger `k=9` scan.
 
+## v0.9 Modulo-210 Source Summary
+
+Goal: compress the v0.8 selected-class detail table by class, cohort role, and
+nearest `C_k` source depth.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-source-summary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv
+```
+
+Current reading:
+
+- `4`, `206`, and `201` are essentially shallow `C_4`-adjacent classes.
+- `111` and `99` are high-count classes mostly adjacent to `C_5`.
+- `118`, `88`, and `62` are more distributed but still centered on `C_5`.
+- The next small step should inspect lifted shallow-boundary neighborhoods
+  before attempting `k=9`.
+
 ## v0.3 Fixed Axis
 
 Primary object:

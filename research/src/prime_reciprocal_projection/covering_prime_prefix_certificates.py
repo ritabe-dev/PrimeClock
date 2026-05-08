@@ -213,6 +213,27 @@ class PrimePrefixUncertifiedMod210ClassDetailRow:
     normalized_residue_distance: float
 
 
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMod210ClassSourceSummaryRow:
+    """Selected class summary by cohort role and nearest C_k source depth."""
+
+    seed_mod210: int
+    selected_rank: int
+    priority_label: str
+    direction_label: str
+    cohort_role: str
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    row_count: int
+    share_within_class_role: float
+    circular_residue_distance_median: float
+    circular_residue_distance_p90: int
+    circular_residue_distance_max: int
+    distance_minus_complete_median: float
+    distance_minus_complete_min: int
+    distance_minus_complete_max: int
+
+
 def prime_prefix_certificate_rows(
     values: Iterable[int],
     *,
@@ -576,6 +597,41 @@ def read_prime_prefix_uncertified_mod210_class_review_csv(
                     direction_label=row["direction_label"],
                     priority_label=row["priority_label"],
                     sample_seed_n=row["sample_seed_n"],
+                )
+            )
+    return rows
+
+
+def read_prime_prefix_uncertified_mod210_class_detail_csv(
+    path: str | Path,
+) -> list[PrimePrefixUncertifiedMod210ClassDetailRow]:
+    """Read selected modulo-210 class detail rows from CSV."""
+    rows: list[PrimePrefixUncertifiedMod210ClassDetailRow] = []
+    with Path(path).open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            rows.append(
+                PrimePrefixUncertifiedMod210ClassDetailRow(
+                    selected_rank=int(row["selected_rank"]),
+                    seed_mod210=int(row["seed_mod210"]),
+                    priority_label=row["priority_label"],
+                    direction_label=row["direction_label"],
+                    seed_n=int(row["seed_n"]),
+                    cohort_role=row["cohort_role"],
+                    n=int(row["n"]),
+                    control_delta=int(row["control_delta"]),
+                    row_mod210=int(row["row_mod210"]),
+                    residue=int(row["residue"]),
+                    nearest_covered_residue=int(row["nearest_covered_residue"]),
+                    nearest_covered_source_k=int(row["nearest_covered_source_k"]),
+                    nearest_covered_source_prime=int(
+                        row["nearest_covered_source_prime"]
+                    ),
+                    circular_residue_distance=int(row["circular_residue_distance"]),
+                    complete_circular_residue_distance=int(
+                        row["complete_circular_residue_distance"]
+                    ),
+                    distance_minus_complete=int(row["distance_minus_complete"]),
+                    normalized_residue_distance=float(row["normalized_residue_distance"]),
                 )
             )
     return rows
@@ -973,6 +1029,80 @@ def prime_prefix_uncertified_mod210_class_detail_rows(
     return detail_rows
 
 
+def prime_prefix_uncertified_mod210_class_source_summary_rows(
+    detail_rows: Iterable[PrimePrefixUncertifiedMod210ClassDetailRow],
+) -> list[PrimePrefixUncertifiedMod210ClassSourceSummaryRow]:
+    """Summarize selected modulo-210 detail rows by source depth."""
+    row_values = list(detail_rows)
+    role_totals: dict[tuple[int, str], int] = {}
+    groups: dict[
+        tuple[int, int, str, str, str, int, int],
+        list[PrimePrefixUncertifiedMod210ClassDetailRow],
+    ] = {}
+    for row in row_values:
+        role_totals[(row.seed_mod210, row.cohort_role)] = (
+            role_totals.get((row.seed_mod210, row.cohort_role), 0) + 1
+        )
+        key = (
+            row.seed_mod210,
+            row.selected_rank,
+            row.priority_label,
+            row.direction_label,
+            row.cohort_role,
+            row.nearest_covered_source_k,
+            row.nearest_covered_source_prime,
+        )
+        groups.setdefault(key, []).append(row)
+
+    role_order = {
+        "complete_uncertified": 0,
+        "local_mod210_control": 1,
+        "local_any_control": 2,
+    }
+    summary: list[PrimePrefixUncertifiedMod210ClassSourceSummaryRow] = []
+    for (
+        seed_mod210,
+        selected_rank,
+        priority_label,
+        direction_label,
+        role,
+        source_k,
+        source_prime,
+    ), group_rows in sorted(
+        groups.items(),
+        key=lambda item: (
+            item[0][1],
+            item[0][0],
+            role_order.get(item[0][4], 99),
+            item[0][5],
+        ),
+    ):
+        distances = sorted(row.circular_residue_distance for row in group_rows)
+        deltas = sorted(row.distance_minus_complete for row in group_rows)
+        summary.append(
+            PrimePrefixUncertifiedMod210ClassSourceSummaryRow(
+                seed_mod210=seed_mod210,
+                selected_rank=selected_rank,
+                priority_label=priority_label,
+                direction_label=direction_label,
+                cohort_role=role,
+                nearest_covered_source_k=source_k,
+                nearest_covered_source_prime=source_prime,
+                row_count=len(group_rows),
+                share_within_class_role=(
+                    len(group_rows) / role_totals[(seed_mod210, role)]
+                ),
+                circular_residue_distance_median=statistics.median(distances),
+                circular_residue_distance_p90=_nearest_rank_quantile(distances, 0.9),
+                circular_residue_distance_max=max(distances),
+                distance_minus_complete_median=statistics.median(deltas),
+                distance_minus_complete_min=min(deltas),
+                distance_minus_complete_max=max(deltas),
+            )
+        )
+    return summary
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -1067,6 +1197,18 @@ def write_prime_prefix_uncertified_mod210_class_detail_csv(
 ) -> None:
     """Write selected modulo-210 class detail rows as CSV."""
     _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMod210ClassDetailRow)
+
+
+def write_prime_prefix_uncertified_mod210_class_source_summary_csv(
+    rows: Iterable[PrimePrefixUncertifiedMod210ClassSourceSummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write selected class source-depth summary rows as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        PrimePrefixUncertifiedMod210ClassSourceSummaryRow,
+    )
 
 
 def _optional_int(value: str) -> int | None:
