@@ -448,8 +448,16 @@ def main(argv: list[str] | None = None) -> int:
         default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv",
     )
     covering_prime_prefix_verify_certificates.add_argument(
+        "--c4-exclusion-summary",
+        default="data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
         "--b5-birth-witnesses",
         default="data/summaries/prc_prime_prefix_birth_witness_v1_5.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--b5-birth-classification",
+        default="data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv",
     )
     covering_prime_prefix_verify_certificates.add_argument(
         "--b5-birth-pair-summary",
@@ -457,7 +465,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     covering_prime_prefix_verify_certificates.add_argument(
         "--out",
-        default="data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv",
+        default="data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv",
     )
 
     covering_prime_prefix_certificates = subparsers.add_parser(
@@ -1288,7 +1296,9 @@ def main(argv: list[str] | None = None) -> int:
         rows = prime_prefix_certificate_verification_rows(
             ck_full_csv=args.ck_full,
             c4_exclusion_witness_csv=args.c4_exclusion_witnesses,
+            c4_exclusion_summary_csv=args.c4_exclusion_summary,
             b5_birth_witness_csv=args.b5_birth_witnesses,
+            b5_birth_classification_csv=args.b5_birth_classification,
             b5_birth_pair_summary_csv=args.b5_birth_pair_summary,
         )
         write_prime_prefix_certificate_verification_csv(rows, args.out)

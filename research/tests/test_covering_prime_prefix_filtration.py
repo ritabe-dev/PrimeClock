@@ -53,6 +53,66 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
 from prime_reciprocal_projection.primes import primes_up_to
 
 
+def _write_verifier_fixture(tmp_path: Path) -> dict[str, Path]:
+    paths = {
+        "ck_full": tmp_path / "ck_full.csv",
+        "c4_witness": tmp_path / "c4_witness.csv",
+        "c4_summary": tmp_path / "c4_summary.csv",
+        "b5_witness": tmp_path / "b5_witness.csv",
+        "b5_classification": tmp_path / "b5_classification.csv",
+        "b5_pair": tmp_path / "b5_pair.csv",
+    }
+    write_prime_prefix_residue_full_csv(
+        prime_prefix_residue_full_rows(max_k=5),
+        paths["ck_full"],
+    )
+    write_prime_prefix_exclusion_witness_v16_csv(
+        prime_prefix_exclusion_witness_v16_rows(k=4),
+        paths["c4_witness"],
+    )
+    write_prime_prefix_exclusion_summary_v15_csv(
+        prime_prefix_exclusion_summary_v15_rows(k=4),
+        paths["c4_summary"],
+    )
+    write_prime_prefix_birth_witness_v15_csv(
+        prime_prefix_birth_witness_v15_rows(k=5),
+        paths["b5_witness"],
+    )
+    write_prime_prefix_birth_classification_v15_csv(
+        prime_prefix_birth_classification_v15_rows(k=5),
+        paths["b5_classification"],
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        prime_prefix_birth_pair_summary_v15_rows(k=5),
+        paths["b5_pair"],
+    )
+    return paths
+
+
+def _verification_by_name(paths: dict[str, Path]) -> dict[str, PrimePrefixCertificateVerificationRow]:
+    rows = prime_prefix_certificate_verification_rows(
+        ck_full_csv=paths["ck_full"],
+        c4_exclusion_witness_csv=paths["c4_witness"],
+        c4_exclusion_summary_csv=paths["c4_summary"],
+        b5_birth_witness_csv=paths["b5_witness"],
+        b5_birth_classification_csv=paths["b5_classification"],
+        b5_birth_pair_summary_csv=paths["b5_pair"],
+    )
+    return {row.check_name: row for row in rows}
+
+
+def _mutate_csv(path: Path, mutate) -> None:
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        rows = list(reader)
+        fieldnames = list(reader.fieldnames or [])
+    rows = mutate(rows)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def test_residue_exact_coverage_for_first_birth_class():
     assert residue_is_exactly_covered(2, [2, 3, 5, 7])
     assert not residue_is_exactly_covered(0, [2, 3, 5, 7])
@@ -844,119 +904,163 @@ def test_covering_prime_prefix_v15_clis_write_csvs(tmp_path: Path):
 
 
 def test_prime_prefix_certificate_verifier_passes_public_csvs(tmp_path: Path):
-    ck_full_out = tmp_path / "ck_full.csv"
-    c4_witness_out = tmp_path / "c4_witness.csv"
-    b5_witness_out = tmp_path / "b5_witness.csv"
-    b5_pair_out = tmp_path / "b5_pair.csv"
+    paths = _write_verifier_fixture(tmp_path)
     verification_out = tmp_path / "verification.csv"
-    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_v16_csv(
-        prime_prefix_exclusion_witness_v16_rows(k=4),
-        c4_witness_out,
-    )
-    write_prime_prefix_birth_witness_v15_csv(
-        prime_prefix_birth_witness_v15_rows(k=5),
-        b5_witness_out,
-    )
-    write_prime_prefix_birth_pair_summary_v15_csv(
-        prime_prefix_birth_pair_summary_v15_rows(k=5),
-        b5_pair_out,
-    )
 
     rows = prime_prefix_certificate_verification_rows(
-        ck_full_csv=ck_full_out,
-        c4_exclusion_witness_csv=c4_witness_out,
-        b5_birth_witness_csv=b5_witness_out,
-        b5_birth_pair_summary_csv=b5_pair_out,
+        ck_full_csv=paths["ck_full"],
+        c4_exclusion_witness_csv=paths["c4_witness"],
+        c4_exclusion_summary_csv=paths["c4_summary"],
+        b5_birth_witness_csv=paths["b5_witness"],
+        b5_birth_classification_csv=paths["b5_classification"],
+        b5_birth_pair_summary_csv=paths["b5_pair"],
     )
     write_prime_prefix_certificate_verification_csv(rows, verification_out)
 
     assert all(row.status == "pass" for row in rows)
-    assert any(
-        row.check_name == "c4_exclusion_rational_witness_point"
-        and row.total == 208
-        and row.passed == 208
-        for row in rows
-    )
+    checks = {row.check_name: row for row in rows}
+    assert checks["c4_exclusion_rational_witness_point"].passed == 208
+    assert checks["c4_exclusion_residue_set_complete"].passed == 208
+    assert checks["c4_exclusion_exact_fields"].passed == 208
+    assert checks["c4_summary_partitions_witness_rows"].passed == 36
+    assert checks["b5_ck_full_c5_rows_complete"].passed == 36
+    assert checks["b5_birth_witness_residue_set_complete"].passed == 14
+    assert checks["b5_birth_exact_witness_fields"].passed == 14
+    assert checks["b5_birth_classification_matches_witnesses"].passed == 14
+    assert checks["b5_pair_summary_matches_classification"].passed == 7
     assert verification_out.read_text(encoding="utf-8").splitlines()[0] == (
         "check_name,total,passed,failed,status"
     )
 
 
 def test_prime_prefix_certificate_verifier_fails_tampered_gap(tmp_path: Path):
-    ck_full_out = tmp_path / "ck_full.csv"
-    c4_witness_out = tmp_path / "c4_witness.csv"
-    b5_witness_out = tmp_path / "b5_witness.csv"
-    b5_pair_out = tmp_path / "b5_pair.csv"
-    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_v16_csv(
-        prime_prefix_exclusion_witness_v16_rows(k=4),
-        c4_witness_out,
-    )
-    write_prime_prefix_birth_witness_v15_csv(
-        prime_prefix_birth_witness_v15_rows(k=5),
-        b5_witness_out,
-    )
-    write_prime_prefix_birth_pair_summary_v15_csv(
-        prime_prefix_birth_pair_summary_v15_rows(k=5),
-        b5_pair_out,
+    paths = _write_verifier_fixture(tmp_path)
+
+    _mutate_csv(
+        paths["b5_witness"],
+        lambda rows: [
+            {**row, "previous_open_gap_boundary_endpoints": "1/4-3/4"}
+            if index == 0
+            else row
+            for index, row in enumerate(rows)
+        ],
     )
 
-    with b5_witness_out.open("r", encoding="utf-8", newline="") as handle:
-        rows = list(csv.DictReader(handle))
-        fieldnames = list(rows[0].keys())
-    rows[0]["previous_open_gap_boundary_endpoints"] = "1/4-3/4"
-    with b5_witness_out.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
-
-    verification_rows = prime_prefix_certificate_verification_rows(
-        ck_full_csv=ck_full_out,
-        c4_exclusion_witness_csv=c4_witness_out,
-        b5_birth_witness_csv=b5_witness_out,
-        b5_birth_pair_summary_csv=b5_pair_out,
-    )
-    containment = next(
-        row
-        for row in verification_rows
-        if row.check_name == "b5_birth_old_open_gap_strictly_inside_new_arc"
-    )
+    containment = _verification_by_name(paths)[
+        "b5_birth_old_open_gap_strictly_inside_new_arc"
+    ]
     assert containment.status == "fail"
     assert containment.failed == 1
 
 
+def test_prime_prefix_certificate_verifier_fails_completeness_tampering(
+    tmp_path: Path,
+):
+    cases = [
+        (
+            "c4_witness",
+            lambda rows: rows[:-1],
+            "c4_exclusion_residue_set_complete",
+        ),
+        (
+            "c4_witness",
+            lambda rows: [rows[0], *rows],
+            "c4_exclusion_residue_set_complete",
+        ),
+        (
+            "c4_summary",
+            lambda rows: [
+                {**row, "residue_count": "999"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "c4_summary_partitions_witness_rows",
+        ),
+        (
+            "c4_witness",
+            lambda rows: [
+                {**row, "uncovered_measure_fraction": "1/999"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "c4_exclusion_exact_fields",
+        ),
+        (
+            "b5_witness",
+            lambda rows: rows[:-1],
+            "b5_birth_witness_residue_set_complete",
+        ),
+        (
+            "b5_witness",
+            lambda rows: [
+                {**row, "previous_open_gap_boundary_endpoints": "71/100-18/25"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "b5_birth_exact_witness_fields",
+        ),
+        (
+            "b5_witness",
+            lambda rows: [
+                {**row, "new_prime_closed_arc_boundary_endpoints": "7/10-3/4"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "b5_birth_exact_witness_fields",
+        ),
+        (
+            "b5_classification",
+            lambda rows: [
+                {**row, "parent_residue_mod_previous": "999"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "b5_birth_classification_matches_witnesses",
+        ),
+        (
+            "b5_pair",
+            lambda rows: [
+                {**row, "new_prime_remainder_pair": "9 / 3"}
+                if index == 0
+                else row
+                for index, row in enumerate(rows)
+            ],
+            "b5_pair_summary_matches_classification",
+        ),
+    ]
+
+    for file_key, mutate, expected_failed_check in cases:
+        paths = _write_verifier_fixture(tmp_path / expected_failed_check)
+        _mutate_csv(paths[file_key], mutate)
+        check = _verification_by_name(paths)[expected_failed_check]
+        assert check.status == "fail", expected_failed_check
+        assert check.failed > 0, expected_failed_check
+
+
 def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path):
-    ck_full_out = tmp_path / "ck_full.csv"
-    c4_witness_out = tmp_path / "c4_witness.csv"
-    b5_witness_out = tmp_path / "b5_witness.csv"
-    b5_pair_out = tmp_path / "b5_pair.csv"
+    paths = _write_verifier_fixture(tmp_path)
     verification_out = tmp_path / "verification.csv"
-    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_v16_csv(
-        prime_prefix_exclusion_witness_v16_rows(k=4),
-        c4_witness_out,
-    )
-    write_prime_prefix_birth_witness_v15_csv(
-        prime_prefix_birth_witness_v15_rows(k=5),
-        b5_witness_out,
-    )
-    write_prime_prefix_birth_pair_summary_v15_csv(
-        prime_prefix_birth_pair_summary_v15_rows(k=5),
-        b5_pair_out,
-    )
     assert (
         main(
             [
                 "covering-prime-prefix-verify-certificates",
                 "--ck-full",
-                str(ck_full_out),
+                str(paths["ck_full"]),
                 "--c4-exclusion-witnesses",
-                str(c4_witness_out),
+                str(paths["c4_witness"]),
+                "--c4-exclusion-summary",
+                str(paths["c4_summary"]),
                 "--b5-birth-witnesses",
-                str(b5_witness_out),
+                str(paths["b5_witness"]),
+                "--b5-birth-classification",
+                str(paths["b5_classification"]),
                 "--b5-birth-pair-summary",
-                str(b5_pair_out),
+                str(paths["b5_pair"]),
                 "--out",
                 str(verification_out),
             ]
@@ -964,7 +1068,7 @@ def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path
         == 0
     )
     lines = verification_out.read_text(encoding="utf-8").splitlines()
-    assert len(lines) == 7
+    assert len(lines) == 15
     assert all(line.endswith(",pass") for line in lines[1:])
 
 
@@ -1055,7 +1159,9 @@ def test_public_finite_theorem_csvs_regenerate_byte_identically(tmp_path: Path):
         prime_prefix_certificate_verification_rows(
             ck_full_csv=full_out,
             c4_exclusion_witness_csv=c4_witness_out,
+            c4_exclusion_summary_csv=c4_summary_out,
             b5_birth_witness_csv=b5_witness_out,
+            b5_birth_classification_csv=b5_classification_out,
             b5_birth_pair_summary_csv=b5_pair_out,
         ),
         verification_out,
@@ -1083,7 +1189,7 @@ def test_public_finite_theorem_csvs_regenerate_byte_identically(tmp_path: Path):
         ),
         verification_out: (
             "data/summaries/"
-            "prc_prime_prefix_certificate_verification_v1_6.csv"
+            "prc_prime_prefix_certificate_verification_v1_7.csv"
         ),
     }
     for generated_path, committed_path in expected_paths.items():

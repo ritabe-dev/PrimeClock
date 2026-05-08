@@ -734,8 +734,14 @@ def prime_prefix_certificate_verification_rows(
     c4_exclusion_witness_csv: str | Path = (
         "data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv"
     ),
+    c4_exclusion_summary_csv: str | Path = (
+        "data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv"
+    ),
     b5_birth_witness_csv: str | Path = (
         "data/summaries/prc_prime_prefix_birth_witness_v1_5.csv"
+    ),
+    b5_birth_classification_csv: str | Path = (
+        "data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv"
     ),
     b5_birth_pair_summary_csv: str | Path = (
         "data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv"
@@ -744,7 +750,9 @@ def prime_prefix_certificate_verification_rows(
     """Verify public C4/B5 certificate CSVs using low-level rational checks."""
     ck_rows = _read_csv_dicts(ck_full_csv)
     c4_exclusion_rows = _read_csv_dicts(c4_exclusion_witness_csv)
+    c4_summary_rows = _read_csv_dicts(c4_exclusion_summary_csv)
     b5_birth_rows = _read_csv_dicts(b5_birth_witness_csv)
+    b5_classification_rows = _read_csv_dicts(b5_birth_classification_csv)
     b5_pair_rows = _read_csv_dicts(b5_birth_pair_summary_csv)
 
     checks: list[PrimePrefixCertificateVerificationRow] = []
@@ -762,12 +770,38 @@ def prime_prefix_certificate_verification_rows(
         _verification_row(
             "c4_positive_closed_arc_coverage",
             total=2,
-            passed=c4_positive_passed if set(c4_positive_residues) == {2, 208} else 0,
+            passed=(
+                2
+                if (
+                    sorted(c4_positive_residues) == [2, 208]
+                    and c4_positive_passed == 2
+                )
+                else 0
+            ),
+        )
+    )
+
+    c4_expected_exclusions = set(range(210)) - {2, 208}
+    c4_exclusion_residues = [int(row["residue"]) for row in c4_exclusion_rows]
+    checks.append(
+        _verification_row(
+            "c4_exclusion_residue_set_complete",
+            total=208,
+            passed=(
+                208
+                if (
+                    len(c4_exclusion_residues) == 208
+                    and len(set(c4_exclusion_residues)) == 208
+                    and set(c4_exclusion_residues) == c4_expected_exclusions
+                )
+                else 0
+            ),
         )
     )
 
     c4_exclusion_passed = 0
     c4_witness_point_passed = 0
+    c4_exact_field_passed = 0
     for row in c4_exclusion_rows:
         residue = int(row["residue"])
         intervals = _parse_interval_list(_first_gap_boundary_text(row))
@@ -784,6 +818,22 @@ def prime_prefix_certificate_verification_rows(
                 )
             ):
                 c4_witness_point_passed += 1
+        exact_gaps = residue_uncovered_intervals(residue, [2, 3, 5, 7])
+        exact_measure = residue_uncovered_measure(residue, [2, 3, 5, 7])
+        if (
+            row.get("k") == "4"
+            and row.get("new_prime") == "7"
+            and row.get("primorial") == "210"
+            and row.get("reflection_residue") == str((-residue) % 210)
+            and row.get("open_gap_count") == str(len(exact_gaps))
+            and row.get("uncovered_measure_fraction") == _format_fraction(exact_measure)
+            and row.get("first_open_gap_boundary_endpoints")
+            == _format_intervals(exact_gaps[:1])
+            and row.get("witness_point")
+            == (_format_fraction(_circular_midpoint(exact_gaps[0])) if exact_gaps else "")
+            and row.get("open_gap_boundary_endpoints") == _format_intervals(exact_gaps)
+        ):
+            c4_exact_field_passed += 1
     checks.append(
         _verification_row(
             "c4_exclusion_open_gap_witness",
@@ -799,9 +849,68 @@ def prime_prefix_certificate_verification_rows(
                 passed=c4_witness_point_passed,
             )
         )
+    checks.append(
+        _verification_row(
+            "c4_exclusion_exact_fields",
+            total=208,
+            passed=c4_exact_field_passed if len(c4_exclusion_rows) == 208 else 0,
+        )
+    )
+
+    expected_c4_summary = _expected_c4_summary_tuples(c4_exclusion_rows)
+    actual_c4_summary = _actual_c4_summary_tuples(c4_summary_rows)
+    c4_summary_has_unique_rows = len(actual_c4_summary) == len(c4_summary_rows)
+    checks.append(
+        _verification_row(
+            "c4_summary_partitions_witness_rows",
+            total=max(len(expected_c4_summary), len(actual_c4_summary)),
+            passed=(
+                len(expected_c4_summary & actual_c4_summary)
+                if c4_summary_has_unique_rows
+                else 0
+            ),
+        )
+    )
+
+    expected_c5_rows = _expected_c5_ck_full_tuples()
+    actual_c5_rows = _actual_c5_ck_full_tuples(ck_rows)
+    c5_row_count = sum(1 for row in ck_rows if row.get("k") == "5")
+    c5_rows_have_unique_residue_status = len(actual_c5_rows) == c5_row_count
+    checks.append(
+        _verification_row(
+            "b5_ck_full_c5_rows_complete",
+            total=max(len(expected_c5_rows), len(actual_c5_rows)),
+            passed=(
+                len(expected_c5_rows & actual_c5_rows)
+                if c5_rows_have_unique_residue_status
+                else 0
+            ),
+        )
+    )
+
+    expected_b5_birth_residues = {
+        residue for residue, status in expected_c5_rows if status == "birth"
+    }
+    b5_birth_residues = [int(row["residue"]) for row in b5_birth_rows]
+    checks.append(
+        _verification_row(
+            "b5_birth_witness_residue_set_complete",
+            total=14,
+            passed=(
+                14
+                if (
+                    len(b5_birth_residues) == 14
+                    and len(set(b5_birth_residues)) == 14
+                    and set(b5_birth_residues) == expected_b5_birth_residues
+                )
+                else 0
+            ),
+        )
+    )
 
     b5_birth_coverage_passed = 0
     b5_gap_containment_passed = 0
+    b5_exact_field_passed = 0
     for row in b5_birth_rows:
         residue = int(row["residue"])
         if (
@@ -813,6 +922,8 @@ def prime_prefix_certificate_verification_rows(
         new_arcs = _parse_interval_list(row["new_prime_closed_arc_boundary_endpoints"])
         if old_gaps and all(_gap_strictly_inside_closed_arcs(gap, new_arcs) for gap in old_gaps):
             b5_gap_containment_passed += 1
+        if _b5_witness_row_matches_exact_fields(row):
+            b5_exact_field_passed += 1
     checks.append(
         _verification_row(
             "b5_birth_previous_uncovered_current_covered",
@@ -825,6 +936,30 @@ def prime_prefix_certificate_verification_rows(
             "b5_birth_old_open_gap_strictly_inside_new_arc",
             total=len(b5_birth_rows),
             passed=b5_gap_containment_passed,
+        )
+    )
+    checks.append(
+        _verification_row(
+            "b5_birth_exact_witness_fields",
+            total=14,
+            passed=b5_exact_field_passed if len(b5_birth_rows) == 14 else 0,
+        )
+    )
+
+    expected_classification = _expected_b5_classification_tuples()
+    actual_classification = _actual_b5_classification_tuples(b5_classification_rows)
+    b5_classification_has_unique_rows = (
+        len(actual_classification) == len(b5_classification_rows)
+    )
+    checks.append(
+        _verification_row(
+            "b5_birth_classification_matches_witnesses",
+            total=max(len(expected_classification), len(actual_classification)),
+            passed=(
+                len(expected_classification & actual_classification)
+                if b5_classification_has_unique_rows
+                else 0
+            ),
         )
     )
 
@@ -840,6 +975,21 @@ def prime_prefix_certificate_verification_rows(
             "b5_reflection_pair_fields",
             total=len(b5_pair_rows),
             passed=b5_reflection_passed,
+        )
+    )
+
+    expected_pair_summary = _expected_b5_pair_summary_tuples()
+    actual_pair_summary = _actual_b5_pair_summary_tuples(b5_pair_rows)
+    b5_pair_summary_has_unique_rows = len(actual_pair_summary) == len(b5_pair_rows)
+    checks.append(
+        _verification_row(
+            "b5_pair_summary_matches_classification",
+            total=max(len(expected_pair_summary), len(actual_pair_summary)),
+            passed=(
+                len(expected_pair_summary & actual_pair_summary)
+                if b5_pair_summary_has_unique_rows
+                else 0
+            ),
         )
     )
 
@@ -1256,6 +1406,213 @@ def _verification_row(
         failed=failed,
         status="pass" if failed == 0 else "fail",
     )
+
+
+def _expected_c4_summary_tuples(rows: Iterable[dict[str, str]]) -> set[tuple[str, ...]]:
+    groups: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in rows:
+        key = (row["open_gap_count"], row["uncovered_measure_fraction"])
+        groups.setdefault(key, []).append(row)
+
+    tuples: set[tuple[str, ...]] = set()
+    for (gap_count, measure_fraction), group in groups.items():
+        residues = sorted(int(row["residue"]) for row in group)
+        first_gaps = sorted({row["first_open_gap_boundary_endpoints"] for row in group})
+        tuples.add(
+            (
+                "4",
+                "7",
+                "210",
+                gap_count,
+                measure_fraction,
+                str(len(residues)),
+                " ".join(str(residue) for residue in residues),
+                " ".join(first_gaps[:8]),
+            )
+        )
+    return tuples
+
+
+def _actual_c4_summary_tuples(rows: Iterable[dict[str, str]]) -> set[tuple[str, ...]]:
+    return {
+        (
+            row["k"],
+            row["new_prime"],
+            row["primorial"],
+            row["open_gap_count"],
+            row["uncovered_measure_fraction"],
+            row["residue_count"],
+            row["residues"],
+            row["first_open_gap_boundary_endpoint_sample"],
+        )
+        for row in rows
+    }
+
+
+def _expected_c5_ck_full_tuples() -> set[tuple[int, str]]:
+    c4_residues = {2, 208}
+    tuples: set[tuple[int, str]] = set()
+    for residue in range(2310):
+        if residue_is_exactly_covered(residue, [2, 3, 5, 7, 11]):
+            status = "inherited" if residue % 210 in c4_residues else "birth"
+            tuples.add((residue, status))
+    return tuples
+
+
+def _actual_c5_ck_full_tuples(rows: Iterable[dict[str, str]]) -> set[tuple[int, str]]:
+    return {
+        (int(row["residue"]), row["status"])
+        for row in rows
+        if row.get("k") == "5"
+    }
+
+
+def _b5_witness_row_matches_exact_fields(row: dict[str, str]) -> bool:
+    residue = int(row["residue"])
+    previous_gaps = residue_uncovered_intervals(residue, [2, 3, 5, 7])
+    previous_measure = residue_uncovered_measure(residue, [2, 3, 5, 7])
+    new_arc_intervals = _exact_arc_intervals_for_residue(residue, 11)
+    return (
+        row.get("k") == "5"
+        and row.get("new_prime") == "11"
+        and row.get("primorial") == "2310"
+        and row.get("residue_mod_previous") == str(residue % 210)
+        and row.get("reflection_residue") == str((-residue) % 2310)
+        and row.get("previous_open_gap_count") == str(len(previous_gaps))
+        and row.get("previous_prefix_uncovered_measure_fraction")
+        == _format_fraction(previous_measure)
+        and row.get("previous_prefix_uncovered_measure") == str(float(previous_measure))
+        and row.get("previous_open_gap_boundary_endpoints") == _format_intervals(previous_gaps)
+        and row.get("new_prime_closed_arc_boundary_endpoints")
+        == _format_intervals(new_arc_intervals)
+        and row.get("uses_endpoint_touching")
+        == str(_uses_endpoint_touching(previous_gaps, new_arc_intervals))
+    )
+
+
+def _expected_b5_classification_rows() -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    birth_residues = sorted(
+        residue
+        for residue, status in _expected_c5_ck_full_tuples()
+        if status == "birth"
+    )
+    for residue in birth_residues:
+        reflection = (-residue) % 2310
+        pair_min = min(residue, reflection)
+        pair_max = max(residue, reflection)
+        previous_gaps = residue_uncovered_intervals(residue, [2, 3, 5, 7])
+        previous_measure = residue_uncovered_measure(residue, [2, 3, 5, 7])
+        new_arc_intervals = _exact_arc_intervals_for_residue(residue, 11)
+        rows.append(
+            {
+                "k": "5",
+                "new_prime": "11",
+                "primorial": "2310",
+                "residue": str(residue),
+                "reflection_residue": str(reflection),
+                "reflection_pair_min": str(pair_min),
+                "reflection_pair_max": str(pair_max),
+                "parent_residue_mod_previous": str(residue % 210),
+                "previous_open_gap_count": str(len(previous_gaps)),
+                "previous_prefix_uncovered_measure_fraction": _format_fraction(
+                    previous_measure
+                ),
+                "previous_prefix_uncovered_measure": str(float(previous_measure)),
+                "previous_open_gap_boundary_endpoints": _format_intervals(previous_gaps),
+                "new_prime_remainder": str(residue % 11),
+                "new_prime_closed_arc_boundary_endpoints": _format_intervals(
+                    new_arc_intervals
+                ),
+                "uses_endpoint_touching": str(
+                    _uses_endpoint_touching(previous_gaps, new_arc_intervals)
+                ),
+            }
+        )
+    return rows
+
+
+def _expected_b5_classification_tuples() -> set[tuple[str, ...]]:
+    return {_b5_classification_tuple(row) for row in _expected_b5_classification_rows()}
+
+
+def _actual_b5_classification_tuples(rows: Iterable[dict[str, str]]) -> set[tuple[str, ...]]:
+    return {_b5_classification_tuple(row) for row in rows}
+
+
+def _b5_classification_tuple(row: dict[str, str]) -> tuple[str, ...]:
+    return (
+        row["k"],
+        row["new_prime"],
+        row["primorial"],
+        row["residue"],
+        row["reflection_residue"],
+        row["reflection_pair_min"],
+        row["reflection_pair_max"],
+        row["parent_residue_mod_previous"],
+        row["previous_open_gap_count"],
+        row["previous_prefix_uncovered_measure_fraction"],
+        row["previous_prefix_uncovered_measure"],
+        row["previous_open_gap_boundary_endpoints"],
+        row["new_prime_remainder"],
+        row["new_prime_closed_arc_boundary_endpoints"],
+        row["uses_endpoint_touching"],
+    )
+
+
+def _expected_b5_pair_summary_tuples() -> set[tuple[str, ...]]:
+    groups: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in _expected_b5_classification_rows():
+        key = (row["reflection_pair_min"], row["reflection_pair_max"])
+        groups.setdefault(key, []).append(row)
+
+    tuples: set[tuple[str, ...]] = set()
+    for (pair_min, pair_max), group in sorted(groups.items()):
+        ordered = sorted(group, key=lambda row: int(row["residue"]))
+        tuples.add(
+            (
+                "5",
+                "11",
+                "2310",
+                pair_min,
+                pair_max,
+                _join_pair(row["parent_residue_mod_previous"] for row in ordered),
+                _join_pair(row["previous_open_gap_count"] for row in ordered),
+                _join_pair(
+                    row["previous_prefix_uncovered_measure_fraction"]
+                    for row in ordered
+                ),
+                _join_pair(row["previous_prefix_uncovered_measure"] for row in ordered),
+                _join_pair(row["previous_open_gap_boundary_endpoints"] for row in ordered),
+                _join_pair(row["new_prime_remainder"] for row in ordered),
+                _join_pair(
+                    row["new_prime_closed_arc_boundary_endpoints"] for row in ordered
+                ),
+                _join_pair(row["uses_endpoint_touching"] for row in ordered),
+            )
+        )
+    return tuples
+
+
+def _actual_b5_pair_summary_tuples(rows: Iterable[dict[str, str]]) -> set[tuple[str, ...]]:
+    return {
+        (
+            row["k"],
+            row["new_prime"],
+            row["primorial"],
+            row["reflection_pair_min"],
+            row["reflection_pair_max"],
+            row["parent_residue_pair_mod_previous"],
+            row["previous_open_gap_count_pair"],
+            row["previous_prefix_uncovered_measure_fraction_pair"],
+            row["previous_prefix_uncovered_measure_pair"],
+            row["previous_open_gap_boundary_endpoints_pair"],
+            row["new_prime_remainder_pair"],
+            row["new_prime_closed_arc_boundary_endpoints_pair"],
+            row["uses_endpoint_touching_pair"],
+        )
+        for row in rows
+    }
 
 
 def _parse_fraction(text: str) -> Fraction:

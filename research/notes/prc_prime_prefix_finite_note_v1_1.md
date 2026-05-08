@@ -249,7 +249,7 @@ closed intervals to be read as one uncovered set.
 The formal certificate for an excluded residue is the row-level v1.6 witness:
 take the listed `witness_point`, check that it lies strictly between the first
 open-gap boundary endpoints on the circle, and check that it is outside every
-closed arc for `p=2,3,5,7`. The independent verifier performs exactly this
+closed arc for `p=2,3,5,7`. The low-level rational CSV verifier performs exactly this
 rational check for all `208` excluded residues. The appendix table above is
 therefore a reading aid and compression of the certificate, not a replacement
 for the row-level rational witnesses.
@@ -337,19 +337,20 @@ words, the note now has three layers for `B_5`:
 2. `birth_classification`: one row per birth residue.
 3. `birth_pair_summary`: one row per reflection pair for the written table.
 
-The public v1.6 certificate bundle can be independently checked from CSV alone:
+The public v1.7 certificate bundle can be audited from CSV alone:
 
 ```bash
 cd research
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
 ```
 
-The verifier reads the public `C_4` and `B_5` CSVs and rechecks closed-arc
-coverage, open-gap witnesses, rational witness points, strict containment of
-each old open gap inside the new `p=11` closed arc, and reflection-pair fields
-using rational interval arithmetic. It does not rely on the high-level
-birth-classification generator.
+The low-level rational CSV verifier reads the public `C_4` and `B_5` CSVs and
+rechecks closed-arc coverage, open-gap witnesses, rational witness points, row
+counts, residue-set completeness, exact interval/fraction fields, the `C_4`
+summary partition, the `B_5` classification table, the reflection-pair quotient,
+and strict containment of each old open gap inside the new `p=11` closed arc.
+It does not rely on the high-level birth-classification generator.
 
 ## Relation to PRC complete covering
 

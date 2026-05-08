@@ -66,7 +66,7 @@ Canonical PRC v1 artifacts in the full repository:
 - `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
-- `data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
@@ -206,6 +206,7 @@ Regenerate the current prime-prefix artifacts:
 
 ```bash
 cd research
+python -m pip install -e ".[dev]"
 python -m prime_reciprocal_projection.cli covering-prime-prefix-profile \
   --n 1000 10000 100000 1000000 39069 372759 \
   --out data/summaries/prc_prime_prefix_profile_v0_1.csv
@@ -240,7 +241,7 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
   --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --complete-source data/summaries/prc_combined_runs_2_1000000.csv \

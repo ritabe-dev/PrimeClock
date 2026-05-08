@@ -145,7 +145,7 @@ Deliverables:
 - `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
-- `data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
 
 Commands:
 
@@ -176,7 +176,7 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
   --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
 ```
 
 Current reading:
