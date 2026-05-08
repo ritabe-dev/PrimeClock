@@ -956,6 +956,91 @@ def control_reuse_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
     return output_path.name
 
 
+def generate_prc_branch_uniform_null_figures(
+    null_csv: str | Path,
+    summary_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.9 branch-uniform null model figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    null_rows = _read_csv_rows(null_csv)
+    summary_rows = _read_csv_rows(summary_csv)
+    if not summary_rows:
+        raise ValueError("summary rows must not be empty")
+    generated = [
+        branch_uniform_observed_percentile_figure(null_rows, output_path),
+        branch_uniform_gap_count_deviation_figure(null_rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-null-model --out {null_csv} "
+            f"--summary-out {summary_csv} --figures-out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering branch-uniform null model",
+        filename="prc_branch_uniform_null_manifest.json",
+    )
+    return generated
+
+
+def branch_uniform_observed_percentile_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate observed percentile distribution by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    data = [
+        [float(row["observed_percentile"]) for row in rows if row["cohort_role"] == role]
+        for role in roles
+    ]
+    fig, ax = plt.subplots(figsize=(9, 5.6))
+    ax.boxplot(data, tick_labels=roles, showmeans=True)
+    ax.axhline(0.05, color="tab:red", linewidth=1.0, alpha=0.55, label="null p05")
+    ax.axhline(0.50, color="black", linewidth=1.0, alpha=0.45, label="null median")
+    ax.set_xticklabels(roles, rotation=18, ha="right")
+    ax.set_ylim(-0.03, 1.03)
+    ax.set_ylabel("observed percentile among null gap counts")
+    ax.set_title("PRC v0.9 observed residual gap count under branch-uniform null")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_uniform_null_percentile_v0_9.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def branch_uniform_gap_count_deviation_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate observed-minus-null-median gap count deviation by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    data = [
+        [
+            float(row["observed_residual_gap_count"]) - float(row["null_gap_count_p50"])
+            for row in rows
+            if row["cohort_role"] == role
+        ]
+        for role in roles
+    ]
+    fig, ax = plt.subplots(figsize=(9, 5.6))
+    ax.boxplot(data, tick_labels=roles, showmeans=True)
+    ax.axhline(0.0, color="black", linewidth=1.0, alpha=0.55)
+    ax.set_xticklabels(roles, rotation=18, ha="right")
+    ax.set_ylabel("observed gap count - null median")
+    ax.set_title("PRC v0.9 branch-uniform null deviation")
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_uniform_null_deviation_v0_9.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
 def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
     with Path(path).open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))

@@ -161,20 +161,46 @@ Current v0.8 reading:
 - `band_ordinary_control` remains strong but is heavily reused and should stay
   a weak-control diagnostic.
 
-## v0.9 Direction
+## v0.9 Branch-Uniform Null
 
 Goal: test whether the residual-gap-count signal survives a structure-preserving
-null model.
+null model, and return the main line to `A(N)` / residual structure rather than
+selected complete values.
+
+Current v0.9 outputs:
+
+- `data/summaries/prc_branch_uniform_null_v0_9.csv`
+- `data/summaries/prc_branch_uniform_null_summary_v0_9.csv`
+- `figures/v0/prc_branch_uniform_null_percentile_v0_9.png`
+- `figures/v0/prc_branch_uniform_null_deviation_v0_9.png`
+- `notes/prc_main_v0_9.md`
+
+Current v0.9 reading:
+
+- The null preserves branch sizes and arc widths, then randomizes centers.
+- All four cohorts have high median observed percentiles against this null:
+  `0.929`, `0.949`, `0.957`, `0.962`.
+- This does not support the idea that complete rows have absolutely low
+  residual component count under random covering.
+- The stronger observation is broad: PRC residual sets are more fragmented than
+  branch-uniform random placements with the same widths.
+
+## v1.0 Direction
+
+Goal: consolidate the PRC research artifact into a short readable note without
+adding another exploratory metric.
 
 Priority order:
 
-1. branch-wise shuffled centers with fixed branch sizes
-2. local branch-bucket shuffled centers if full branch shuffling is too loose
-3. cluster-level statistic against the shuffled null
-4. larger local/mod-6 matched complete cohort
-5. true seeded random controls
+1. write a v1.0 Japanese/English research note around `A(N)` and residual
+   fragmentation
+2. explain the branch-uniform null and why it is intentionally loose
+3. separate complete-vs-control observations from PRC-vs-null observations
+4. list the next stricter nulls: local branch-bucket shuffle and arithmetic
+   order-preserving controls
+5. defer larger complete-cohort expansion and `N<=10^7` scan
 
-Until v0.9, `residual_gap_count` should be treated as an exploratory
+Until v1.0, `residual_gap_count` should be treated as an exploratory
 diagnostic, not as an explanation of `A(N)=0`.
 
 Non-claims until v0.5:
@@ -186,6 +212,8 @@ Non-claims until v0.5:
 - no claim that v0.7 p-values are confirmatory
 - no claim that v0.8 cluster-level p-values are confirmatory
 - no claim that the weak `band_ordinary_control` signal is robust
+- no claim that branch-uniform null is the final null model
+- no claim that high PRC residual fragmentation is asymptotic
 
 ## Canonical Data Scope
 

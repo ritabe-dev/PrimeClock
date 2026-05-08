@@ -37,6 +37,15 @@ from .covering_branch_fill_cohorts import (
     write_cohort_manifest_csv,
 )
 from .covering_metrics import covering_row, covering_table
+from .covering_null_model import (
+    branch_uniform_arc_template,
+    branch_uniform_null_rows,
+    branch_uniform_null_summary_rows,
+    branch_uniform_sample_arcs,
+    read_branch_uniform_null_csv,
+    write_branch_uniform_null_csv,
+    write_branch_uniform_null_summary_csv,
+)
 from .covering_residual_gaps import (
     benjamini_hochberg_q_values,
     bootstrap_median_delta_ci,
@@ -94,6 +103,10 @@ __all__ = [
     "branch_fill_summary_table",
     "branch_fill_summary_rows",
     "branch_fill_table",
+    "branch_uniform_arc_template",
+    "branch_uniform_null_rows",
+    "branch_uniform_null_summary_rows",
+    "branch_uniform_sample_arcs",
     "build_cohort_manifest",
     "build_cohort_manifest_from_runs_csv",
     "benchmark_prefilter_windows",
@@ -145,6 +158,7 @@ __all__ = [
     "rho_n_pnt",
     "read_cluster_scan_csv",
     "read_branch_fill_csv",
+    "read_branch_uniform_null_csv",
     "read_residual_gap_pair_delta_csv",
     "read_residual_gap_csv",
     "scan_cluster_table",
@@ -162,6 +176,8 @@ __all__ = [
     "write_control_reuse_detail_csv",
     "write_branch_fill_csv",
     "write_branch_fill_summary_csv",
+    "write_branch_uniform_null_csv",
+    "write_branch_uniform_null_summary_csv",
     "write_cohort_branch_fill_checkpoints_csv",
     "write_cohort_branch_fill_summary_csv",
     "write_cohort_manifest_csv",

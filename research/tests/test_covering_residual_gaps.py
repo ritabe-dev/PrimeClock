@@ -4,6 +4,12 @@ import pytest
 
 from prime_reciprocal_projection.cli import main
 from prime_reciprocal_projection.covering_branch_fill_cohorts import CohortManifestRow
+from prime_reciprocal_projection.covering_null_model import (
+    branch_uniform_arc_template,
+    branch_uniform_null_rows,
+    branch_uniform_null_summary_rows,
+    branch_uniform_sample_arcs,
+)
 from prime_reciprocal_projection.covering_residual_gaps import (
     benjamini_hochberg_q_values,
     bootstrap_median_delta_ci,
@@ -290,6 +296,105 @@ def test_residual_gap_count_test_cli_writes_outputs(tmp_path):
     assert len(secondary_rows) == 6
     assert test_rows[0]["metric"] == "residual_gap_count"
     assert test_rows[0]["non_tie_pair_count"] == "2"
+
+
+def test_branch_uniform_sample_preserves_branch_sizes_and_widths():
+    template = branch_uniform_arc_template(200, max_branch=5)
+    sampled = branch_uniform_sample_arcs(200, max_branch=5)
+    assert len(sampled) == len(template)
+    assert sorted(branch for branch, _, _ in sampled) == sorted(arc.branch for arc in template)
+    assert sorted(radius for _, _, radius in sampled) == sorted(arc.radius for arc in template)
+    assert all(0.0 <= center < 1.0 for _, center, _ in sampled)
+
+
+def test_branch_uniform_null_rows_are_seeded_and_summarized():
+    manifest = [
+        CohortManifestRow(3000, "complete", 3000, 0, 2500, 3500, 0, True, ""),
+        CohortManifestRow(3000, "local_mod6_control", 3006, 0, 2500, 3500, 0, True, ""),
+    ]
+    observed = residual_gap_rows(manifest, max_branch=100)
+    first = branch_uniform_null_rows(
+        manifest,
+        observed,
+        max_branch=100,
+        iterations=10,
+        seed=1729,
+    )
+    second = branch_uniform_null_rows(
+        manifest,
+        observed,
+        max_branch=100,
+        iterations=10,
+        seed=1729,
+    )
+    assert first == second
+    assert len(first) == 2
+    for row in first:
+        assert row.model == "branch_uniform"
+        assert row.iterations == 10
+        assert 0.0 <= row.observed_percentile <= 1.0
+        assert 0.0 <= row.observed_less_than_null_rate <= 1.0
+    summary = branch_uniform_null_summary_rows(first)
+    assert [row.cohort_role for row in summary] == ["complete", "local_mod6_control"]
+
+
+def test_branch_uniform_null_rejects_zero_iterations():
+    with pytest.raises(ValueError, match="iterations"):
+        branch_uniform_null_rows([], [], iterations=0)
+
+
+def test_branch_uniform_null_cli_writes_outputs(tmp_path):
+    manifest = tmp_path / "manifest.csv"
+    manifest.write_text(
+        "\n".join(
+            [
+                "seed_n,cohort_role,n,bin_index,bin_start,bin_stop,n_mod_6,eligible,exclusion_reason",
+                "3000,complete,3000,0,2500,3500,0,True,",
+                "3000,local_mod6_control,3006,0,2500,3500,0,True,",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    observed = tmp_path / "observed.csv"
+    observed.write_text(
+        "\n".join(
+            [
+                "seed_n,cohort_role,n,bin_index,max_branch,max_possible_branch,prefix_exhausts_all_branches,seed_analysis_eligible,full_uncovered_measure,exact_complete,residual_uncovered_measure,residual_gap_count,residual_gap_max,residual_gap_p50,residual_gap_p90,residual_gap_p99,residual_gap_entropy,residual_top_gap_share,residual_gap_near_zero_count",
+                "3000,complete,3000,0,100,1500,False,True,0.0,True,0.3,3,0.2,0.1,0.2,0.2,0.8,0.66,0",
+                "3000,local_mod6_control,3006,0,100,1503,False,True,0.1,False,0.4,4,0.2,0.1,0.2,0.2,0.9,0.50,1",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "null.csv"
+    summary = tmp_path / "summary.csv"
+    assert (
+        main(
+            [
+                "covering-branch-fill-null-model",
+                "--manifest",
+                str(manifest),
+                "--observed",
+                str(observed),
+                "--max-branch",
+                "100",
+                "--iterations",
+                "10",
+                "--out",
+                str(out),
+                "--summary-out",
+                str(summary),
+                "--skip-figures",
+            ]
+        )
+        == 0
+    )
+    rows = list(csv.DictReader(out.open(encoding="utf-8")))
+    summary_rows = list(csv.DictReader(summary.open(encoding="utf-8")))
+    assert len(rows) == 2
+    assert len(summary_rows) == 2
+    assert rows[0]["model"] == "branch_uniform"
+    assert rows[0]["iterations"] == "10"
 
 
 def test_seed_cluster_audit_groups_same_bin_with_radius():

@@ -31,6 +31,12 @@ from .covering_branch_fill_cohorts import (
     write_cohort_branch_fill_summary_csv,
     write_cohort_manifest_csv,
 )
+from .covering_null_model import (
+    branch_uniform_null_rows,
+    branch_uniform_null_summary_rows,
+    write_branch_uniform_null_csv,
+    write_branch_uniform_null_summary_csv,
+)
 from .covering_residual_gaps import (
     cluster_level_gap_count_direction_rows,
     control_reuse_detail_rows,
@@ -76,6 +82,7 @@ from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
     generate_prc_branch_fill_cohort_figures,
     generate_prc_branch_fill_figures,
+    generate_prc_branch_uniform_null_figures,
     generate_prc_cluster_audit_figures,
     generate_prc_residual_gap_count_test_figures,
     generate_prc_residual_gap_pair_figures,
@@ -348,6 +355,36 @@ def main(argv: list[str] | None = None) -> int:
         "--skip-figures",
         action="store_true",
         help="write only the v0.8 CSVs",
+    )
+
+    covering_branch_fill_null_model = subparsers.add_parser(
+        "covering-branch-fill-null-model",
+        help="generate v0.9 branch-prefix null model comparison diagnostics",
+    )
+    covering_branch_fill_null_model.add_argument(
+        "--manifest", default="data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv"
+    )
+    covering_branch_fill_null_model.add_argument(
+        "--observed", default="data/summaries/prc_branch_fill_residual_gaps_v0_5.csv"
+    )
+    covering_branch_fill_null_model.add_argument(
+        "--model", choices=["branch_uniform"], default="branch_uniform"
+    )
+    covering_branch_fill_null_model.add_argument("--max-branch", type=int, default=1000)
+    covering_branch_fill_null_model.add_argument("--iterations", type=int, default=1000)
+    covering_branch_fill_null_model.add_argument("--seed", type=int, default=1729)
+    covering_branch_fill_null_model.add_argument(
+        "--out", default="data/summaries/prc_branch_uniform_null_v0_9.csv"
+    )
+    covering_branch_fill_null_model.add_argument(
+        "--summary-out",
+        default="data/summaries/prc_branch_uniform_null_summary_v0_9.csv",
+    )
+    covering_branch_fill_null_model.add_argument("--figures-out", default="figures/v0")
+    covering_branch_fill_null_model.add_argument(
+        "--skip-figures",
+        action="store_true",
+        help="write only the v0.9 CSVs",
     )
 
     covering_certify = subparsers.add_parser(
@@ -685,6 +722,32 @@ def main(argv: list[str] | None = None) -> int:
             "covering-branch-fill-cluster-audit: "
             f"cluster_rows={len(cluster_rows)}, direction_rows={len(direction_rows)}, "
             f"reuse_rows={len(reuse_rows)}, figures={len(generated)}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-null-model":
+        rows = branch_uniform_null_rows(
+            read_cohort_manifest_csv(args.manifest),
+            read_residual_gap_csv(args.observed),
+            model=args.model,
+            max_branch=args.max_branch,
+            iterations=args.iterations,
+            seed=args.seed,
+        )
+        summary_rows = branch_uniform_null_summary_rows(rows)
+        write_branch_uniform_null_csv(rows, args.out)
+        write_branch_uniform_null_summary_csv(summary_rows, args.summary_out)
+        generated = (
+            []
+            if args.skip_figures
+            else generate_prc_branch_uniform_null_figures(
+                args.out,
+                args.summary_out,
+                args.figures_out,
+            )
+        )
+        print(
+            "covering-branch-fill-null-model: "
+            f"rows={len(rows)}, summary_rows={len(summary_rows)}, figures={len(generated)}"
         )
         return 0
     if args.command == "covering-certify":

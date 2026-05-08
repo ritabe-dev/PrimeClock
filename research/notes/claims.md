@@ -52,6 +52,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.6 paired residual-gap summary, complete rows have fewer residual components than matched controls in `22/33`, `19/33`, and `26/33` pairs for the three control roles; top-gap-share direction is mixed across controls | Experiment |
 | In the exploratory v0.7 residual-gap-count test, the weaker `band_ordinary_control` comparison has sign-test `p=0.00132` and BH `q=0.00396`, while the harder `local_mod6_control` and `band_mod6_control` comparisons have BH `q=0.1202` and `0.2810`; this is discovery evidence only | Experiment |
 | In the exploratory v0.8 cluster audit, the 33 eligible seeds collapse to 11 clusters; complete rows have fewer residual components in `9/11`, `6/11`, and `10/11` clusters for the three control roles, with the hard `local_mod6_control` result remaining suggestive but not confirmatory | Experiment |
+| In the v0.9 branch-uniform null model with 1000 iterations per row, all four cohorts have high median observed residual-gap-count percentiles (`0.929`, `0.949`, `0.957`, `0.962`), suggesting broad PRC residual fragmentation relative to that null rather than a complete-specific low-component effect | Experiment |
 
 ## Non-Claims
 
@@ -88,6 +89,11 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the `band_ordinary_control` signal is robust,
   because that control role is a band-center non-complete control and has heavy
   reuse.
+- This project does not claim the v0.9 branch-uniform null is the final or
+  uniquely correct null model; it deliberately destroys within-branch arithmetic
+  phase structure.
+- This project does not claim from v0.9 that high residual fragmentation is
+  asymptotic or universal.
 
 ## Known-Result Check
 

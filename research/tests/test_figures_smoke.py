@@ -325,3 +325,45 @@ def test_prc_cluster_audit_figures_smoke(tmp_path):
     for filename in generated:
         assert (tmp_path / filename).exists()
     assert (tmp_path / "prc_cluster_audit_manifest.json").exists()
+
+
+def test_prc_branch_uniform_null_figures_smoke(tmp_path):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg", force=True)
+    except ModuleNotFoundError:
+        pytest.skip("matplotlib is not installed in this environment")
+
+    from prime_reciprocal_projection.figures import generate_prc_branch_uniform_null_figures
+
+    null_csv = tmp_path / "null.csv"
+    null_csv.write_text(
+        "\n".join(
+            [
+                "seed_n,cohort_role,n,model,iterations,observed_residual_gap_count,null_gap_count_mean,null_gap_count_p05,null_gap_count_p50,null_gap_count_p95,observed_percentile,observed_less_than_null_rate",
+                "3000,complete,3000,branch_uniform,10,3,5.0,2,5,8,0.2,0.8",
+                "3000,local_mod6_control,3006,branch_uniform,10,4,5.0,2,5,8,0.4,0.6",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    summary_csv = tmp_path / "summary.csv"
+    summary_csv.write_text(
+        "\n".join(
+            [
+                "cohort_role,eligible_row_count,median_observed_percentile,median_observed_less_than_null_rate,rows_below_null_p05,rows_above_null_p95",
+                "complete,1,0.2,0.8,0,0",
+                "local_mod6_control,1,0.4,0.6,0,0",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    generated = generate_prc_branch_uniform_null_figures(null_csv, summary_csv, tmp_path)
+    assert set(generated) == {
+        "prc_branch_uniform_null_percentile_v0_9.png",
+        "prc_branch_uniform_null_deviation_v0_9.png",
+    }
+    for filename in generated:
+        assert (tmp_path / filename).exists()
+    assert (tmp_path / "prc_branch_uniform_null_manifest.json").exists()

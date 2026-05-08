@@ -1,0 +1,5 @@
+cohort_role,eligible_row_count,median_observed_percentile,median_observed_less_than_null_rate,rows_below_null_p05,rows_above_null_p95
+complete,33,0.929,0.071,0,12
+local_mod6_control,33,0.949,0.051,1,16
+band_mod6_control,33,0.957,0.043,0,17
+band_ordinary_control,33,0.962,0.038,0,18

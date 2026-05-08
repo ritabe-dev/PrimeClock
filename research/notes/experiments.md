@@ -693,3 +693,58 @@ Control reuse:
 Reading: the local mod-6 result remains suggestive after clustering, but the
 hard controls do not confirm the signal. The strongest numeric result is still
 in `band_ordinary_control`, which is the weakest and most reused control role.
+
+## PRC Main v0.9 Branch-Uniform Null Model
+
+The v0.9 null model checks whether the observed `K=1000`
+`residual_gap_count` is unusual after preserving branch sizes and prime arc
+widths but replacing centers by independent uniform random centers.
+
+Command:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-null-model \
+  --manifest data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv \
+  --observed data/summaries/prc_branch_fill_residual_gaps_v0_5.csv \
+  --model branch_uniform \
+  --max-branch 1000 \
+  --iterations 1000 \
+  --seed 1729 \
+  --out data/summaries/prc_branch_uniform_null_v0_9.csv \
+  --summary-out data/summaries/prc_branch_uniform_null_summary_v0_9.csv \
+  --figures-out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_branch_uniform_null_v0_9.csv
+data/summaries/prc_branch_uniform_null_summary_v0_9.csv
+figures/v0/prc_branch_uniform_null_percentile_v0_9.png
+figures/v0/prc_branch_uniform_null_deviation_v0_9.png
+figures/v0/prc_branch_uniform_null_manifest.json
+```
+
+Recorded local run:
+
+```text
+132 per-row null summaries
+4 cohort summaries
+1000 iterations per row
+runtime about 1162s
+```
+
+Summary:
+
+| cohort | rows | median observed percentile | median observed < null rate | below null p05 | above null p95 |
+|---|---:|---:|---:|---:|---:|
+| complete | 33 | 0.929 | 0.071 | 0 | 12 |
+| local_mod6_control | 33 | 0.949 | 0.051 | 1 | 16 |
+| band_mod6_control | 33 | 0.957 | 0.043 | 0 | 17 |
+| band_ordinary_control | 33 | 0.962 | 0.038 | 0 | 18 |
+
+Reading: the branch-uniform null does not support the idea that complete rows
+have unusually low residual component count in an absolute random-covering
+sense. Instead, all cohorts have high observed percentiles. The stronger
+v0.9 observation is that PRC residual sets are more fragmented than
+branch-uniform random placements with the same widths.
