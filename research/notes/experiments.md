@@ -220,9 +220,9 @@ The v1.2 certificate/classification layer adds:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses-v1-6 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
   --k 4 \
@@ -238,9 +238,11 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
 ```
 
 The `C_4` exclusion witness table has `208` data rows, one for every residue
-outside `{2,208} mod 210`. The exclusion summary compresses these into `36`
-component/measure classes: `22` one-gap classes covering `143` residues and
-`14` two-gap classes covering `65` residues. The `B_5` classification table
+outside `{2,208} mod 210`. The current v1.6 witness table records exact
+uncovered-measure fractions, open-gap boundary endpoints, and one rational
+interior `witness_point` per row. The exclusion summary compresses these into
+`36` component/measure classes: `22` one-gap classes covering `143` residues
+and `14` two-gap classes covering `65` residues. The `B_5` classification table
 has `14` rows and records reflection pairs, parent residues modulo `210`, old
 gap templates, and new residues modulo `11`. The `B_5` pair summary compresses
 those rows into `7` reflection-pair rows for the paper-facing table. All `B_5`
@@ -269,12 +271,13 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
   --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
 ```
 
-The verifier currently reports `5` checks and `0` failures. It treats C4
-witnesses as rational open gaps with covered boundary endpoints allowed, and
-checks B5 gap closure using closed arcs.
+The verifier currently reports `6` checks and `0` failures. It treats C4
+witnesses as rational open gaps with covered boundary endpoints allowed, checks
+the explicit C4 `witness_point` column, and checks B5 gap closure using closed
+arcs.
 
 ## PRC Candidate Windows
 

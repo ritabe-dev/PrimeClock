@@ -70,6 +70,7 @@ from .covering_prime_prefix_filtration import (
     prime_prefix_exclusion_summary_rows,
     prime_prefix_exclusion_summary_v15_rows,
     prime_prefix_exclusion_witness_rows,
+    prime_prefix_exclusion_witness_v16_rows,
     prime_prefix_residue_full_rows,
     prime_prefix_residue_filtration_tables,
     write_prime_prefix_birth_classification_csv,
@@ -82,6 +83,7 @@ from .covering_prime_prefix_filtration import (
     write_prime_prefix_exclusion_summary_csv,
     write_prime_prefix_exclusion_summary_v15_csv,
     write_prime_prefix_exclusion_witness_csv,
+    write_prime_prefix_exclusion_witness_v16_csv,
     write_prime_prefix_residue_full_csv,
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
@@ -313,6 +315,21 @@ def main(argv: list[str] | None = None) -> int:
         default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv",
     )
 
+    covering_prime_prefix_exclusion_witnesses_v16 = subparsers.add_parser(
+        "covering-prime-prefix-exclusion-witnesses-v1-6",
+        help="export theorem-oriented C4 gap witnesses with rational interior points",
+    )
+    covering_prime_prefix_exclusion_witnesses_v16.add_argument("--k", type=int, default=4)
+    covering_prime_prefix_exclusion_witnesses_v16.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exclusion witnesses beyond the small-k guardrail",
+    )
+    covering_prime_prefix_exclusion_witnesses_v16.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv",
+    )
+
     covering_prime_prefix_exclusion_summary = subparsers.add_parser(
         "covering-prime-prefix-exclusion-summary",
         help="export compressed exclusion-witness classes for one prefix",
@@ -428,7 +445,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     covering_prime_prefix_verify_certificates.add_argument(
         "--c4-exclusion-witnesses",
-        default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv",
+        default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv",
     )
     covering_prime_prefix_verify_certificates.add_argument(
         "--b5-birth-witnesses",
@@ -1176,6 +1193,17 @@ def main(argv: list[str] | None = None) -> int:
         write_prime_prefix_exclusion_witness_csv(rows, args.out)
         print(
             "covering-prime-prefix-exclusion-witnesses: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-exclusion-witnesses-v1-6":
+        rows = prime_prefix_exclusion_witness_v16_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_exclusion_witness_v16_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-exclusion-witnesses-v1-6: "
             f"rows={len(rows)}, k={args.k}, out={args.out}"
         )
         return 0

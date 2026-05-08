@@ -48,6 +48,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In `B_5`, every birth closes exactly one previous gap; six reflection pairs close a gap of length `1/20`, one pair closes a gap of length `1/21`, and no pair uses endpoint touching | Exact generated artifact |
 | The v1.5 theorem CSVs add exact fraction columns for `B_5` gap measures and complete residue lists for the `36` C4 exclusion classes; decimal measure columns are summaries only | Exact generated artifact |
 | The v1.5 certificate verifier reads the public C4/B5 CSVs and checks closed-arc coverage, open-gap witnesses, strict containment of old gaps in new `p=11` arcs, and reflection-pair fields with rational interval arithmetic | Exact generated artifact |
+| The v1.6 C4 exclusion-witness table adds one rational `witness_point` inside the first open gap for each of the `208` residues outside `{2,208} mod 210`, and the v1.6 verifier checks all witness points | Exact generated artifact |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |

@@ -155,15 +155,17 @@ gap witness per residue:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses-v1-6 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv
 ```
 
 The witness CSV has `208` data rows. Each row gives boundary endpoints for a
 nonempty rational open gap for a residue not in `C_4`. Since the arcs are
 closed, the gap boundary endpoints themselves may be covered; the certified
-uncovered object is the open interval between them.
+uncovered object is the open interval between them. The v1.6 witness table also
+records a rational `witness_point` inside the first open gap, so each exclusion
+row has a directly checkable interior point.
 
 The 208 witnesses can be compressed into 36 measure/component classes:
 
@@ -275,18 +277,19 @@ words, the note now has three layers for `B_5`:
 2. `birth_classification`: one row per birth residue.
 3. `birth_pair_summary`: one row per reflection pair for the written table.
 
-The public v1.5 certificate bundle can be independently checked from CSV alone:
+The public v1.6 certificate bundle can be independently checked from CSV alone:
 
 ```bash
 cd research
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
 ```
 
 The verifier reads the public `C_4` and `B_5` CSVs and rechecks closed-arc
-coverage, open-gap witnesses, strict containment of each old open gap inside
-the new `p=11` closed arc, and reflection-pair fields using rational interval
-arithmetic. It does not rely on the high-level birth-classification generator.
+coverage, open-gap witnesses, rational witness points, strict containment of
+each old open gap inside the new `p=11` closed arc, and reflection-pair fields
+using rational interval arithmetic. It does not rely on the high-level
+birth-classification generator.
 
 ## Relation to PRC complete covering
 
@@ -313,8 +316,5 @@ Rows without a certificate through checked `k` should be called
 1. Turn the v1.5 36-class `C_4` exclusion table into a compact written
    appendix; the table is already machine-verifiable, but a hand compression
    would be better for human reading.
-2. Add an independent witness-point column to the row-level `C_4` exclusion
-   CSV if a reviewer wants a one-point gap certificate rather than boundary
-   endpoints.
-3. Extend the same witness/classification/pair-summary format to `B_6`,
+2. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.

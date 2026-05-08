@@ -61,12 +61,12 @@ Canonical PRC v1 artifacts in the full repository:
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv`
 - `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
-- `data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
@@ -219,9 +219,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --max-k 5 \
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses-v1-6 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
   --k 4 \
@@ -240,7 +240,7 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
   --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --complete-source data/summaries/prc_combined_runs_2_1000000.csv \

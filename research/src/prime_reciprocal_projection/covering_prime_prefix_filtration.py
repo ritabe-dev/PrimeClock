@@ -92,6 +92,23 @@ class PrimePrefixExclusionWitnessRow:
 
 
 @dataclass(frozen=True)
+class PrimePrefixExclusionWitnessV16Row:
+    """Theorem-oriented exclusion witness with a rational interior point."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    reflection_residue: int
+    open_gap_count: int
+    uncovered_measure_fraction: str
+    uncovered_measure: float
+    first_open_gap_boundary_endpoints: str
+    witness_point: str
+    open_gap_boundary_endpoints: str
+
+
+@dataclass(frozen=True)
 class PrimePrefixBirthClassificationRow:
     """Template-oriented classification for one birth residue."""
 
@@ -363,6 +380,45 @@ def prime_prefix_exclusion_witness_rows(
                 uncovered_measure=float(residue_uncovered_measure(residue, primes)),
                 first_uncovered_interval=_format_intervals(gaps[:1]),
                 uncovered_intervals=_format_intervals(gaps),
+            )
+        )
+    return rows
+
+
+def prime_prefix_exclusion_witness_v16_rows(
+    *,
+    k: int = 4,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixExclusionWitnessV16Row]:
+    """Return theorem-oriented gap witnesses with explicit interior points."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    primes = _first_primes(k)
+    primorial = _primorial(primes)
+    covered = {
+        row.residue
+        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=allow_large_k)
+        if row.k == k
+    }
+    rows: list[PrimePrefixExclusionWitnessV16Row] = []
+    for residue in range(primorial):
+        if residue in covered:
+            continue
+        gaps = residue_uncovered_intervals(residue, primes)
+        measure = residue_uncovered_measure(residue, primes)
+        first_gap = gaps[0]
+        rows.append(
+            PrimePrefixExclusionWitnessV16Row(
+                k=k,
+                new_prime=primes[-1],
+                primorial=primorial,
+                residue=residue,
+                reflection_residue=(-residue) % primorial,
+                open_gap_count=len(gaps),
+                uncovered_measure_fraction=_format_fraction(measure),
+                uncovered_measure=float(measure),
+                first_open_gap_boundary_endpoints=_format_intervals([first_gap]),
+                witness_point=_format_fraction(_circular_midpoint(first_gap)),
+                open_gap_boundary_endpoints=_format_intervals(gaps),
             )
         )
     return rows
@@ -676,7 +732,7 @@ def prime_prefix_certificate_verification_rows(
     *,
     ck_full_csv: str | Path = "data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
     c4_exclusion_witness_csv: str | Path = (
-        "data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv"
+        "data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv"
     ),
     b5_birth_witness_csv: str | Path = (
         "data/summaries/prc_prime_prefix_birth_witness_v1_5.csv"
@@ -711,11 +767,23 @@ def prime_prefix_certificate_verification_rows(
     )
 
     c4_exclusion_passed = 0
+    c4_witness_point_passed = 0
     for row in c4_exclusion_rows:
         residue = int(row["residue"])
-        intervals = _parse_interval_list(row["first_uncovered_interval"])
+        intervals = _parse_interval_list(_first_gap_boundary_text(row))
         if intervals and _has_valid_open_gap_witness(residue, [2, 3, 5, 7], intervals[0]):
             c4_exclusion_passed += 1
+        if intervals and "witness_point" in row:
+            witness_point = _parse_fraction(row["witness_point"])
+            if (
+                _point_in_open_interval(witness_point, intervals[0])
+                and not _point_is_covered_by_closed_arcs(
+                    witness_point,
+                    residue,
+                    [2, 3, 5, 7],
+                )
+            ):
+                c4_witness_point_passed += 1
     checks.append(
         _verification_row(
             "c4_exclusion_open_gap_witness",
@@ -723,6 +791,14 @@ def prime_prefix_certificate_verification_rows(
             passed=c4_exclusion_passed,
         )
     )
+    if c4_exclusion_rows and "witness_point" in c4_exclusion_rows[0]:
+        checks.append(
+            _verification_row(
+                "c4_exclusion_rational_witness_point",
+                total=len(c4_exclusion_rows),
+                passed=c4_witness_point_passed,
+            )
+        )
 
     b5_birth_coverage_passed = 0
     b5_gap_containment_passed = 0
@@ -970,6 +1046,14 @@ def write_prime_prefix_exclusion_witness_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixExclusionWitnessRow)
 
 
+def write_prime_prefix_exclusion_witness_v16_csv(
+    rows: Iterable[PrimePrefixExclusionWitnessV16Row],
+    output_path: str | Path,
+) -> None:
+    """Write theorem-oriented exclusion witness rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixExclusionWitnessV16Row)
+
+
 def write_prime_prefix_exclusion_summary_csv(
     rows: Iterable[PrimePrefixExclusionSummaryRow],
     output_path: str | Path,
@@ -1189,6 +1273,10 @@ def _parse_interval_list(text: str) -> list[ExactInterval]:
         start, end = item.split("-", 1)
         intervals.append((_parse_fraction(start), _parse_fraction(end)))
     return intervals
+
+
+def _first_gap_boundary_text(row: dict[str, str]) -> str:
+    return row.get("first_open_gap_boundary_endpoints") or row.get("first_uncovered_interval", "")
 
 
 def _has_valid_open_gap_witness(

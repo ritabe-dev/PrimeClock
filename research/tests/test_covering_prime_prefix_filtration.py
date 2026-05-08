@@ -16,6 +16,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     PrimePrefixExclusionSummaryRow,
     PrimePrefixExclusionSummaryV15Row,
     PrimePrefixExclusionWitnessRow,
+    PrimePrefixExclusionWitnessV16Row,
     PrimePrefixResidueBirthSampleRow,
     PrimePrefixResidueFiltrationRow,
     PrimePrefixResidueFullRow,
@@ -29,6 +30,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     prime_prefix_exclusion_summary_rows,
     prime_prefix_exclusion_summary_v15_rows,
     prime_prefix_exclusion_witness_rows,
+    prime_prefix_exclusion_witness_v16_rows,
     prime_prefix_residue_filtration_tables,
     prime_prefix_residue_full_rows,
     residue_is_exactly_covered,
@@ -43,6 +45,7 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     write_prime_prefix_exclusion_summary_csv,
     write_prime_prefix_exclusion_summary_v15_csv,
     write_prime_prefix_exclusion_witness_csv,
+    write_prime_prefix_exclusion_witness_v16_csv,
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
     write_prime_prefix_residue_full_csv,
@@ -178,6 +181,27 @@ def test_prime_prefix_c4_exclusion_witness_rows():
         assert row.uncovered_measure > 0
         assert row.first_uncovered_interval
         assert row.uncovered_intervals
+        assert not residue_is_exactly_covered(row.residue, [2, 3, 5, 7])
+
+
+def test_prime_prefix_c4_exclusion_witness_v16_rows():
+    rows = prime_prefix_exclusion_witness_v16_rows(k=4)
+    residues = {row.residue for row in rows}
+    assert len(rows) == 208
+    assert 2 not in residues
+    assert 208 not in residues
+    first = rows[0]
+    assert first.residue == 0
+    assert first.uncovered_measure_fraction == "1/2"
+    assert first.first_open_gap_boundary_endpoints == "1/4-3/4"
+    assert first.witness_point == "1/2"
+    assert first.open_gap_boundary_endpoints == "1/4-3/4"
+    for row in rows:
+        assert row.open_gap_count > 0
+        assert row.uncovered_measure_fraction
+        assert row.witness_point
+        assert row.first_open_gap_boundary_endpoints
+        assert row.open_gap_boundary_endpoints
         assert not residue_is_exactly_covered(row.residue, [2, 3, 5, 7])
 
 
@@ -459,6 +483,7 @@ def test_write_prime_prefix_v15_csv_headers(tmp_path: Path):
     witness_out = tmp_path / "witness_v15.csv"
     classification_out = tmp_path / "classification_v15.csv"
     pair_summary_out = tmp_path / "pair_summary_v15.csv"
+    exclusion_witness_out = tmp_path / "exclusion_witness_v16.csv"
     exclusion_summary_out = tmp_path / "exclusion_summary_v15.csv"
     verification_out = tmp_path / "verification.csv"
     write_prime_prefix_birth_witness_v15_csv(
@@ -540,6 +565,24 @@ def test_write_prime_prefix_v15_csv_headers(tmp_path: Path):
         ],
         exclusion_summary_out,
     )
+    write_prime_prefix_exclusion_witness_v16_csv(
+        [
+            PrimePrefixExclusionWitnessV16Row(
+                k=4,
+                new_prime=7,
+                primorial=210,
+                residue=0,
+                reflection_residue=0,
+                open_gap_count=1,
+                uncovered_measure_fraction="1/2",
+                uncovered_measure=0.5,
+                first_open_gap_boundary_endpoints="1/4-3/4",
+                witness_point="1/2",
+                open_gap_boundary_endpoints="1/4-3/4",
+            )
+        ],
+        exclusion_witness_out,
+    )
     write_prime_prefix_certificate_verification_csv(
         [
             PrimePrefixCertificateVerificationRow(
@@ -577,6 +620,12 @@ def test_write_prime_prefix_v15_csv_headers(tmp_path: Path):
         "k,new_prime,primorial,open_gap_count,uncovered_measure_fraction,"
         "uncovered_measure,residue_count,residues,"
         "first_open_gap_boundary_endpoint_sample"
+    )
+    assert exclusion_witness_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,residue,reflection_residue,open_gap_count,"
+        "uncovered_measure_fraction,uncovered_measure,"
+        "first_open_gap_boundary_endpoints,witness_point,"
+        "open_gap_boundary_endpoints"
     )
     assert verification_out.read_text(encoding="utf-8").splitlines()[0] == (
         "check_name,total,passed,failed,status"
@@ -725,6 +774,7 @@ def test_covering_prime_prefix_v15_clis_write_csvs(tmp_path: Path):
     witness_out = tmp_path / "witness_v15.csv"
     classification_out = tmp_path / "classification_v15.csv"
     pair_out = tmp_path / "pair_v15.csv"
+    exclusion_witness_out = tmp_path / "exclusion_witness_v16.csv"
     exclusion_summary_out = tmp_path / "exclusion_summary_v15.csv"
     assert (
         main(
@@ -765,6 +815,18 @@ def test_covering_prime_prefix_v15_clis_write_csvs(tmp_path: Path):
     assert (
         main(
             [
+                "covering-prime-prefix-exclusion-witnesses-v1-6",
+                "--k",
+                "4",
+                "--out",
+                str(exclusion_witness_out),
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
                 "covering-prime-prefix-exclusion-summary-v1-5",
                 "--k",
                 "4",
@@ -777,6 +839,7 @@ def test_covering_prime_prefix_v15_clis_write_csvs(tmp_path: Path):
     assert len(witness_out.read_text(encoding="utf-8").splitlines()) == 15
     assert len(classification_out.read_text(encoding="utf-8").splitlines()) == 15
     assert len(pair_out.read_text(encoding="utf-8").splitlines()) == 8
+    assert len(exclusion_witness_out.read_text(encoding="utf-8").splitlines()) == 209
     assert len(exclusion_summary_out.read_text(encoding="utf-8").splitlines()) == 37
 
 
@@ -787,8 +850,8 @@ def test_prime_prefix_certificate_verifier_passes_public_csvs(tmp_path: Path):
     b5_pair_out = tmp_path / "b5_pair.csv"
     verification_out = tmp_path / "verification.csv"
     write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_csv(
-        prime_prefix_exclusion_witness_rows(k=4),
+    write_prime_prefix_exclusion_witness_v16_csv(
+        prime_prefix_exclusion_witness_v16_rows(k=4),
         c4_witness_out,
     )
     write_prime_prefix_birth_witness_v15_csv(
@@ -809,6 +872,12 @@ def test_prime_prefix_certificate_verifier_passes_public_csvs(tmp_path: Path):
     write_prime_prefix_certificate_verification_csv(rows, verification_out)
 
     assert all(row.status == "pass" for row in rows)
+    assert any(
+        row.check_name == "c4_exclusion_rational_witness_point"
+        and row.total == 208
+        and row.passed == 208
+        for row in rows
+    )
     assert verification_out.read_text(encoding="utf-8").splitlines()[0] == (
         "check_name,total,passed,failed,status"
     )
@@ -820,8 +889,8 @@ def test_prime_prefix_certificate_verifier_fails_tampered_gap(tmp_path: Path):
     b5_witness_out = tmp_path / "b5_witness.csv"
     b5_pair_out = tmp_path / "b5_pair.csv"
     write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_csv(
-        prime_prefix_exclusion_witness_rows(k=4),
+    write_prime_prefix_exclusion_witness_v16_csv(
+        prime_prefix_exclusion_witness_v16_rows(k=4),
         c4_witness_out,
     )
     write_prime_prefix_birth_witness_v15_csv(
@@ -864,8 +933,8 @@ def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path
     b5_pair_out = tmp_path / "b5_pair.csv"
     verification_out = tmp_path / "verification.csv"
     write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
-    write_prime_prefix_exclusion_witness_csv(
-        prime_prefix_exclusion_witness_rows(k=4),
+    write_prime_prefix_exclusion_witness_v16_csv(
+        prime_prefix_exclusion_witness_v16_rows(k=4),
         c4_witness_out,
     )
     write_prime_prefix_birth_witness_v15_csv(
@@ -895,7 +964,7 @@ def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path
         == 0
     )
     lines = verification_out.read_text(encoding="utf-8").splitlines()
-    assert len(lines) == 6
+    assert len(lines) == 7
     assert all(line.endswith(",pass") for line in lines[1:])
 
 
