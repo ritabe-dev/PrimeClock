@@ -3,6 +3,35 @@
 This note is the v1.1 pivot target for PRC. It reframes the project around an
 exact finite object rather than selected modulo-210 diagnostics.
 
+## Abstract
+
+For the first `k` primes `p_1,...,p_k`, let `M_k=prod_{i<=k}p_i`. Each residue
+`r in Z/M_kZ` chooses one closed arc of length `1/p_i` centered at
+`(r mod p_i)/p_i` for every prefix prime. This note studies the finite set
+`C_k` of residues for which those arcs cover the circle.
+
+The sets `C_k` form a lifted monotone filtration over primorial residue rings:
+covered residues lift to covered residues at the next prime, and the new
+covered residues form a birth layer `B_k`. Exact rational computation gives
+`C_1=C_2=C_3=empty`, `C_4={2,208} mod 210`, and `|C_7|=9384` modulo `510510`.
+The first nonempty layer has an explicit coverage chain for `2` and `208`, and
+the other `208` residues have rational gap witnesses. At `k=5`, the `14`
+births split into `7` reflection pairs, each closing one previous gap.
+
+The emphasis is finite residue-covering structure and certificate depth, not a
+new limiting law for prime fractional parts.
+
+## Main finite statements
+
+- Prefix coverage by the first `k` primes depends only on `N mod M_k`.
+- Lift monotonicity holds: if `r in C_k`, every lift of `r` belongs to
+  `C_{k+1}`.
+- The density `alpha_k=|C_k|/M_k` is nondecreasing because
+  `alpha_k=alpha_{k-1}+|B_k|/M_k`.
+- The first nonempty layer is exactly `C_4={2,208} mod 210`, with closed arcs.
+- The `B_5` layer has `14` births, grouped into `7` reflection pairs; each
+  birth closes one old gap and none uses endpoint touching.
+
 ## Definition
 
 Let

@@ -29,12 +29,12 @@ claim by itself.
 
 Read in this order:
 
-1. `notes/prc_research_note_v1_0_ja.md` for the current integrated PRC note.
-2. `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
-3. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
-   exact `C_k` residue filtration.
-4. `notes/prc_prime_prefix_finite_note_v1_1.md` for the finite theorem framing,
+1. `notes/prc_prime_prefix_finite_note_v1_1.md` for the finite theorem framing,
    closed-arc convention, `C_4`, and `B_5` witnesses.
+2. `notes/prc_research_note_v1_0_ja.md` for the integrated PRC background note.
+3. `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
+4. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
+   exact `C_k` residue filtration.
 5. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
    `C_k` to exact-certified complete-covering values.
 6. `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
