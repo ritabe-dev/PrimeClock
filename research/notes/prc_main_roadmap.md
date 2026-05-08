@@ -217,6 +217,35 @@ Current reading:
 - Therefore nearest-distance to `C_8` is not yet a complete-specific
   explanation; it is mostly a local/wheel-residue diagnostic.
 
+## v0.6 Uncertified Control Audit
+
+Goal: split the v0.5 matched profile by seed modulo `210` and by the `C_k`
+source depth of the nearest covered residue.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_control_audit_v0_6.md`
+- `data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv`
+- `data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-control-audit \
+  --profile data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --mod210-out data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv \
+  --source-depth-out data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv
+```
+
+Current reading:
+
+- The audit creates `196` modulo-210 rows and `15` source-depth rows.
+- Source-depth composition is similar across complete and local controls.
+- Some large modulo-210 classes have different paired directions, but the
+  global conclusion remains unchanged: nearest distance to `C_8` is mostly a
+  local/wheel diagnostic, not a standalone complete-covering explanation.
+
 ## v0.3 Fixed Axis
 
 Primary object:

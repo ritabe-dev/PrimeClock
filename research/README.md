@@ -41,11 +41,13 @@ Read in this order:
    residual class left after `C_8`.
 7. `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md` for the local
    non-complete control check.
-8. `notes/claims.md` for claim categories and non-claims.
-9. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+8. `notes/prc_prime_prefix_uncertified_control_audit_v0_6.md` for the
+   modulo-210/source-depth audit of the v0.5 controls.
+9. `notes/claims.md` for claim categories and non-claims.
+10. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-10. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-11. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+11. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+12. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -60,6 +62,8 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv`
 - `data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv`
 - `data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv`
+- `data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv`
+- `data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -127,7 +131,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `151 passed`.
+Expected smoke-test result for the current suite is `153 passed`.
 
 ## First Experiments
 
@@ -197,4 +201,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --max-k 7 \
   --out data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv \
   --summary-out data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-control-audit \
+  --profile data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --mod210-out data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv \
+  --source-depth-out data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv
 ```

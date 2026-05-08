@@ -998,3 +998,45 @@ Paired direction for circular residue distance:
 Reading: the hard local modulo-210 control is very close to the complete rows.
 Nearest distance to `C_8` should not be treated as a complete-specific
 explanation.
+
+## PRC Prime-Prefix Uncertified Control Audit v0.6
+
+The v0.6 audit splits the v0.5 complete/control profile by seed modulo `210`
+and by the source `C_k` layer of the nearest covered residue.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-control-audit \
+  --profile data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --mod210-out data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv \
+  --source-depth-out data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv
+```
+
+Outputs:
+
+```text
+data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv
+data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv
+```
+
+Summary:
+
+| output | data rows |
+|---|---:|
+| modulo-210 audit | 196 |
+| source-depth summary | 15 |
+
+Source-depth composition:
+
+| role | k=4 | k=5 | k=6 | k=7 | k=8 |
+|---|---:|---:|---:|---:|---:|
+| `complete_uncertified` | 1,989 | 1,686 | 386 | 291 | 143 |
+| `local_mod210_control` | 2,070 | 1,587 | 305 | 367 | 146 |
+| `local_any_control` | 1,989 | 1,684 | 389 | 290 | 143 |
+
+Reading: the source-depth split is close across roles. The modulo-210 audit is
+useful for choosing classes for hand inspection, but it does not change the
+v0.5 conclusion that nearest distance to `C_8` is not a complete-specific
+explanation.

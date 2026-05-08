@@ -9,21 +9,26 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows,
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
+    prime_prefix_uncertified_mod210_audit_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows,
     prime_prefix_uncertified_matched_summary_rows,
     prime_prefix_uncertified_overall_summary_rows,
     prime_prefix_uncertified_residue_rows,
+    prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
+    read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_uncertified_mod210_audit_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_uncertified_matched_summary_csv,
     write_prime_prefix_uncertified_overall_summary_csv,
     write_prime_prefix_uncertified_residue_csv,
+    write_prime_prefix_uncertified_source_depth_summary_csv,
 )
 
 
@@ -336,3 +341,88 @@ def test_prime_prefix_uncertified_matched_controls_cli_writes_csvs(tmp_path: Pat
     assert len(profile_out.read_text(encoding="utf-8").splitlines()) == 4
     assert len(summary_out.read_text(encoding="utf-8").splitlines()) == 4
     assert len(deltas_out.read_text(encoding="utf-8").splitlines()) == 5
+
+
+def test_prime_prefix_uncertified_control_audit_and_source_headers(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    profile_out = tmp_path / "profile.csv"
+    audit_out = tmp_path / "audit.csv"
+    source_out = tmp_path / "source.csv"
+    write_prime_prefix_uncertified_matched_profile_csv(rows, profile_out)
+
+    read_rows = read_prime_prefix_uncertified_matched_profile_csv(profile_out)
+    audit = prime_prefix_uncertified_mod210_audit_rows(read_rows)
+    source_summary = prime_prefix_uncertified_source_depth_summary_rows(read_rows)
+    write_prime_prefix_uncertified_mod210_audit_csv(audit, audit_out)
+    write_prime_prefix_uncertified_source_depth_summary_csv(source_summary, source_out)
+
+    assert audit_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "control_role,seed_mod210,pair_count,complete_distance_median,"
+        "control_distance_median,median_delta_complete_minus_control,"
+        "complete_smaller_count,complete_larger_count,tie_count,"
+        "complete_smaller_rate,complete_larger_rate,sample_seed_n"
+    )
+    assert source_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "cohort_role,nearest_covered_source_k,nearest_covered_source_prime,row_count,"
+        "share_of_role,nearest_distance_median,nearest_distance_max"
+    )
+    local_any_count = sum(
+        row.pair_count for row in audit if row.control_role == "local_any_control"
+    )
+    assert local_any_count == len(uncertified)
+    for row in audit:
+        assert (
+            row.complete_smaller_count + row.complete_larger_count + row.tie_count
+        ) == row.pair_count
+    source_counts: dict[str, int] = {}
+    for row in source_summary:
+        source_counts[row.cohort_role] = source_counts.get(row.cohort_role, 0) + row.row_count
+    assert source_counts["complete_uncertified"] == len(uncertified)
+    assert source_counts["local_any_control"] == len(uncertified)
+
+
+def test_covering_prime_prefix_uncertified_control_audit_cli_writes_csvs(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    profile_out = tmp_path / "profile.csv"
+    audit_out = tmp_path / "audit.csv"
+    source_out = tmp_path / "source.csv"
+    write_prime_prefix_uncertified_matched_profile_csv(rows, profile_out)
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-control-audit",
+                "--profile",
+                str(profile_out),
+                "--mod210-out",
+                str(audit_out),
+                "--source-depth-out",
+                str(source_out),
+            ]
+        )
+        == 0
+    )
+    assert len(audit_out.read_text(encoding="utf-8").splitlines()) == 5
+    assert len(source_out.read_text(encoding="utf-8").splitlines()) == 4

@@ -1,0 +1,16 @@
+cohort_role,nearest_covered_source_k,nearest_covered_source_prime,row_count,share_of_role,nearest_distance_median,nearest_distance_max
+complete_uncertified,4,7,1989,0.4424916573971079,26,97
+complete_uncertified,5,11,1686,0.37508342602892103,24.0,86
+complete_uncertified,6,13,386,0.08587319243604004,19.0,56
+complete_uncertified,7,17,291,0.06473859844271412,19,84
+complete_uncertified,8,19,143,0.03181312569521691,28,95
+local_mod210_control,4,7,2070,0.46256983240223465,26.0,100
+local_mod210_control,5,11,1587,0.3546368715083799,26,86
+local_mod210_control,6,13,305,0.06815642458100558,19,59
+local_mod210_control,7,17,367,0.08201117318435754,20,78
+local_mod210_control,8,19,146,0.032625698324022345,23.5,84
+local_any_control,4,7,1989,0.4424916573971079,27,98
+local_any_control,5,11,1684,0.3746384872080089,25.0,87
+local_any_control,6,13,389,0.08654060066740824,18,57
+local_any_control,7,17,290,0.06451612903225806,19.0,73
+local_any_control,8,19,143,0.03181312569521691,27,94

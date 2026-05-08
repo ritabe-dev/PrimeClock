@@ -23,20 +23,25 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_summary_rows,
+    prime_prefix_uncertified_mod210_audit_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows_from_csv,
     prime_prefix_uncertified_matched_summary_rows,
     prime_prefix_uncertified_overall_summary_rows,
     prime_prefix_uncertified_residue_rows,
+    prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
+    read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_uncertified_mod210_audit_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_uncertified_matched_summary_csv,
     write_prime_prefix_uncertified_overall_summary_csv,
     write_prime_prefix_uncertified_residue_csv,
+    write_prime_prefix_uncertified_source_depth_summary_csv,
 )
 from .covering_prime_prefix_filtration import (
     prime_prefix_residue_filtration_tables,
@@ -311,6 +316,24 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_uncertified_controls.add_argument(
         "--pair-deltas-out",
         default="data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv",
+    )
+
+    covering_prime_prefix_uncertified_control_audit = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-control-audit",
+        help="audit v0.5 uncertified complete/control profiles by mod210 and C_k source depth",
+    )
+    covering_prime_prefix_uncertified_control_audit.add_argument(
+        "--profile",
+        default="data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv",
+        help="matched complete/control residue profile CSV",
+    )
+    covering_prime_prefix_uncertified_control_audit.add_argument(
+        "--mod210-out",
+        default="data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv",
+    )
+    covering_prime_prefix_uncertified_control_audit.add_argument(
+        "--source-depth-out",
+        default="data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -826,6 +849,22 @@ def main(argv: list[str] | None = None) -> int:
             f"rows={len(rows)}, summary_rows={len(summary_rows)}, "
             f"pair_delta_rows={len(delta_rows)}, out={args.out}, "
             f"summary_out={args.summary_out}, pair_deltas_out={args.pair_deltas_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-control-audit":
+        rows = read_prime_prefix_uncertified_matched_profile_csv(args.profile)
+        mod210_rows = prime_prefix_uncertified_mod210_audit_rows(rows)
+        source_depth_rows = prime_prefix_uncertified_source_depth_summary_rows(rows)
+        write_prime_prefix_uncertified_mod210_audit_csv(mod210_rows, args.mod210_out)
+        write_prime_prefix_uncertified_source_depth_summary_csv(
+            source_depth_rows,
+            args.source_depth_out,
+        )
+        print(
+            "covering-prime-prefix-uncertified-control-audit: "
+            f"profile_rows={len(rows)}, mod210_rows={len(mod210_rows)}, "
+            f"source_depth_rows={len(source_depth_rows)}, "
+            f"mod210_out={args.mod210_out}, source_depth_out={args.source_depth_out}"
         )
         return 0
     if args.command == "covering-window-figure":
