@@ -59,6 +59,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the exploratory v0.7 residual-gap-count test, the weaker `band_ordinary_control` comparison has sign-test `p=0.00132` and BH `q=0.00396`, while the harder `local_mod6_control` and `band_mod6_control` comparisons have BH `q=0.1202` and `0.2810`; this is discovery evidence only | Experiment |
 | In the exploratory v0.8 cluster audit, the 33 eligible seeds collapse to 11 clusters; complete rows have fewer residual components in `9/11`, `6/11`, and `10/11` clusters for the three control roles, with the hard `local_mod6_control` result remaining suggestive but not confirmatory | Experiment |
 | In the v0.9 branch-uniform null model with 1000 iterations per row, all four cohorts have high median observed residual-gap-count percentiles (`0.929`, `0.949`, `0.957`, `0.962`), suggesting broad PRC residual fragmentation relative to this first coarse null rather than a complete-specific low-component effect | Experiment |
+| In the v0.2 prime-prefix certificate-depth table, `18,377 / 23,571` exact-certified complete-covering values for `2<=N<=10^6` have a prefix certificate with `k<=7`; the remaining `5,194` are not certified within the checked `C_k` range | Experiment / exact finite filtration |
 
 ## Non-Claims
 
@@ -74,6 +75,9 @@ Every statement in this research track should be assigned one of these statuses.
   experiments.
 - This project does not claim an asymptotic law for `|C_k|/M_k`; the current
   prime-prefix residue filtration table is a finite exact generated artifact.
+- This project does not claim `k<=7` certificate coverage explains all
+  complete-covering values; rows without a prefix certificate are only
+  uncertified within the checked filtration range.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample

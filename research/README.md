@@ -33,17 +33,21 @@ Read in this order:
 2. `notes/prc_prime_prefix_profile_v0_1.md` for the prime-prefix residual profile.
 3. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
    exact `C_k` residue filtration.
-4. `notes/claims.md` for claim categories and non-claims.
-5. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+4. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
+   `C_k` to exact-certified complete-covering values.
+5. `notes/claims.md` for claim categories and non-claims.
+6. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-6. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-7. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+7. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+8. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
 - `data/summaries/prc_prime_prefix_profile_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -111,7 +115,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `138 passed`.
+Expected smoke-test result for the current suite is `145 passed`.
 
 ## First Experiments
 
@@ -175,4 +179,10 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
   --birth-sample-limit 200 \
   --summary-out data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv \
   --birth-samples-out data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --max-k 7 \
+  --out data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv \
+  --summary-out data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
 ```

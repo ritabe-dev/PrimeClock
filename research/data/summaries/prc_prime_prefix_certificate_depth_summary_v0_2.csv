@@ -1,0 +1,6 @@
+certificate_status,k_cert,p_cert,complete_count,share_of_complete,min_n,max_n,checked_max_k,checked_max_prime
+prefix_certificate,4,7,9522,0.4039709812905689,208,999812,7,17
+prefix_certificate,5,11,6061,0.2571380085698528,118,999782,7,17
+prefix_certificate,6,13,1398,0.059310169275805014,939,999136,7,17
+prefix_certificate,7,17,1396,0.059225319248228755,1245,999801,7,17
+no_prefix_certificate_within_max_k,,,5194,0.22035552161554453,178,999842,7,17

@@ -51,6 +51,25 @@ def prime_prefix_residue_filtration_tables(
     allow_large_k: bool = False,
 ) -> tuple[list[PrimePrefixResidueFiltrationRow], list[PrimePrefixResidueBirthSampleRow]]:
     """Return exact summary and birth-sample rows for the residue filtration."""
+    summary_rows, birth_sample_rows, _ = prime_prefix_residue_filtration_data(
+        max_k=max_k,
+        birth_sample_limit=birth_sample_limit,
+        allow_large_k=allow_large_k,
+    )
+    return summary_rows, birth_sample_rows
+
+
+def prime_prefix_residue_filtration_data(
+    *,
+    max_k: int = 7,
+    birth_sample_limit: int = 200,
+    allow_large_k: bool = False,
+) -> tuple[
+    list[PrimePrefixResidueFiltrationRow],
+    list[PrimePrefixResidueBirthSampleRow],
+    list[set[int]],
+]:
+    """Return exact filtration rows, birth samples, and covered residue sets."""
     if max_k < 1:
         raise ValueError("max_k must be >= 1")
     if max_k > MAX_DEFAULT_FILTRATION_K and not allow_large_k:
@@ -67,6 +86,7 @@ def prime_prefix_residue_filtration_tables(
     primorial = 1
     summary_rows: list[PrimePrefixResidueFiltrationRow] = []
     birth_sample_rows: list[PrimePrefixResidueBirthSampleRow] = []
+    covered_sets: list[set[int]] = []
 
     for k, new_prime in enumerate(primes, start=1):
         prefix_primes = primes[:k]
@@ -122,9 +142,10 @@ def prime_prefix_residue_filtration_tables(
             )
         )
         previous_covered = covered
+        covered_sets.append(covered)
         previous_primorial = primorial
 
-    return summary_rows, birth_sample_rows
+    return summary_rows, birth_sample_rows, covered_sets
 
 
 def residue_is_exactly_covered(residue: int, primes: Iterable[int]) -> bool:

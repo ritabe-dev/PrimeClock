@@ -46,6 +46,7 @@ research/README.md
 research/notes/prc_research_note_v1_0_ja.md
 research/notes/prc_prime_prefix_profile_v0_1.md
 research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
+research/notes/prc_prime_prefix_certificate_depth_v0_2.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_main_v0_9.md
@@ -61,4 +62,6 @@ Current prime-prefix artifacts to include in the summaries directory:
 research/data/summaries/prc_prime_prefix_profile_v0_1.csv
 research/data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv
 research/data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+research/data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv
+research/data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
 ```

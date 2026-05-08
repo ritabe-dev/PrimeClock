@@ -836,3 +836,41 @@ component count in an absolute random-covering sense. Instead, all cohorts have
 high observed percentiles. The conservative v0.9 observation is that PRC
 residual sets look more fragmented than branch-uniform random placements with
 the same widths.
+
+## PRC Prime-Prefix Certificate Depth v0.2
+
+The v0.2 certificate-depth table connects the exact generated `C_k` filtration
+to the exact-certified complete-covering values for `2 <= N <= 1,000,000`.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --max-k 7 \
+  --out data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv \
+  --summary-out data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
+```
+
+Outputs:
+
+```text
+data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv
+data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
+```
+
+Summary:
+
+| status | k | prime | count | share |
+|---|---:|---:|---:|---:|
+| prefix certificate | 4 | 7 | 9,522 | 0.403971 |
+| prefix certificate | 5 | 11 | 6,061 | 0.257138 |
+| prefix certificate | 6 | 13 | 1,398 | 0.059310 |
+| prefix certificate | 7 | 17 | 1,396 | 0.059225 |
+| no prefix certificate within max_k | - | - | 5,194 | 0.220356 |
+
+Reading: within `max_k=7`, most complete-covering values are already certified
+by shallow prime-prefix residue cells. The remaining `5,194` values are not
+negative examples; they are simply not certified by the current checked
+filtration range.

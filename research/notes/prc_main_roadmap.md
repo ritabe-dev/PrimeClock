@@ -118,8 +118,36 @@ Current reading:
   including `714` new births at `p=17`.
 
 The current implementation regenerates this table exactly through the CLI.
-Next implementation step: use `C_k` membership to compute exact certificate
-depth for certified complete-covering values.
+
+## v0.2 Prime-Prefix Certificate Depth
+
+Goal: connect exact `C_k` membership to existing exact-certified
+complete-covering values without turning `C0` into the main PRC axis.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_certificate_depth_v0_2.md`
+- `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --max-k 7 \
+  --out data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv \
+  --summary-out data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
+```
+
+Current reading:
+
+- `18,377 / 23,571` complete-covering values have a prefix certificate with
+  `k<=7`.
+- `5,194` values are not certified by the checked `C_k` range and remain the
+  next target.
+- `k=8` is intentionally behind the `--allow-large-k` primorial-scale guardrail.
 
 ## v0.3 Fixed Axis
 

@@ -19,6 +19,12 @@ from .covering_prime_prefix import (
     prime_prefix_profile_rows,
     write_prime_prefix_profile_csv,
 )
+from .covering_prime_prefix_certificates import (
+    prime_prefix_certificate_rows_from_runs_csv,
+    prime_prefix_certificate_summary_rows,
+    write_prime_prefix_certificate_csv,
+    write_prime_prefix_certificate_summary_csv,
+)
 from .covering_prime_prefix_filtration import (
     prime_prefix_residue_filtration_tables,
     write_prime_prefix_residue_birth_samples_csv,
@@ -204,6 +210,30 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_filtration.add_argument(
         "--birth-samples-out",
         default="data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv",
+    )
+
+    covering_prime_prefix_certificates = subparsers.add_parser(
+        "covering-prime-prefix-certificates",
+        help="connect exact C_k residue filtrations to complete-covering values",
+    )
+    covering_prime_prefix_certificates.add_argument(
+        "--complete-source",
+        default="data/summaries/prc_combined_runs_2_1000000.csv",
+        help="complete-covering runs CSV",
+    )
+    covering_prime_prefix_certificates.add_argument("--max-k", type=int, default=7)
+    covering_prime_prefix_certificates.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exploratory primorial-scale scans beyond the v0.2 max-k=7 guardrail",
+    )
+    covering_prime_prefix_certificates.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv",
+    )
+    covering_prime_prefix_certificates.add_argument(
+        "--summary-out",
+        default="data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -662,6 +692,21 @@ def main(argv: list[str] | None = None) -> int:
             "covering-prime-prefix-filtration: "
             f"summary_rows={len(summary_rows)}, birth_sample_rows={len(birth_rows)}, "
             f"summary_out={args.summary_out}, birth_samples_out={args.birth_samples_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-certificates":
+        rows = prime_prefix_certificate_rows_from_runs_csv(
+            args.complete_source,
+            max_k=args.max_k,
+            allow_large_k=args.allow_large_k,
+        )
+        summary_rows = prime_prefix_certificate_summary_rows(rows)
+        write_prime_prefix_certificate_csv(rows, args.out)
+        write_prime_prefix_certificate_summary_csv(summary_rows, args.summary_out)
+        print(
+            "covering-prime-prefix-certificates: "
+            f"rows={len(rows)}, summary_rows={len(summary_rows)}, "
+            f"out={args.out}, summary_out={args.summary_out}"
         )
         return 0
     if args.command == "covering-window-figure":
