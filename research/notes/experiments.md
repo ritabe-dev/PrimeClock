@@ -207,9 +207,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --max-k 5 \
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 ```
 
 These artifacts make the exact small-k structure auditable: `C_5` has `36`
@@ -224,17 +224,17 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnes
   --k 4 \
   --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 ```
 
 The `C_4` exclusion witness table has `208` data rows, one for every residue

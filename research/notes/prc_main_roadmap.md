@@ -140,11 +140,12 @@ Deliverables:
 
 - `notes/prc_prime_prefix_finite_note_v1_1.md`
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
-- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv`
 
 Commands:
 
@@ -154,25 +155,28 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --max-k 5 \
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
-  --k 5 \
-  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
-
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses-v1-6 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary-v1-5 \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_6.csv
 ```
 
 Current reading:
@@ -182,11 +186,11 @@ Current reading:
 - `C_5` has `36` residues: `22` inherited lifts from `C_4` and `14` births.
 - The `B_5` witness table records the previous uncovered interval and the
   `p=11` arc that closes it. This is the next theorem-building object.
-- The `C_4` exclusion witness table gives one uncovered rational gap for every
-  residue outside `{2,208}`.
-- The `C_4` exclusion summary compresses the 208 witnesses into 36
-  component/measure classes: 22 one-gap classes covering 143 residues and 14
-  two-gap classes covering 65 residues.
+- The v1.6 `C_4` exclusion witness table gives one rational open-gap witness
+  and one rational interior witness point for every residue outside `{2,208}`.
+- The v1.5 `C_4` exclusion summary compresses the 208 witnesses into 36
+  component/measure classes with complete residue lists: 22 one-gap classes
+  covering 143 residues and 14 two-gap classes covering 65 residues.
 - The `B_5` classification table turns the witness rows into reflection-pair
   and parent-gap templates.
 - The `B_5` pair summary compresses those `14` birth rows into `7`

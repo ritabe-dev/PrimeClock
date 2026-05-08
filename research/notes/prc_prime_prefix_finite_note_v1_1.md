@@ -194,6 +194,55 @@ Thus the `C_4` finite proof can be read in three layers: the two residues
 rational gap witnesses, and those witnesses collapse into `36` exact
 component/measure classes for a shorter appendix table.
 
+### C4 exclusion appendix table
+
+The following table is the compact human-readable index for excluding all
+residues outside `{2,208} mod 210`. Each row lists a class of residues with the
+same number of open gaps and the same exact uncovered measure. The last column
+shows representative open-gap boundary endpoints from the row-level witness
+table. These endpoints are not claimed to be uncovered points themselves; the
+certified uncovered set is the open interval between the endpoints, and the
+v1.6 row-level CSV additionally gives an interior rational `witness_point`.
+
+| components | measure | count | residues | representative gap boundaries |
+|---:|---:|---:|---|---|
+| 1 | `1/28` | 2 | `99 111` | `3/14-1/4 3/4-11/14` |
+| 1 | `1/21` | 2 | `9 201` | `1/6-3/14 11/14-5/6` |
+| 1 | `1/20` | 12 | `28 32 58 62 88 92 118 122 148 152 178 182` | `1/4-3/10 7/10-3/4` |
+| 1 | `2/35` | 2 | `4 206` | `3/10-5/14 9/14-7/10` |
+| 1 | `1/12` | 10 | `21 39 51 69 81 129 141 159 171 189` | `1/6-1/4 3/4-5/6` |
+| 1 | `3/28` | 6 | `38 46 80 130 164 172` | `1/4-5/14 9/14-3/4` |
+| 1 | `1/7` | 8 | `40 44 82 86 124 128 166 170` | `1/2-9/14 5/14-1/2` |
+| 1 | `3/20` | 2 | `85 125` | `1/10-1/4 3/4-9/10` |
+| 1 | `6/35` | 2 | `41 169` | `13/14-1/10 9/10-1/14` |
+| 1 | `1/5` | 10 | `26 34 56 64 94 116 146 154 176 184` | `1/2-7/10 3/10-1/2` |
+| 1 | `5/21` | 2 | `71 139` | `13/14-1/6 5/6-1/14` |
+| 1 | `1/4` | 32 | `8 10 14 16 20 22 50 52 68 70 72 74 76 98 100 104 106 110 112 134 136 138 140 142 158 160 188 190 194 196 200 202` | `1/2-3/4 1/4-1/2` |
+| 1 | `4/15` | 8 | `11 19 79 101 109 131 191 199` | `5/6-1/10 9/10-1/6` |
+| 1 | `11/35` | 2 | `61 149` | `11/14-1/10 9/10-3/14` |
+| 1 | `9/28` | 6 | `1 43 83 127 167 209` | `13/14-1/4 3/4-1/14` |
+| 1 | `12/35` | 2 | `96 114` | `3/10-9/14 5/14-7/10` |
+| 1 | `7/20` | 6 | `31 59 89 121 151 179` | `3/4-1/10 9/10-1/4` |
+| 1 | `8/21` | 4 | `23 103 107 187` | `11/14-1/6 5/6-3/14` |
+| 1 | `11/28` | 4 | `30 54 156 180` | `1/4-9/14 5/14-3/4` |
+| 1 | `5/12` | 12 | `17 37 47 53 67 73 137 143 157 163 173 193` | `3/4-1/6 5/6-1/4` |
+| 1 | `9/20` | 6 | `6 36 84 126 174 204` | `1/4-7/10 3/10-3/4` |
+| 1 | `1/2` | 3 | `0 90 120` | `1/4-3/4` |
+| 2 | `43/420` | 2 | `55 155` | `1/10-1/6 3/14-1/4` |
+| 2 | `5/42` | 6 | `15 27 57 153 183 195` | `1/6-1/4 3/14-1/4` |
+| 2 | `13/105` | 2 | `49 161` | `1/14-1/10 1/14-1/6` |
+| 2 | `11/84` | 6 | `33 75 93 117 135 177` | `1/6-1/4 1/6-3/14` |
+| 2 | `11/70` | 2 | `102 108` | `1/4-3/10 1/4-5/14` |
+| 2 | `1/6` | 9 | `3 45 63 87 105 123 147 165 207` | `1/6-1/4` |
+| 2 | `19/105` | 2 | `65 145` | `1/10-1/6 1/10-3/14` |
+| 2 | `27/140` | 2 | `12 198` | `1/4-3/10 5/14-1/2` |
+| 2 | `29/140` | 4 | `29 91 119 181` | `1/14-1/10 1/14-1/4 3/14-1/4 3/4-11/14` |
+| 2 | `13/60` | 8 | `5 25 35 95 115 175 185 205` | `1/10-1/4 1/10-1/6` |
+| 2 | `23/84` | 8 | `7 13 77 97 113 133 197 203` | `1/14-1/4 1/14-1/6 3/14-1/4 3/4-11/14` |
+| 2 | `3/10` | 8 | `18 42 48 78 132 162 168 192` | `1/4-1/2 1/4-3/10` |
+| 2 | `43/140` | 4 | `24 66 144 186` | `1/4-1/2 1/4-5/14 3/10-1/2 3/10-5/14` |
+| 2 | `5/14` | 2 | `60 150` | `1/4-1/2 1/4-5/14` |
+
 ## C5 and B5
 
 The v1.1 full export is generated with:
@@ -313,8 +362,7 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Turn the v1.5 36-class `C_4` exclusion table into a compact written
-   appendix; the table is already machine-verifiable, but a hand compression
-   would be better for human reading.
+1. Turn the appendix table above into a more compressed handwritten exclusion
+   proof if a reviewer wants less machine-certificate surface.
 2. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.
