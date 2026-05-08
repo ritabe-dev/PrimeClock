@@ -22,8 +22,15 @@ from .covering_prime_prefix import (
 from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
+    prime_prefix_uncertified_mod210_summary_rows,
+    prime_prefix_uncertified_overall_summary_rows,
+    prime_prefix_uncertified_residue_rows,
+    read_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_uncertified_mod210_summary_csv,
+    write_prime_prefix_uncertified_overall_summary_csv,
+    write_prime_prefix_uncertified_residue_csv,
 )
 from .covering_prime_prefix_filtration import (
     prime_prefix_residue_filtration_tables,
@@ -234,6 +241,34 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_certificates.add_argument(
         "--summary-out",
         default="data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv",
+    )
+
+    covering_prime_prefix_uncertified = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-residues",
+        help="profile no-prefix-certificate values against the checked C_k set",
+    )
+    covering_prime_prefix_uncertified.add_argument(
+        "--certificates",
+        default="data/summaries/prc_prime_prefix_certificate_depth_k8_v0_3.csv",
+        help="certificate-depth detail CSV",
+    )
+    covering_prime_prefix_uncertified.add_argument("--max-k", type=int, default=8)
+    covering_prime_prefix_uncertified.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exploratory primorial-scale scans beyond the v0.2 max-k=7 guardrail",
+    )
+    covering_prime_prefix_uncertified.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv",
+    )
+    covering_prime_prefix_uncertified.add_argument(
+        "--summary-out",
+        default="data/summaries/prc_prime_prefix_uncertified_residue_summary_v0_4.csv",
+    )
+    covering_prime_prefix_uncertified.add_argument(
+        "--mod210-out",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -707,6 +742,24 @@ def main(argv: list[str] | None = None) -> int:
             "covering-prime-prefix-certificates: "
             f"rows={len(rows)}, summary_rows={len(summary_rows)}, "
             f"out={args.out}, summary_out={args.summary_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-residues":
+        certificate_rows = read_prime_prefix_certificate_csv(args.certificates)
+        rows = prime_prefix_uncertified_residue_rows(
+            certificate_rows,
+            max_k=args.max_k,
+            allow_large_k=args.allow_large_k,
+        )
+        overall_rows = prime_prefix_uncertified_overall_summary_rows(rows)
+        mod210_rows = prime_prefix_uncertified_mod210_summary_rows(rows)
+        write_prime_prefix_uncertified_residue_csv(rows, args.out)
+        write_prime_prefix_uncertified_overall_summary_csv(overall_rows, args.summary_out)
+        write_prime_prefix_uncertified_mod210_summary_csv(mod210_rows, args.mod210_out)
+        print(
+            "covering-prime-prefix-uncertified-residues: "
+            f"rows={len(rows)}, mod210_rows={len(mod210_rows)}, "
+            f"out={args.out}, summary_out={args.summary_out}, mod210_out={args.mod210_out}"
         )
         return 0
     if args.command == "covering-window-figure":

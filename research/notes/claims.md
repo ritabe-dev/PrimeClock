@@ -61,6 +61,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.9 branch-uniform null model with 1000 iterations per row, all four cohorts have high median observed residual-gap-count percentiles (`0.929`, `0.949`, `0.957`, `0.962`), suggesting broad PRC residual fragmentation relative to this first coarse null rather than a complete-specific low-component effect | Experiment |
 | In the v0.2 prime-prefix certificate-depth table, `18,377 / 23,571` exact-certified complete-covering values for `2<=N<=10^6` have a prefix certificate with `k<=7`; the remaining `5,194` are not certified within the checked `C_k` range | Experiment / exact finite filtration |
 | In the v0.3 guarded `k=8` extension, `|C_8|=185,048` modulo `9,699,690`, and `699` additional exact-certified complete-covering values get a prefix certificate at `p=19`, leaving `4,495` uncertified within `max_k=8` | Experiment / exact finite filtration |
+| In the v0.4 uncertified-residue profile, the `4,495` values left uncertified after `C_8` occupy `98` modulo-210 classes; nearest distance to `C_8` has median `25`, p90 `56`, p99 `90`, and max `97` in residue units modulo `M_8` | Experiment / diagnostic |
 
 ## Non-Claims
 
@@ -82,6 +83,9 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim `k<=8` is exhaustive for complete-covering
   certificates; the remaining rows may need deeper prefixes or a different
   description.
+- This project does not claim nearest-residue distance to `C_8` explains
+  complete covering; v0.4 is only a diagnostic profile of rows left
+  uncertified after `max_k=8`.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample

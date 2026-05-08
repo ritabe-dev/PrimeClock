@@ -914,3 +914,46 @@ Summary:
 
 Reading: `k=8` is feasible and useful, but the remaining uncertified class is
 still large enough to study before attempting the much larger `k=9` scan.
+
+## PRC Prime-Prefix Uncertified Residue Profile v0.4
+
+The v0.4 profile inspects the `4,495` complete-covering values left without a
+prefix certificate after `max_k=8`.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-residues \
+  --certificates data/summaries/prc_prime_prefix_certificate_depth_k8_v0_3.csv \
+  --max-k 8 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv \
+  --summary-out data/summaries/prc_prime_prefix_uncertified_residue_summary_v0_4.csv \
+  --mod210-out data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| uncertified count | 4,495 |
+| unique mod 210 classes | 98 |
+| nearest distance median | 25 |
+| nearest distance p90 | 56 |
+| nearest distance p99 | 90 |
+| nearest distance max | 97 |
+
+Top modulo-210 classes:
+
+| mod 210 | count | share | median nearest distance |
+|---:|---:|---:|---:|
+| 111 | 209 | 0.046496 | 37 |
+| 4 | 204 | 0.045384 | 2 |
+| 99 | 197 | 0.043826 | 37 |
+| 206 | 185 | 0.041157 | 2 |
+| 118 | 162 | 0.036040 | 26 |
+
+Reading: the remaining class is structured enough to profile before attempting
+`k=9`. These are residue-distance diagnostics relative to `C_8`, not an
+explanation of complete covering.

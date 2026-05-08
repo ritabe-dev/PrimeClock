@@ -9,8 +9,15 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows,
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
+    prime_prefix_uncertified_mod210_summary_rows,
+    prime_prefix_uncertified_overall_summary_rows,
+    prime_prefix_uncertified_residue_rows,
+    read_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
+    write_prime_prefix_uncertified_mod210_summary_csv,
+    write_prime_prefix_uncertified_overall_summary_csv,
+    write_prime_prefix_uncertified_residue_csv,
 )
 
 
@@ -128,3 +135,85 @@ def test_covering_prime_prefix_certificates_cli_rejects_large_k_without_flag(
                 str(tmp_path / "summary.csv"),
             ]
         )
+
+
+def test_prime_prefix_uncertified_residue_profile_known_nearest_class(tmp_path: Path):
+    certificate_rows = prime_prefix_certificate_rows([178, 208], max_k=4)
+    detail_out = tmp_path / "certificates.csv"
+    write_prime_prefix_certificate_csv(certificate_rows, detail_out)
+
+    read_rows = read_prime_prefix_certificate_csv(detail_out)
+    rows = prime_prefix_uncertified_residue_rows(read_rows, max_k=4)
+
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.n == 178
+    assert row.residue_modulus == 210
+    assert row.residue == 178
+    assert row.nearest_covered_residue == 208
+    assert row.nearest_covered_source_k == 4
+    assert row.nearest_covered_source_prime == 7
+    assert row.circular_residue_distance == 30
+    assert row.normalized_residue_distance == pytest.approx(30 / 210)
+
+
+def test_prime_prefix_uncertified_summaries_and_headers(tmp_path: Path):
+    rows = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    overall = prime_prefix_uncertified_overall_summary_rows(rows)
+    mod210 = prime_prefix_uncertified_mod210_summary_rows(rows)
+    detail_out = tmp_path / "uncertified.csv"
+    overall_out = tmp_path / "overall.csv"
+    mod210_out = tmp_path / "mod210.csv"
+
+    write_prime_prefix_uncertified_residue_csv(rows, detail_out)
+    write_prime_prefix_uncertified_overall_summary_csv(overall, overall_out)
+    write_prime_prefix_uncertified_mod210_summary_csv(mod210, mod210_out)
+
+    assert detail_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "n,checked_max_k,checked_max_prime,residue_modulus,residue,mod210,mod2310,"
+        "nearest_covered_residue,nearest_covered_source_k,nearest_covered_source_prime,"
+        "circular_residue_distance,normalized_residue_distance"
+    )
+    assert overall_out.read_text(encoding="utf-8").splitlines()[0] == "metric,value"
+    assert mod210_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "mod210,uncertified_count,share_of_uncertified,nearest_distance_median,"
+        "nearest_distance_max,sample_n"
+    )
+    assert any(row.metric == "uncertified_count" and row.value == "2" for row in overall)
+    assert sum(row.uncertified_count for row in mod210) == 2
+
+
+def test_covering_prime_prefix_uncertified_residues_cli_writes_csvs(tmp_path: Path):
+    certificates = tmp_path / "certificates.csv"
+    detail_out = tmp_path / "detail.csv"
+    summary_out = tmp_path / "summary.csv"
+    mod210_out = tmp_path / "mod210.csv"
+    write_prime_prefix_certificate_csv(
+        prime_prefix_certificate_rows([178, 208], max_k=4),
+        certificates,
+    )
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-residues",
+                "--certificates",
+                str(certificates),
+                "--max-k",
+                "4",
+                "--out",
+                str(detail_out),
+                "--summary-out",
+                str(summary_out),
+                "--mod210-out",
+                str(mod210_out),
+            ]
+        )
+        == 0
+    )
+    assert len(detail_out.read_text(encoding="utf-8").splitlines()) == 2
+    assert len(summary_out.read_text(encoding="utf-8").splitlines()) == 10
+    assert len(mod210_out.read_text(encoding="utf-8").splitlines()) == 2

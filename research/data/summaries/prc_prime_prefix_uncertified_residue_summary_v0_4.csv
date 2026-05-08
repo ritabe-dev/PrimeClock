@@ -1,0 +1,10 @@
+metric,value
+uncertified_count,4495
+checked_max_k,8
+checked_max_prime,19
+residue_modulus,9699690
+unique_mod210_count,98
+nearest_distance_median,25
+nearest_distance_p90,56
+nearest_distance_p99,90
+nearest_distance_max,97

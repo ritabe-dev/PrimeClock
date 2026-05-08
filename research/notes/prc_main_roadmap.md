@@ -172,6 +172,29 @@ Current reading:
 - Do not jump directly to `k=9`; `M_9=223,092,870`, so the next step should
   inspect the `4,495` remaining rows first.
 
+## v0.4 Uncertified Residue Profile
+
+Goal: inspect the `4,495` complete-covering values left uncertified after
+`C_8` before attempting the much larger `k=9` scan.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md`
+- `data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv`
+- `data/summaries/prc_prime_prefix_uncertified_residue_summary_v0_4.csv`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv`
+
+Current reading:
+
+- The `4,495` rows occupy `98` modulo-210 classes.
+- Nearest distance to `C_8` has median `25`, p90 `56`, p99 `90`, and max `97`
+  in residue units modulo `M_8`.
+- The largest modulo-210 classes are `111`, `4`, `99`, `206`, and `118`.
+- Some high-count classes are very near `C_8` in residue distance, while others
+  have much larger nearest-distance profiles.
+- The next useful experiment is a matched non-complete control profile, not an
+  immediate jump to `k=9`.
+
 ## v0.3 Fixed Axis
 
 Primary object:
