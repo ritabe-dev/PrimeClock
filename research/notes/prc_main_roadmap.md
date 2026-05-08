@@ -190,6 +190,10 @@ Current v0.9 reading:
 Goal: consolidate the PRC research artifact into a short readable note without
 adding another exploratory metric.
 
+Current v1.0 output:
+
+- `notes/prc_research_note_v1_0_ja.md`
+
 Priority order:
 
 1. write a v1.0 Japanese/English research note around `A(N)` and residual
