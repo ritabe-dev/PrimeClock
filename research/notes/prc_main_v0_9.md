@@ -113,5 +113,6 @@ For v1.0, this is more central than trying to make `residual_gap_count` explain
 - v0.9 does not claim a theorem about PRC.
 - v0.9 does not claim complete covering is explained by residual component
   count.
-- v0.9 does not claim the branch-uniform null is the final null model.
+- v0.9 does not claim the branch-uniform null is the final null model; it does
+  not preserve within-branch density or arithmetic order.
 - v0.9 does not claim the observed high fragmentation is asymptotic.

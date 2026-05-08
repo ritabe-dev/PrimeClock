@@ -92,7 +92,10 @@ Main columns:
 - `uncovered_measure`: `A(N)`, the total uncovered measure.
 - `uncovered_measure_times_log_n`: a normalized view motivated by the random
   arc baseline.
-- `random_arc_baseline`: `exp(-sum_{p<=N} 1/p)`, a rough null-control scale.
+- `random_arc_baseline`: legacy column equal to `poisson_arc_baseline`.
+- `poisson_arc_baseline`: `exp(-sum_{p<=N} 1/p)`, a Poissonized rough scale.
+- `product_arc_baseline`: `prod_{p<=N}(1 - 1/p)`, the fixed-point baseline for
+  independent uniformly centered arcs.
 - `max_uncovered_gap`: `G(N)`, the largest uncovered component.
 - `complete_scale_1_over_n`: `A(N) < 1/N`, the main v0 scale event.
 - `complete_scale_1_over_pi_n`: `A(N) < 1/pi(N)`.
@@ -414,7 +417,8 @@ Main columns:
   `A(N)` was positive; this diagnoses float prefilter misses.
 - `d_r`: `D_R(center) = exact_complete_count / window_size`.
 - `median_uncovered_measure`: median `A(N)` in the local window.
-- `median_baseline_ratio`: median `A(N) / random_arc_baseline(N)`.
+- `median_baseline_ratio`: legacy median `A(N) / random_arc_baseline(N)`, where
+  `random_arc_baseline` is the Poisson approximation.
 - `certified_values`: exact complete-covering values in the window.
 
 ## PRC Consecutive Runs and Prefilter Guardrail
@@ -743,8 +747,11 @@ Summary:
 | band_mod6_control | 33 | 0.957 | 0.043 | 0 | 17 |
 | band_ordinary_control | 33 | 0.962 | 0.038 | 0 | 18 |
 
-Reading: the branch-uniform null does not support the idea that complete rows
-have unusually low residual component count in an absolute random-covering
-sense. Instead, all cohorts have high observed percentiles. The stronger
-v0.9 observation is that PRC residual sets are more fragmented than
-branch-uniform random placements with the same widths.
+Reading: the branch-uniform null is a first coarse null. It preserves branch
+sizes and arc widths but deliberately destroys within-branch arithmetic order
+and does not preserve the smooth branch density. Under that loose comparison,
+the data do not support the idea that complete rows have unusually low residual
+component count in an absolute random-covering sense. Instead, all cohorts have
+high observed percentiles. The conservative v0.9 observation is that PRC
+residual sets look more fragmented than branch-uniform random placements with
+the same widths.

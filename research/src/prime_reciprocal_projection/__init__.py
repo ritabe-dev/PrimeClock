@@ -36,7 +36,13 @@ from .covering_branch_fill_cohorts import (
     write_cohort_branch_fill_summary_csv,
     write_cohort_manifest_csv,
 )
-from .covering_metrics import covering_row, covering_table
+from .covering_metrics import (
+    covering_row,
+    covering_table,
+    poisson_arc_baseline,
+    product_arc_baseline,
+    random_arc_baseline,
+)
 from .covering_null_model import (
     branch_uniform_arc_template,
     branch_uniform_null_rows,
@@ -142,10 +148,13 @@ __all__ = [
     "max_uncovered_gap",
     "normalized_gap_entropy",
     "phi",
+    "poisson_arc_baseline",
     "prefiltered_exact_complete_values_in_range",
     "prefilter_validation_windows",
     "PREFILTER_GUARANTEE_MAX_N",
     "primes_up_to",
+    "product_arc_baseline",
+    "random_arc_baseline",
     "required_prefilter_tolerance",
     "residual_gap_count_test_rows",
     "residual_gap_effect_summary_rows",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from fractions import Fraction
+from functools import cmp_to_key
 from typing import Iterable
 
 from .primes import primes_up_to
@@ -249,7 +250,7 @@ def exact_is_completely_covered(n: int, primes: Iterable[int] | None = None) -> 
     ]
     if not intervals:
         return False
-    intervals.sort(key=lambda interval: interval[0] / interval[1])
+    intervals.sort(key=cmp_to_key(_compare_exact_raw_intervals))
     current_start_num, current_start_den, current_end_num, current_end_den = intervals[0]
     for start_num, start_den, end_num, end_den in intervals[1:]:
         if start_num * current_end_den <= current_end_num * start_den:
@@ -258,6 +259,24 @@ def exact_is_completely_covered(n: int, primes: Iterable[int] | None = None) -> 
         else:
             return False
     return current_start_num == 0 and current_end_num >= current_end_den
+
+
+def _compare_exact_raw_intervals(left: ExactRawInterval, right: ExactRawInterval) -> int:
+    """Compare exact raw intervals by rational start, then rational end."""
+    left_start_num, left_start_den, left_end_num, left_end_den = left
+    right_start_num, right_start_den, right_end_num, right_end_den = right
+    start_delta = left_start_num * right_start_den - right_start_num * left_start_den
+    if start_delta < 0:
+        return -1
+    if start_delta > 0:
+        return 1
+
+    end_delta = left_end_num * right_end_den - right_end_num * left_end_den
+    if end_delta < 0:
+        return -1
+    if end_delta > 0:
+        return 1
+    return 0
 
 
 def max_uncovered_gap(

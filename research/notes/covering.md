@@ -114,19 +114,30 @@ gap_p50, gap_p90, gap_p99 = uncovered-gap quantiles
 `gap_fill_ratio` can be unstable when `G1(N)` is small, so `gap_fill_drop` and
 gap quantiles should be read alongside it.
 
-## Baseline
+## Baselines
 
-A first null model is independent random arcs with the same widths. Since
+Two baseline scales are kept separate.
+
+For a Poissonized approximation, since
 
 ```text
 sum_{p<=N} 1/p ~ log log N,
 ```
 
-the rough uncovered-measure baseline is
+the rough uncovered-measure scale is
 
 ```text
-random_arc_baseline_A(N) = exp(-sum_{p<=N} 1/p).
+poisson_arc_baseline_A(N) = exp(-sum_{p<=N} 1/p).
 ```
 
-This is not a theorem for PRC. It is a control scale for asking whether
-`A(N)` is showing more than generic dense covering behavior.
+For independent uniformly centered arcs, the expected uncovered measure for a
+fixed point is exactly
+
+```text
+product_arc_baseline_A(N) = prod_{p<=N} (1 - 1/p).
+```
+
+Neither is a theorem for PRC. They are control scales for asking whether
+`A(N)` is showing more than generic dense covering behavior. The legacy
+`random_arc_baseline` CSV column is retained as the Poisson approximation for
+backward compatibility.

@@ -3,6 +3,7 @@ from fractions import Fraction
 import pytest
 
 from prime_reciprocal_projection.covering import (
+    _compare_exact_raw_intervals,
     covered_intervals,
     covering_summary,
     exact_is_completely_covered,
@@ -55,6 +56,14 @@ def test_exact_uncovered_measure_matches_float_for_small_oracle():
     assert exact_uncovered_measure(10, primes=[5]) == Fraction(4, 5)
     assert exact_uncovered_measure(10, primes=[3]) == Fraction(2, 3)
     assert uncovered_measure(10, primes=[3]) == pytest.approx(float(exact_uncovered_measure(10, primes=[3])))
+
+
+def test_exact_raw_interval_comparator_uses_rational_order_not_float_order():
+    left = (2**60 + 1, 2**60 + 4, 1, 1)
+    right = (2**60, 2**60 + 3, 1, 1)
+    assert float(left[0] / left[1]) == float(right[0] / right[1])
+    assert _compare_exact_raw_intervals(left, right) > 0
+    assert _compare_exact_raw_intervals(right, left) < 0
 
 
 def test_exact_uncovered_intervals_use_circular_gap_topology():

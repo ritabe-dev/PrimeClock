@@ -4,6 +4,9 @@ from prime_reciprocal_projection.covering_metrics import (
     CoveringRow,
     branch1_exposed_gap_estimate,
     covering_row,
+    poisson_arc_baseline,
+    product_arc_baseline,
+    random_arc_baseline,
     write_covering_csv,
 )
 from prime_reciprocal_projection.cli import main
@@ -17,7 +20,17 @@ def test_covering_row_has_expected_fields():
     assert 0 <= row.uncovered_measure <= 1
     assert row.uncovered_measure_times_log_n >= 0
     assert row.random_arc_baseline > 0
+    assert row.poisson_arc_baseline == row.random_arc_baseline
+    assert 0 <= row.product_arc_baseline <= row.poisson_arc_baseline
     assert row.branch1_exposed_gap_estimate >= 0
+
+
+def test_arc_baselines_split_poisson_and_product_models():
+    assert random_arc_baseline(30) == poisson_arc_baseline(30)
+    expected_product = 1.0
+    for p in primes_up_to(30):
+        expected_product *= 1.0 - 1.0 / p
+    assert product_arc_baseline(30) == expected_product
 
 
 def test_branch1_exposed_gap_estimate_is_nonnegative():
@@ -45,6 +58,8 @@ def test_write_covering_csv_has_stable_header_and_blank_none(tmp_path: Path):
         uncovered_measure=0.1,
         uncovered_measure_times_log_n=0.23,
         random_arc_baseline=0.3,
+        poisson_arc_baseline=0.3,
+        product_arc_baseline=0.2,
         max_uncovered_gap=0.05,
         complete_scale_1_over_n=False,
         complete_scale_1_over_pi_n=True,
@@ -65,6 +80,7 @@ def test_write_covering_csv_has_stable_header_and_blank_none(tmp_path: Path):
     assert lines[0].startswith(
         "n,prime_count,uncovered_measure,uncovered_measure_times_log_n"
     )
+    assert "random_arc_baseline,poisson_arc_baseline,product_arc_baseline" in lines[0]
     assert ",," in lines[1]
 
 

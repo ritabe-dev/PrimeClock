@@ -21,6 +21,8 @@ class CoveringRow:
     uncovered_measure: float
     uncovered_measure_times_log_n: float
     random_arc_baseline: float
+    poisson_arc_baseline: float
+    product_arc_baseline: float
     max_uncovered_gap: float
     complete_scale_1_over_n: bool
     complete_scale_1_over_pi_n: bool
@@ -37,11 +39,26 @@ class CoveringRow:
 
 
 def random_arc_baseline(n: int, primes: list[int] | None = None) -> float:
-    """Return the independent-random arc uncovered-measure baseline."""
+    """Return the legacy Poisson arc uncovered-measure baseline."""
+    return poisson_arc_baseline(n, primes=primes)
+
+
+def poisson_arc_baseline(n: int, primes: list[int] | None = None) -> float:
+    """Return ``exp(-sum 1/p)``, the Poissonized random-arc approximation."""
     n = validate_n(n)
     prime_values = primes_up_to(n) if primes is None else [p for p in primes if p <= n]
     harmonic_prime_width = sum(1.0 / p for p in prime_values)
     return math.exp(-harmonic_prime_width)
+
+
+def product_arc_baseline(n: int, primes: list[int] | None = None) -> float:
+    """Return ``prod(1 - 1/p)``, the fixed-point random-arc baseline."""
+    n = validate_n(n)
+    prime_values = primes_up_to(n) if primes is None else [p for p in primes if p <= n]
+    baseline = 1.0
+    for p in prime_values:
+        baseline *= 1.0 - 1.0 / p
+    return baseline
 
 
 def branch1_exposed_gap_estimate(n: int, primes: list[int] | None = None) -> float:
@@ -69,13 +86,16 @@ def branch1_exposed_gap_estimate(n: int, primes: list[int] | None = None) -> flo
 def covering_row(n: int, primes: list[int] | None = None) -> CoveringRow:
     """Compute PRC covering metrics for one integer N."""
     summary = covering_summary(n, primes=primes)
-    baseline = random_arc_baseline(n, primes=primes)
+    poisson_baseline = poisson_arc_baseline(n, primes=primes)
+    product_baseline = product_arc_baseline(n, primes=primes)
     return CoveringRow(
         n=summary.n,
         prime_count=summary.prime_count,
         uncovered_measure=summary.uncovered_measure,
         uncovered_measure_times_log_n=summary.uncovered_measure * math.log(summary.n),
-        random_arc_baseline=baseline,
+        random_arc_baseline=poisson_baseline,
+        poisson_arc_baseline=poisson_baseline,
+        product_arc_baseline=product_baseline,
         max_uncovered_gap=summary.max_uncovered_gap,
         complete_scale_1_over_n=summary.complete_scale_1_over_n,
         complete_scale_1_over_pi_n=summary.complete_scale_1_over_pi_n,
@@ -106,7 +126,7 @@ def write_covering_csv(rows: list[CoveringRow], output_path: str | Path) -> None
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = list(CoveringRow.__dataclass_fields__.keys())
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow(
