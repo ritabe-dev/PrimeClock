@@ -243,7 +243,9 @@ component/measure classes: `22` one-gap classes covering `143` residues and
 `14` two-gap classes covering `65` residues. The `B_5` classification table
 has `14` rows and records reflection pairs, parent residues modulo `210`, old
 gap templates, and new residues modulo `11`. The `B_5` pair summary compresses
-those rows into `7` reflection-pair rows for the paper-facing table.
+those rows into `7` reflection-pair rows for the paper-facing table. All `B_5`
+births close exactly one old gap; six reflection pairs close length `1/20`
+gaps and one pair closes a length `1/21` gap, with no endpoint-touching closure.
 
 ## PRC Candidate Windows
 

@@ -191,6 +191,9 @@ Current reading:
   and parent-gap templates.
 - The `B_5` pair summary compresses those `14` birth rows into `7`
   reflection-pair rows for the displayed finite theorem table.
+- All `B_5` births are single-gap closures: six reflection pairs close length
+  `1/20` gaps and one pair closes a length `1/21` gap, with no endpoint-touching
+  closure.
 - v0.9--v0.12 selected modulo-210 diagnostics are retained as appendix-style
   applications/diagnostics, not the main proof spine.
 

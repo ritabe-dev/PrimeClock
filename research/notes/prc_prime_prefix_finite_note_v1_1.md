@@ -192,6 +192,12 @@ The birth residues come in reflection pairs:
 | 872 / 1438 | 32 / 178 | `1/4-3/10` and `7/10-3/4` | `5/22-7/22` / `15/22-17/22` |
 | 1108 / 1202 | 58 / 152 | `7/10-3/4` and `1/4-3/10` | `15/22-17/22` / `5/22-7/22` |
 
+This table is generated from
+`data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`. Its finite
+reading is simple: every `B_5` birth closes exactly one old gap; six reflection
+pairs close a gap of length `1/20`, and the pair `849/1461` closes a gap of
+length `1/21`. None of the `B_5` closures relies on endpoint touching.
+
 The witness CSV is generated with:
 
 ```bash
