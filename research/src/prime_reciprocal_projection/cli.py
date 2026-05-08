@@ -23,6 +23,7 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
@@ -33,10 +34,12 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
     read_prime_prefix_uncertified_mod210_audit_csv,
+    read_prime_prefix_uncertified_mod210_class_review_csv,
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
@@ -351,6 +354,38 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_uncertified_class_review.add_argument(
         "--out",
         default="data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv",
+    )
+
+    covering_prime_prefix_uncertified_class_detail = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-class-detail",
+        help="expand selected modulo-210 classes to seed/control profile rows",
+    )
+    covering_prime_prefix_uncertified_class_detail.add_argument(
+        "--profile",
+        default="data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv",
+        help="matched complete/control residue profile CSV",
+    )
+    covering_prime_prefix_uncertified_class_detail.add_argument(
+        "--class-review",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv",
+        help="ranked modulo-210 class review CSV",
+    )
+    covering_prime_prefix_uncertified_class_detail.add_argument(
+        "--class-limit",
+        type=int,
+        default=8,
+        help="number of top-ranked classes to expand when --mod210 is omitted",
+    )
+    covering_prime_prefix_uncertified_class_detail.add_argument(
+        "--mod210",
+        type=int,
+        action="append",
+        default=[],
+        help="explicit modulo-210 class to expand; may be repeated",
+    )
+    covering_prime_prefix_uncertified_class_detail.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -891,6 +926,19 @@ def main(argv: list[str] | None = None) -> int:
         write_prime_prefix_uncertified_mod210_class_review_csv(rows, args.out)
         print(
             "covering-prime-prefix-uncertified-class-review: "
+            f"rows={len(rows)}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-class-detail":
+        rows = prime_prefix_uncertified_mod210_class_detail_rows(
+            read_prime_prefix_uncertified_matched_profile_csv(args.profile),
+            read_prime_prefix_uncertified_mod210_class_review_csv(args.class_review),
+            class_limit=args.class_limit,
+            selected_mod210=args.mod210 or None,
+        )
+        write_prime_prefix_uncertified_mod210_class_detail_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-uncertified-class-detail: "
             f"rows={len(rows)}, out={args.out}"
         )
         return 0

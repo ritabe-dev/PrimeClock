@@ -52,6 +52,7 @@ research/notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md
 research/notes/prc_prime_prefix_uncertified_control_profile_v0_5.md
 research/notes/prc_prime_prefix_uncertified_control_audit_v0_6.md
 research/notes/prc_prime_prefix_uncertified_mod210_class_review_v0_7.md
+research/notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_main_v0_9.md
@@ -82,4 +83,5 @@ research/data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.cs
 research/data/summaries/prc_prime_prefix_uncertified_control_mod210_audit_v0_6.csv
 research/data/summaries/prc_prime_prefix_uncertified_source_depth_summary_v0_6.csv
 research/data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv
+research/data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv
 ```

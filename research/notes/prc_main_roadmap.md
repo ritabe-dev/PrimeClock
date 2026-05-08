@@ -275,6 +275,36 @@ Current reading:
 - This strengthens the view that this layer is a local wheel-residue diagnostic
   rather than a complete-covering explanation.
 
+## v0.8 Modulo-210 Class Detail
+
+Goal: expand the top v0.7 classes back into seed/control rows so the class
+review can be inspected at the individual-residue level.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.md`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-detail \
+  --profile data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --class-review data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv \
+  --class-limit 8 \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv
+```
+
+Current reading:
+
+- The detail table expands the top `8` classes: `111`, `4`, `99`, `206`,
+  `118`, `88`, `201`, and `62`.
+- It contains `4,227` rows: `1,413` complete rows, `1,413` nearest-any controls,
+  and `1,401` same-modulo-210 controls.
+- The table is meant for targeted inspection before either a stricter discrete
+  residue null or a much larger `k=9` scan.
+
 ## v0.3 Fixed Axis
 
 Primary object:

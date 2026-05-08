@@ -190,6 +190,29 @@ class PrimePrefixUncertifiedMod210ClassReviewRow:
     sample_seed_n: str
 
 
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMod210ClassDetailRow:
+    """Selected modulo-210 class row expanded back to seed/control profiles."""
+
+    selected_rank: int
+    seed_mod210: int
+    priority_label: str
+    direction_label: str
+    seed_n: int
+    cohort_role: str
+    n: int
+    control_delta: int
+    row_mod210: int
+    residue: int
+    nearest_covered_residue: int
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    circular_residue_distance: int
+    complete_circular_residue_distance: int
+    distance_minus_complete: int
+    normalized_residue_distance: float
+
+
 def prime_prefix_certificate_rows(
     values: Iterable[int],
     *,
@@ -507,6 +530,51 @@ def read_prime_prefix_uncertified_mod210_audit_csv(
                     tie_count=int(row["tie_count"]),
                     complete_smaller_rate=float(row["complete_smaller_rate"]),
                     complete_larger_rate=float(row["complete_larger_rate"]),
+                    sample_seed_n=row["sample_seed_n"],
+                )
+            )
+    return rows
+
+
+def read_prime_prefix_uncertified_mod210_class_review_csv(
+    path: str | Path,
+) -> list[PrimePrefixUncertifiedMod210ClassReviewRow]:
+    """Read pivoted modulo-210 class review rows from CSV."""
+    rows: list[PrimePrefixUncertifiedMod210ClassReviewRow] = []
+    with Path(path).open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            rows.append(
+                PrimePrefixUncertifiedMod210ClassReviewRow(
+                    seed_mod210=int(row["seed_mod210"]),
+                    max_pair_count=int(row["max_pair_count"]),
+                    local_mod210_pair_count=_optional_int(row["local_mod210_pair_count"]),
+                    local_any_pair_count=_optional_int(row["local_any_pair_count"]),
+                    local_mod210_median_delta=_optional_float(
+                        row["local_mod210_median_delta"]
+                    ),
+                    local_any_median_delta=_optional_float(
+                        row["local_any_median_delta"]
+                    ),
+                    median_delta_difference_any_minus_mod210=_optional_float(
+                        row["median_delta_difference_any_minus_mod210"]
+                    ),
+                    local_mod210_complete_smaller_rate=_optional_float(
+                        row["local_mod210_complete_smaller_rate"]
+                    ),
+                    local_any_complete_smaller_rate=_optional_float(
+                        row["local_any_complete_smaller_rate"]
+                    ),
+                    smaller_rate_difference_any_minus_mod210=_optional_float(
+                        row["smaller_rate_difference_any_minus_mod210"]
+                    ),
+                    local_mod210_complete_larger_rate=_optional_float(
+                        row["local_mod210_complete_larger_rate"]
+                    ),
+                    local_any_complete_larger_rate=_optional_float(
+                        row["local_any_complete_larger_rate"]
+                    ),
+                    direction_label=row["direction_label"],
+                    priority_label=row["priority_label"],
                     sample_seed_n=row["sample_seed_n"],
                 )
             )
@@ -835,6 +903,76 @@ def prime_prefix_uncertified_mod210_class_review_rows(
     )
 
 
+def prime_prefix_uncertified_mod210_class_detail_rows(
+    profile_rows: Iterable[PrimePrefixUncertifiedMatchedProfileRow],
+    class_review_rows: Iterable[PrimePrefixUncertifiedMod210ClassReviewRow],
+    *,
+    class_limit: int = 8,
+    selected_mod210: Iterable[int] | None = None,
+) -> list[PrimePrefixUncertifiedMod210ClassDetailRow]:
+    """Expand selected modulo-210 classes to their seed/control profile rows."""
+    if class_limit < 1:
+        raise ValueError("class_limit must be >= 1")
+    review_values = list(class_review_rows)
+    review_by_class = {row.seed_mod210: row for row in review_values}
+    selected_classes = (
+        list(dict.fromkeys(selected_mod210))
+        if selected_mod210 is not None
+        else [row.seed_mod210 for row in review_values[:class_limit]]
+    )
+    rank_by_class = {seed_mod210: index + 1 for index, seed_mod210 in enumerate(selected_classes)}
+    selected_set = set(selected_classes)
+
+    profile_values = [
+        row for row in profile_rows if row.seed_n % 210 in selected_set
+    ]
+    by_seed_role = {(row.seed_n, row.cohort_role): row for row in profile_values}
+    role_order = {
+        "complete_uncertified": 0,
+        "local_mod210_control": 1,
+        "local_any_control": 2,
+    }
+    detail_rows: list[PrimePrefixUncertifiedMod210ClassDetailRow] = []
+    for row in sorted(
+        profile_values,
+        key=lambda item: (
+            rank_by_class[item.seed_n % 210],
+            item.seed_n,
+            role_order.get(item.cohort_role, 99),
+            item.n,
+        ),
+    ):
+        seed_mod210 = row.seed_n % 210
+        review = review_by_class.get(seed_mod210)
+        complete = by_seed_role.get((row.seed_n, "complete_uncertified"))
+        if complete is None:
+            continue
+        detail_rows.append(
+            PrimePrefixUncertifiedMod210ClassDetailRow(
+                selected_rank=rank_by_class[seed_mod210],
+                seed_mod210=seed_mod210,
+                priority_label=review.priority_label if review else "",
+                direction_label=review.direction_label if review else "",
+                seed_n=row.seed_n,
+                cohort_role=row.cohort_role,
+                n=row.n,
+                control_delta=row.control_delta,
+                row_mod210=row.mod210,
+                residue=row.residue,
+                nearest_covered_residue=row.nearest_covered_residue,
+                nearest_covered_source_k=row.nearest_covered_source_k,
+                nearest_covered_source_prime=row.nearest_covered_source_prime,
+                circular_residue_distance=row.circular_residue_distance,
+                complete_circular_residue_distance=complete.circular_residue_distance,
+                distance_minus_complete=(
+                    row.circular_residue_distance - complete.circular_residue_distance
+                ),
+                normalized_residue_distance=row.normalized_residue_distance,
+            )
+        )
+    return detail_rows
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -923,8 +1061,20 @@ def write_prime_prefix_uncertified_mod210_class_review_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMod210ClassReviewRow)
 
 
+def write_prime_prefix_uncertified_mod210_class_detail_csv(
+    rows: Iterable[PrimePrefixUncertifiedMod210ClassDetailRow],
+    output_path: str | Path,
+) -> None:
+    """Write selected modulo-210 class detail rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMod210ClassDetailRow)
+
+
 def _optional_int(value: str) -> int | None:
     return int(value) if value else None
+
+
+def _optional_float(value: str) -> float | None:
+    return float(value) if value else None
 
 
 def _matched_profile_row(

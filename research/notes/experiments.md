@@ -1081,3 +1081,39 @@ Reading: many large classes change direction depending on whether the control
 preserves modulo `210`. This is useful for selecting classes to inspect, but it
 still points to a wheel/local-control effect rather than a complete-specific
 nearest-`C_8` effect.
+
+## PRC Prime-Prefix Modulo-210 Class Detail v0.8
+
+The v0.8 detail table expands the top v0.7 modulo-210 classes into their
+underlying complete/control rows.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-detail \
+  --profile data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --class-review data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv \
+  --class-limit 8 \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| selected classes | 8 |
+| data rows | 4,227 |
+| complete rows | 1,413 |
+| same-modulo-210 control rows | 1,401 |
+| nearest-any control rows | 1,413 |
+
+Selected classes:
+
+```text
+111, 4, 99, 206, 118, 88, 201, 62
+```
+
+Reading: this artifact is for hand inspection. It confirms that the most useful
+next question is not "are complete rows closer to `C_8`?", but "which local
+wheel condition is being preserved by the control?".

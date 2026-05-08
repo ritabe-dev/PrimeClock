@@ -10,6 +10,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
@@ -20,10 +21,12 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_uncertified_source_depth_summary_rows,
     read_prime_prefix_certificate_csv,
     read_prime_prefix_uncertified_mod210_audit_csv,
+    read_prime_prefix_uncertified_mod210_class_review_csv,
     read_prime_prefix_uncertified_matched_profile_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
@@ -502,3 +505,86 @@ def test_covering_prime_prefix_uncertified_class_review_cli_writes_csv(tmp_path:
         == 0
     )
     assert len(review_out.read_text(encoding="utf-8").splitlines()) == 3
+
+
+def test_prime_prefix_uncertified_mod210_class_detail_headers(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    audit_rows = prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+    review_rows = prime_prefix_uncertified_mod210_class_review_rows(audit_rows)
+    review_out = tmp_path / "review.csv"
+    detail_out = tmp_path / "detail.csv"
+    write_prime_prefix_uncertified_mod210_class_review_csv(review_rows, review_out)
+
+    detail_rows = prime_prefix_uncertified_mod210_class_detail_rows(
+        profile_rows,
+        read_prime_prefix_uncertified_mod210_class_review_csv(review_out),
+        selected_mod210=[178],
+    )
+    write_prime_prefix_uncertified_mod210_class_detail_csv(detail_rows, detail_out)
+
+    assert detail_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "selected_rank,seed_mod210,priority_label,direction_label,seed_n,cohort_role,"
+        "n,control_delta,row_mod210,residue,nearest_covered_residue,"
+        "nearest_covered_source_k,nearest_covered_source_prime,"
+        "circular_residue_distance,complete_circular_residue_distance,"
+        "distance_minus_complete,normalized_residue_distance"
+    )
+    assert [row.cohort_role for row in detail_rows] == [
+        "complete_uncertified",
+        "local_mod210_control",
+        "local_any_control",
+    ]
+    assert detail_rows[0].distance_minus_complete == 0
+    assert all(row.seed_mod210 == 178 for row in detail_rows)
+
+
+def test_covering_prime_prefix_uncertified_class_detail_cli_writes_csv(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    review_rows = prime_prefix_uncertified_mod210_class_review_rows(
+        prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+    )
+    profile_out = tmp_path / "profile.csv"
+    review_out = tmp_path / "review.csv"
+    detail_out = tmp_path / "detail.csv"
+    write_prime_prefix_uncertified_matched_profile_csv(profile_rows, profile_out)
+    write_prime_prefix_uncertified_mod210_class_review_csv(review_rows, review_out)
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-class-detail",
+                "--profile",
+                str(profile_out),
+                "--class-review",
+                str(review_out),
+                "--mod210",
+                "178",
+                "--out",
+                str(detail_out),
+            ]
+        )
+        == 0
+    )
+    assert len(detail_out.read_text(encoding="utf-8").splitlines()) == 4
