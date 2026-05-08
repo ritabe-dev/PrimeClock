@@ -296,6 +296,23 @@ certificate, not a replacement for the row-level rational witnesses.
 
 ## C5 and B5
 
+The next layer is the first nontrivial birth layer after `C_4`.
+
+**Proposition.** At `k=5`, with new prime `11` and `M_5=2310`,
+
+```text
+|C_5| = 36
+|Lift_5(C_4)| = 22
+|B_5| = 14
+B_5 = {
+  118, 448, 542, 778, 849, 872, 1108,
+  1202, 1438, 1461, 1532, 1768, 1862, 2192
+} mod 2310.
+```
+
+The `22` inherited rows are exactly the lifts of `C_4={2,208} mod 210`.
+The remaining `14` rows are the birth layer `B_5=C_5 \ Lift_5(C_4)`.
+
 The v1.1 full export is generated with:
 
 ```bash
@@ -305,7 +322,7 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 ```
 
-At `k=5`:
+It gives the finite enumeration behind the proposition:
 
 ```text
 |C_5| = 36
@@ -330,6 +347,13 @@ This table is generated from
 reading is simple: every `B_5` birth closes exactly one old gap; six reflection
 pairs close a gap of length `1/20`, and the pair `849/1461` closes a gap of
 length `1/21`. None of the `B_5` closures relies on endpoint touching.
+
+The proof structure is row-level and finite. For each displayed birth residue,
+the first four prime arcs leave exactly one old open gap. The new closed
+`p=11` arc strictly contains that old gap, so the union becomes the full circle
+after adding the fifth prime. In the displayed representatives this means the
+old open-gap boundaries lie strictly between the new closed-arc boundaries;
+there is no equality case to resolve by endpoint convention.
 
 The witness CSV is generated with:
 
@@ -371,10 +395,11 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
 
 This gives `7` rows. It is the preferred source for the displayed `B_5` table.
 The row-level classification and witness CSVs remain the audit trail. In other
-words, the note now has three layers for `B_5`:
+words, the finite proposition has three artifact layers:
 
-1. `birth_witness`: rational interval proof data.
-2. `birth_classification`: one row per birth residue.
+1. `birth_witness`: rational interval proof data for each of the `14` births.
+2. `birth_classification`: one row per birth residue, with parent and symmetry
+   metadata.
 3. `birth_pair_summary`: one row per reflection pair for the written table.
 
 The public v1.7 certificate bundle can be audited from CSV alone:
@@ -428,8 +453,7 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Polish `B_5` into an explicit finite proposition with the 14 birth residues,
-   7 reflection pairs, and old-gap/new-arc containment inequalities stated in
-   one place.
-2. Extend the same witness/classification/pair-summary format to `B_6`,
+1. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.
+2. If needed for a paper version, expand the `B_5` proposition into a compact
+   appendix table listing the `14` old-gap/new-arc strict containments in full.

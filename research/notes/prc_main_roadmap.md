@@ -188,8 +188,12 @@ Current reading:
 - `C_4={2,208} mod 210` is the first nonempty layer. The coverage chain for
   `r=2` uses closed-arc endpoint touching at `1/2`; `208` is its reflection.
 - `C_5` has `36` residues: `22` inherited lifts from `C_4` and `14` births.
+- The `B_5` section is now written as an explicit finite proposition: the exact
+  14-residue birth set modulo `2310`, its 7 reflection pairs, and the
+  old-gap/new-arc strict containment structure are stated in one place.
 - The `B_5` witness table records the previous uncovered interval and the
-  `p=11` arc that closes it. This is the next theorem-building object.
+  `p=11` arc that closes it. It is the row-level proof data behind the
+  proposition.
 - The v1.6 `C_4` exclusion witness table gives one rational open-gap witness
   and one rational interior witness point for every residue outside `{2,208}`.
 - The v1.5 `C_4` exclusion summary compresses the 208 witnesses into 36
