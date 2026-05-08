@@ -67,6 +67,7 @@ Every statement in this research track should be assigned one of these statuses.
 | In the v0.7 modulo-210 class review, `16` large classes have mixed control direction, so the sign of the nearest-`C_8` distance comparison often depends on whether the control preserves modulo `210` | Experiment / diagnostic |
 | The v0.8 modulo-210 class detail table expands the top `8` v0.7 classes into `4,227` seed/control rows for inspection | Experiment / diagnostic |
 | The v0.9 modulo-210 source summary shows that selected classes split into shallow `C_4`-adjacent classes (`4`, `206`, `201`) and mostly `C_5`-adjacent classes (`111`, `99`, with `118`, `88`, `62` more mixed) | Experiment / diagnostic |
+| The v0.11 lift-boundary table shows that selected classes can be read as neighborhoods of a few shallow anchors, especially `C_4` anchors `2,208` and `C_5` anchors `62,148,122,88` | Experiment / diagnostic |
 
 ## Non-Claims
 
@@ -107,6 +108,9 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the v0.10 boundary-anchor split explains
   complete covering; it only identifies which shallow modulo-210 covered
   anchors the selected classes sit near.
+- This project does not claim the v0.11 lift-boundary table explains complete
+  covering; it only re-expresses selected modulo-210 classes as neighborhoods
+  of shallow anchors.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample

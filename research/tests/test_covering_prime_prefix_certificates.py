@@ -14,6 +14,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_class_source_summary_rows,
+    prime_prefix_uncertified_mod210_lift_boundary_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows,
@@ -33,6 +34,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_class_source_summary_csv,
+    write_prime_prefix_uncertified_mod210_lift_boundary_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
@@ -766,3 +768,86 @@ def test_covering_prime_prefix_uncertified_class_boundary_summary_cli_writes_csv
         == 0
     )
     assert len(summary_out.read_text(encoding="utf-8").splitlines()) >= 2
+
+
+def test_prime_prefix_uncertified_mod210_lift_boundary_headers(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    detail_rows = prime_prefix_uncertified_mod210_class_detail_rows(
+        profile_rows,
+        prime_prefix_uncertified_mod210_class_review_rows(
+            prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+        ),
+        selected_mod210=[178],
+    )
+    out = tmp_path / "lift.csv"
+
+    rows = prime_prefix_uncertified_mod210_lift_boundary_rows(
+        detail_rows,
+        source_max_k=4,
+    )
+    write_prime_prefix_uncertified_mod210_lift_boundary_csv(rows, out)
+
+    assert out.read_text(encoding="utf-8").splitlines()[0] == (
+        "nearest_covered_source_k,nearest_covered_source_prime,"
+        "nearest_covered_mod210,cohort_role,seed_mod210,selected_rank,"
+        "priority_label,direction_label,mod210_signed_delta,row_count,"
+        "share_within_anchor_role,share_within_class_role,"
+        "circular_residue_distance_median,circular_residue_distance_max,"
+        "distance_minus_complete_median,sample_seed_n"
+    )
+    assert sum(row.row_count for row in rows) == len(detail_rows)
+    assert all(row.nearest_covered_source_k <= 4 for row in rows)
+
+
+def test_covering_prime_prefix_uncertified_lift_boundary_cli_writes_csv(
+    tmp_path: Path,
+):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    detail_rows = prime_prefix_uncertified_mod210_class_detail_rows(
+        profile_rows,
+        prime_prefix_uncertified_mod210_class_review_rows(
+            prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+        ),
+        selected_mod210=[178],
+    )
+    detail_out = tmp_path / "detail.csv"
+    out = tmp_path / "lift.csv"
+    write_prime_prefix_uncertified_mod210_class_detail_csv(detail_rows, detail_out)
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-lift-boundary",
+                "--detail",
+                str(detail_out),
+                "--source-max-k",
+                "4",
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    assert len(out.read_text(encoding="utf-8").splitlines()) >= 2

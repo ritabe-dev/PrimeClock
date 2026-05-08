@@ -257,6 +257,28 @@ class PrimePrefixUncertifiedMod210ClassBoundarySummaryRow:
     distance_minus_complete_median: float
 
 
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMod210LiftBoundaryRow:
+    """Selected class rows inverted as shallow-anchor boundary neighborhoods."""
+
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    nearest_covered_mod210: int
+    cohort_role: str
+    seed_mod210: int
+    selected_rank: int
+    priority_label: str
+    direction_label: str
+    mod210_signed_delta: int
+    row_count: int
+    share_within_anchor_role: float
+    share_within_class_role: float
+    circular_residue_distance_median: float
+    circular_residue_distance_max: int
+    distance_minus_complete_median: float
+    sample_seed_n: str
+
+
 def prime_prefix_certificate_rows(
     values: Iterable[int],
     *,
@@ -1213,6 +1235,113 @@ def prime_prefix_uncertified_mod210_class_boundary_summary_rows(
     return summary
 
 
+def prime_prefix_uncertified_mod210_lift_boundary_rows(
+    detail_rows: Iterable[PrimePrefixUncertifiedMod210ClassDetailRow],
+    *,
+    source_max_k: int = 5,
+) -> list[PrimePrefixUncertifiedMod210LiftBoundaryRow]:
+    """Invert selected class detail rows into shallow-anchor neighborhoods."""
+    if source_max_k < 1:
+        raise ValueError("source_max_k must be >= 1")
+    row_values = [
+        row
+        for row in detail_rows
+        if row.nearest_covered_source_k <= source_max_k
+    ]
+    anchor_role_totals: dict[tuple[int, int, int, str], int] = {}
+    class_role_totals: dict[tuple[int, str], int] = {}
+    groups: dict[
+        tuple[int, int, int, str, int, int, str, str, int],
+        list[PrimePrefixUncertifiedMod210ClassDetailRow],
+    ] = {}
+    for row in row_values:
+        nearest_mod210 = row.nearest_covered_residue % 210
+        signed_delta = _signed_circular_delta(
+            start=nearest_mod210,
+            end=row.row_mod210,
+            modulus=210,
+        )
+        anchor_role_key = (
+            row.nearest_covered_source_k,
+            row.nearest_covered_source_prime,
+            nearest_mod210,
+            row.cohort_role,
+        )
+        class_role_key = (row.seed_mod210, row.cohort_role)
+        group_key = (
+            row.nearest_covered_source_k,
+            row.nearest_covered_source_prime,
+            nearest_mod210,
+            row.cohort_role,
+            row.seed_mod210,
+            row.selected_rank,
+            row.priority_label,
+            row.direction_label,
+            signed_delta,
+        )
+        anchor_role_totals[anchor_role_key] = anchor_role_totals.get(anchor_role_key, 0) + 1
+        class_role_totals[class_role_key] = class_role_totals.get(class_role_key, 0) + 1
+        groups.setdefault(group_key, []).append(row)
+
+    role_order = {
+        "complete_uncertified": 0,
+        "local_mod210_control": 1,
+        "local_any_control": 2,
+    }
+    rows: list[PrimePrefixUncertifiedMod210LiftBoundaryRow] = []
+    for (
+        source_k,
+        source_prime,
+        nearest_mod210,
+        role,
+        seed_mod210,
+        selected_rank,
+        priority_label,
+        direction_label,
+        signed_delta,
+    ), group_rows in sorted(
+        groups.items(),
+        key=lambda item: (
+            item[0][0],
+            item[0][2],
+            role_order.get(item[0][3], 99),
+            -len(item[1]),
+            item[0][8],
+            item[0][4],
+        ),
+    ):
+        distances = sorted(row.circular_residue_distance for row in group_rows)
+        deltas = sorted(row.distance_minus_complete for row in group_rows)
+        anchor_role_key = (source_k, source_prime, nearest_mod210, role)
+        class_role_key = (seed_mod210, role)
+        sample = " ".join(str(row.seed_n) for row in sorted(group_rows, key=lambda item: item.seed_n)[:10])
+        rows.append(
+            PrimePrefixUncertifiedMod210LiftBoundaryRow(
+                nearest_covered_source_k=source_k,
+                nearest_covered_source_prime=source_prime,
+                nearest_covered_mod210=nearest_mod210,
+                cohort_role=role,
+                seed_mod210=seed_mod210,
+                selected_rank=selected_rank,
+                priority_label=priority_label,
+                direction_label=direction_label,
+                mod210_signed_delta=signed_delta,
+                row_count=len(group_rows),
+                share_within_anchor_role=(
+                    len(group_rows) / anchor_role_totals[anchor_role_key]
+                ),
+                share_within_class_role=(
+                    len(group_rows) / class_role_totals[class_role_key]
+                ),
+                circular_residue_distance_median=statistics.median(distances),
+                circular_residue_distance_max=max(distances),
+                distance_minus_complete_median=statistics.median(deltas),
+                sample_seed_n=sample,
+            )
+        )
+    return rows
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -1330,6 +1459,18 @@ def write_prime_prefix_uncertified_mod210_class_boundary_summary_csv(
         rows,
         output_path,
         PrimePrefixUncertifiedMod210ClassBoundarySummaryRow,
+    )
+
+
+def write_prime_prefix_uncertified_mod210_lift_boundary_csv(
+    rows: Iterable[PrimePrefixUncertifiedMod210LiftBoundaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write selected class lift-boundary rows as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        PrimePrefixUncertifiedMod210LiftBoundaryRow,
     )
 
 

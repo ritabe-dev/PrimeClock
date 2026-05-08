@@ -1194,3 +1194,44 @@ Reading: the selected classes are better understood as neighborhoods of
 specific shallow covered anchors. The next exact target should be a
 lifted-boundary table for shallow `C_k` anchors rather than a raw `k=9`
 enumeration.
+
+## PRC Prime-Prefix Modulo-210 Lift-Boundary Table v0.11
+
+The v0.11 lift-boundary table inverts v0.10. It groups selected-class detail
+rows by shallow covered anchor, then reports which selected modulo-210 classes
+appear around that anchor.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-lift-boundary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --source-max-k 5 \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| lift-boundary rows | 140 |
+| source depth included | `k <= 5` |
+
+First reading for complete rows:
+
+| source | anchor mod 210 | selected class | signed delta | row count |
+|---|---:|---:|---:|---:|
+| `C_4` | 2 | 4 | +2 | 204 |
+| `C_4` | 208 | 206 | -2 | 185 |
+| `C_4` | 208 | 201 | -7 | 148 |
+| `C_5` | 62 | 111 | +49 | 49 |
+| `C_5` | 148 | 99 | -49 | 46 |
+| `C_4` | 2 | 62 | +60 | 37 |
+| `C_4` | 2 | 88 | +86 | 26 |
+| `C_5` | 122 | 99 | -23 | 26 |
+| `C_5` | 88 | 111 | +23 | 23 |
+
+Reading: the selected classes are now readable as neighborhoods of a few
+shallow anchors. The next exact target is the anchor-neighborhood structure of
+`C_4` and `C_5` inside the `C_8` residue ring.

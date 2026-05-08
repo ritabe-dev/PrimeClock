@@ -27,6 +27,7 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_class_source_summary_rows,
+    prime_prefix_uncertified_mod210_lift_boundary_rows,
     prime_prefix_uncertified_mod210_summary_rows,
     prime_prefix_uncertified_matched_pair_delta_rows,
     prime_prefix_uncertified_matched_profile_rows_from_csv,
@@ -46,6 +47,7 @@ from .covering_prime_prefix_certificates import (
     write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_class_source_summary_csv,
+    write_prime_prefix_uncertified_mod210_lift_boundary_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
     write_prime_prefix_uncertified_matched_pair_delta_csv,
     write_prime_prefix_uncertified_matched_profile_csv,
@@ -424,6 +426,29 @@ def main(argv: list[str] | None = None) -> int:
         default=(
             "data/summaries/"
             "prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv"
+        ),
+    )
+
+    covering_prime_prefix_uncertified_lift_boundary = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-lift-boundary",
+        help="invert selected modulo-210 class detail rows into shallow-anchor neighborhoods",
+    )
+    covering_prime_prefix_uncertified_lift_boundary.add_argument(
+        "--detail",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv",
+        help="selected modulo-210 class detail CSV",
+    )
+    covering_prime_prefix_uncertified_lift_boundary.add_argument(
+        "--source-max-k",
+        type=int,
+        default=5,
+        help="largest nearest C_k source depth to include",
+    )
+    covering_prime_prefix_uncertified_lift_boundary.add_argument(
+        "--out",
+        default=(
+            "data/summaries/"
+            "prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv"
         ),
     )
 
@@ -999,6 +1024,17 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "covering-prime-prefix-uncertified-class-boundary-summary: "
             f"rows={len(rows)}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-lift-boundary":
+        rows = prime_prefix_uncertified_mod210_lift_boundary_rows(
+            read_prime_prefix_uncertified_mod210_class_detail_csv(args.detail),
+            source_max_k=args.source_max_k,
+        )
+        write_prime_prefix_uncertified_mod210_lift_boundary_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-uncertified-lift-boundary: "
+            f"rows={len(rows)}, source_max_k={args.source_max_k}, out={args.out}"
         )
         return 0
     if args.command == "covering-window-figure":

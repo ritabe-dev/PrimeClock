@@ -361,6 +361,37 @@ Current reading:
 - The next exact target is a lifted-boundary table for shallow `C_k` anchors,
   not a raw larger primorial scan.
 
+## v0.11 Modulo-210 Lift-Boundary Table
+
+Goal: invert the selected-class boundary table and read selected modulo-210
+classes as neighborhoods of shallow covered anchors.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-lift-boundary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --source-max-k 5 \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv
+```
+
+Current reading:
+
+- `C_4` anchor `2` maps strongly to selected class `4`, with weaker
+  neighborhoods at `62`, `88`, and `99`.
+- `C_4` anchor `208` maps strongly to selected classes `206` and `201`, with a
+  weaker neighborhood at `118`.
+- `C_5` anchors `62`, `148`, `122`, and `88` explain the main selected
+  `C_5`-adjacent classes `111`, `99`, `88`, and `118`.
+- The next step should describe the anchor-neighborhood structure of `C_4` and
+  `C_5` inside the `C_8` residue ring.
+
 ## v0.3 Fixed Axis
 
 Primary object:

@@ -51,11 +51,13 @@ Read in this order:
    selected-class source-depth summary.
 12. `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md` for
    the selected-class boundary-anchor summary.
-13. `notes/claims.md` for claim categories and non-claims.
-14. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+13. `notes/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.md` for the
+   shallow-anchor lift-boundary table.
+14. `notes/claims.md` for claim categories and non-claims.
+15. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-15. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-16. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+16. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+17. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -76,6 +78,7 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -236,4 +239,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-clas
 python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-boundary-summary \
   --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
   --out data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-lift-boundary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --source-max-k 5 \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_lift_boundary_v0_11.csv
 ```
