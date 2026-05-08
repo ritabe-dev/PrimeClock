@@ -29,8 +29,8 @@ claim by itself.
 
 Read in this order:
 
-1. `notes/prc_prime_prefix_finite_note_v1_1.md` for the finite theorem framing,
-   closed-arc convention, `C_4`, and `B_5` witnesses.
+1. `notes/prc_finite_certificate_note_v2_0.md` for the release-ready finite
+   theorem note.
 2. `notes/claims_finite_c4_b5.md` for the narrow finite-theorem claims and
    non-claims audited in the minimal package.
 3. `VERIFY_FINITE_C4_B5.md` for the verifier contract and expected checks.
@@ -52,6 +52,8 @@ Appendix / diagnostic notes:
   connection from `C_k` to exact-certified complete-covering values.
 - `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
 - `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+- `notes/prc_prime_prefix_finite_note_v1_1.md` for the older v1.1 pivot note
+  that v2.0 condenses.
 
 In the minimal external review package, these appendix/context notes are
 intentionally excluded unless explicitly promoted. Use the full repository or
@@ -63,6 +65,9 @@ package. For the narrow external package, use `notes/claims_finite_c4_b5.md`.
 
 Canonical PRC v1 artifacts in the full repository:
 
+- `notes/prc_finite_certificate_note_v2_0.md`
+- `RELEASE_NOTES_v2_0.md`
+- `VERIFY_FINITE_C4_B5.md`
 - `data/summaries/prc_prime_prefix_profile_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`

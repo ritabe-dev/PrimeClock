@@ -14,6 +14,8 @@ finite theorem note and keeps modulo-210 diagnostics out of the main path.
 - `src/prime_reciprocal_projection/`
 - `tests/`
 - `VERIFY_FINITE_C4_B5.md`
+- `RELEASE_NOTES_v2_0.md`
+- `notes/prc_finite_certificate_note_v2_0.md`
 - `notes/prc_prime_prefix_finite_note_v1_1.md`
 - `notes/claims_finite_c4_b5.md`
 - `notes/known-results.md`
@@ -60,6 +62,24 @@ figures, including modulo-210 and branch-uniform experiments.
 - `data/summaries/`
 - `figures/v0/`
 
+## v2.0 Release-Ready Bundle
+
+Use this package when the reviewer should see the polished finite theorem note
+and citation metadata, but not the full historical archive.
+
+- `CITATION.cff`
+- `README.md`
+- `research/README.md`
+- `research/RELEASE_NOTES_v2_0.md`
+- `research/VERIFY_FINITE_C4_B5.md`
+- `research/notes/prc_finite_certificate_note_v2_0.md`
+- `research/notes/claims_finite_c4_b5.md`
+- `research/notes/known-results.md`
+- `research/data/summaries/prc_prime_prefix_*`
+- `research/src/prime_reciprocal_projection/`
+- `research/tests/test_covering_prime_prefix_filtration.py`
+- `research/certificates/check_prime_prefix_c4_b5.py`
+
 From the repository root, also include the small PrimeClock visualization only
 when the reviewer wants the origin artifact:
 
@@ -89,7 +109,7 @@ For a minimal research review, start with:
 
 ```text
 research/README.md
-research/notes/prc_prime_prefix_finite_note_v1_1.md
+research/notes/prc_finite_certificate_note_v2_0.md
 research/notes/claims_finite_c4_b5.md
 research/VERIFY_FINITE_C4_B5.md
 research/notes/known-results.md

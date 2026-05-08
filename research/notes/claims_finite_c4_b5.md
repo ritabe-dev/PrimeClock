@@ -4,6 +4,9 @@ This is the narrow claim registry for the minimal external review package. It
 only covers the finite `C_k/C_4/B_5` certificate artifacts included in that
 package. Broader PRC diagnostics live in `claims.md` and are not audited here.
 
+The release-ready v2.0 theorem note is
+`prc_finite_certificate_note_v2_0.md`.
+
 ## Status Labels
 
 | Type | Meaning |
