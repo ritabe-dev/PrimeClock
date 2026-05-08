@@ -224,13 +224,18 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnes
   --k 4 \
   --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
 
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+
 python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
   --k 5 \
   --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
 ```
 
 The `C_4` exclusion witness table has `208` data rows, one for every residue
-outside `{2,208} mod 210`. The `B_5` classification table has `14` rows and
+outside `{2,208} mod 210`. The exclusion summary compresses these into `36`
+component/measure classes. The `B_5` classification table has `14` rows and
 records reflection pairs, parent residues modulo `210`, old gap templates, and
 new residues modulo `11`.
 

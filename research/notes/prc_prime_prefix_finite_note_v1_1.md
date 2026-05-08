@@ -136,6 +136,19 @@ uncovered interval for a residue not in `C_4`. A compressed handwritten
 exclusion table remains a polishing target, but the finite certificate artifact
 is now auditable.
 
+The 208 witnesses can be compressed into 36 measure/component classes:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+```
+
+This summary is the working index for a short written exclusion proof. It
+groups residues by uncovered component count and exact uncovered measure, while
+retaining residue samples and representative gap intervals.
+
 ## C5 and B5
 
 The v1.1 full export is generated with:

@@ -111,6 +111,21 @@ class PrimePrefixBirthClassificationRow:
     uses_endpoint_touching: bool
 
 
+@dataclass(frozen=True)
+class PrimePrefixExclusionSummaryRow:
+    """Compressed exclusion-witness group for one prefix level."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    uncovered_interval_count: int
+    uncovered_measure_fraction: str
+    uncovered_measure: float
+    residue_count: int
+    residues_sample: str
+    first_uncovered_interval_sample: str
+
+
 def prime_prefix_residue_filtration_tables(
     *,
     max_k: int = 7,
@@ -246,6 +261,42 @@ def prime_prefix_exclusion_witness_rows(
                 uncovered_measure=float(residue_uncovered_measure(residue, primes)),
                 first_uncovered_interval=_format_intervals(gaps[:1]),
                 uncovered_intervals=_format_intervals(gaps),
+            )
+        )
+    return rows
+
+
+def prime_prefix_exclusion_summary_rows(
+    *,
+    k: int = 4,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixExclusionSummaryRow]:
+    """Return compressed classes for exclusion witnesses at one prefix level."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    primes = _first_primes(k)
+    primorial = _primorial(primes)
+    groups: dict[tuple[int, Fraction], list[tuple[int, str]]] = {}
+    for row in prime_prefix_exclusion_witness_rows(k=k, allow_large_k=allow_large_k):
+        exact_measure = residue_uncovered_measure(row.residue, primes)
+        groups.setdefault((row.uncovered_interval_count, exact_measure), []).append(
+            (row.residue, row.first_uncovered_interval)
+        )
+
+    rows: list[PrimePrefixExclusionSummaryRow] = []
+    for (gap_count, measure), values in sorted(groups.items(), key=_exclusion_summary_sort_key):
+        residues = [residue for residue, _ in values]
+        first_intervals = sorted({interval for _, interval in values})
+        rows.append(
+            PrimePrefixExclusionSummaryRow(
+                k=k,
+                new_prime=primes[-1],
+                primorial=primorial,
+                uncovered_interval_count=gap_count,
+                uncovered_measure_fraction=_format_fraction(measure),
+                uncovered_measure=float(measure),
+                residue_count=len(residues),
+                residues_sample=" ".join(str(residue) for residue in residues[:20]),
+                first_uncovered_interval_sample=" ".join(first_intervals[:8]),
             )
         )
     return rows
@@ -483,6 +534,14 @@ def write_prime_prefix_exclusion_witness_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixExclusionWitnessRow)
 
 
+def write_prime_prefix_exclusion_summary_csv(
+    rows: Iterable[PrimePrefixExclusionSummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write compressed exclusion summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixExclusionSummaryRow)
+
+
 def write_prime_prefix_birth_classification_csv(
     rows: Iterable[PrimePrefixBirthClassificationRow],
     output_path: str | Path,
@@ -515,6 +574,13 @@ def _primorial(primes: Iterable[int]) -> int:
     for p in primes:
         value *= p
     return value
+
+
+def _exclusion_summary_sort_key(
+    item: tuple[tuple[int, Fraction], list[tuple[int, str]]],
+) -> tuple[int, Fraction]:
+    (gap_count, measure), _ = item
+    return (gap_count, measure)
 
 
 def _exact_arc_intervals_for_residue(residue: int, p: int) -> list[ExactInterval]:

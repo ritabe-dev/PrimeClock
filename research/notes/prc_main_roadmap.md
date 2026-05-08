@@ -142,6 +142,7 @@ Deliverables:
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
 - `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
 
 Commands:
@@ -160,6 +161,10 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnes
   --k 4 \
   --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
 
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+
 python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
   --k 5 \
   --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
@@ -174,6 +179,8 @@ Current reading:
   `p=11` arc that closes it. This is the next theorem-building object.
 - The `C_4` exclusion witness table gives one uncovered rational gap for every
   residue outside `{2,208}`.
+- The `C_4` exclusion summary compresses the 208 witnesses into 36
+  component/measure classes for a shorter written proof.
 - The `B_5` classification table turns the witness rows into reflection-pair
   and parent-gap templates.
 - v0.9--v0.12 selected modulo-210 diagnostics are retained as appendix-style

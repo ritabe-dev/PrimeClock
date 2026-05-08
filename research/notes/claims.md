@@ -42,6 +42,7 @@ Every statement in this research track should be assigned one of these statuses.
 | The v1.1 `B_5` birth-witness table gives rational previous-gap and new-arc intervals for the `14` births at `p=11` | Exact generated artifact |
 | The v1.2 `C_4` exclusion-witness table gives one rational uncovered-gap witness for each of the `208` residues outside `{2,208} mod 210` | Exact generated artifact |
 | The v1.2 `B_5` birth-classification table groups the `14` births by reflection pair, parent residue modulo `210`, previous gap, and new residue modulo `11` | Exact generated artifact |
+| The v1.3 `C_4` exclusion-summary table compresses the `208` excluded residues into `36` exact uncovered-measure/component classes | Exact generated artifact |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |

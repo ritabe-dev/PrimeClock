@@ -76,6 +76,7 @@ research/data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
 research/data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 research/data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
 research/data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
+research/data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
 research/data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
