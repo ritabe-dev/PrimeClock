@@ -9,6 +9,7 @@ from prime_reciprocal_projection.covering_runs import (
     DEFAULT_PREFILTER_TOLERANCE,
     PREFILTER_GUARANTEE_MAX_N,
     block_scan_prefilter_runs,
+    c0_autocorrelation_rows,
     complete_covering_runs_from_cluster_csv,
     consecutive_runs,
     default_prefilter_validation_windows,
@@ -23,6 +24,7 @@ from prime_reciprocal_projection.covering_runs import (
     transition_stats_from_runs,
     summarize_runs,
     validate_prefilter_tolerance,
+    write_c0_autocorrelation_csv,
     write_complete_covering_runs_csv,
 )
 
@@ -165,6 +167,38 @@ def test_transition_stats_counts_runs_and_residues():
     assert stats.length2_start_mod_6_counts == "0:0 1:0 2:1 3:0 4:1 5:1"
 
 
+def test_c0_autocorrelation_rows_compare_independent_and_residue_baselines():
+    rows = c0_autocorrelation_rows(
+        [
+            CompleteCoveringRun(start=10, stop=12, length=3),
+            CompleteCoveringRun(start=20, stop=21, length=2),
+        ],
+        start=10,
+        stop=30,
+        max_lag=2,
+    )
+    assert [row.h for row in rows] == [1, 2]
+    assert rows[0].observed_pair_count == 3
+    assert rows[1].observed_pair_count == 1
+    assert rows[0].independent_expected_pair_count > 0
+    assert rows[0].mod30_expected_pair_count > 0
+    assert rows[0].mod210_expected_pair_count > 0
+
+
+def test_write_c0_autocorrelation_csv_has_stable_header(tmp_path: Path):
+    output = tmp_path / "autocorr.csv"
+    rows = c0_autocorrelation_rows(
+        [CompleteCoveringRun(start=118, stop=118, length=1)],
+        start=116,
+        stop=120,
+        max_lag=1,
+    )
+    write_c0_autocorrelation_csv(rows, output)
+    assert output.read_text(encoding="utf-8").splitlines()[0].startswith(
+        "h,observed_pair_count,independent_expected_pair_count"
+    )
+
+
 def test_length2_forensics_and_neighborhood_cover_expected_offsets():
     runs = [CompleteCoveringRun(start=118, stop=119, length=2)]
     pair_rows = length2_pair_forensics(runs)
@@ -279,6 +313,40 @@ def test_covering_run_forensics_cli_writes_outputs(tmp_path: Path):
     assert "factorization_start" in pair_out.read_text(encoding="utf-8")
     assert "offset" in neighborhood_out.read_text(encoding="utf-8")
     assert "matches" in validation_out.read_text(encoding="utf-8")
+
+
+def test_covering_run_autocorrelation_cli_writes_csv(tmp_path: Path):
+    input_csv = tmp_path / "runs.csv"
+    output = tmp_path / "autocorr.csv"
+    write_complete_covering_runs_csv(
+        [
+            CompleteCoveringRun(start=10, stop=12, length=3),
+            CompleteCoveringRun(start=20, stop=21, length=2),
+        ],
+        input_csv,
+    )
+
+    assert (
+        main(
+            [
+                "covering-run-autocorrelation",
+                "--input",
+                str(input_csv),
+                "--start",
+                "10",
+                "--stop",
+                "30",
+                "--max-lag",
+                "2",
+                "--out",
+                str(output),
+            ]
+        )
+        == 0
+    )
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert lines[0].startswith("h,observed_pair_count")
+    assert len(lines) == 3
 
 
 def test_covering_run_prefilter_scan_cli_writes_csv(tmp_path: Path):

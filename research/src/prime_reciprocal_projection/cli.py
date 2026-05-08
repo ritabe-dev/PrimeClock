@@ -60,6 +60,7 @@ from .covering_residual_gaps import (
 from .covering_runs import (
     benchmark_prefilter_windows,
     block_scan_prefilter_runs,
+    c0_autocorrelation_rows,
     complete_covering_runs_from_cluster_csv,
     exact_complete_runs_in_range,
     prefiltered_exact_complete_values_in_range,
@@ -72,6 +73,7 @@ from .covering_runs import (
     summarize_runs,
     transition_stats_from_runs,
     write_complete_covering_runs_csv,
+    write_c0_autocorrelation_csv,
     write_fast_scan_benchmark_csv,
     write_length2_neighborhoods_csv,
     write_length2_pair_forensics_csv,
@@ -560,6 +562,20 @@ def main(argv: list[str] | None = None) -> int:
         default="data/summaries/prc_prefilter_validation_windows.csv",
     )
 
+    covering_run_autocorrelation = subparsers.add_parser(
+        "covering-run-autocorrelation",
+        help="generate lagged exact C0 autocorrelation diagnostics from run rows",
+    )
+    covering_run_autocorrelation.add_argument(
+        "--input", default="data/summaries/prc_combined_runs_2_1000000.csv"
+    )
+    covering_run_autocorrelation.add_argument("--start", type=int, default=2)
+    covering_run_autocorrelation.add_argument("--stop", type=int, default=1000000)
+    covering_run_autocorrelation.add_argument("--max-lag", type=int, default=210)
+    covering_run_autocorrelation.add_argument(
+        "--out", default="data/summaries/prc_c0_autocorrelation_2_1000000.csv"
+    )
+
     args = parser.parse_args(argv)
     if args.command == "figures":
         generate_v0_figures(args.out, n=args.n, bins=args.bins)
@@ -890,6 +906,20 @@ def main(argv: list[str] | None = None) -> int:
             f"length2={transition.length2_run_count}, "
             f"length3={transition.length3_start_count}, "
             f"validation_windows={len(validation_rows)}"
+        )
+        return 0
+    if args.command == "covering-run-autocorrelation":
+        runs = read_complete_covering_runs_csv(args.input)
+        rows = c0_autocorrelation_rows(
+            runs,
+            start=args.start,
+            stop=args.stop,
+            max_lag=args.max_lag,
+        )
+        write_c0_autocorrelation_csv(rows, args.out)
+        print(
+            "covering-run-autocorrelation: "
+            f"rows={len(rows)}, max_lag={args.max_lag}, out={args.out}"
         )
         return 0
     parser.error(f"unknown command: {args.command}")

@@ -132,6 +132,20 @@ class RunTransitionStats:
 
 
 @dataclass(frozen=True)
+class C0AutocorrelationRow:
+    """Lagged exact complete-covering co-occurrence diagnostics."""
+
+    h: int
+    observed_pair_count: int
+    independent_expected_pair_count: float
+    independent_observed_to_expected: float
+    mod30_expected_pair_count: float
+    mod30_observed_to_expected: float
+    mod210_expected_pair_count: float
+    mod210_observed_to_expected: float
+
+
+@dataclass(frozen=True)
 class Length2PairForensicsRow:
     """Forensic metrics around one length-2 complete-covering run."""
 
@@ -633,6 +647,61 @@ def transition_stats_from_runs(
     )
 
 
+def c0_autocorrelation_rows(
+    runs: Iterable[CompleteCoveringRun],
+    *,
+    start: int,
+    stop: int,
+    max_lag: int = 210,
+) -> list[C0AutocorrelationRow]:
+    """Compute lagged ``C0(N)`` co-occurrence rows from certified run rows."""
+    start = validate_n(start)
+    stop = validate_n(stop)
+    if stop < start:
+        raise ValueError("stop must be >= start")
+    if max_lag < 1:
+        raise ValueError("max_lag must be >= 1")
+
+    values = values_from_runs(runs)
+    value_set = set(values)
+    checked_count = stop - start + 1
+    p_c0 = len(values) / checked_count
+    mod30_rates = _residue_rates(values, start=start, stop=stop, modulus=30)
+    mod210_rates = _residue_rates(values, start=start, stop=stop, modulus=210)
+    rows: list[C0AutocorrelationRow] = []
+    for h in range(1, max_lag + 1):
+        pair_start_count = max(0, checked_count - h)
+        observed = sum(1 for value in values if value + h in value_set and value + h <= stop)
+        independent_expected = pair_start_count * p_c0 * p_c0
+        mod30_expected = _residue_conditioned_pair_expectation(
+            start=start,
+            stop=stop,
+            h=h,
+            rates=mod30_rates,
+            modulus=30,
+        )
+        mod210_expected = _residue_conditioned_pair_expectation(
+            start=start,
+            stop=stop,
+            h=h,
+            rates=mod210_rates,
+            modulus=210,
+        )
+        rows.append(
+            C0AutocorrelationRow(
+                h=h,
+                observed_pair_count=observed,
+                independent_expected_pair_count=independent_expected,
+                independent_observed_to_expected=_ratio(observed, independent_expected),
+                mod30_expected_pair_count=mod30_expected,
+                mod30_observed_to_expected=_ratio(observed, mod30_expected),
+                mod210_expected_pair_count=mod210_expected,
+                mod210_observed_to_expected=_ratio(observed, mod210_expected),
+            )
+        )
+    return rows
+
+
 def length2_pair_forensics(runs: Iterable[CompleteCoveringRun]) -> list[Length2PairForensicsRow]:
     """Return compact forensic rows for every run with length at least 2."""
     pair_runs = length2_runs(runs)
@@ -833,6 +902,14 @@ def write_run_transition_stats_csv(row: RunTransitionStats, output_path: str | P
     write_dataclass_csv([row], output_path, list(RunTransitionStats.__dataclass_fields__))
 
 
+def write_c0_autocorrelation_csv(
+    rows: Iterable[C0AutocorrelationRow],
+    output_path: str | Path,
+) -> None:
+    """Write lagged ``C0`` autocorrelation rows to CSV."""
+    write_dataclass_csv(rows, output_path, list(C0AutocorrelationRow.__dataclass_fields__))
+
+
 def write_length2_pair_forensics_csv(
     rows: Iterable[Length2PairForensicsRow],
     output_path: str | Path,
@@ -1023,6 +1100,41 @@ def _residue_counts(values: Iterable[int], modulus: int) -> dict[int, int]:
     for value in values:
         counts[value % modulus] += 1
     return counts
+
+
+def _residue_rates(
+    values: Iterable[int],
+    *,
+    start: int,
+    stop: int,
+    modulus: int,
+) -> dict[int, float]:
+    complete_counts = _residue_counts(values, modulus)
+    denominator_counts = _residue_counts(range(start, stop + 1), modulus)
+    return {
+        residue: complete_counts[residue] / denominator_counts[residue]
+        if denominator_counts[residue]
+        else 0.0
+        for residue in range(modulus)
+    }
+
+
+def _residue_conditioned_pair_expectation(
+    *,
+    start: int,
+    stop: int,
+    h: int,
+    rates: dict[int, float],
+    modulus: int,
+) -> float:
+    return sum(
+        rates[n % modulus] * rates[(n + h) % modulus]
+        for n in range(start, stop - h + 1)
+    )
+
+
+def _ratio(numerator: float, denominator: float) -> float:
+    return numerator / denominator if denominator else 0.0
 
 
 def _format_counts(counts: dict[int, int]) -> str:
