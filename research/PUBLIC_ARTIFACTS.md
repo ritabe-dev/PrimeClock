@@ -17,15 +17,20 @@ finite theorem note and keeps modulo-210 diagnostics out of the main path.
 - `notes/claims.md`
 - `notes/known-results.md`
 - `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`
-- `notes/prc_prime_prefix_certificate_depth_v0_2.md`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
-- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv`
+
+The certificate-depth note and CSVs are context artifacts for the full archive,
+not part of the minimal `C_k/C_4/B_5` theorem package. This prevents a minimal
+reviewer from hitting references to complete-covering source tables that are
+not included in the small zip.
 
 The existing `review_packages/` directory contains stale archived snapshots.
 Do not send those as the current review package; regenerate a new package from
@@ -81,7 +86,6 @@ research/notes/prc_prime_prefix_finite_note_v1_1.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
-research/notes/prc_prime_prefix_certificate_depth_v0_2.md
 ```
 
 For a full reproducibility review, continue with appendix/internal diagnostics:
@@ -113,11 +117,12 @@ research/data/summaries/prc_prime_prefix_profile_v0_1.csv
 research/data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv
 research/data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
 research/data/summaries/prc_prime_prefix_ck_full_v1_1.csv
-research/data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
 research/data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
-research/data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
-research/data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
-research/data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+research/data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
+research/data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
+research/data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
+research/data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
+research/data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
 research/data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv

@@ -247,6 +247,35 @@ those rows into `7` reflection-pair rows for the paper-facing table. All `B_5`
 births close exactly one old gap; six reflection pairs close length `1/20`
 gaps and one pair closes a length `1/21` gap, with no endpoint-touching closure.
 
+The v1.5 certificate-hardening layer keeps the old CSVs as compatibility
+artifacts and adds theorem-facing exact-fraction/open-gap columns:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
+  --k 4 \
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification-v1-5 \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary-v1-5 \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
+```
+
+The verifier currently reports `5` checks and `0` failures. It treats C4
+witnesses as rational open gaps with covered boundary endpoints allowed, and
+checks B5 gap closure using closed arcs.
+
 ## PRC Candidate Windows
 
 The first exact-complete candidates from the v0 log grid are:

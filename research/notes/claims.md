@@ -46,6 +46,8 @@ Every statement in this research track should be assigned one of these statuses.
 | The v1.3 `C_4` exclusion-summary table compresses the `208` excluded residues into `36` exact uncovered-measure/component classes: `143` residues in one-gap classes and `65` in two-gap classes | Exact generated artifact |
 | The v1.4 `B_5` birth-pair summary compresses the `14` birth residues into `7` reflection-pair rows for the displayed finite theorem table | Exact generated artifact |
 | In `B_5`, every birth closes exactly one previous gap; six reflection pairs close a gap of length `1/20`, one pair closes a gap of length `1/21`, and no pair uses endpoint touching | Exact generated artifact |
+| The v1.5 theorem CSVs add exact fraction columns for `B_5` gap measures and complete residue lists for the `36` C4 exclusion classes; decimal measure columns are summaries only | Exact generated artifact |
+| The v1.5 certificate verifier reads the public C4/B5 CSVs and checks closed-arc coverage, open-gap witnesses, strict containment of old gaps in new `p=11` arcs, and reflection-pair fields with rational interval arithmetic | Exact generated artifact |
 | `C_scale(N)=1[A(N)<1/N]` is the v0 scale event | Experiment |
 | `C0(N)=1` for selected candidate-window values after exact interval checking | Exact identity / Experiment |
 | `D_R(N)=#{M in [N-R,N+R]: C0(M)=1}/(2R+1)` is local complete-covering density | Definition |
@@ -98,7 +100,8 @@ Every statement in this research track should be assigned one of these statuses.
   the monotone limit.
 - This project does not claim `C_4={2,208}` has a polished handwritten
   exclusion proof yet; the exclusion is currently supported by exact finite
-  enumeration, tests, and a rational uncovered-gap witness CSV.
+  enumeration, tests, rational open-gap witness CSVs, and the v1.5 independent
+  verifier.
 - This project does not claim `k<=7` certificate coverage explains all
   complete-covering values; rows without a prefix certificate are only
   uncertified within the checked filtration range.

@@ -144,6 +144,90 @@ class PrimePrefixExclusionSummaryRow:
     first_uncovered_interval_sample: str
 
 
+@dataclass(frozen=True)
+class PrimePrefixBirthWitnessV15Row:
+    """Theorem-oriented birth witness with exact fractions and open-gap wording."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    residue_mod_previous: int | None
+    reflection_residue: int
+    previous_open_gap_count: int
+    previous_prefix_uncovered_measure_fraction: str
+    previous_prefix_uncovered_measure: float
+    previous_open_gap_boundary_endpoints: str
+    new_prime_closed_arc_boundary_endpoints: str
+    uses_endpoint_touching: bool
+
+
+@dataclass(frozen=True)
+class PrimePrefixBirthClassificationV15Row:
+    """Template classification with exact gap-measure fractions."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    reflection_residue: int
+    reflection_pair_min: int
+    reflection_pair_max: int
+    parent_residue_mod_previous: int
+    previous_open_gap_count: int
+    previous_prefix_uncovered_measure_fraction: str
+    previous_prefix_uncovered_measure: float
+    previous_open_gap_boundary_endpoints: str
+    new_prime_remainder: int
+    new_prime_closed_arc_boundary_endpoints: str
+    uses_endpoint_touching: bool
+
+
+@dataclass(frozen=True)
+class PrimePrefixBirthPairSummaryV15Row:
+    """Reflection-pair summary with exact fraction pairs."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    reflection_pair_min: int
+    reflection_pair_max: int
+    parent_residue_pair_mod_previous: str
+    previous_open_gap_count_pair: str
+    previous_prefix_uncovered_measure_fraction_pair: str
+    previous_prefix_uncovered_measure_pair: str
+    previous_open_gap_boundary_endpoints_pair: str
+    new_prime_remainder_pair: str
+    new_prime_closed_arc_boundary_endpoints_pair: str
+    uses_endpoint_touching_pair: str
+
+
+@dataclass(frozen=True)
+class PrimePrefixExclusionSummaryV15Row:
+    """Compressed C4 exclusion group with complete residue lists."""
+
+    k: int
+    new_prime: int
+    primorial: int
+    open_gap_count: int
+    uncovered_measure_fraction: str
+    uncovered_measure: float
+    residue_count: int
+    residues: str
+    first_open_gap_boundary_endpoint_sample: str
+
+
+@dataclass(frozen=True)
+class PrimePrefixCertificateVerificationRow:
+    """Summary row for independent finite-certificate verification."""
+
+    check_name: str
+    total: int
+    passed: int
+    failed: int
+    status: str
+
+
 def prime_prefix_residue_filtration_tables(
     *,
     max_k: int = 7,
@@ -320,6 +404,42 @@ def prime_prefix_exclusion_summary_rows(
     return rows
 
 
+def prime_prefix_exclusion_summary_v15_rows(
+    *,
+    k: int = 4,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixExclusionSummaryV15Row]:
+    """Return theorem-oriented C4 exclusion classes with complete residue lists."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    primes = _first_primes(k)
+    primorial = _primorial(primes)
+    groups: dict[tuple[int, Fraction], list[tuple[int, str]]] = {}
+    for row in prime_prefix_exclusion_witness_rows(k=k, allow_large_k=allow_large_k):
+        exact_measure = residue_uncovered_measure(row.residue, primes)
+        groups.setdefault((row.uncovered_interval_count, exact_measure), []).append(
+            (row.residue, row.first_uncovered_interval)
+        )
+
+    rows: list[PrimePrefixExclusionSummaryV15Row] = []
+    for (gap_count, measure), values in sorted(groups.items(), key=_exclusion_summary_sort_key):
+        residues = [residue for residue, _ in values]
+        first_intervals = sorted({interval for _, interval in values})
+        rows.append(
+            PrimePrefixExclusionSummaryV15Row(
+                k=k,
+                new_prime=primes[-1],
+                primorial=primorial,
+                open_gap_count=gap_count,
+                uncovered_measure_fraction=_format_fraction(measure),
+                uncovered_measure=float(measure),
+                residue_count=len(residues),
+                residues=" ".join(str(residue) for residue in residues),
+                first_open_gap_boundary_endpoint_sample=" ".join(first_intervals[:8]),
+            )
+        )
+    return rows
+
+
 def prime_prefix_birth_classification_rows(
     *,
     k: int = 5,
@@ -347,6 +467,149 @@ def prime_prefix_birth_classification_rows(
                 new_prime_remainder=row.residue % row.new_prime,
                 new_prime_arc_intervals=row.new_prime_arc_intervals,
                 uses_endpoint_touching=row.uses_endpoint_touching,
+            )
+        )
+    return rows
+
+
+def prime_prefix_birth_witness_v15_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthWitnessV15Row]:
+    """Return theorem-oriented birth witnesses with exact fraction columns."""
+    _validate_small_export_k(k, allow_large_k=allow_large_k)
+    full_rows = [
+        row
+        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=allow_large_k)
+        if row.k == k and row.status == "birth"
+    ]
+    primes = _first_primes(k)
+    previous_primes = primes[:-1]
+    new_prime = primes[-1]
+    previous_primorial = _primorial(previous_primes)
+
+    rows: list[PrimePrefixBirthWitnessV15Row] = []
+    for row in full_rows:
+        previous_gaps = residue_uncovered_intervals(row.residue, previous_primes)
+        previous_measure = residue_uncovered_measure(row.residue, previous_primes)
+        new_arc_intervals = _exact_arc_intervals_for_residue(row.residue, new_prime)
+        rows.append(
+            PrimePrefixBirthWitnessV15Row(
+                k=row.k,
+                new_prime=row.new_prime,
+                primorial=row.primorial,
+                residue=row.residue,
+                residue_mod_previous=(
+                    row.residue % previous_primorial if previous_primes else None
+                ),
+                reflection_residue=row.reflection_residue,
+                previous_open_gap_count=len(previous_gaps),
+                previous_prefix_uncovered_measure_fraction=_format_fraction(previous_measure),
+                previous_prefix_uncovered_measure=float(previous_measure),
+                previous_open_gap_boundary_endpoints=_format_intervals(previous_gaps),
+                new_prime_closed_arc_boundary_endpoints=_format_intervals(new_arc_intervals),
+                uses_endpoint_touching=_uses_endpoint_touching(
+                    previous_gaps,
+                    new_arc_intervals,
+                ),
+            )
+        )
+    return rows
+
+
+def prime_prefix_birth_classification_v15_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthClassificationV15Row]:
+    """Return theorem-oriented B5 classifications with exact fraction columns."""
+    witness_rows = prime_prefix_birth_witness_v15_rows(k=k, allow_large_k=allow_large_k)
+    rows: list[PrimePrefixBirthClassificationV15Row] = []
+    for row in witness_rows:
+        pair_min = min(row.residue, row.reflection_residue)
+        pair_max = max(row.residue, row.reflection_residue)
+        rows.append(
+            PrimePrefixBirthClassificationV15Row(
+                k=row.k,
+                new_prime=row.new_prime,
+                primorial=row.primorial,
+                residue=row.residue,
+                reflection_residue=row.reflection_residue,
+                reflection_pair_min=pair_min,
+                reflection_pair_max=pair_max,
+                parent_residue_mod_previous=row.residue_mod_previous or 0,
+                previous_open_gap_count=row.previous_open_gap_count,
+                previous_prefix_uncovered_measure_fraction=(
+                    row.previous_prefix_uncovered_measure_fraction
+                ),
+                previous_prefix_uncovered_measure=row.previous_prefix_uncovered_measure,
+                previous_open_gap_boundary_endpoints=row.previous_open_gap_boundary_endpoints,
+                new_prime_remainder=row.residue % row.new_prime,
+                new_prime_closed_arc_boundary_endpoints=(
+                    row.new_prime_closed_arc_boundary_endpoints
+                ),
+                uses_endpoint_touching=row.uses_endpoint_touching,
+            )
+        )
+    return rows
+
+
+def prime_prefix_birth_pair_summary_v15_rows(
+    *,
+    k: int = 5,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixBirthPairSummaryV15Row]:
+    """Return theorem-oriented B5 reflection-pair summaries."""
+    classification_rows = prime_prefix_birth_classification_v15_rows(
+        k=k,
+        allow_large_k=allow_large_k,
+    )
+    groups: dict[tuple[int, int], list[PrimePrefixBirthClassificationV15Row]] = {}
+    for row in classification_rows:
+        key = (row.reflection_pair_min, row.reflection_pair_max)
+        groups.setdefault(key, []).append(row)
+
+    rows: list[PrimePrefixBirthPairSummaryV15Row] = []
+    for (pair_min, pair_max), group in sorted(groups.items()):
+        ordered = sorted(group, key=lambda row: row.residue)
+        if len(ordered) != 2:
+            raise ValueError(
+                "birth pair summary expects two residues per reflection pair; "
+                f"got {len(ordered)} for {pair_min}/{pair_max}"
+            )
+        first = ordered[0]
+        rows.append(
+            PrimePrefixBirthPairSummaryV15Row(
+                k=first.k,
+                new_prime=first.new_prime,
+                primorial=first.primorial,
+                reflection_pair_min=pair_min,
+                reflection_pair_max=pair_max,
+                parent_residue_pair_mod_previous=_join_pair(
+                    [row.parent_residue_mod_previous for row in ordered]
+                ),
+                previous_open_gap_count_pair=_join_pair(
+                    [row.previous_open_gap_count for row in ordered]
+                ),
+                previous_prefix_uncovered_measure_fraction_pair=_join_pair(
+                    [row.previous_prefix_uncovered_measure_fraction for row in ordered]
+                ),
+                previous_prefix_uncovered_measure_pair=_join_pair(
+                    [row.previous_prefix_uncovered_measure for row in ordered]
+                ),
+                previous_open_gap_boundary_endpoints_pair=_join_pair(
+                    [row.previous_open_gap_boundary_endpoints for row in ordered]
+                ),
+                new_prime_remainder_pair=_join_pair(
+                    [row.new_prime_remainder for row in ordered]
+                ),
+                new_prime_closed_arc_boundary_endpoints_pair=_join_pair(
+                    [row.new_prime_closed_arc_boundary_endpoints for row in ordered]
+                ),
+                uses_endpoint_touching_pair=_join_pair(
+                    [row.uses_endpoint_touching for row in ordered]
+                ),
             )
         )
     return rows
@@ -407,6 +670,104 @@ def prime_prefix_birth_pair_summary_rows(
             )
         )
     return rows
+
+
+def prime_prefix_certificate_verification_rows(
+    *,
+    ck_full_csv: str | Path = "data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
+    c4_exclusion_witness_csv: str | Path = (
+        "data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv"
+    ),
+    b5_birth_witness_csv: str | Path = (
+        "data/summaries/prc_prime_prefix_birth_witness_v1_5.csv"
+    ),
+    b5_birth_pair_summary_csv: str | Path = (
+        "data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv"
+    ),
+) -> list[PrimePrefixCertificateVerificationRow]:
+    """Verify public C4/B5 certificate CSVs using low-level rational checks."""
+    ck_rows = _read_csv_dicts(ck_full_csv)
+    c4_exclusion_rows = _read_csv_dicts(c4_exclusion_witness_csv)
+    b5_birth_rows = _read_csv_dicts(b5_birth_witness_csv)
+    b5_pair_rows = _read_csv_dicts(b5_birth_pair_summary_csv)
+
+    checks: list[PrimePrefixCertificateVerificationRow] = []
+
+    c4_positive_residues = [
+        int(row["residue"])
+        for row in ck_rows
+        if row.get("k") == "4"
+    ]
+    c4_positive_passed = sum(
+        residue in {2, 208} and residue_is_exactly_covered(residue, [2, 3, 5, 7])
+        for residue in c4_positive_residues
+    )
+    checks.append(
+        _verification_row(
+            "c4_positive_closed_arc_coverage",
+            total=2,
+            passed=c4_positive_passed if set(c4_positive_residues) == {2, 208} else 0,
+        )
+    )
+
+    c4_exclusion_passed = 0
+    for row in c4_exclusion_rows:
+        residue = int(row["residue"])
+        intervals = _parse_interval_list(row["first_uncovered_interval"])
+        if intervals and _has_valid_open_gap_witness(residue, [2, 3, 5, 7], intervals[0]):
+            c4_exclusion_passed += 1
+    checks.append(
+        _verification_row(
+            "c4_exclusion_open_gap_witness",
+            total=len(c4_exclusion_rows),
+            passed=c4_exclusion_passed,
+        )
+    )
+
+    b5_birth_coverage_passed = 0
+    b5_gap_containment_passed = 0
+    for row in b5_birth_rows:
+        residue = int(row["residue"])
+        if (
+            not residue_is_exactly_covered(residue, [2, 3, 5, 7])
+            and residue_is_exactly_covered(residue, [2, 3, 5, 7, 11])
+        ):
+            b5_birth_coverage_passed += 1
+        old_gaps = _parse_interval_list(row["previous_open_gap_boundary_endpoints"])
+        new_arcs = _parse_interval_list(row["new_prime_closed_arc_boundary_endpoints"])
+        if old_gaps and all(_gap_strictly_inside_closed_arcs(gap, new_arcs) for gap in old_gaps):
+            b5_gap_containment_passed += 1
+    checks.append(
+        _verification_row(
+            "b5_birth_previous_uncovered_current_covered",
+            total=len(b5_birth_rows),
+            passed=b5_birth_coverage_passed,
+        )
+    )
+    checks.append(
+        _verification_row(
+            "b5_birth_old_open_gap_strictly_inside_new_arc",
+            total=len(b5_birth_rows),
+            passed=b5_gap_containment_passed,
+        )
+    )
+
+    b5_reflection_passed = 0
+    for row in b5_pair_rows:
+        primorial = int(row["primorial"])
+        pair_min = int(row["reflection_pair_min"])
+        pair_max = int(row["reflection_pair_max"])
+        if (-pair_min) % primorial == pair_max and (-pair_max) % primorial == pair_min:
+            b5_reflection_passed += 1
+    checks.append(
+        _verification_row(
+            "b5_reflection_pair_fields",
+            total=len(b5_pair_rows),
+            passed=b5_reflection_passed,
+        )
+    )
+
+    return checks
 
 
 def prime_prefix_residue_filtration_data(
@@ -617,6 +978,14 @@ def write_prime_prefix_exclusion_summary_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixExclusionSummaryRow)
 
 
+def write_prime_prefix_exclusion_summary_v15_csv(
+    rows: Iterable[PrimePrefixExclusionSummaryV15Row],
+    output_path: str | Path,
+) -> None:
+    """Write theorem-oriented exclusion summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixExclusionSummaryV15Row)
+
+
 def write_prime_prefix_birth_classification_csv(
     rows: Iterable[PrimePrefixBirthClassificationRow],
     output_path: str | Path,
@@ -631,6 +1000,38 @@ def write_prime_prefix_birth_pair_summary_csv(
 ) -> None:
     """Write birth reflection-pair summary rows as CSV."""
     _write_dataclass_csv(rows, output_path, PrimePrefixBirthPairSummaryRow)
+
+
+def write_prime_prefix_birth_witness_v15_csv(
+    rows: Iterable[PrimePrefixBirthWitnessV15Row],
+    output_path: str | Path,
+) -> None:
+    """Write theorem-oriented birth witness rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthWitnessV15Row)
+
+
+def write_prime_prefix_birth_classification_v15_csv(
+    rows: Iterable[PrimePrefixBirthClassificationV15Row],
+    output_path: str | Path,
+) -> None:
+    """Write theorem-oriented birth classification rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthClassificationV15Row)
+
+
+def write_prime_prefix_birth_pair_summary_v15_csv(
+    rows: Iterable[PrimePrefixBirthPairSummaryV15Row],
+    output_path: str | Path,
+) -> None:
+    """Write theorem-oriented birth reflection-pair summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixBirthPairSummaryV15Row)
+
+
+def write_prime_prefix_certificate_verification_csv(
+    rows: Iterable[PrimePrefixCertificateVerificationRow],
+    output_path: str | Path,
+) -> None:
+    """Write independent certificate verification summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixCertificateVerificationRow)
 
 
 def _validate_small_export_k(max_k: int, *, allow_large_k: bool) -> None:
@@ -750,6 +1151,102 @@ def _format_intervals(intervals: Iterable[ExactInterval]) -> str:
         f"{_format_fraction(start)}-{_format_fraction(end)}"
         for start, end in intervals
     )
+
+
+def _read_csv_dicts(path: str | Path) -> list[dict[str, str]]:
+    with Path(path).open("r", encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _verification_row(
+    check_name: str,
+    *,
+    total: int,
+    passed: int,
+) -> PrimePrefixCertificateVerificationRow:
+    failed = total - passed
+    return PrimePrefixCertificateVerificationRow(
+        check_name=check_name,
+        total=total,
+        passed=passed,
+        failed=failed,
+        status="pass" if failed == 0 else "fail",
+    )
+
+
+def _parse_fraction(text: str) -> Fraction:
+    if "/" in text:
+        numerator, denominator = text.split("/", 1)
+        return Fraction(int(numerator), int(denominator))
+    return Fraction(int(text), 1)
+
+
+def _parse_interval_list(text: str) -> list[ExactInterval]:
+    if not text:
+        return []
+    intervals: list[ExactInterval] = []
+    for item in text.split(";"):
+        start, end = item.split("-", 1)
+        intervals.append((_parse_fraction(start), _parse_fraction(end)))
+    return intervals
+
+
+def _has_valid_open_gap_witness(
+    residue: int,
+    primes: Iterable[int],
+    gap: ExactInterval,
+) -> bool:
+    if _exact_interval_length(gap) <= 0:
+        return False
+    witness = _circular_midpoint(gap)
+    return not _point_is_covered_by_closed_arcs(witness, residue, primes)
+
+
+def _circular_midpoint(interval: ExactInterval) -> Fraction:
+    start, end = interval
+    one = Fraction(1)
+    if end >= start:
+        return (start + end) / 2
+    return ((start + end + one) / 2) % one
+
+
+def _point_is_covered_by_closed_arcs(
+    point: Fraction,
+    residue: int,
+    primes: Iterable[int],
+) -> bool:
+    for p in primes:
+        if any(_point_in_closed_interval(point, interval) for interval in _exact_arc_intervals_for_residue(residue, p)):
+            return True
+    return False
+
+
+def _point_in_closed_interval(point: Fraction, interval: ExactInterval) -> bool:
+    return any(start <= point <= end for start, end in _split_interval(interval))
+
+
+def _point_in_open_interval(point: Fraction, interval: ExactInterval) -> bool:
+    return any(start < point < end for start, end in _split_interval(interval))
+
+
+def _gap_strictly_inside_closed_arcs(
+    gap: ExactInterval,
+    arc_intervals: Iterable[ExactInterval],
+) -> bool:
+    arc_segments = [
+        segment
+        for interval in arc_intervals
+        for segment in _split_interval(interval)
+    ]
+    for gap_segment in _split_interval(gap):
+        gap_start, gap_end = gap_segment
+        if not any(
+            _point_in_open_interval(gap_start, arc_segment)
+            and _point_in_open_interval(gap_end, arc_segment)
+            for arc_segment in arc_segments
+        ):
+            return False
+    return True
 
 
 def _split_interval(interval: ExactInterval) -> list[ExactInterval]:

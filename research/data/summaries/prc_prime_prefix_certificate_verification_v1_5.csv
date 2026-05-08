@@ -1,0 +1,6 @@
+check_name,total,passed,failed,status
+c4_positive_closed_arc_coverage,2,2,0,pass
+c4_exclusion_open_gap_witness,208,208,0,pass
+b5_birth_previous_uncovered_current_covered,14,14,0,pass
+b5_birth_old_open_gap_strictly_inside_new_arc,14,14,0,pass
+b5_reflection_pair_fields,7,7,0,pass

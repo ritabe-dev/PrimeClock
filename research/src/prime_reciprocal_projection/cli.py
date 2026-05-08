@@ -61,16 +61,26 @@ from .covering_prime_prefix_certificates import (
 )
 from .covering_prime_prefix_filtration import (
     prime_prefix_birth_classification_rows,
+    prime_prefix_birth_classification_v15_rows,
     prime_prefix_birth_pair_summary_rows,
+    prime_prefix_birth_pair_summary_v15_rows,
     prime_prefix_birth_witness_rows,
+    prime_prefix_birth_witness_v15_rows,
+    prime_prefix_certificate_verification_rows,
     prime_prefix_exclusion_summary_rows,
+    prime_prefix_exclusion_summary_v15_rows,
     prime_prefix_exclusion_witness_rows,
     prime_prefix_residue_full_rows,
     prime_prefix_residue_filtration_tables,
     write_prime_prefix_birth_classification_csv,
+    write_prime_prefix_birth_classification_v15_csv,
     write_prime_prefix_birth_pair_summary_csv,
+    write_prime_prefix_birth_pair_summary_v15_csv,
     write_prime_prefix_birth_witness_csv,
+    write_prime_prefix_birth_witness_v15_csv,
+    write_prime_prefix_certificate_verification_csv,
     write_prime_prefix_exclusion_summary_csv,
+    write_prime_prefix_exclusion_summary_v15_csv,
     write_prime_prefix_exclusion_witness_csv,
     write_prime_prefix_residue_full_csv,
     write_prime_prefix_residue_birth_samples_csv,
@@ -346,6 +356,91 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_birth_pair_summary.add_argument(
         "--out",
         default="data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv",
+    )
+
+    covering_prime_prefix_birth_witnesses_v15 = subparsers.add_parser(
+        "covering-prime-prefix-birth-witnesses-v1-5",
+        help="export theorem-oriented birth witnesses with exact fraction columns",
+    )
+    covering_prime_prefix_birth_witnesses_v15.add_argument("--k", type=int, default=5)
+    covering_prime_prefix_birth_witnesses_v15.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow birth witnesses beyond the small-k guardrail",
+    )
+    covering_prime_prefix_birth_witnesses_v15.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_birth_witness_v1_5.csv",
+    )
+
+    covering_prime_prefix_birth_classification_v15 = subparsers.add_parser(
+        "covering-prime-prefix-birth-classification-v1-5",
+        help="export theorem-oriented birth classifications with exact fraction columns",
+    )
+    covering_prime_prefix_birth_classification_v15.add_argument("--k", type=int, default=5)
+    covering_prime_prefix_birth_classification_v15.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow birth classifications beyond the small-k guardrail",
+    )
+    covering_prime_prefix_birth_classification_v15.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv",
+    )
+
+    covering_prime_prefix_birth_pair_summary_v15 = subparsers.add_parser(
+        "covering-prime-prefix-birth-pair-summary-v1-5",
+        help="export theorem-oriented birth reflection-pair summaries",
+    )
+    covering_prime_prefix_birth_pair_summary_v15.add_argument("--k", type=int, default=5)
+    covering_prime_prefix_birth_pair_summary_v15.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow birth pair summaries beyond the small-k guardrail",
+    )
+    covering_prime_prefix_birth_pair_summary_v15.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv",
+    )
+
+    covering_prime_prefix_exclusion_summary_v15 = subparsers.add_parser(
+        "covering-prime-prefix-exclusion-summary-v1-5",
+        help="export theorem-oriented exclusion classes with complete residue lists",
+    )
+    covering_prime_prefix_exclusion_summary_v15.add_argument("--k", type=int, default=4)
+    covering_prime_prefix_exclusion_summary_v15.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exclusion summary beyond the small-k guardrail",
+    )
+    covering_prime_prefix_exclusion_summary_v15.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv",
+    )
+
+    covering_prime_prefix_verify_certificates = subparsers.add_parser(
+        "covering-prime-prefix-verify-certificates",
+        help="verify public C4/B5 finite-certificate CSVs with rational interval checks",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--ck-full",
+        default="data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--c4-exclusion-witnesses",
+        default="data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--b5-birth-witnesses",
+        default="data/summaries/prc_prime_prefix_birth_witness_v1_5.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--b5-birth-pair-summary",
+        default="data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv",
+    )
+    covering_prime_prefix_verify_certificates.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv",
     )
 
     covering_prime_prefix_certificates = subparsers.add_parser(
@@ -1115,6 +1210,64 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "covering-prime-prefix-birth-pair-summary: "
             f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-birth-witnesses-v1-5":
+        rows = prime_prefix_birth_witness_v15_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_birth_witness_v15_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-birth-witnesses-v1-5: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-birth-classification-v1-5":
+        rows = prime_prefix_birth_classification_v15_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_birth_classification_v15_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-birth-classification-v1-5: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-birth-pair-summary-v1-5":
+        rows = prime_prefix_birth_pair_summary_v15_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_birth_pair_summary_v15_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-birth-pair-summary-v1-5: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-exclusion-summary-v1-5":
+        rows = prime_prefix_exclusion_summary_v15_rows(
+            k=args.k,
+            allow_large_k=args.allow_large_k,
+        )
+        write_prime_prefix_exclusion_summary_v15_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-exclusion-summary-v1-5: "
+            f"rows={len(rows)}, k={args.k}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-verify-certificates":
+        rows = prime_prefix_certificate_verification_rows(
+            ck_full_csv=args.ck_full,
+            c4_exclusion_witness_csv=args.c4_exclusion_witnesses,
+            b5_birth_witness_csv=args.b5_birth_witnesses,
+            b5_birth_pair_summary_csv=args.b5_birth_pair_summary,
+        )
+        write_prime_prefix_certificate_verification_csv(rows, args.out)
+        failed = sum(row.failed for row in rows)
+        print(
+            "covering-prime-prefix-verify-certificates: "
+            f"checks={len(rows)}, failed={failed}, out={args.out}"
         )
         return 0
     if args.command == "covering-prime-prefix-certificates":

@@ -36,8 +36,7 @@ Read in this order:
    fractional-parts results.
 4. `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md` for the
    exact `C_k` residue filtration.
-5. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
-   `C_k` to exact-certified complete-covering values.
+5. `PUBLIC_ARTIFACTS.md` for the minimal external package manifest.
 
 Appendix / diagnostic notes:
 
@@ -47,20 +46,27 @@ Appendix / diagnostic notes:
   extension.
 - `notes/prc_prime_prefix_uncertified_*.md` and
   `notes/prc_prime_prefix_mod210_*.md` for v0.4-v0.12 internal diagnostics.
+- `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the contextual
+  connection from `C_k` to exact-certified complete-covering values.
 - `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
 - `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
-Canonical PRC v1 artifacts:
+In the minimal external review package, these appendix/context notes are
+intentionally excluded unless explicitly promoted. Use the full repository or
+full reproducibility archive for that broader context.
+
+Canonical PRC v1 artifacts in the full repository:
 
 - `data/summaries/prc_prime_prefix_profile_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
 - `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
-- `data/summaries/prc_prime_prefix_birth_witness_v1_1.csv`
 - `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`
+- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
+- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
+- `data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
@@ -144,7 +150,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `181 passed`.
+Expected smoke-test result for the current suite is `188 passed`.
 
 ## First Experiments
 
@@ -213,25 +219,28 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --max-k 5 \
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
-  --k 5 \
-  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
-
 python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnesses \
   --k 4 \
   --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary-v1-5 \
+  --k 5 \
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
   --complete-source data/summaries/prc_combined_runs_2_1000000.csv \

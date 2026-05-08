@@ -160,22 +160,24 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-witnes
   --out data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_2.csv
 ```
 
-The witness CSV has `208` data rows. Each row gives a nonempty rational
-uncovered interval for a residue not in `C_4`. This is the row-level exclusion
-certificate.
+The witness CSV has `208` data rows. Each row gives boundary endpoints for a
+nonempty rational open gap for a residue not in `C_4`. Since the arcs are
+closed, the gap boundary endpoints themselves may be covered; the certified
+uncovered object is the open interval between them.
 
 The 208 witnesses can be compressed into 36 measure/component classes:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summary-v1-5 \
   --k 4 \
-  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_3.csv
+  --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
 ```
 
 This summary is the working index for a short written exclusion proof. It
 groups residues by uncovered component count and exact uncovered measure, while
-retaining residue samples and representative gap intervals.
+retaining the complete residue list for each class and representative open-gap
+boundary endpoints.
 
 The compressed index has the following shape:
 
@@ -222,7 +224,7 @@ The birth residues come in reflection pairs:
 | 1108 / 1202 | 58 / 152 | `7/10-3/4` and `1/4-3/10` | `15/22-17/22` / `5/22-7/22` |
 
 This table is generated from
-`data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv`. Its finite
+`data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`. Its finite
 reading is simple: every `B_5` birth closes exactly one old gap; six reflection
 pairs close a gap of length `1/20`, and the pair `849/1461` closes a gap of
 length `1/21`. None of the `B_5` closures relies on endpoint touching.
@@ -231,22 +233,23 @@ The witness CSV is generated with:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 ```
 
-Each row records the old uncovered interval(s), the new prime arc interval(s),
-and whether closure uses endpoint touching. For `B_5`, each birth closes one
-old gap, and none of these closures require endpoint touching.
+Each row records the old open-gap boundary endpoints, the exact fraction for
+the old uncovered measure, the new closed prime-arc boundary endpoints, and
+whether closure uses endpoint touching. For `B_5`, each birth closes one old
+gap, and none of these closures require endpoint touching.
 
 The classification CSV is generated with:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-classification-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_2.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
 ```
 
 It keeps the same `14` births, but adds `reflection_pair_min/max`, the parent
@@ -259,9 +262,9 @@ reflection pair:
 
 ```bash
 cd research
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summary-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_4.csv
+  --out data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 ```
 
 This gives `7` rows. It is the preferred source for the displayed `B_5` table.
@@ -271,6 +274,19 @@ words, the note now has three layers for `B_5`:
 1. `birth_witness`: rational interval proof data.
 2. `birth_classification`: one row per birth residue.
 3. `birth_pair_summary`: one row per reflection pair for the written table.
+
+The public v1.5 certificate bundle can be independently checked from CSV alone:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
+  --out data/summaries/prc_prime_prefix_certificate_verification_v1_5.csv
+```
+
+The verifier reads the public `C_4` and `B_5` CSVs and rechecks closed-arc
+coverage, open-gap witnesses, strict containment of each old open gap inside
+the new `p=11` closed arc, and reflection-pair fields using rational interval
+arithmetic. It does not rely on the high-level birth-classification generator.
 
 ## Relation to PRC complete covering
 
@@ -294,9 +310,11 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Write the `B_5` section from the 7-row pair summary rather than maintaining
-   a hand-copied table.
-2. Extend the same witness/classification/pair-summary format to `B_6`,
+1. Turn the v1.5 36-class `C_4` exclusion table into a compact written
+   appendix; the table is already machine-verifiable, but a hand compression
+   would be better for human reading.
+2. Add an independent witness-point column to the row-level `C_4` exclusion
+   CSV if a reviewer wants a one-point gap certificate rather than boundary
+   endpoints.
+3. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.
-3. Decide whether the 36-row `C_4` exclusion summary belongs in the main note
-   or an appendix table.

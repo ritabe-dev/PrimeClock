@@ -153,9 +153,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration-full 
   --max-k 5 \
   --out data/summaries/prc_prime_prefix_ck_full_v1_1.csv
 
-python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses \
+python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-witnesses-v1-5 \
   --k 5 \
-  --out data/summaries/prc_prime_prefix_birth_witness_v1_1.csv
+  --out data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 ```
 
 Summary:

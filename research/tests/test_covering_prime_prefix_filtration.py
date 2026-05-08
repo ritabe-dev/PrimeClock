@@ -1,3 +1,4 @@
+import csv
 from fractions import Fraction
 from pathlib import Path
 
@@ -6,26 +7,41 @@ import pytest
 from prime_reciprocal_projection.cli import main
 from prime_reciprocal_projection.covering_prime_prefix_filtration import (
     PrimePrefixBirthClassificationRow,
+    PrimePrefixBirthClassificationV15Row,
     PrimePrefixBirthPairSummaryRow,
+    PrimePrefixBirthPairSummaryV15Row,
     PrimePrefixBirthWitnessRow,
+    PrimePrefixBirthWitnessV15Row,
+    PrimePrefixCertificateVerificationRow,
     PrimePrefixExclusionSummaryRow,
+    PrimePrefixExclusionSummaryV15Row,
     PrimePrefixExclusionWitnessRow,
     PrimePrefixResidueBirthSampleRow,
     PrimePrefixResidueFiltrationRow,
     PrimePrefixResidueFullRow,
     prime_prefix_birth_classification_rows,
+    prime_prefix_birth_classification_v15_rows,
     prime_prefix_birth_pair_summary_rows,
+    prime_prefix_birth_pair_summary_v15_rows,
     prime_prefix_birth_witness_rows,
+    prime_prefix_birth_witness_v15_rows,
+    prime_prefix_certificate_verification_rows,
     prime_prefix_exclusion_summary_rows,
+    prime_prefix_exclusion_summary_v15_rows,
     prime_prefix_exclusion_witness_rows,
     prime_prefix_residue_filtration_tables,
     prime_prefix_residue_full_rows,
     residue_is_exactly_covered,
     residue_uncovered_measure,
     write_prime_prefix_birth_classification_csv,
+    write_prime_prefix_birth_classification_v15_csv,
     write_prime_prefix_birth_pair_summary_csv,
+    write_prime_prefix_birth_pair_summary_v15_csv,
     write_prime_prefix_birth_witness_csv,
+    write_prime_prefix_birth_witness_v15_csv,
+    write_prime_prefix_certificate_verification_csv,
     write_prime_prefix_exclusion_summary_csv,
+    write_prime_prefix_exclusion_summary_v15_csv,
     write_prime_prefix_exclusion_witness_csv,
     write_prime_prefix_residue_birth_samples_csv,
     write_prime_prefix_residue_filtration_csv,
@@ -205,6 +221,42 @@ def test_prime_prefix_b5_birth_pair_summary_rows():
     assert rows[0].new_prime_remainder_pair == "8 / 3"
     assert rows[0].new_prime_arc_intervals_pair == "15/22-17/22 / 5/22-7/22"
     assert rows[0].uses_endpoint_touching_pair == "False / False"
+
+
+def test_prime_prefix_b5_v15_rows_have_exact_fraction_and_open_gap_fields():
+    witness_rows = prime_prefix_birth_witness_v15_rows(k=5)
+    classification_rows = prime_prefix_birth_classification_v15_rows(k=5)
+    pair_rows = prime_prefix_birth_pair_summary_v15_rows(k=5)
+
+    first_witness = witness_rows[0]
+    assert first_witness.previous_prefix_uncovered_measure_fraction == "1/20"
+    assert first_witness.previous_open_gap_boundary_endpoints == "7/10-3/4"
+    assert first_witness.new_prime_closed_arc_boundary_endpoints == "15/22-17/22"
+
+    first_classification = classification_rows[0]
+    assert first_classification.previous_prefix_uncovered_measure_fraction == "1/20"
+    assert first_classification.previous_open_gap_count == 1
+    assert first_classification.previous_open_gap_boundary_endpoints == "7/10-3/4"
+
+    assert pair_rows[0].previous_prefix_uncovered_measure_fraction_pair == "1/20 / 1/20"
+    one_over_21_pair = next(row for row in pair_rows if row.reflection_pair_min == 849)
+    assert one_over_21_pair.previous_prefix_uncovered_measure_fraction_pair == "1/21 / 1/21"
+
+
+def test_prime_prefix_c4_v15_exclusion_summary_has_complete_residue_lists():
+    rows = prime_prefix_exclusion_summary_v15_rows(k=4)
+    assert len(rows) == 36
+    assert sum(row.residue_count for row in rows) == 208
+    residues = {
+        int(value)
+        for row in rows
+        for value in row.residues.split()
+    }
+    assert len(residues) == 208
+    assert 2 not in residues
+    assert 208 not in residues
+    assert rows[0].open_gap_count == 1
+    assert rows[0].uncovered_measure_fraction == "1/28"
 
 
 def test_prime_prefix_full_export_rejects_unguarded_large_k():
@@ -403,6 +455,134 @@ def test_write_prime_prefix_full_and_witness_csv_headers(tmp_path: Path):
     )
 
 
+def test_write_prime_prefix_v15_csv_headers(tmp_path: Path):
+    witness_out = tmp_path / "witness_v15.csv"
+    classification_out = tmp_path / "classification_v15.csv"
+    pair_summary_out = tmp_path / "pair_summary_v15.csv"
+    exclusion_summary_out = tmp_path / "exclusion_summary_v15.csv"
+    verification_out = tmp_path / "verification.csv"
+    write_prime_prefix_birth_witness_v15_csv(
+        [
+            PrimePrefixBirthWitnessV15Row(
+                k=5,
+                new_prime=11,
+                primorial=2310,
+                residue=118,
+                residue_mod_previous=118,
+                reflection_residue=2192,
+                previous_open_gap_count=1,
+                previous_prefix_uncovered_measure_fraction="1/20",
+                previous_prefix_uncovered_measure=0.05,
+                previous_open_gap_boundary_endpoints="7/10-3/4",
+                new_prime_closed_arc_boundary_endpoints="15/22-17/22",
+                uses_endpoint_touching=False,
+            )
+        ],
+        witness_out,
+    )
+    write_prime_prefix_birth_classification_v15_csv(
+        [
+            PrimePrefixBirthClassificationV15Row(
+                k=5,
+                new_prime=11,
+                primorial=2310,
+                residue=118,
+                reflection_residue=2192,
+                reflection_pair_min=118,
+                reflection_pair_max=2192,
+                parent_residue_mod_previous=118,
+                previous_open_gap_count=1,
+                previous_prefix_uncovered_measure_fraction="1/20",
+                previous_prefix_uncovered_measure=0.05,
+                previous_open_gap_boundary_endpoints="7/10-3/4",
+                new_prime_remainder=8,
+                new_prime_closed_arc_boundary_endpoints="15/22-17/22",
+                uses_endpoint_touching=False,
+            )
+        ],
+        classification_out,
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        [
+            PrimePrefixBirthPairSummaryV15Row(
+                k=5,
+                new_prime=11,
+                primorial=2310,
+                reflection_pair_min=118,
+                reflection_pair_max=2192,
+                parent_residue_pair_mod_previous="118 / 92",
+                previous_open_gap_count_pair="1 / 1",
+                previous_prefix_uncovered_measure_fraction_pair="1/20 / 1/20",
+                previous_prefix_uncovered_measure_pair="0.05 / 0.05",
+                previous_open_gap_boundary_endpoints_pair="7/10-3/4 / 1/4-3/10",
+                new_prime_remainder_pair="8 / 3",
+                new_prime_closed_arc_boundary_endpoints_pair=(
+                    "15/22-17/22 / 5/22-7/22"
+                ),
+                uses_endpoint_touching_pair="False / False",
+            )
+        ],
+        pair_summary_out,
+    )
+    write_prime_prefix_exclusion_summary_v15_csv(
+        [
+            PrimePrefixExclusionSummaryV15Row(
+                k=4,
+                new_prime=7,
+                primorial=210,
+                open_gap_count=1,
+                uncovered_measure_fraction="1/28",
+                uncovered_measure=1 / 28,
+                residue_count=2,
+                residues="1 209",
+                first_open_gap_boundary_endpoint_sample="1/2-15/28",
+            )
+        ],
+        exclusion_summary_out,
+    )
+    write_prime_prefix_certificate_verification_csv(
+        [
+            PrimePrefixCertificateVerificationRow(
+                check_name="example",
+                total=1,
+                passed=1,
+                failed=0,
+                status="pass",
+            )
+        ],
+        verification_out,
+    )
+    assert witness_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,residue,residue_mod_previous,reflection_residue,"
+        "previous_open_gap_count,previous_prefix_uncovered_measure_fraction,"
+        "previous_prefix_uncovered_measure,previous_open_gap_boundary_endpoints,"
+        "new_prime_closed_arc_boundary_endpoints,uses_endpoint_touching"
+    )
+    assert classification_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,residue,reflection_residue,reflection_pair_min,"
+        "reflection_pair_max,parent_residue_mod_previous,previous_open_gap_count,"
+        "previous_prefix_uncovered_measure_fraction,previous_prefix_uncovered_measure,"
+        "previous_open_gap_boundary_endpoints,new_prime_remainder,"
+        "new_prime_closed_arc_boundary_endpoints,uses_endpoint_touching"
+    )
+    assert pair_summary_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,reflection_pair_min,reflection_pair_max,"
+        "parent_residue_pair_mod_previous,previous_open_gap_count_pair,"
+        "previous_prefix_uncovered_measure_fraction_pair,"
+        "previous_prefix_uncovered_measure_pair,"
+        "previous_open_gap_boundary_endpoints_pair,new_prime_remainder_pair,"
+        "new_prime_closed_arc_boundary_endpoints_pair,uses_endpoint_touching_pair"
+    )
+    assert exclusion_summary_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "k,new_prime,primorial,open_gap_count,uncovered_measure_fraction,"
+        "uncovered_measure,residue_count,residues,"
+        "first_open_gap_boundary_endpoint_sample"
+    )
+    assert verification_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "check_name,total,passed,failed,status"
+    )
+
+
 def test_covering_prime_prefix_filtration_cli_writes_csvs(tmp_path: Path):
     summary_out = tmp_path / "summary.csv"
     birth_out = tmp_path / "birth.csv"
@@ -539,6 +719,184 @@ def test_covering_prime_prefix_birth_pair_summary_cli_writes_csv(tmp_path: Path)
     lines = output.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 8
     assert lines[0].startswith("k,new_prime,primorial,reflection_pair_min")
+
+
+def test_covering_prime_prefix_v15_clis_write_csvs(tmp_path: Path):
+    witness_out = tmp_path / "witness_v15.csv"
+    classification_out = tmp_path / "classification_v15.csv"
+    pair_out = tmp_path / "pair_v15.csv"
+    exclusion_summary_out = tmp_path / "exclusion_summary_v15.csv"
+    assert (
+        main(
+            [
+                "covering-prime-prefix-birth-witnesses-v1-5",
+                "--k",
+                "5",
+                "--out",
+                str(witness_out),
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "covering-prime-prefix-birth-classification-v1-5",
+                "--k",
+                "5",
+                "--out",
+                str(classification_out),
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "covering-prime-prefix-birth-pair-summary-v1-5",
+                "--k",
+                "5",
+                "--out",
+                str(pair_out),
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "covering-prime-prefix-exclusion-summary-v1-5",
+                "--k",
+                "4",
+                "--out",
+                str(exclusion_summary_out),
+            ]
+        )
+        == 0
+    )
+    assert len(witness_out.read_text(encoding="utf-8").splitlines()) == 15
+    assert len(classification_out.read_text(encoding="utf-8").splitlines()) == 15
+    assert len(pair_out.read_text(encoding="utf-8").splitlines()) == 8
+    assert len(exclusion_summary_out.read_text(encoding="utf-8").splitlines()) == 37
+
+
+def test_prime_prefix_certificate_verifier_passes_public_csvs(tmp_path: Path):
+    ck_full_out = tmp_path / "ck_full.csv"
+    c4_witness_out = tmp_path / "c4_witness.csv"
+    b5_witness_out = tmp_path / "b5_witness.csv"
+    b5_pair_out = tmp_path / "b5_pair.csv"
+    verification_out = tmp_path / "verification.csv"
+    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
+    write_prime_prefix_exclusion_witness_csv(
+        prime_prefix_exclusion_witness_rows(k=4),
+        c4_witness_out,
+    )
+    write_prime_prefix_birth_witness_v15_csv(
+        prime_prefix_birth_witness_v15_rows(k=5),
+        b5_witness_out,
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        prime_prefix_birth_pair_summary_v15_rows(k=5),
+        b5_pair_out,
+    )
+
+    rows = prime_prefix_certificate_verification_rows(
+        ck_full_csv=ck_full_out,
+        c4_exclusion_witness_csv=c4_witness_out,
+        b5_birth_witness_csv=b5_witness_out,
+        b5_birth_pair_summary_csv=b5_pair_out,
+    )
+    write_prime_prefix_certificate_verification_csv(rows, verification_out)
+
+    assert all(row.status == "pass" for row in rows)
+    assert verification_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "check_name,total,passed,failed,status"
+    )
+
+
+def test_prime_prefix_certificate_verifier_fails_tampered_gap(tmp_path: Path):
+    ck_full_out = tmp_path / "ck_full.csv"
+    c4_witness_out = tmp_path / "c4_witness.csv"
+    b5_witness_out = tmp_path / "b5_witness.csv"
+    b5_pair_out = tmp_path / "b5_pair.csv"
+    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
+    write_prime_prefix_exclusion_witness_csv(
+        prime_prefix_exclusion_witness_rows(k=4),
+        c4_witness_out,
+    )
+    write_prime_prefix_birth_witness_v15_csv(
+        prime_prefix_birth_witness_v15_rows(k=5),
+        b5_witness_out,
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        prime_prefix_birth_pair_summary_v15_rows(k=5),
+        b5_pair_out,
+    )
+
+    with b5_witness_out.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+        fieldnames = list(rows[0].keys())
+    rows[0]["previous_open_gap_boundary_endpoints"] = "1/4-3/4"
+    with b5_witness_out.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    verification_rows = prime_prefix_certificate_verification_rows(
+        ck_full_csv=ck_full_out,
+        c4_exclusion_witness_csv=c4_witness_out,
+        b5_birth_witness_csv=b5_witness_out,
+        b5_birth_pair_summary_csv=b5_pair_out,
+    )
+    containment = next(
+        row
+        for row in verification_rows
+        if row.check_name == "b5_birth_old_open_gap_strictly_inside_new_arc"
+    )
+    assert containment.status == "fail"
+    assert containment.failed == 1
+
+
+def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path):
+    ck_full_out = tmp_path / "ck_full.csv"
+    c4_witness_out = tmp_path / "c4_witness.csv"
+    b5_witness_out = tmp_path / "b5_witness.csv"
+    b5_pair_out = tmp_path / "b5_pair.csv"
+    verification_out = tmp_path / "verification.csv"
+    write_prime_prefix_residue_full_csv(prime_prefix_residue_full_rows(max_k=5), ck_full_out)
+    write_prime_prefix_exclusion_witness_csv(
+        prime_prefix_exclusion_witness_rows(k=4),
+        c4_witness_out,
+    )
+    write_prime_prefix_birth_witness_v15_csv(
+        prime_prefix_birth_witness_v15_rows(k=5),
+        b5_witness_out,
+    )
+    write_prime_prefix_birth_pair_summary_v15_csv(
+        prime_prefix_birth_pair_summary_v15_rows(k=5),
+        b5_pair_out,
+    )
+    assert (
+        main(
+            [
+                "covering-prime-prefix-verify-certificates",
+                "--ck-full",
+                str(ck_full_out),
+                "--c4-exclusion-witnesses",
+                str(c4_witness_out),
+                "--b5-birth-witnesses",
+                str(b5_witness_out),
+                "--b5-birth-pair-summary",
+                str(b5_pair_out),
+                "--out",
+                str(verification_out),
+            ]
+        )
+        == 0
+    )
+    lines = verification_out.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 6
+    assert all(line.endswith(",pass") for line in lines[1:])
 
 
 def test_covering_prime_prefix_filtration_cli_rejects_large_k_without_flag(tmp_path: Path):
