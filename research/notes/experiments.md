@@ -874,3 +874,43 @@ Reading: within `max_k=7`, most complete-covering values are already certified
 by shallow prime-prefix residue cells. The remaining `5,194` values are not
 negative examples; they are simply not certified by the current checked
 filtration range.
+
+## PRC Prime-Prefix k=8 Extension v0.3
+
+The v0.3 extension checks whether the next guarded prime-prefix layer is
+computationally feasible and whether it reduces the uncertified complete set.
+
+Commands:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
+  --max-k 8 \
+  --allow-large-k \
+  --birth-sample-limit 200 \
+  --summary-out data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv \
+  --birth-samples-out data/summaries/prc_prime_prefix_residue_covering_birth_samples_k8_v0_3.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-certificates \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --max-k 8 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_certificate_depth_k8_v0_3.csv \
+  --summary-out data/summaries/prc_prime_prefix_certificate_depth_summary_k8_v0_3.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| `M_8` | 9,699,690 |
+| local filtration runtime | about 62s |
+| `|C_8|` | 185,048 |
+| `C_8` density | 0.0190777 |
+| inherited residues | 178,296 |
+| birth residues | 6,752 |
+| newly certified complete values at `k=8` | 699 |
+| uncertified after `max_k=8` | 4,495 |
+
+Reading: `k=8` is feasible and useful, but the remaining uncertified class is
+still large enough to study before attempting the much larger `k=9` scan.

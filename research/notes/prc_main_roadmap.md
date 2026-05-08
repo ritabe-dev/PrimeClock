@@ -149,6 +149,29 @@ Current reading:
   next target.
 - `k=8` is intentionally behind the `--allow-large-k` primorial-scale guardrail.
 
+## v0.3 Guarded k=8 Extension
+
+Goal: test whether the next primorial-scale layer is feasible and whether it
+materially reduces the uncertified complete-covering set.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_k8_extension_v0_3.md`
+- `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
+- `data/summaries/prc_prime_prefix_residue_covering_birth_samples_k8_v0_3.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_k8_v0_3.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_summary_k8_v0_3.csv`
+
+Current reading:
+
+- `M_8=9,699,690`; local filtration generation completed in about 62 seconds.
+- `|C_8|=185,048`, with `6,752` new birth residues at `p=19`.
+- `k=8` certifies `699` additional complete-covering values.
+- The uncertified group falls from `5,194` at `max_k=7` to `4,495` at
+  `max_k=8`.
+- Do not jump directly to `k=9`; `M_9=223,092,870`, so the next step should
+  inspect the `4,495` remaining rows first.
+
 ## v0.3 Fixed Axis
 
 Primary object:

@@ -35,11 +35,13 @@ Read in this order:
    exact `C_k` residue filtration.
 4. `notes/prc_prime_prefix_certificate_depth_v0_2.md` for the connection from
    `C_k` to exact-certified complete-covering values.
-5. `notes/claims.md` for claim categories and non-claims.
-6. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+5. `notes/prc_prime_prefix_k8_extension_v0_3.md` for the guarded `k=8`
+   extension.
+6. `notes/claims.md` for claim categories and non-claims.
+7. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-7. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-8. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+8. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+9. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -48,6 +50,8 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv`
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv`
+- `data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv`
+- `data/summaries/prc_prime_prefix_certificate_depth_summary_k8_v0_3.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
