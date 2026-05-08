@@ -10,6 +10,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_boundary_summary_rows,
     prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_class_source_summary_rows,
@@ -28,6 +29,7 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_boundary_summary_csv,
     write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_class_source_summary_csv,
@@ -680,3 +682,87 @@ def test_covering_prime_prefix_uncertified_class_source_summary_cli_writes_csv(
         == 0
     )
     assert len(summary_out.read_text(encoding="utf-8").splitlines()) == 4
+
+
+def test_prime_prefix_uncertified_mod210_class_boundary_summary_headers(
+    tmp_path: Path,
+):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    detail_rows = prime_prefix_uncertified_mod210_class_detail_rows(
+        profile_rows,
+        prime_prefix_uncertified_mod210_class_review_rows(
+            prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+        ),
+        selected_mod210=[178],
+    )
+    summary_out = tmp_path / "boundary.csv"
+
+    summary = prime_prefix_uncertified_mod210_class_boundary_summary_rows(detail_rows)
+    write_prime_prefix_uncertified_mod210_class_boundary_summary_csv(
+        summary,
+        summary_out,
+    )
+
+    assert summary_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "seed_mod210,selected_rank,priority_label,direction_label,cohort_role,"
+        "nearest_covered_source_k,nearest_covered_source_prime,"
+        "nearest_covered_mod210,row_count,share_within_class_role,"
+        "mod210_signed_delta_median,mod210_signed_delta_min,"
+        "mod210_signed_delta_max,circular_residue_distance_median,"
+        "circular_residue_distance_p90,circular_residue_distance_max,"
+        "distance_minus_complete_median"
+    )
+    assert sum(row.row_count for row in summary) == len(detail_rows)
+    assert all(-105 <= row.mod210_signed_delta_median <= 105 for row in summary)
+
+
+def test_covering_prime_prefix_uncertified_class_boundary_summary_cli_writes_csv(
+    tmp_path: Path,
+):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    profile_rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    detail_rows = prime_prefix_uncertified_mod210_class_detail_rows(
+        profile_rows,
+        prime_prefix_uncertified_mod210_class_review_rows(
+            prime_prefix_uncertified_mod210_audit_rows(profile_rows)
+        ),
+        selected_mod210=[178],
+    )
+    detail_out = tmp_path / "detail.csv"
+    summary_out = tmp_path / "boundary.csv"
+    write_prime_prefix_uncertified_mod210_class_detail_csv(detail_rows, detail_out)
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-class-boundary-summary",
+                "--detail",
+                str(detail_out),
+                "--out",
+                str(summary_out),
+            ]
+        )
+        == 0
+    )
+    assert len(summary_out.read_text(encoding="utf-8").splitlines()) >= 2

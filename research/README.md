@@ -49,11 +49,13 @@ Read in this order:
    expanded seed/control rows in the top classes.
 11. `notes/prc_prime_prefix_uncertified_mod210_source_summary_v0_9.md` for the
    selected-class source-depth summary.
-12. `notes/claims.md` for claim categories and non-claims.
-13. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+12. `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md` for
+   the selected-class boundary-anchor summary.
+13. `notes/claims.md` for claim categories and non-claims.
+14. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-14. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-15. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+15. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+16. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -73,6 +75,7 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_review_v0_7.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -229,4 +232,8 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-clas
 python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-source-summary \
   --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
   --out data/summaries/prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv
+
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-boundary-summary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv
 ```

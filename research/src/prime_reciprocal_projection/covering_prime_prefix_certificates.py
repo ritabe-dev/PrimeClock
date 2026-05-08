@@ -234,6 +234,29 @@ class PrimePrefixUncertifiedMod210ClassSourceSummaryRow:
     distance_minus_complete_max: int
 
 
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMod210ClassBoundarySummaryRow:
+    """Selected class summary by the nearest covered residue class modulo 210."""
+
+    seed_mod210: int
+    selected_rank: int
+    priority_label: str
+    direction_label: str
+    cohort_role: str
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    nearest_covered_mod210: int
+    row_count: int
+    share_within_class_role: float
+    mod210_signed_delta_median: float
+    mod210_signed_delta_min: int
+    mod210_signed_delta_max: int
+    circular_residue_distance_median: float
+    circular_residue_distance_p90: int
+    circular_residue_distance_max: int
+    distance_minus_complete_median: float
+
+
 def prime_prefix_certificate_rows(
     values: Iterable[int],
     *,
@@ -1103,6 +1126,93 @@ def prime_prefix_uncertified_mod210_class_source_summary_rows(
     return summary
 
 
+def prime_prefix_uncertified_mod210_class_boundary_summary_rows(
+    detail_rows: Iterable[PrimePrefixUncertifiedMod210ClassDetailRow],
+) -> list[PrimePrefixUncertifiedMod210ClassBoundarySummaryRow]:
+    """Summarize selected classes by nearest covered modulo-210 anchor."""
+    row_values = list(detail_rows)
+    role_totals: dict[tuple[int, str], int] = {}
+    groups: dict[
+        tuple[int, int, str, str, str, int, int, int],
+        list[PrimePrefixUncertifiedMod210ClassDetailRow],
+    ] = {}
+    for row in row_values:
+        role_totals[(row.seed_mod210, row.cohort_role)] = (
+            role_totals.get((row.seed_mod210, row.cohort_role), 0) + 1
+        )
+        key = (
+            row.seed_mod210,
+            row.selected_rank,
+            row.priority_label,
+            row.direction_label,
+            row.cohort_role,
+            row.nearest_covered_source_k,
+            row.nearest_covered_source_prime,
+            row.nearest_covered_residue % 210,
+        )
+        groups.setdefault(key, []).append(row)
+
+    role_order = {
+        "complete_uncertified": 0,
+        "local_mod210_control": 1,
+        "local_any_control": 2,
+    }
+    summary: list[PrimePrefixUncertifiedMod210ClassBoundarySummaryRow] = []
+    for (
+        seed_mod210,
+        selected_rank,
+        priority_label,
+        direction_label,
+        role,
+        source_k,
+        source_prime,
+        nearest_mod210,
+    ), group_rows in sorted(
+        groups.items(),
+        key=lambda item: (
+            item[0][1],
+            item[0][0],
+            role_order.get(item[0][4], 99),
+            item[0][5],
+            item[0][7],
+        ),
+    ):
+        distances = sorted(row.circular_residue_distance for row in group_rows)
+        deltas = sorted(row.distance_minus_complete for row in group_rows)
+        mod210_deltas = sorted(
+            _signed_circular_delta(
+                start=row.nearest_covered_residue % 210,
+                end=row.row_mod210,
+                modulus=210,
+            )
+            for row in group_rows
+        )
+        summary.append(
+            PrimePrefixUncertifiedMod210ClassBoundarySummaryRow(
+                seed_mod210=seed_mod210,
+                selected_rank=selected_rank,
+                priority_label=priority_label,
+                direction_label=direction_label,
+                cohort_role=role,
+                nearest_covered_source_k=source_k,
+                nearest_covered_source_prime=source_prime,
+                nearest_covered_mod210=nearest_mod210,
+                row_count=len(group_rows),
+                share_within_class_role=(
+                    len(group_rows) / role_totals[(seed_mod210, role)]
+                ),
+                mod210_signed_delta_median=statistics.median(mod210_deltas),
+                mod210_signed_delta_min=min(mod210_deltas),
+                mod210_signed_delta_max=max(mod210_deltas),
+                circular_residue_distance_median=statistics.median(distances),
+                circular_residue_distance_p90=_nearest_rank_quantile(distances, 0.9),
+                circular_residue_distance_max=max(distances),
+                distance_minus_complete_median=statistics.median(deltas),
+            )
+        )
+    return summary
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -1211,6 +1321,18 @@ def write_prime_prefix_uncertified_mod210_class_source_summary_csv(
     )
 
 
+def write_prime_prefix_uncertified_mod210_class_boundary_summary_csv(
+    rows: Iterable[PrimePrefixUncertifiedMod210ClassBoundarySummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write selected class boundary-anchor summary rows as CSV."""
+    _write_dataclass_csv(
+        rows,
+        output_path,
+        PrimePrefixUncertifiedMod210ClassBoundarySummaryRow,
+    )
+
+
 def _optional_int(value: str) -> int | None:
     return int(value) if value else None
 
@@ -1306,6 +1428,13 @@ def _nearest_circular_residue(
 def _circular_distance(left: int, right: int, modulus: int) -> int:
     distance = abs(left - right)
     return min(distance, modulus - distance)
+
+
+def _signed_circular_delta(*, start: int, end: int, modulus: int) -> int:
+    delta = (end - start) % modulus
+    if delta > modulus // 2:
+        delta -= modulus
+    return delta
 
 
 def _nearest_rank_quantile(values: list[int], q: float) -> int:

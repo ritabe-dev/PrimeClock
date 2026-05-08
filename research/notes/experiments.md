@@ -1155,3 +1155,42 @@ First reading for complete rows:
 Reading: several high-priority classes are lifted neighborhoods of shallow
 `C_4`/`C_5` layers. That is a main-line finite-filtration question and a better
 next target than an immediate `k=9` scan.
+
+## PRC Prime-Prefix Modulo-210 Boundary Summary v0.10
+
+The v0.10 boundary summary refines v0.9 by grouping the same selected-class
+detail rows by nearest covered residue modulo `210`, not only by source depth.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-boundary-summary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv
+```
+
+Summary:
+
+| metric | value |
+|---|---:|
+| boundary-summary rows | 414 |
+| selected classes | 8 |
+
+First reading for complete rows:
+
+| mod 210 | dominant boundary anchor |
+|---:|---|
+| 4 | `C_4` anchor `2`, signed delta `+2` |
+| 206 | `C_4` anchor `208`, signed delta `-2` |
+| 201 | mostly `C_4` anchor `208`, signed delta `-7` |
+| 111 | mostly `C_5` anchors, especially `62` and `88` |
+| 99 | mostly `C_5` anchors, especially `148` and `122` |
+| 118 | mixed `C_5`/`C_6` anchors |
+| 88 | mixed, including `C_4` anchor `2` |
+| 62 | mixed, including `C_4` anchor `2` |
+
+Reading: the selected classes are better understood as neighborhoods of
+specific shallow covered anchors. The next exact target should be a
+lifted-boundary table for shallow `C_k` anchors rather than a raw `k=9`
+enumeration.

@@ -23,6 +23,7 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_audit_rows,
+    prime_prefix_uncertified_mod210_class_boundary_summary_rows,
     prime_prefix_uncertified_mod210_class_detail_rows,
     prime_prefix_uncertified_mod210_class_review_rows,
     prime_prefix_uncertified_mod210_class_source_summary_rows,
@@ -41,6 +42,7 @@ from .covering_prime_prefix_certificates import (
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_audit_csv,
+    write_prime_prefix_uncertified_mod210_class_boundary_summary_csv,
     write_prime_prefix_uncertified_mod210_class_detail_csv,
     write_prime_prefix_uncertified_mod210_class_review_csv,
     write_prime_prefix_uncertified_mod210_class_source_summary_csv,
@@ -405,6 +407,23 @@ def main(argv: list[str] | None = None) -> int:
         default=(
             "data/summaries/"
             "prc_prime_prefix_uncertified_mod210_class_source_summary_v0_9.csv"
+        ),
+    )
+
+    covering_prime_prefix_uncertified_class_boundary_summary = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-class-boundary-summary",
+        help="summarize selected modulo-210 class detail rows by nearest covered mod210 anchor",
+    )
+    covering_prime_prefix_uncertified_class_boundary_summary.add_argument(
+        "--detail",
+        default="data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv",
+        help="selected modulo-210 class detail CSV",
+    )
+    covering_prime_prefix_uncertified_class_boundary_summary.add_argument(
+        "--out",
+        default=(
+            "data/summaries/"
+            "prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv"
         ),
     )
 
@@ -969,6 +988,16 @@ def main(argv: list[str] | None = None) -> int:
         write_prime_prefix_uncertified_mod210_class_source_summary_csv(rows, args.out)
         print(
             "covering-prime-prefix-uncertified-class-source-summary: "
+            f"rows={len(rows)}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-class-boundary-summary":
+        rows = prime_prefix_uncertified_mod210_class_boundary_summary_rows(
+            read_prime_prefix_uncertified_mod210_class_detail_csv(args.detail)
+        )
+        write_prime_prefix_uncertified_mod210_class_boundary_summary_csv(rows, args.out)
+        print(
+            "covering-prime-prefix-uncertified-class-boundary-summary: "
             f"rows={len(rows)}, out={args.out}"
         )
         return 0

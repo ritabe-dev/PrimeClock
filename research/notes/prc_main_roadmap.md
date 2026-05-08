@@ -332,6 +332,35 @@ Current reading:
 - The next small step should inspect lifted shallow-boundary neighborhoods
   before attempting `k=9`.
 
+## v0.10 Modulo-210 Boundary Summary
+
+Goal: refine v0.9 by grouping the selected-class detail rows by the nearest
+covered residue modulo `210`, not only by nearest `C_k` source depth.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_mod210_boundary_summary_v0_10.md`
+- `data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv`
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-class-boundary-summary \
+  --detail data/summaries/prc_prime_prefix_uncertified_mod210_class_detail_v0_8.csv \
+  --out data/summaries/prc_prime_prefix_uncertified_mod210_class_boundary_summary_v0_10.csv
+```
+
+Current reading:
+
+- `4`, `206`, and `201` are clean neighborhoods of the `C_4` anchors `2` and
+  `208` modulo `210`.
+- `111` and `99` are not single-boundary `C_4` effects; they spread across
+  multiple `C_5` anchors.
+- `118`, `88`, and `62` are mixed-anchor cases.
+- The next exact target is a lifted-boundary table for shallow `C_k` anchors,
+  not a raw larger primorial scan.
+
 ## v0.3 Fixed Axis
 
 Primary object:

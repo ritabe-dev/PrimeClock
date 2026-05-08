@@ -104,6 +104,9 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the v0.9 source-depth split explains complete
   covering; it only identifies which shallow `C_k` layers the selected classes
   sit near.
+- This project does not claim the v0.10 boundary-anchor split explains
+  complete covering; it only identifies which shallow modulo-210 covered
+  anchors the selected classes sit near.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample
