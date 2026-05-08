@@ -2,6 +2,15 @@
 
 Every statement in this research track should be assigned one of these statuses.
 
+This file is the full-archive claim registry. It intentionally includes older
+PRC diagnostics, complete-covering side tracks, and modulo-210 exploratory
+tables whose source artifacts are not included in the minimal external review
+package.
+
+For the narrow `C_k/C_4/B_5` finite theorem bundle, read
+`claims_finite_c4_b5.md` instead. Every claim in that file is audited by the
+minimal package artifacts and verifier outputs.
+
 | Type | Meaning | Example |
 |---|---|---|
 | Definition | Notation or object being fixed | `Phi_N`, `mu_N`, `B_{N,k}` |

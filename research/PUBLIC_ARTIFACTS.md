@@ -13,8 +13,9 @@ finite theorem note and keeps modulo-210 diagnostics out of the main path.
 - `uv.lock`
 - `src/prime_reciprocal_projection/`
 - `tests/`
+- `VERIFY_FINITE_C4_B5.md`
 - `notes/prc_prime_prefix_finite_note_v1_1.md`
-- `notes/claims.md`
+- `notes/claims_finite_c4_b5.md`
 - `notes/known-results.md`
 - `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
@@ -33,6 +34,10 @@ The certificate-depth note and CSVs are context artifacts for the full archive,
 not part of the minimal `C_k/C_4/B_5` theorem package. This prevents a minimal
 reviewer from hitting references to complete-covering source tables that are
 not included in the small zip.
+
+The broad `notes/claims.md` file is also a full-archive context artifact. The
+minimal package should include `notes/claims_finite_c4_b5.md` instead, so every
+claim in the small zip is audited by the included C4/B5 artifacts.
 
 The existing `review_packages/` directory contains stale archived snapshots.
 Do not send those as the current review package; regenerate a new package from
@@ -85,7 +90,8 @@ For a minimal research review, start with:
 ```text
 research/README.md
 research/notes/prc_prime_prefix_finite_note_v1_1.md
-research/notes/claims.md
+research/notes/claims_finite_c4_b5.md
+research/VERIFY_FINITE_C4_B5.md
 research/notes/known-results.md
 research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
 ```

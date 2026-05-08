@@ -3,6 +3,11 @@
 Objective: identify a deeper mathematically developable research theme beyond
 the current experimental PRC directions.
 
+Status note: this is a historical theme note. The current theorem-facing
+statement of the `C_k/C_4/B_5` finite package is
+`prc_prime_prefix_finite_note_v1_1.md`, and the current minimal-package claims
+are in `claims_finite_c4_b5.md`.
+
 ## Recommendation
 
 The strongest mathematical theme is:
@@ -217,9 +222,12 @@ So the union is all of `R/Z`.
 The residue `208 == -2 mod 210` is the mirror case.
 
 This is an exact hand coverage example for the two covered residues. The
-statement `C_4={2,208} mod 210` itself is currently established by exact
-finite enumeration; a written exclusion proof for the other residue classes is
-a separate theorem target.
+statement `C_4={2,208} mod 210` is now supported by the v1.6 row-level
+exclusion witnesses, the v1.5 36-class summary table, the v1.7 package
+verifier, the v1.8 standard-library standalone checker, and the human-readable
+C4 appendix in the finite note. The fully handwritten 208-case compression is
+still optional polish, not a blocker for the current finite certificate
+package.
 
 ## Why This Is Mathematically Promising
 
