@@ -195,6 +195,9 @@ Current reading:
 - The v1.5 `C_4` exclusion summary compresses the 208 witnesses into 36
   component/measure classes with complete residue lists: 22 one-gap classes
   covering 143 residues and 14 two-gap classes covering 65 residues.
+- The C4 appendix is now written as a finite proof outline: positive coverage
+  for `2`, reflection for `208`, and one rational interior witness for each
+  excluded residue, with the 36-class table as a human-readable index.
 - The `B_5` classification table turns the witness rows into reflection-pair
   and parent-gap templates.
 - The `B_5` pair summary compresses those `14` birth rows into `7`

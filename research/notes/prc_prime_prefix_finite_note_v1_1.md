@@ -124,14 +124,20 @@ This table is a finite exact artifact. It is not an asymptotic law.
 
 ## First nonempty layer
 
-The first nonempty layer is
+The first nonempty layer is the finite proposition
 
 ```text
 C_1=C_2=C_3=empty
-C_4={2,208} mod 210.
+C_4={2,-2}={2,208} mod 210.
 ```
 
-For `r=2`, the four arcs are:
+This statement has two covered residues and `208` excluded residues. The proof
+is finite: show coverage for `2`, use reflection for `208`, and give one
+rational open-gap witness for every other residue.
+
+### Positive coverage proof
+
+For `r=2`, the four closed arcs are:
 
 ```text
 p=2: [0,1/4] union [3/4,1]
@@ -149,9 +155,24 @@ They chain across the circle:
 [1/2,5/6] overlaps [3/4,1]
 ```
 
-The residue `208=-2 mod 210` is the reflection partner. The exclusion of the
-other 208 residues is certified by exact finite enumeration with one rational
-gap witness per residue:
+Thus these four closed arcs cover the circle. The endpoint at `1/2` is covered
+because the theorem-level convention uses closed arcs. The residue
+`208=-2 mod 210` is covered by reflection symmetry: the map `x -> -x` sends the
+arc family for `2` to the arc family for `-2`.
+
+### Finite exclusion certificate
+
+For every other residue `r mod 210`, the row-level certificate gives an explicit
+rational point that remains uncovered by the four closed arcs. This is the
+logical exclusion certificate:
+
+```text
+for each r not in {2,208},
+  witness_point(r) lies strictly inside a rational open gap,
+  and witness_point(r) is outside I_2(r), I_3(r), I_5(r), I_7(r).
+```
+
+The witness table is generated with:
 
 ```bash
 cd research
@@ -167,7 +188,22 @@ uncovered object is the open interval between them. The v1.6 witness table also
 records a rational `witness_point` inside the first open gap, so each exclusion
 row has a directly checkable interior point.
 
-The 208 witnesses can be compressed into 36 measure/component classes:
+The v1.8 standard-library standalone checker rederives this certificate without
+importing the package:
+
+```bash
+cd research
+python certificates/check_prime_prefix_c4_b5.py \
+  --out data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
+```
+
+It checks the positive residues, the exact excluded residue set, the C4 witness
+fields, and the C4 summary partition. In the current artifact it reports
+`9` checks and `0` failures.
+
+### Human-readable compression
+
+The 208 row-level witnesses can be compressed into 36 measure/component classes:
 
 ```bash
 cd research
@@ -176,10 +212,12 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-exclusion-summar
   --out data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv
 ```
 
-This summary is the working index for a short written exclusion proof. It
+This summary is the human-readable index for the finite exclusion proof. It
 groups residues by uncovered component count and exact uncovered measure, while
 retaining the complete residue list for each class and representative open-gap
-boundary endpoints.
+boundary endpoints. It is not the formal certificate by itself; the row-level
+`witness_point` rows are the certificate, and this table is the compression that
+makes the 208 exclusions readable.
 
 The compressed index has the following shape:
 
@@ -189,23 +227,25 @@ The compressed index has the following shape:
 | 2 | 14 | 65 |
 | total | 36 | 208 |
 
-Thus the `C_4` finite proof can be read in three layers: the two residues
-`2,208` have explicit coverage chains, the other `208` residues have row-level
-rational gap witnesses, and those witnesses collapse into `36` exact
-component/measure classes for a shorter appendix table.
+Thus the `C_4` finite proof should be read in three layers:
+
+1. `r=2` has an explicit closed-arc coverage chain.
+2. `r=208=-2` follows from reflection symmetry.
+3. Every other residue has a row-level rational interior witness, indexed below
+   by `36` exact component/measure classes.
 
 ### C4 exclusion appendix table
 
 The following table is the compact human-readable index for excluding all
 residues outside `{2,208} mod 210`. Each row lists a class of residues with the
-same number of open gaps and the same exact uncovered measure. The last column
-shows representative open-gap boundary endpoints from the row-level witness
-table. These endpoints are not claimed to be uncovered points themselves; the
-certified uncovered set is the open interval between the endpoints, and the
-v1.6 row-level CSV additionally gives an interior rational `witness_point`.
-When more than one boundary string appears in the representative column, those
-strings are samples from different residues in the same class, not multiple
-closed intervals to be read as one uncovered set.
+same number of open gaps and the same exact uncovered measure. The `residues`
+column is complete for that class. The last column shows representative
+open-gap boundary endpoints from the row-level witness table.
+
+Read the last column carefully: those endpoints are samples, not the full gap
+list for every residue in the class. They are also boundary endpoints of open
+gaps, not uncovered closed intervals. The actual certificate for a residue is
+the corresponding v1.6 row with its `witness_point`.
 
 | components | measure | count | residues | representative gap boundaries |
 |---:|---:|---:|---|---|
@@ -246,13 +286,13 @@ closed intervals to be read as one uncovered set.
 | 2 | `43/140` | 4 | `24 66 144 186` | `1/4-1/2 1/4-5/14 3/10-1/2 3/10-5/14` |
 | 2 | `5/14` | 2 | `60 150` | `1/4-1/2 1/4-5/14` |
 
-The formal certificate for an excluded residue is the row-level v1.6 witness:
-take the listed `witness_point`, check that it lies strictly between the first
-open-gap boundary endpoints on the circle, and check that it is outside every
-closed arc for `p=2,3,5,7`. The low-level rational CSV verifier performs exactly this
-rational check for all `208` excluded residues. The appendix table above is
-therefore a reading aid and compression of the certificate, not a replacement
-for the row-level rational witnesses.
+The formal certificate for an excluded residue remains the row-level v1.6
+witness: take the listed `witness_point`, check that it lies strictly between
+the first open-gap boundary endpoints on the circle, and check that it is
+outside every closed arc for `p=2,3,5,7`. The package verifier and the v1.8
+standalone checker perform this rational check for all `208` excluded residues.
+The appendix table above is therefore a human-readable index for the
+certificate, not a replacement for the row-level rational witnesses.
 
 ## C5 and B5
 
@@ -388,7 +428,8 @@ Rows without a certificate through checked `k` should be called
 
 ## Next theorem targets
 
-1. Turn the appendix table above into a more compressed handwritten exclusion
-   proof if a reviewer wants less machine-certificate surface.
+1. Polish `B_5` into an explicit finite proposition with the 14 birth residues,
+   7 reflection pairs, and old-gap/new-arc containment inequalities stated in
+   one place.
 2. Extend the same witness/classification/pair-summary format to `B_6`,
    before chasing larger `k`.

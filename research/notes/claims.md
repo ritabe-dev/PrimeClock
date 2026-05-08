@@ -99,11 +99,11 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not ask whether `|C_k|/M_k` decays; lift monotonicity makes
   the density nondecreasing. The open questions are about birth persistence and
   the monotone limit.
-- This project does not claim `C_4={2,208}` has a fully handwritten exclusion
-  proof yet; the exclusion is currently supported by exact finite enumeration,
-  tests, a 36-class appendix table, rational open-gap witness CSVs, and the
-  v1.7 low-level rational CSV verifier plus the v1.8 standard-library
-  standalone checker.
+- This project does not claim `C_4={2,208}` has a fully handwritten 208-case
+  exclusion proof yet; the exclusion is currently presented as a human-readable
+  finite appendix backed by exact row-level rational witnesses, tests, the v1.7
+  low-level rational CSV verifier, and the v1.8 standard-library standalone
+  checker.
 - This project does not claim `k<=7` certificate coverage explains all
   complete-covering values; rows without a prefix certificate are only
   uncertified within the checked filtration range.
