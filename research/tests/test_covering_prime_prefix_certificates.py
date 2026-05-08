@@ -10,12 +10,18 @@ from prime_reciprocal_projection.covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_summary_rows,
+    prime_prefix_uncertified_matched_pair_delta_rows,
+    prime_prefix_uncertified_matched_profile_rows,
+    prime_prefix_uncertified_matched_summary_rows,
     prime_prefix_uncertified_overall_summary_rows,
     prime_prefix_uncertified_residue_rows,
     read_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
+    write_prime_prefix_uncertified_matched_pair_delta_csv,
+    write_prime_prefix_uncertified_matched_profile_csv,
+    write_prime_prefix_uncertified_matched_summary_csv,
     write_prime_prefix_uncertified_overall_summary_csv,
     write_prime_prefix_uncertified_residue_csv,
 )
@@ -217,3 +223,116 @@ def test_covering_prime_prefix_uncertified_residues_cli_writes_csvs(tmp_path: Pa
     assert len(detail_out.read_text(encoding="utf-8").splitlines()) == 2
     assert len(summary_out.read_text(encoding="utf-8").splitlines()) == 10
     assert len(mod210_out.read_text(encoding="utf-8").splitlines()) == 2
+
+
+def test_prime_prefix_uncertified_matched_controls_are_local_and_noncomplete():
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    by_role = {row.cohort_role: row for row in rows}
+
+    assert by_role["complete_uncertified"].n == 178
+    assert by_role["local_mod210_control"].n == 388
+    assert by_role["local_mod210_control"].mod210 == 178
+    assert by_role["local_mod210_control"].control_delta == 210
+    assert by_role["local_any_control"].n == 177
+    assert by_role["local_any_control"].n not in {178, 208}
+
+
+def test_prime_prefix_uncertified_matched_summary_and_deltas(tmp_path: Path):
+    uncertified = prime_prefix_uncertified_residue_rows(
+        prime_prefix_certificate_rows([178, 201, 208], max_k=4),
+        max_k=4,
+    )
+    rows = prime_prefix_uncertified_matched_profile_rows(
+        uncertified,
+        complete_values={178, 201, 208},
+        start=2,
+        stop=500,
+        local_radius=250,
+        max_k=4,
+    )
+    summary = prime_prefix_uncertified_matched_summary_rows(rows)
+    deltas = prime_prefix_uncertified_matched_pair_delta_rows(rows)
+    profile_out = tmp_path / "profile.csv"
+    summary_out = tmp_path / "summary.csv"
+    deltas_out = tmp_path / "deltas.csv"
+
+    write_prime_prefix_uncertified_matched_profile_csv(rows, profile_out)
+    write_prime_prefix_uncertified_matched_summary_csv(summary, summary_out)
+    write_prime_prefix_uncertified_matched_pair_delta_csv(deltas, deltas_out)
+
+    assert profile_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "seed_n,cohort_role,n,control_delta,checked_max_k,checked_max_prime,"
+        "residue_modulus,residue,mod210,mod2310,nearest_covered_residue,"
+        "nearest_covered_source_k,nearest_covered_source_prime,"
+        "circular_residue_distance,normalized_residue_distance"
+    )
+    assert summary_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "cohort_role,row_count,unique_n_count,unique_mod210_count,"
+        "nearest_distance_median,nearest_distance_p90,nearest_distance_p99,"
+        "nearest_distance_max"
+    )
+    assert deltas_out.read_text(encoding="utf-8").splitlines()[0] == (
+        "seed_n,control_role,complete_n,control_n,metric,complete_value,"
+        "control_value,delta_complete_minus_control"
+    )
+    assert [row.cohort_role for row in summary] == [
+        "complete_uncertified",
+        "local_mod210_control",
+        "local_any_control",
+    ]
+    assert len(deltas) == 2 * 2 * len(uncertified)
+
+
+def test_prime_prefix_uncertified_matched_controls_cli_writes_csvs(tmp_path: Path):
+    runs = tmp_path / "runs.csv"
+    certificates = tmp_path / "certificates.csv"
+    uncertified_profile = tmp_path / "uncertified.csv"
+    profile_out = tmp_path / "profile.csv"
+    summary_out = tmp_path / "summary.csv"
+    deltas_out = tmp_path / "deltas.csv"
+    runs.write_text("start,stop,length\n178,178,1\n208,208,1\n", encoding="utf-8")
+    certificate_rows = prime_prefix_certificate_rows([178, 208], max_k=4)
+    write_prime_prefix_certificate_csv(certificate_rows, certificates)
+    uncertified = prime_prefix_uncertified_residue_rows(certificate_rows, max_k=4)
+    write_prime_prefix_uncertified_residue_csv(uncertified, uncertified_profile)
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-uncertified-controls",
+                "--uncertified-profile",
+                str(uncertified_profile),
+                "--complete-source",
+                str(runs),
+                "--start",
+                "2",
+                "--stop",
+                "500",
+                "--local-radius",
+                "250",
+                "--max-k",
+                "4",
+                "--out",
+                str(profile_out),
+                "--summary-out",
+                str(summary_out),
+                "--pair-deltas-out",
+                str(deltas_out),
+            ]
+        )
+        == 0
+    )
+    assert len(profile_out.read_text(encoding="utf-8").splitlines()) == 4
+    assert len(summary_out.read_text(encoding="utf-8").splitlines()) == 4
+    assert len(deltas_out.read_text(encoding="utf-8").splitlines()) == 5

@@ -23,12 +23,18 @@ from .covering_prime_prefix_certificates import (
     prime_prefix_certificate_rows_from_runs_csv,
     prime_prefix_certificate_summary_rows,
     prime_prefix_uncertified_mod210_summary_rows,
+    prime_prefix_uncertified_matched_pair_delta_rows,
+    prime_prefix_uncertified_matched_profile_rows_from_csv,
+    prime_prefix_uncertified_matched_summary_rows,
     prime_prefix_uncertified_overall_summary_rows,
     prime_prefix_uncertified_residue_rows,
     read_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_csv,
     write_prime_prefix_certificate_summary_csv,
     write_prime_prefix_uncertified_mod210_summary_csv,
+    write_prime_prefix_uncertified_matched_pair_delta_csv,
+    write_prime_prefix_uncertified_matched_profile_csv,
+    write_prime_prefix_uncertified_matched_summary_csv,
     write_prime_prefix_uncertified_overall_summary_csv,
     write_prime_prefix_uncertified_residue_csv,
 )
@@ -269,6 +275,42 @@ def main(argv: list[str] | None = None) -> int:
     covering_prime_prefix_uncertified.add_argument(
         "--mod210-out",
         default="data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv",
+    )
+
+    covering_prime_prefix_uncertified_controls = subparsers.add_parser(
+        "covering-prime-prefix-uncertified-controls",
+        help="compare uncertified complete rows to local non-complete controls",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--uncertified-profile",
+        default="data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--complete-source",
+        default="data/summaries/prc_combined_runs_2_1000000.csv",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument("--start", type=int, default=2)
+    covering_prime_prefix_uncertified_controls.add_argument("--stop", type=int, default=1000000)
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--local-radius", type=int, default=250
+    )
+    covering_prime_prefix_uncertified_controls.add_argument("--max-k", type=int, default=8)
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--allow-large-k",
+        action="store_true",
+        help="allow exploratory primorial-scale scans beyond the v0.2 max-k=7 guardrail",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--out",
+        default="data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--summary-out",
+        default="data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv",
+    )
+    covering_prime_prefix_uncertified_controls.add_argument(
+        "--pair-deltas-out",
+        default="data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -760,6 +802,30 @@ def main(argv: list[str] | None = None) -> int:
             "covering-prime-prefix-uncertified-residues: "
             f"rows={len(rows)}, mod210_rows={len(mod210_rows)}, "
             f"out={args.out}, summary_out={args.summary_out}, mod210_out={args.mod210_out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-uncertified-controls":
+        rows = prime_prefix_uncertified_matched_profile_rows_from_csv(
+            args.uncertified_profile,
+            args.complete_source,
+            start=args.start,
+            stop=args.stop,
+            local_radius=args.local_radius,
+            max_k=args.max_k,
+            allow_large_k=args.allow_large_k,
+        )
+        summary_rows = prime_prefix_uncertified_matched_summary_rows(rows)
+        delta_rows = prime_prefix_uncertified_matched_pair_delta_rows(rows)
+        write_prime_prefix_uncertified_matched_profile_csv(rows, args.out)
+        write_prime_prefix_uncertified_matched_summary_csv(summary_rows, args.summary_out)
+        write_prime_prefix_uncertified_matched_pair_delta_csv(
+            delta_rows, args.pair_deltas_out
+        )
+        print(
+            "covering-prime-prefix-uncertified-controls: "
+            f"rows={len(rows)}, summary_rows={len(summary_rows)}, "
+            f"pair_delta_rows={len(delta_rows)}, out={args.out}, "
+            f"summary_out={args.summary_out}, pair_deltas_out={args.pair_deltas_out}"
         )
         return 0
     if args.command == "covering-window-figure":

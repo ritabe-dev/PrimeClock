@@ -195,6 +195,28 @@ Current reading:
 - The next useful experiment is a matched non-complete control profile, not an
   immediate jump to `k=9`.
 
+## v0.5 Uncertified Control Profile
+
+Goal: test whether the `C_8` nearest-distance profile is complete-specific or
+also appears in local non-complete controls.
+
+Deliverables:
+
+- `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md`
+- `data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv`
+- `data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv`
+- `data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv`
+
+Current reading:
+
+- `local_mod210_control` has median distance `26`, compared with `25` for the
+  complete rows.
+- Paired `complete - local_mod210_control` median delta is `0`, with `1,310`
+  ties over `4,475` pairs.
+- `local_any_control` is also very close, with median distance `25`.
+- Therefore nearest-distance to `C_8` is not yet a complete-specific
+  explanation; it is mostly a local/wheel-residue diagnostic.
+
 ## v0.3 Fixed Axis
 
 Primary object:

@@ -39,11 +39,13 @@ Read in this order:
    extension.
 6. `notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md` for the
    residual class left after `C_8`.
-7. `notes/claims.md` for claim categories and non-claims.
-8. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
+7. `notes/prc_prime_prefix_uncertified_control_profile_v0_5.md` for the local
+   non-complete control check.
+8. `notes/claims.md` for claim categories and non-claims.
+9. `notes/known-results.md` for the PRP relationship to Saffari--Vaughan style
    fractional-parts results.
-9. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
-10. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
+10. `notes/prc_main_v0_9.md` for the first branch-uniform null comparison.
+11. `PUBLIC_ARTIFACTS.md` before creating or reviewing a public zip.
 
 Canonical PRC v1 artifacts:
 
@@ -56,6 +58,8 @@ Canonical PRC v1 artifacts:
 - `data/summaries/prc_prime_prefix_certificate_depth_summary_k8_v0_3.csv`
 - `data/summaries/prc_prime_prefix_uncertified_residue_summary_v0_4.csv`
 - `data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv`
+- `data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv`
+- `data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv`
 - `data/summaries/prc_branch_fill_v0_3.csv`
 - `data/summaries/prc_branch_fill_summary_v0_3.csv`
 - `data/summaries/prc_branch_fill_residual_gaps_v0_5.csv`
@@ -123,7 +127,7 @@ python -m pytest
 python -m prime_reciprocal_projection.cli figures --out figures/v0
 ```
 
-Expected smoke-test result for the current suite is `148 passed`.
+Expected smoke-test result for the current suite is `151 passed`.
 
 ## First Experiments
 

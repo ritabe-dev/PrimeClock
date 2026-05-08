@@ -7,10 +7,11 @@ import statistics
 from bisect import bisect_left
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Callable, Iterable
 
 from .covering_prime_prefix_filtration import (
     MAX_DEFAULT_FILTRATION_K,
+    PrimePrefixResidueFiltrationRow,
     prime_prefix_residue_filtration_data,
 )
 from .covering_runs import read_complete_covering_runs_csv, values_from_runs
@@ -86,6 +87,55 @@ class PrimePrefixUncertifiedOverallSummaryRow:
 
     metric: str
     value: str
+
+
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMatchedProfileRow:
+    """Uncertified complete value or matched non-complete control residue profile."""
+
+    seed_n: int
+    cohort_role: str
+    n: int
+    control_delta: int
+    checked_max_k: int
+    checked_max_prime: int
+    residue_modulus: int
+    residue: int
+    mod210: int
+    mod2310: int
+    nearest_covered_residue: int
+    nearest_covered_source_k: int
+    nearest_covered_source_prime: int
+    circular_residue_distance: int
+    normalized_residue_distance: float
+
+
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMatchedSummaryRow:
+    """Cohort-level summary for uncertified complete/control residue profiles."""
+
+    cohort_role: str
+    row_count: int
+    unique_n_count: int
+    unique_mod210_count: int
+    nearest_distance_median: float
+    nearest_distance_p90: int
+    nearest_distance_p99: int
+    nearest_distance_max: int
+
+
+@dataclass(frozen=True)
+class PrimePrefixUncertifiedMatchedPairDeltaRow:
+    """Paired complete-control distance delta for one metric."""
+
+    seed_n: int
+    control_role: str
+    complete_n: int
+    control_n: int
+    metric: str
+    complete_value: float
+    control_value: float
+    delta_complete_minus_control: float
 
 
 def prime_prefix_certificate_rows(
@@ -328,6 +378,188 @@ def prime_prefix_uncertified_overall_summary_rows(
     ]
 
 
+def read_prime_prefix_uncertified_residue_csv(
+    path: str | Path,
+) -> list[PrimePrefixUncertifiedResidueRow]:
+    """Read uncertified residue profile rows from CSV."""
+    rows: list[PrimePrefixUncertifiedResidueRow] = []
+    with Path(path).open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            rows.append(
+                PrimePrefixUncertifiedResidueRow(
+                    n=int(row["n"]),
+                    checked_max_k=int(row["checked_max_k"]),
+                    checked_max_prime=int(row["checked_max_prime"]),
+                    residue_modulus=int(row["residue_modulus"]),
+                    residue=int(row["residue"]),
+                    mod210=int(row["mod210"]),
+                    mod2310=int(row["mod2310"]),
+                    nearest_covered_residue=int(row["nearest_covered_residue"]),
+                    nearest_covered_source_k=int(row["nearest_covered_source_k"]),
+                    nearest_covered_source_prime=int(row["nearest_covered_source_prime"]),
+                    circular_residue_distance=int(row["circular_residue_distance"]),
+                    normalized_residue_distance=float(row["normalized_residue_distance"]),
+                )
+            )
+    return rows
+
+
+def prime_prefix_uncertified_matched_profile_rows(
+    uncertified_rows: Iterable[PrimePrefixUncertifiedResidueRow],
+    *,
+    complete_values: set[int],
+    start: int = 2,
+    stop: int = 1_000_000,
+    local_radius: int = 250,
+    max_k: int = 8,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixUncertifiedMatchedProfileRow]:
+    """Build complete/control residue profiles for uncertified complete values."""
+    if start < 2:
+        raise ValueError("start must be >= 2")
+    if stop < start:
+        raise ValueError("stop must be >= start")
+    if local_radius < 0:
+        raise ValueError("local_radius must be >= 0")
+
+    summary_rows, _, covered_sets = prime_prefix_residue_filtration_data(
+        max_k=max_k,
+        birth_sample_limit=0,
+        allow_large_k=allow_large_k,
+    )
+    max_summary = summary_rows[-1]
+    covered = sorted(covered_sets[-1])
+    source_k_by_residue = _covered_source_depth_map(summary_rows, covered_sets)
+
+    rows: list[PrimePrefixUncertifiedMatchedProfileRow] = []
+    for uncertified in sorted(uncertified_rows, key=lambda row: row.n):
+        candidate_values = [
+            ("complete_uncertified", uncertified.n),
+            (
+                "local_mod210_control",
+                _nearest_noncomplete_control(
+                    uncertified.n,
+                    complete_values=complete_values,
+                    start=start,
+                    stop=stop,
+                    local_radius=local_radius,
+                    predicate=lambda n, seed=uncertified.n: n % 210 == seed % 210,
+                ),
+            ),
+            (
+                "local_any_control",
+                _nearest_noncomplete_control(
+                    uncertified.n,
+                    complete_values=complete_values,
+                    start=start,
+                    stop=stop,
+                    local_radius=local_radius,
+                    predicate=lambda _n: True,
+                ),
+            ),
+        ]
+        for role, n in candidate_values:
+            if n is None:
+                continue
+            rows.append(
+                _matched_profile_row(
+                    seed_n=uncertified.n,
+                    role=role,
+                    n=n,
+                    max_summary=max_summary,
+                    covered=covered,
+                    source_k_by_residue=source_k_by_residue,
+                    summary_rows=summary_rows,
+                )
+            )
+    return rows
+
+
+def prime_prefix_uncertified_matched_profile_rows_from_csv(
+    uncertified_profile_csv: str | Path,
+    complete_runs_csv: str | Path,
+    *,
+    start: int = 2,
+    stop: int = 1_000_000,
+    local_radius: int = 250,
+    max_k: int = 8,
+    allow_large_k: bool = False,
+) -> list[PrimePrefixUncertifiedMatchedProfileRow]:
+    """Read inputs and build matched complete/control residue profile rows."""
+    complete_values = set(values_from_runs(read_complete_covering_runs_csv(complete_runs_csv)))
+    return prime_prefix_uncertified_matched_profile_rows(
+        read_prime_prefix_uncertified_residue_csv(uncertified_profile_csv),
+        complete_values=complete_values,
+        start=start,
+        stop=stop,
+        local_radius=local_radius,
+        max_k=max_k,
+        allow_large_k=allow_large_k,
+    )
+
+
+def prime_prefix_uncertified_matched_summary_rows(
+    rows: Iterable[PrimePrefixUncertifiedMatchedProfileRow],
+) -> list[PrimePrefixUncertifiedMatchedSummaryRow]:
+    """Summarize matched residue profile rows by cohort role."""
+    row_values = list(rows)
+    groups: dict[str, list[PrimePrefixUncertifiedMatchedProfileRow]] = {}
+    for row in row_values:
+        groups.setdefault(row.cohort_role, []).append(row)
+
+    role_order = {
+        "complete_uncertified": 0,
+        "local_mod210_control": 1,
+        "local_any_control": 2,
+    }
+    summary: list[PrimePrefixUncertifiedMatchedSummaryRow] = []
+    for role, group_rows in sorted(groups.items(), key=lambda item: role_order.get(item[0], 99)):
+        distances = sorted(row.circular_residue_distance for row in group_rows)
+        summary.append(
+            PrimePrefixUncertifiedMatchedSummaryRow(
+                cohort_role=role,
+                row_count=len(group_rows),
+                unique_n_count=len({row.n for row in group_rows}),
+                unique_mod210_count=len({row.mod210 for row in group_rows}),
+                nearest_distance_median=statistics.median(distances),
+                nearest_distance_p90=_nearest_rank_quantile(distances, 0.9),
+                nearest_distance_p99=_nearest_rank_quantile(distances, 0.99),
+                nearest_distance_max=max(distances),
+            )
+        )
+    return summary
+
+
+def prime_prefix_uncertified_matched_pair_delta_rows(
+    rows: Iterable[PrimePrefixUncertifiedMatchedProfileRow],
+) -> list[PrimePrefixUncertifiedMatchedPairDeltaRow]:
+    """Return paired deltas for complete versus matched controls."""
+    by_seed_role = {(row.seed_n, row.cohort_role): row for row in rows}
+    deltas: list[PrimePrefixUncertifiedMatchedPairDeltaRow] = []
+    for (seed_n, role), control in sorted(by_seed_role.items()):
+        if role == "complete_uncertified":
+            continue
+        complete = by_seed_role.get((seed_n, "complete_uncertified"))
+        if complete is None:
+            continue
+        for metric in ("circular_residue_distance", "normalized_residue_distance"):
+            complete_value = float(getattr(complete, metric))
+            control_value = float(getattr(control, metric))
+            deltas.append(
+                PrimePrefixUncertifiedMatchedPairDeltaRow(
+                    seed_n=seed_n,
+                    control_role=role,
+                    complete_n=complete.n,
+                    control_n=control.n,
+                    metric=metric,
+                    complete_value=complete_value,
+                    control_value=control_value,
+                    delta_complete_minus_control=complete_value - control_value,
+                )
+            )
+    return deltas
+
+
 def write_prime_prefix_certificate_csv(
     rows: Iterable[PrimePrefixCertificateRow],
     output_path: str | Path,
@@ -368,19 +600,94 @@ def write_prime_prefix_uncertified_overall_summary_csv(
     _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedOverallSummaryRow)
 
 
+def write_prime_prefix_uncertified_matched_profile_csv(
+    rows: Iterable[PrimePrefixUncertifiedMatchedProfileRow],
+    output_path: str | Path,
+) -> None:
+    """Write matched residue profile rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMatchedProfileRow)
+
+
+def write_prime_prefix_uncertified_matched_summary_csv(
+    rows: Iterable[PrimePrefixUncertifiedMatchedSummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write matched residue profile summary rows as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMatchedSummaryRow)
+
+
+def write_prime_prefix_uncertified_matched_pair_delta_csv(
+    rows: Iterable[PrimePrefixUncertifiedMatchedPairDeltaRow],
+    output_path: str | Path,
+) -> None:
+    """Write matched residue profile pair deltas as CSV."""
+    _write_dataclass_csv(rows, output_path, PrimePrefixUncertifiedMatchedPairDeltaRow)
+
+
 def _optional_int(value: str) -> int | None:
     return int(value) if value else None
 
 
+def _matched_profile_row(
+    *,
+    seed_n: int,
+    role: str,
+    n: int,
+    max_summary: PrimePrefixResidueFiltrationRow,
+    covered: list[int],
+    source_k_by_residue: dict[int, int],
+    summary_rows: list[PrimePrefixResidueFiltrationRow],
+) -> PrimePrefixUncertifiedMatchedProfileRow:
+    modulus = max_summary.primorial
+    residue = n % modulus
+    nearest_residue, distance = _nearest_circular_residue(residue, covered, modulus)
+    nearest_source_k = source_k_by_residue[nearest_residue]
+    nearest_source_prime = summary_rows[nearest_source_k - 1].new_prime
+    return PrimePrefixUncertifiedMatchedProfileRow(
+        seed_n=seed_n,
+        cohort_role=role,
+        n=n,
+        control_delta=n - seed_n,
+        checked_max_k=max_summary.k,
+        checked_max_prime=max_summary.new_prime,
+        residue_modulus=modulus,
+        residue=residue,
+        mod210=n % 210,
+        mod2310=n % 2310,
+        nearest_covered_residue=nearest_residue,
+        nearest_covered_source_k=nearest_source_k,
+        nearest_covered_source_prime=nearest_source_prime,
+        circular_residue_distance=distance,
+        normalized_residue_distance=distance / modulus,
+    )
+
+
+def _nearest_noncomplete_control(
+    seed_n: int,
+    *,
+    complete_values: set[int],
+    start: int,
+    stop: int,
+    local_radius: int,
+    predicate: Callable[[int], bool],
+) -> int | None:
+    candidates = (
+        n
+        for n in range(max(start, seed_n - local_radius), min(stop, seed_n + local_radius) + 1)
+        if n != seed_n and n not in complete_values and predicate(n)
+    )
+    return min(candidates, key=lambda n: (abs(n - seed_n), n), default=None)
+
+
 def _covered_source_depth_map(
-    summary_rows: list[object],
+    summary_rows: list[PrimePrefixResidueFiltrationRow],
     covered_sets: list[set[int]],
 ) -> dict[int, int]:
-    max_modulus = summary_rows[-1].primorial  # type: ignore[attr-defined]
+    max_modulus = summary_rows[-1].primorial
     source: dict[int, int] = {}
     for residue in sorted(covered_sets[-1]):
         for index, summary in enumerate(summary_rows):
-            primorial = summary.primorial  # type: ignore[attr-defined]
+            primorial = summary.primorial
             if residue % primorial in covered_sets[index]:
                 source[residue] = index + 1
                 break

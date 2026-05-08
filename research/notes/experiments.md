@@ -957,3 +957,44 @@ Top modulo-210 classes:
 Reading: the remaining class is structured enough to profile before attempting
 `k=9`. These are residue-distance diagnostics relative to `C_8`, not an
 explanation of complete covering.
+
+## PRC Prime-Prefix Uncertified Control Profile v0.5
+
+The v0.5 control profile applies the same nearest-`C_8` residue diagnostics to
+local non-complete controls.
+
+Command:
+
+```bash
+cd research
+python -m prime_reciprocal_projection.cli covering-prime-prefix-uncertified-controls \
+  --uncertified-profile data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --start 2 \
+  --stop 1000000 \
+  --local-radius 250 \
+  --max-k 8 \
+  --allow-large-k \
+  --out data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv \
+  --summary-out data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv \
+  --pair-deltas-out data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv
+```
+
+Summary:
+
+| cohort | rows | median distance | p90 | p99 | max |
+|---|---:|---:|---:|---:|---:|
+| complete_uncertified | 4,495 | 25 | 56 | 90 | 97 |
+| local_mod210_control | 4,475 | 26 | 60 | 97 | 100 |
+| local_any_control | 4,495 | 25 | 57 | 91 | 98 |
+
+Paired direction for circular residue distance:
+
+| control | pairs | median delta | complete smaller | complete larger | ties |
+|---|---:|---:|---:|---:|---:|
+| local_mod210_control | 4,475 | 0 | 1,654 | 1,511 | 1,310 |
+| local_any_control | 4,495 | 1 | 2,201 | 2,273 | 21 |
+
+Reading: the hard local modulo-210 control is very close to the complete rows.
+Nearest distance to `C_8` should not be treated as a complete-specific
+explanation.

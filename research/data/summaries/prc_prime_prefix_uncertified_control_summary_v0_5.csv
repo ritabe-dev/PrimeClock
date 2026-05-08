@@ -1,0 +1,4 @@
+cohort_role,row_count,unique_n_count,unique_mod210_count,nearest_distance_median,nearest_distance_p90,nearest_distance_p99,nearest_distance_max
+complete_uncertified,4495,4495,98,25,56,90,97
+local_mod210_control,4475,4465,98,26,60,97,100
+local_any_control,4495,4495,100,25,57,91,98

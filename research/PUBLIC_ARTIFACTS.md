@@ -49,6 +49,7 @@ research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
 research/notes/prc_prime_prefix_certificate_depth_v0_2.md
 research/notes/prc_prime_prefix_k8_extension_v0_3.md
 research/notes/prc_prime_prefix_uncertified_residue_profile_v0_4.md
+research/notes/prc_prime_prefix_uncertified_control_profile_v0_5.md
 research/notes/claims.md
 research/notes/known-results.md
 research/notes/prc_main_v0_9.md
@@ -73,4 +74,7 @@ research/data/summaries/prc_prime_prefix_certificate_depth_summary_k8_v0_3.csv
 research/data/summaries/prc_prime_prefix_uncertified_residue_profile_v0_4.csv
 research/data/summaries/prc_prime_prefix_uncertified_residue_summary_v0_4.csv
 research/data/summaries/prc_prime_prefix_uncertified_mod210_summary_v0_4.csv
+research/data/summaries/prc_prime_prefix_uncertified_control_profile_v0_5.csv
+research/data/summaries/prc_prime_prefix_uncertified_control_summary_v0_5.csv
+research/data/summaries/prc_prime_prefix_uncertified_control_pair_deltas_v0_5.csv
 ```
