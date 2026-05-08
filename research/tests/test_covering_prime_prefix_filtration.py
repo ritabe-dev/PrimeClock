@@ -1,4 +1,6 @@
 import csv
+import subprocess
+import sys
 from fractions import Fraction
 from pathlib import Path
 
@@ -1194,3 +1196,66 @@ def test_public_finite_theorem_csvs_regenerate_byte_identically(tmp_path: Path):
     }
     for generated_path, committed_path in expected_paths.items():
         assert generated_path.read_bytes() == Path(committed_path).read_bytes()
+
+
+def test_standalone_prime_prefix_certificate_checker_passes(tmp_path: Path):
+    output = tmp_path / "standalone_verification.csv"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "certificates/check_prime_prefix_c4_b5.py",
+            "--out",
+            str(output),
+        ],
+        check=False,
+        cwd=Path(__file__).parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "checks=9, failed=0" in result.stdout
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 10
+    assert all(line.endswith(",pass") for line in lines[1:])
+    assert output.read_bytes() == Path(
+        "data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv"
+    ).read_bytes()
+
+
+def test_standalone_prime_prefix_certificate_checker_fails_missing_row(
+    tmp_path: Path,
+):
+    paths = _write_verifier_fixture(tmp_path)
+    output = tmp_path / "standalone_verification.csv"
+    _mutate_csv(paths["c4_witness"], lambda rows: rows[:-1])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "certificates/check_prime_prefix_c4_b5.py",
+            "--ck-full",
+            str(paths["ck_full"]),
+            "--c4-exclusion-witnesses",
+            str(paths["c4_witness"]),
+            "--c4-exclusion-summary",
+            str(paths["c4_summary"]),
+            "--b5-birth-witnesses",
+            str(paths["b5_witness"]),
+            "--b5-birth-classification",
+            str(paths["b5_classification"]),
+            "--b5-birth-pair-summary",
+            str(paths["b5_pair"]),
+            "--out",
+            str(output),
+        ],
+        check=False,
+        cwd=Path(__file__).parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "failed=" in result.stdout
+    rows = {row["check_name"]: row for row in csv.DictReader(output.open())}
+    assert rows["c4_exclusion_rows_exact"]["status"] == "fail"

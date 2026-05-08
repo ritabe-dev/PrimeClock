@@ -352,6 +352,20 @@ summary partition, the `B_5` classification table, the reflection-pair quotient,
 and strict containment of each old open gap inside the new `p=11` closed arc.
 It does not rely on the high-level birth-classification generator.
 
+For a smaller audit surface, the v1.8 standalone checker uses only Python's
+standard library (`csv`, `fractions`, `collections`, `pathlib`, `argparse`) and
+does not import the package:
+
+```bash
+cd research
+python certificates/check_prime_prefix_c4_b5.py \
+  --out data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
+```
+
+It currently reports `9` checks and `0` failures. The package verifier remains
+the fuller project-integrated audit; the standalone checker is the compact
+external sanity check for theorem-facing CSV completeness.
+
 ## Relation to PRC complete covering
 
 For an original PRC integer `N`, a prefix certificate is sufficient:

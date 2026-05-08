@@ -272,6 +272,9 @@ python -m prime_reciprocal_projection.cli covering-prime-prefix-birth-pair-summa
 
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
   --out data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
+
+python certificates/check_prime_prefix_c4_b5.py \
+  --out data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
 ```
 
 The verifier currently reports `14` checks and `0` failures. It treats C4
@@ -279,6 +282,11 @@ witnesses as rational open gaps with covered boundary endpoints allowed, checks
 the explicit C4 `witness_point` column, checks C4 row-set completeness and
 summary partitioning, checks B5 row-set completeness and exact witness fields,
 and verifies B5 classification / reflection-pair summary consistency.
+
+The standalone checker uses only the Python standard library and currently
+reports `9` checks and `0` failures. It is intentionally redundant with the
+package verifier so the public finite-certificate CSVs can be audited without
+importing `prime_reciprocal_projection`.
 
 ## PRC Candidate Windows
 

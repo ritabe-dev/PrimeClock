@@ -1,0 +1,10 @@
+check_name,total,passed,failed,status
+c4_positive_rows_exact,2,2,0,pass
+c4_exclusion_rows_exact,208,208,0,pass
+c4_exclusion_witness_fields_exact,208,208,0,pass
+c4_summary_partitions_witness_rows,36,36,0,pass
+c5_full_rows_exact,36,36,0,pass
+b5_birth_witness_rows_exact,14,14,0,pass
+b5_birth_witness_fields_exact,14,14,0,pass
+b5_classification_rows_exact,14,14,0,pass
+b5_pair_summary_rows_exact,7,7,0,pass

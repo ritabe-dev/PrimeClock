@@ -26,6 +26,8 @@ finite theorem note and keeps modulo-210 diagnostics out of the main path.
 - `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
 - `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
 - `data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
+- `data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv`
+- `certificates/check_prime_prefix_c4_b5.py`
 
 The certificate-depth note and CSVs are context artifacts for the full archive,
 not part of the minimal `C_k/C_4/B_5` theorem package. This prevents a minimal
@@ -123,6 +125,7 @@ research/data/summaries/prc_prime_prefix_birth_witness_v1_5.csv
 research/data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv
 research/data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv
 research/data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
+research/data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_v0_2.csv
 research/data/summaries/prc_prime_prefix_certificate_depth_summary_v0_2.csv
 research/data/summaries/prc_prime_prefix_residue_covering_filtration_k8_v0_3.csv

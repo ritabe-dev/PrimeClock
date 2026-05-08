@@ -102,7 +102,8 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim `C_4={2,208}` has a fully handwritten exclusion
   proof yet; the exclusion is currently supported by exact finite enumeration,
   tests, a 36-class appendix table, rational open-gap witness CSVs, and the
-  v1.7 low-level rational CSV verifier.
+  v1.7 low-level rational CSV verifier plus the v1.8 standard-library
+  standalone checker.
 - This project does not claim `k<=7` certificate coverage explains all
   complete-covering values; rows without a prefix certificate are only
   uncertified within the checked filtration range.
