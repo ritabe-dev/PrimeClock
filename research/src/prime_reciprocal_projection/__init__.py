@@ -49,6 +49,15 @@ from .covering_prime_prefix import (
     prime_prefix_profile_rows,
     write_prime_prefix_profile_csv,
 )
+from .covering_prime_prefix_filtration import (
+    PrimePrefixResidueBirthSampleRow,
+    PrimePrefixResidueFiltrationRow,
+    prime_prefix_residue_filtration_tables,
+    residue_is_exactly_covered,
+    residue_uncovered_measure,
+    write_prime_prefix_residue_birth_samples_csv,
+    write_prime_prefix_residue_filtration_csv,
+)
 from .covering_null_model import (
     branch_uniform_arc_template,
     branch_uniform_null_rows,
@@ -157,6 +166,9 @@ __all__ = [
     "phi",
     "poisson_arc_baseline",
     "PrimePrefixProfileRow",
+    "PrimePrefixResidueBirthSampleRow",
+    "PrimePrefixResidueFiltrationRow",
+    "prime_prefix_residue_filtration_tables",
     "prime_prefix_profile_rows",
     "prefiltered_exact_complete_values_in_range",
     "prefilter_validation_windows",
@@ -179,6 +191,8 @@ __all__ = [
     "read_branch_uniform_null_csv",
     "read_residual_gap_pair_delta_csv",
     "read_residual_gap_csv",
+    "residue_is_exactly_covered",
+    "residue_uncovered_measure",
     "scan_cluster_table",
     "read_cohort_manifest_csv",
     "scan_cluster_window",
@@ -201,6 +215,8 @@ __all__ = [
     "write_cohort_manifest_csv",
     "write_fast_scan_benchmark_csv",
     "write_prime_prefix_profile_csv",
+    "write_prime_prefix_residue_birth_samples_csv",
+    "write_prime_prefix_residue_filtration_csv",
     "write_residual_gap_count_test_csv",
     "write_residual_gap_effect_summary_csv",
     "write_residual_gap_csv",

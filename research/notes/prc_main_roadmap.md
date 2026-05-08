@@ -90,11 +90,21 @@ This is the exact primorial-residue version of the prime-prefix hierarchy.
 Unlike the descriptive `numeric_complete_prefix` flag, membership in `C_k` is
 a finite rational interval question.
 
-Current scouting outputs:
+Generated outputs:
 
 - `notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`
 - `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
 - `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
+
+Command:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
+  --max-k 7 \
+  --birth-sample-limit 200 \
+  --summary-out data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv \
+  --birth-samples-out data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+```
 
 Current reading:
 
@@ -105,8 +115,9 @@ Current reading:
 - The current exact table reaches `k=7`, where `|C_7|=9384` modulo `510510`,
   including `714` new births at `p=17`.
 
-Next implementation step: add a reproducible exact generator/CLI for this
-filtration before treating the CSVs as fully canonical generated artifacts.
+The current implementation regenerates this table exactly through the CLI.
+Next implementation step: use `C_k` membership to compute exact certificate
+depth for certified complete-covering values.
 
 ## v0.3 Fixed Axis
 

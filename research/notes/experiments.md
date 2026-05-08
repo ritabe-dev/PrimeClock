@@ -161,7 +161,17 @@ M_k = product_{i<=k} p_i
 C_k = {r in Z/M_kZ : union_{i<=k} I_{p_i}(r)=T}
 ```
 
-Current scouting artifacts:
+Generate the exact filtration tables with:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-prime-prefix-filtration \
+  --max-k 7 \
+  --birth-sample-limit 200 \
+  --summary-out data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv \
+  --birth-samples-out data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv
+```
+
+Current generated artifacts:
 
 ```text
 notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md
@@ -182,8 +192,8 @@ Current table:
 | 7 | 17 | 510,510 | 9,384 | 0.018382 | 8,670 | 714 |
 
 This is stronger than a numeric prefix-complete flag: it is a finite exact
-classification problem over primorial residue rings. The next implementation
-step is to add a reproducible generator/CLI for this table.
+classification problem over primorial residue rings. The CLI uses lift
+monotonicity to avoid exact-rechecking inherited covered classes.
 
 ## PRC Candidate Windows
 

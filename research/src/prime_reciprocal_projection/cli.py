@@ -19,6 +19,11 @@ from .covering_prime_prefix import (
     prime_prefix_profile_rows,
     write_prime_prefix_profile_csv,
 )
+from .covering_prime_prefix_filtration import (
+    prime_prefix_residue_filtration_tables,
+    write_prime_prefix_residue_birth_samples_csv,
+    write_prime_prefix_residue_filtration_csv,
+)
 from .covering_branch_fill import (
     branch_fill_summary_table,
     branch_fill_summary_rows,
@@ -179,6 +184,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     covering_prime_prefix_profile.add_argument(
         "--out", default="data/summaries/prc_prime_prefix_profile_v0_1.csv"
+    )
+
+    covering_prime_prefix_filtration = subparsers.add_parser(
+        "covering-prime-prefix-filtration",
+        help="generate exact PRC prime-prefix residue-covering filtration tables",
+    )
+    covering_prime_prefix_filtration.add_argument("--max-k", type=int, default=7)
+    covering_prime_prefix_filtration.add_argument("--birth-sample-limit", type=int, default=200)
+    covering_prime_prefix_filtration.add_argument(
+        "--summary-out",
+        default="data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv",
+    )
+    covering_prime_prefix_filtration.add_argument(
+        "--birth-samples-out",
+        default="data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv",
     )
 
     covering_window_figures = subparsers.add_parser(
@@ -623,6 +643,19 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "covering-prime-prefix-profile: "
             f"n_values={len(set(args.n))}, rows={len(rows)}, out={args.out}"
+        )
+        return 0
+    if args.command == "covering-prime-prefix-filtration":
+        summary_rows, birth_rows = prime_prefix_residue_filtration_tables(
+            max_k=args.max_k,
+            birth_sample_limit=args.birth_sample_limit,
+        )
+        write_prime_prefix_residue_filtration_csv(summary_rows, args.summary_out)
+        write_prime_prefix_residue_birth_samples_csv(birth_rows, args.birth_samples_out)
+        print(
+            "covering-prime-prefix-filtration: "
+            f"summary_rows={len(summary_rows)}, birth_sample_rows={len(birth_rows)}, "
+            f"summary_out={args.summary_out}, birth_samples_out={args.birth_samples_out}"
         )
         return 0
     if args.command == "covering-window-figure":

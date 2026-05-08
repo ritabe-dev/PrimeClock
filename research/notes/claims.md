@@ -73,7 +73,7 @@ Every statement in this research track should be assigned one of these statuses.
   prime distribution theorem; it is a framework for finite-`N` PRC covering
   experiments.
 - This project does not claim an asymptotic law for `|C_k|/M_k`; the current
-  prime-prefix residue filtration table is a finite exact/scouting artifact.
+  prime-prefix residue filtration table is a finite exact generated artifact.
 - This project does not treat complete covering or anti-clustering as the main
   PRC axis in v1.0; they remain exploratory forensic subproblems.
 - This project does not claim the selected `D_R` windows are an unbiased sample
