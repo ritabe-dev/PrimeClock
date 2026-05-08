@@ -1,0 +1,12 @@
+{
+  "name": "Prime Reciprocal Covering branch fill",
+  "generated_at_utc": "2026-05-08T00:07:00.480786+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "237dfbe317e8b3a4157ec88687190d09c4eba1d0",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-figures --input data/summaries/prc_branch_fill_v0_3.csv --out figures/v0",
+  "generated_files": [
+    "prc_branch_fill_residual_v0_3.png",
+    "prc_branch_fill_fraction_v0_3.png"
+  ]
+}

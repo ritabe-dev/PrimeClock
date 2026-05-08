@@ -7,11 +7,14 @@ import os
 import platform
 import subprocess
 import sys
+import csv
 from datetime import datetime, timezone
 from pathlib import Path
+from statistics import median
 
 from .branches import branch_decomposition, limit_branch_mass
 from .cluster_scan import ClusterScanRow, read_cluster_scan_csv, unique_certified_values
+from .covering_branch_fill import BranchFillRow, read_branch_fill_csv
 from .covering_metrics import covering_table
 from .experiments import histogram_masses, limit_bin_masses
 from .fourier import fourier_coefficient, limit_fourier_coefficient
@@ -302,6 +305,246 @@ def generate_prc_window_figure(
         filename=f"prc_window_N{ns[0]}_{ns[-1]}_manifest.json",
     )
     return generated
+
+
+def generate_prc_branch_fill_figures(
+    input_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC branch fill-in figures from a canonical branch-fill CSV."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    rows = read_branch_fill_csv(input_csv)
+    if not rows:
+        raise ValueError("branch fill CSV must contain at least one row")
+    generated = [
+        branch_fill_residual_figure(rows, output_path),
+        branch_fill_fraction_figure(rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-figures --input {input_csv} --out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering branch fill",
+        filename="prc_branch_fill_manifest.json",
+    )
+    return generated
+
+
+def branch_fill_residual_figure(rows: list[BranchFillRow], output_dir: Path) -> str:
+    """Generate residual fraction by cumulative branch checkpoint."""
+    plt = _require_matplotlib()
+    grouped = _branch_fill_groups(rows)
+    fig, ax = plt.subplots(figsize=(9, 5.8))
+    for n, n_rows in grouped.items():
+        checkpoints = _checkpoint_rows(n_rows)
+        ax.plot(
+            [row.branch for row in checkpoints],
+            [row.residual_fraction if row.residual_fraction is not None else 0.0 for row in checkpoints],
+            marker="o",
+            linewidth=1.2,
+            label=f"N={n}",
+        )
+    ax.set_xscale("log")
+    ax.set_xlabel("cumulative branch K")
+    ax.set_ylabel("R_K = residual fraction")
+    ax.set_title("PRC branch fill-in residual")
+    ax.set_ylim(-0.03, 1.03)
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_residual_v0_3.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def branch_fill_fraction_figure(rows: list[BranchFillRow], output_dir: Path) -> str:
+    """Generate filled fraction by cumulative branch checkpoint."""
+    plt = _require_matplotlib()
+    grouped = _branch_fill_groups(rows)
+    fig, ax = plt.subplots(figsize=(9, 5.8))
+    for n, n_rows in grouped.items():
+        checkpoints = _checkpoint_rows(n_rows)
+        ax.plot(
+            [row.branch for row in checkpoints],
+            [row.fill_fraction if row.fill_fraction is not None else 0.0 for row in checkpoints],
+            marker="o",
+            linewidth=1.2,
+            label=f"N={n}",
+        )
+    ax.set_xscale("log")
+    ax.set_xlabel("cumulative branch K")
+    ax.set_ylabel("F_K = filled fraction")
+    ax.set_title("PRC branch fill-in progress")
+    ax.set_ylim(-0.03, 1.03)
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_fraction_v0_3.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def _branch_fill_groups(rows: list[BranchFillRow]) -> dict[int, list[BranchFillRow]]:
+    grouped: dict[int, list[BranchFillRow]] = {}
+    for row in rows:
+        grouped.setdefault(row.n, []).append(row)
+    for n_rows in grouped.values():
+        n_rows.sort(key=lambda row: row.branch)
+    return dict(sorted(grouped.items()))
+
+
+def _checkpoint_rows(rows: list[BranchFillRow]) -> list[BranchFillRow]:
+    if not rows:
+        return []
+    checkpoints = {branch for branch in range(1, min(20, rows[-1].branch) + 1)}
+    checkpoints.update({30, 50, 100, 200, 500, 1000})
+    checkpoints.add(rows[-1].branch)
+    by_branch = {row.branch: row for row in rows}
+    return [by_branch[branch] for branch in sorted(checkpoints) if branch in by_branch]
+
+
+def generate_prc_branch_fill_cohort_figures(
+    summary_csv: str | Path,
+    checkpoints_csv: str | Path,
+    output_dir: str | Path,
+) -> list[str]:
+    """Generate PRC v0.4 cohort comparison figures."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    summary_rows = _read_csv_rows(summary_csv)
+    checkpoint_rows = _read_csv_rows(checkpoints_csv)
+    generated = [
+        cohort_k_depth_figure(summary_rows, output_path),
+        cohort_residual_figure(summary_rows, output_path),
+        cohort_checkpoint_fill_figure(checkpoint_rows, output_path),
+    ]
+    write_manifest(
+        output_path,
+        command=(
+            "python -m prime_reciprocal_projection.cli "
+            f"covering-branch-fill-cohort-figures --summary {summary_csv} "
+            f"--checkpoints {checkpoints_csv} --out {output_path}"
+        ),
+        generated_files=generated,
+        name="Prime Reciprocal Covering branch fill cohort comparison",
+        filename="prc_branch_fill_cohort_manifest.json",
+    )
+    return generated
+
+
+def cohort_k_depth_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate median K-depth comparison by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    thresholds = ["k50", "k90", "k99"]
+    x_base = list(range(len(roles)))
+    width = 0.24
+
+    fig, ax = plt.subplots(figsize=(10, 5.8))
+    for offset, threshold in enumerate(thresholds):
+        values = []
+        for role in roles:
+            role_values = [_optional_float(row[threshold]) for row in rows if row["cohort_role"] == role]
+            numeric_values = [value for value in role_values if value is not None]
+            values.append(median(numeric_values) if numeric_values else 0.0)
+        xs = [x + (offset - 1) * width for x in x_base]
+        ax.bar(xs, values, width=width, label=threshold.upper())
+    ax.set_xticks(x_base, roles, rotation=18, ha="right")
+    ax.set_ylabel("median uncensored K")
+    ax.set_title("PRC branch fill-in depth by cohort")
+    ax.legend()
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_cohort_k_depth_v0_4.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def cohort_residual_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate residual-at-last comparison by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    data = [
+        [
+            value
+            for value in (_optional_float(row["residual_last"]) for row in rows if row["cohort_role"] == role)
+            if value is not None
+        ]
+        for role in roles
+    ]
+    fig, ax = plt.subplots(figsize=(9, 5.6))
+    ax.boxplot(data, tick_labels=roles, showmeans=True)
+    ax.set_xticklabels(roles, rotation=18, ha="right")
+    ax.set_ylabel("residual fraction at K=1000")
+    ax.set_title("PRC residual after cumulative branches <=1000")
+    ax.grid(axis="y", alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_cohort_residual_v0_4.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def cohort_checkpoint_fill_figure(rows: list[dict[str, str]], output_dir: Path) -> str:
+    """Generate median fill curve at checkpoint branches by cohort role."""
+    if not rows:
+        raise ValueError("rows must not be empty")
+    plt = _require_matplotlib()
+    roles = _cohort_roles(rows)
+    branches = sorted({int(row["branch"]) for row in rows})
+    fig, ax = plt.subplots(figsize=(9.5, 5.8))
+    for role in roles:
+        medians = []
+        for branch in branches:
+            values = [
+                value
+                for value in (
+                    _optional_float(row["fill_fraction"])
+                    for row in rows
+                    if row["cohort_role"] == role and int(row["branch"]) == branch
+                )
+                if value is not None
+            ]
+            medians.append(median(values) if values else 0.0)
+        ax.plot(branches, medians, marker="o", linewidth=1.3, label=role)
+    ax.set_xscale("log")
+    ax.set_ylim(-0.03, 1.03)
+    ax.set_xlabel("cumulative branch K")
+    ax.set_ylabel("median filled fraction")
+    ax.set_title("PRC cohort median branch fill-in curve")
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.25)
+    output_path = output_dir / "prc_branch_fill_cohort_checkpoint_fill_v0_4.png"
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+    return output_path.name
+
+
+def _read_csv_rows(path: str | Path) -> list[dict[str, str]]:
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _cohort_roles(rows: list[dict[str, str]]) -> list[str]:
+    preferred = ["complete", "local_mod6_control", "band_mod6_control", "band_ordinary_control"]
+    present = {row["cohort_role"] for row in rows}
+    return [role for role in preferred if role in present] + sorted(present - set(preferred))
+
+
+def _optional_float(value: str) -> float | None:
+    return None if value == "" else float(value)
 
 
 def generate_prc_cluster_figures(

@@ -139,6 +139,100 @@ python -m prime_reciprocal_projection.cli covering-metrics \
   --out data/summaries/prc_v0_covering_candidate_windows.csv
 ```
 
+## PRC Main v0.3 Branch Fill-In
+
+The main PRC direction now tracks how lower reciprocal branches fill the
+uncovered circle. Generate the v0.3 branch fill-in long table, summary table,
+and figures with:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill \
+  --n 1000 10000 100000 1000000 39069 372759 \
+  --max-branch 1000 \
+  --out data/summaries/prc_branch_fill_v0_3.csv
+
+python -m prime_reciprocal_projection.cli covering-branch-fill-summary \
+  --input data/summaries/prc_branch_fill_v0_3.csv \
+  --out data/summaries/prc_branch_fill_summary_v0_3.csv
+
+python -m prime_reciprocal_projection.cli covering-branch-fill-figures \
+  --input data/summaries/prc_branch_fill_v0_3.csv \
+  --out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_branch_fill_v0_3.csv
+data/summaries/prc_branch_fill_summary_v0_3.csv
+figures/v0/prc_branch_fill_residual_v0_3.png
+figures/v0/prc_branch_fill_fraction_v0_3.png
+figures/v0/prc_branch_fill_manifest.json
+```
+
+Initial reading:
+
+- Branch 1 is the prime-gap shadow layer, but it leaves about `0.90` to `0.95`
+  of the circle uncovered on the tested values.
+- `N=1000` reaches `K50=27`, `K90=333`, and `K99=500`.
+- `N=10000`, `39069`, `100000`, and `372759` reach `K50` between `126` and
+  `885`, but `K90/K99` are censored at `K=1000`.
+- `N=1000000` is censored even for `K50` at `K=1000`.
+- The exact-complete values `39069` and `372759` are not early-fill examples;
+  both still have large normalized residuals at `K=1000`.
+
+See `notes/prc_main_v0_3.md`.
+
+## PRC Main v0.4 Matched Branch Fill-In Cohorts
+
+Generate deterministic complete/control cohorts from the certified
+`N<=10^6` run table:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-branch-fill-cohorts \
+  --complete-source data/summaries/prc_combined_runs_2_1000000.csv \
+  --start 1000 \
+  --stop 1000000 \
+  --bin-count 12 \
+  --max-per-bin 3 \
+  --local-radius 250 \
+  --out data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv
+
+python -m prime_reciprocal_projection.cli covering-branch-fill-cohort-summary \
+  --manifest data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv \
+  --max-branch 1000 \
+  --summary-out data/summaries/prc_branch_fill_cohort_summary_v0_4.csv \
+  --checkpoint-out data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv
+
+python -m prime_reciprocal_projection.cli covering-branch-fill-cohort-figures \
+  --summary data/summaries/prc_branch_fill_cohort_summary_v0_4.csv \
+  --checkpoints data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv \
+  --out figures/v0
+```
+
+Outputs:
+
+```text
+data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv
+data/summaries/prc_branch_fill_cohort_summary_v0_4.csv
+data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv
+figures/v0/prc_branch_fill_cohort_k_depth_v0_4.png
+figures/v0/prc_branch_fill_cohort_residual_v0_4.png
+figures/v0/prc_branch_fill_cohort_checkpoint_fill_v0_4.png
+```
+
+Initial result:
+
+- 36 complete seeds, 0 exclusions, 144 summary rows.
+- Complete median `K50=234`; controls have median `K50` of `211`, `160`, and
+  `195`.
+- Complete median residual at `K=1000` is `0.371519`; controls are about
+  `0.332` to `0.340`.
+- The v0.4 sample does not support the simple explanation that complete values
+  are early low-branch fill-in cases.
+
+See `notes/prc_main_v0_4.md`.
+
 Generate local window figures with:
 
 ```bash
@@ -226,10 +320,10 @@ The contiguous run scan to `10^6` uses:
 numeric prefilter -> exact rational certification of every numeric candidate
 ```
 
-The prefilter is guarded for the v0 range by:
+The prefilter is guarded for the documented v0.2 range by:
 
 ```text
-PREFILTER_GUARANTEE_MAX_N = 1,000,000
+PREFILTER_GUARANTEE_MAX_N = 10,000,000
 DEFAULT_PREFILTER_TOLERANCE = 1e-12
 required_prefilter_tolerance = 4096 * eps ~= 9.09e-13
 ```
@@ -237,7 +331,9 @@ required_prefilter_tolerance = 4096 * eps ~= 9.09e-13
 This is an implementation-level binary64 guardrail, not a PRC theorem. It says
 the default numeric merge tolerance is larger than the documented endpoint
 rounding budget, so exact complete-covering values should not be rejected by
-the prefilter within `N <= 10^6`. All reported values are still exact-certified.
+the prefilter within `N <= 10^7`. All reported values are still exact-certified.
+The completed contiguous scan currently reaches `N <= 10^6`; the `N <= 10^7`
+full scan has not been run.
 
 See:
 
@@ -384,3 +480,50 @@ length-2 neighborhood rows: 40
 prefilter validation windows: 20
 validation mismatches: 0
 ```
+
+## PRC Fast Scan v0.2 Pilot
+
+The v0.2 scanner adds a NumPy numeric prefilter and a block/resume command.
+The proof step remains exact rational certification of numeric candidates.
+
+Benchmark output:
+
+```text
+data/summaries/prc_fastscan_benchmark.csv
+```
+
+Pilot outputs:
+
+```text
+data/summaries/prc_fastscan_pilot_runs_1000001_1100000.csv
+data/summaries/prc_fastscan_pilot_summary_1000001_1100000.csv
+data/summaries/prc_fastscan_pilot_blocks_1000001_1100000/
+```
+
+Pilot command:
+
+```bash
+python -m prime_reciprocal_projection.cli covering-run-block-scan \
+  --start 1000001 \
+  --stop 1100000 \
+  --block-size 10000 \
+  --workers 4 \
+  --chunk-size 1000 \
+  --engine numpy \
+  --out-dir data/summaries/prc_fastscan_pilot_blocks_1000001_1100000 \
+  --combined-out data/summaries/prc_fastscan_pilot_runs_1000001_1100000.csv \
+  --summary-out data/summaries/prc_fastscan_pilot_summary_1000001_1100000.csv
+```
+
+Current pilot result:
+
+```text
+1,000,001 <= N <= 1,100,000:
+2,380 exact-certified complete-covering values
+2,378 consecutive runs
+longest run length = 2
+length-2 runs = 2
+length-3 starts = 0
+```
+
+The full `N <= 10^7` scan has not been run.

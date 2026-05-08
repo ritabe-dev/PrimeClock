@@ -15,7 +15,25 @@ from .cluster_scan import (
     write_cluster_sensitivity_csv,
 )
 from .covering_metrics import covering_table, write_covering_csv
+from .covering_branch_fill import (
+    branch_fill_summary_table,
+    branch_fill_summary_rows,
+    branch_fill_table,
+    read_branch_fill_csv,
+    write_branch_fill_csv,
+    write_branch_fill_summary_csv,
+)
+from .covering_branch_fill_cohorts import (
+    build_cohort_manifest_from_runs_csv,
+    cohort_branch_fill_tables,
+    read_cohort_manifest_csv,
+    write_cohort_branch_fill_checkpoints_csv,
+    write_cohort_branch_fill_summary_csv,
+    write_cohort_manifest_csv,
+)
 from .covering_runs import (
+    benchmark_prefilter_windows,
+    block_scan_prefilter_runs,
     complete_covering_runs_from_cluster_csv,
     exact_complete_runs_in_range,
     prefiltered_exact_complete_values_in_range,
@@ -28,6 +46,7 @@ from .covering_runs import (
     summarize_runs,
     transition_stats_from_runs,
     write_complete_covering_runs_csv,
+    write_fast_scan_benchmark_csv,
     write_length2_neighborhoods_csv,
     write_length2_pair_forensics_csv,
     write_prefilter_validation_windows_csv,
@@ -35,6 +54,8 @@ from .covering_runs import (
 )
 from .covering import exact_is_completely_covered, exact_uncovered_measure
 from .figures import (
+    generate_prc_branch_fill_cohort_figures,
+    generate_prc_branch_fill_figures,
     generate_prc_cluster_figures,
     generate_prc_v0_figures,
     generate_prc_window_figure,
@@ -114,6 +135,96 @@ def main(argv: list[str] | None = None) -> int:
     covering_window_figures.add_argument("--center", type=int, required=True)
     covering_window_figures.add_argument("--radius", type=int, default=500)
     covering_window_figures.add_argument("--out", default="figures/v0", help="output directory")
+
+    covering_branch_fill = subparsers.add_parser(
+        "covering-branch-fill",
+        help="generate cumulative PRC branch fill-in diagnostics",
+    )
+    covering_branch_fill.add_argument(
+        "--n",
+        type=int,
+        nargs="+",
+        default=[1000, 10000, 100000, 1000000],
+        help="N values",
+    )
+    covering_branch_fill.add_argument("--max-branch", type=int, default=1000)
+    covering_branch_fill.add_argument(
+        "--out", default="data/summaries/prc_branch_fill_v0_3.csv"
+    )
+
+    covering_branch_fill_summary = subparsers.add_parser(
+        "covering-branch-fill-summary",
+        help="generate PRC branch fill-in threshold summaries",
+    )
+    covering_branch_fill_summary.add_argument(
+        "--n",
+        type=int,
+        nargs="+",
+        default=[1000, 10000, 100000, 1000000],
+        help="N values",
+    )
+    covering_branch_fill_summary.add_argument(
+        "--input",
+        help="optional long branch-fill CSV to summarize instead of recomputing",
+    )
+    covering_branch_fill_summary.add_argument("--max-branch", type=int, default=1000)
+    covering_branch_fill_summary.add_argument(
+        "--out", default="data/summaries/prc_branch_fill_summary_v0_3.csv"
+    )
+
+    covering_branch_fill_figures = subparsers.add_parser(
+        "covering-branch-fill-figures",
+        help="generate PRC branch fill-in figures from a CSV",
+    )
+    covering_branch_fill_figures.add_argument(
+        "--input", default="data/summaries/prc_branch_fill_v0_3.csv"
+    )
+    covering_branch_fill_figures.add_argument("--out", default="figures/v0")
+
+    covering_branch_fill_cohorts = subparsers.add_parser(
+        "covering-branch-fill-cohorts",
+        help="generate deterministic PRC branch fill-in comparison cohorts",
+    )
+    covering_branch_fill_cohorts.add_argument(
+        "--complete-source", default="data/summaries/prc_combined_runs_2_1000000.csv"
+    )
+    covering_branch_fill_cohorts.add_argument("--start", type=int, default=1000)
+    covering_branch_fill_cohorts.add_argument("--stop", type=int, default=1000000)
+    covering_branch_fill_cohorts.add_argument("--bin-count", type=int, default=12)
+    covering_branch_fill_cohorts.add_argument("--max-per-bin", type=int, default=3)
+    covering_branch_fill_cohorts.add_argument("--local-radius", type=int, default=250)
+    covering_branch_fill_cohorts.add_argument(
+        "--out", default="data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv"
+    )
+
+    covering_branch_fill_cohort_summary = subparsers.add_parser(
+        "covering-branch-fill-cohort-summary",
+        help="generate branch fill-in summary/checkpoint rows for comparison cohorts",
+    )
+    covering_branch_fill_cohort_summary.add_argument(
+        "--manifest", default="data/summaries/prc_branch_fill_cohort_manifest_v0_4.csv"
+    )
+    covering_branch_fill_cohort_summary.add_argument("--max-branch", type=int, default=1000)
+    covering_branch_fill_cohort_summary.add_argument(
+        "--summary-out", default="data/summaries/prc_branch_fill_cohort_summary_v0_4.csv"
+    )
+    covering_branch_fill_cohort_summary.add_argument(
+        "--checkpoint-out",
+        default="data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv",
+    )
+
+    covering_branch_fill_cohort_figures = subparsers.add_parser(
+        "covering-branch-fill-cohort-figures",
+        help="generate PRC branch fill-in cohort comparison figures",
+    )
+    covering_branch_fill_cohort_figures.add_argument(
+        "--summary", default="data/summaries/prc_branch_fill_cohort_summary_v0_4.csv"
+    )
+    covering_branch_fill_cohort_figures.add_argument(
+        "--checkpoints",
+        default="data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv",
+    )
+    covering_branch_fill_cohort_figures.add_argument("--out", default="figures/v0")
 
     covering_certify = subparsers.add_parser(
         "covering-certify", help="check exact rational PRC coverage"
@@ -200,12 +311,68 @@ def main(argv: list[str] | None = None) -> int:
     covering_run_prefilter_scan.add_argument("--workers", type=int, default=1)
     covering_run_prefilter_scan.add_argument("--chunk-size", type=int, default=100000)
     covering_run_prefilter_scan.add_argument(
+        "--engine", choices=["python", "numpy"], default="python"
+    )
+    covering_run_prefilter_scan.add_argument(
         "--allow-unguaranteed-prefilter",
         action="store_true",
         help="allow exploratory prefilter scans outside the documented v0 guarantee range",
     )
     covering_run_prefilter_scan.add_argument(
         "--out", default="data/summaries/prc_prefilter_exact_runs.csv"
+    )
+
+    covering_run_block_scan = subparsers.add_parser(
+        "covering-run-block-scan",
+        help="run a resumable block PRC complete-covering scan",
+    )
+    covering_run_block_scan.add_argument("--start", type=int, required=True)
+    covering_run_block_scan.add_argument("--stop", type=int, required=True)
+    covering_run_block_scan.add_argument("--block-size", type=int, required=True)
+    covering_run_block_scan.add_argument("--tolerance", type=float, default=1e-12)
+    covering_run_block_scan.add_argument("--workers", type=int, default=1)
+    covering_run_block_scan.add_argument("--chunk-size", type=int, default=100000)
+    covering_run_block_scan.add_argument("--engine", choices=["python", "numpy"], default="numpy")
+    covering_run_block_scan.add_argument("--out-dir", required=True)
+    covering_run_block_scan.add_argument("--combined-out", required=True)
+    covering_run_block_scan.add_argument("--summary-out", required=True)
+    covering_run_block_scan.add_argument("--resume", action="store_true")
+    covering_run_block_scan.add_argument(
+        "--allow-unguaranteed-prefilter",
+        action="store_true",
+        help="allow exploratory block scans outside the documented guarantee range",
+    )
+
+    covering_run_benchmark = subparsers.add_parser(
+        "covering-run-benchmark",
+        help="benchmark PRC prefilter engines on one or more windows",
+    )
+    covering_run_benchmark.add_argument(
+        "--window",
+        nargs=3,
+        action="append",
+        metavar=("START", "STOP", "LABEL"),
+        required=True,
+        help="benchmark one inclusive window; may be repeated",
+    )
+    covering_run_benchmark.add_argument(
+        "--engine",
+        choices=["python", "numpy"],
+        nargs="+",
+        default=["python", "numpy"],
+    )
+    covering_run_benchmark.add_argument("--tolerance", type=float, default=1e-12)
+    covering_run_benchmark.add_argument("--chunk-size", type=int, default=100000)
+    covering_run_benchmark.add_argument("--out", required=True)
+    covering_run_benchmark.add_argument(
+        "--append",
+        action="store_true",
+        help="append rows to an existing benchmark CSV without writing a duplicate header",
+    )
+    covering_run_benchmark.add_argument(
+        "--allow-unguaranteed-prefilter",
+        action="store_true",
+        help="allow exploratory benchmark windows outside the documented guarantee range",
     )
 
     covering_run_forensics = subparsers.add_parser(
@@ -256,6 +423,59 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "covering-window-figure":
         generate_prc_window_figure(args.out, center=args.center, radius=args.radius)
+        return 0
+    if args.command == "covering-branch-fill":
+        rows = branch_fill_table(sorted(set(args.n)), max_branch=args.max_branch)
+        write_branch_fill_csv(rows, args.out)
+        return 0
+    if args.command == "covering-branch-fill-summary":
+        rows = (
+            branch_fill_summary_table(read_branch_fill_csv(args.input))
+            if args.input
+            else branch_fill_summary_rows(sorted(set(args.n)), max_branch=args.max_branch)
+        )
+        write_branch_fill_summary_csv(rows, args.out)
+        return 0
+    if args.command == "covering-branch-fill-figures":
+        generate_prc_branch_fill_figures(args.input, args.out)
+        return 0
+    if args.command == "covering-branch-fill-cohorts":
+        rows = build_cohort_manifest_from_runs_csv(
+            args.complete_source,
+            start=args.start,
+            stop=args.stop,
+            bin_count=args.bin_count,
+            max_per_bin=args.max_per_bin,
+            local_radius=args.local_radius,
+        )
+        write_cohort_manifest_csv(rows, args.out)
+        eligible_seeds = len({row.seed_n for row in rows if row.eligible})
+        excluded_seeds = len({row.seed_n for row in rows if not row.eligible})
+        print(
+            "covering-branch-fill-cohorts: "
+            f"rows={len(rows)}, eligible_seeds={eligible_seeds}, "
+            f"excluded_seeds={excluded_seeds}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-cohort-summary":
+        summary_rows, checkpoint_rows = cohort_branch_fill_tables(
+            read_cohort_manifest_csv(args.manifest),
+            max_branch=args.max_branch,
+        )
+        write_cohort_branch_fill_summary_csv(summary_rows, args.summary_out)
+        write_cohort_branch_fill_checkpoints_csv(checkpoint_rows, args.checkpoint_out)
+        print(
+            "covering-branch-fill-cohort-summary: "
+            f"summary_rows={len(summary_rows)}, checkpoint_rows={len(checkpoint_rows)}"
+        )
+        return 0
+    if args.command == "covering-branch-fill-cohort-figures":
+        generated = generate_prc_branch_fill_cohort_figures(
+            args.summary,
+            args.checkpoints,
+            args.out,
+        )
+        print(f"covering-branch-fill-cohort-figures: files={len(generated)}")
         return 0
     if args.command == "covering-certify":
         for n in args.n:
@@ -331,6 +551,7 @@ def main(argv: list[str] | None = None) -> int:
             workers=args.workers,
             chunk_size=args.chunk_size,
             require_guarantee=not args.allow_unguaranteed_prefilter,
+            engine=args.engine,
         )
         runs = consecutive_runs(result.values)
         write_complete_covering_runs_csv(runs, args.out)
@@ -342,6 +563,41 @@ def main(argv: list[str] | None = None) -> int:
             f"exact_values={result.exact_complete_count}, "
             f"runs={summary.run_count}, longest={summary.longest_run_length}"
         )
+        return 0
+    if args.command == "covering-run-block-scan":
+        result = block_scan_prefilter_runs(
+            args.start,
+            args.stop,
+            block_size=args.block_size,
+            out_dir=args.out_dir,
+            combined_out=args.combined_out,
+            summary_out=args.summary_out,
+            tolerance=args.tolerance,
+            workers=args.workers,
+            chunk_size=args.chunk_size,
+            require_guarantee=not args.allow_unguaranteed_prefilter,
+            engine=args.engine,
+            resume=args.resume,
+        )
+        print(
+            "covering-run-block-scan: "
+            f"blocks={result.block_count}, computed={result.computed_block_count}, "
+            f"resumed={result.resumed_block_count}, checked={result.checked_count}, "
+            f"exact_values={result.exact_complete_count}, runs={result.run_count}, "
+            f"longest={result.longest_run_length}"
+        )
+        return 0
+    if args.command == "covering-run-benchmark":
+        windows = [(int(start), int(stop), label) for start, stop, label in args.window]
+        rows = benchmark_prefilter_windows(
+            windows,
+            engines=args.engine,
+            tolerance=args.tolerance,
+            chunk_size=args.chunk_size,
+            require_guarantee=not args.allow_unguaranteed_prefilter,
+        )
+        write_fast_scan_benchmark_csv(rows, args.out, append=args.append)
+        print(f"covering-run-benchmark: rows={len(rows)}, out={args.out}")
         return 0
     if args.command == "covering-run-forensics":
         runs = read_complete_covering_runs_csv(args.input)

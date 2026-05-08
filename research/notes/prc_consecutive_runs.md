@@ -299,3 +299,34 @@ observed length-2 corridor breaks immediately on one side.
 
 The immediate next target is not another selected-window scan. It is an exact
 or certified contiguous scan to a larger `X`, with performance work if needed.
+
+## v0.2 Fast-Scan Pilot
+
+The first `N>10^6` extension is scanner infrastructure, not a full `10^7`
+claim. See `notes/prc_fast_scan.md`.
+
+Current pilot:
+
+```text
+range: 1,000,001 <= N <= 1,100,000
+checked values: 100,000
+exact-certified complete-covering values: 2,380
+runs: 2,378
+longest run length: 2
+length-2 runs: 2
+length-3 starts: 0
+```
+
+The two length-2 runs are:
+
+```text
+1,035,932, 1,035,933
+1,041,927, 1,041,928
+```
+
+Under the NumPy prefilter guardrail plus exact certification, this keeps the
+observed pattern intact just beyond `10^6`: complete coverage appears at
+roughly the same rate, adjacent pairs exist, and no length-3 run was found in
+the pilot.
+
+Do not yet state `L(10^7)=2`. The full `10^7` scan has not been run.

@@ -18,10 +18,30 @@ from .covering import (
     max_uncovered_gap,
     uncovered_measure,
 )
+from .covering_branch_fill import (
+    branch_fill_rows,
+    branch_fill_summary_table,
+    branch_fill_summary_rows,
+    branch_fill_table,
+    read_branch_fill_csv,
+    write_branch_fill_csv,
+    write_branch_fill_summary_csv,
+)
+from .covering_branch_fill_cohorts import (
+    build_cohort_manifest,
+    build_cohort_manifest_from_runs_csv,
+    cohort_branch_fill_tables,
+    read_cohort_manifest_csv,
+    write_cohort_branch_fill_checkpoints_csv,
+    write_cohort_branch_fill_summary_csv,
+    write_cohort_manifest_csv,
+)
 from .covering_metrics import covering_row, covering_table
 from .covering_runs import (
     DEFAULT_PREFILTER_TOLERANCE,
     PREFILTER_GUARANTEE_MAX_N,
+    benchmark_prefilter_windows,
+    block_scan_prefilter_runs,
     consecutive_runs,
     factorization,
     length2_pair_forensics,
@@ -33,6 +53,7 @@ from .covering_runs import (
     summarize_runs,
     transition_stats_from_runs,
     validate_prefilter_tolerance,
+    write_fast_scan_benchmark_csv,
 )
 from .density import rho, rho_bin_mass, rho_n_pnt
 from .fourier import fourier_coefficient, limit_fourier_coefficient
@@ -42,9 +63,18 @@ from .projection import fractional_parts, phi
 
 __all__ = [
     "branch_decomposition",
+    "branch_fill_rows",
+    "branch_fill_summary_table",
+    "branch_fill_summary_rows",
+    "branch_fill_table",
+    "build_cohort_manifest",
+    "build_cohort_manifest_from_runs_csv",
+    "benchmark_prefilter_windows",
+    "block_scan_prefilter_runs",
     "covering_row",
     "covering_summary",
     "covering_table",
+    "cohort_branch_fill_tables",
     "consecutive_runs",
     "convergence_row",
     "convergence_table",
@@ -74,7 +104,9 @@ __all__ = [
     "rho_bin_mass",
     "rho_n_pnt",
     "read_cluster_scan_csv",
+    "read_branch_fill_csv",
     "scan_cluster_table",
+    "read_cohort_manifest_csv",
     "scan_cluster_window",
     "summarize_runs",
     "transition_stats_from_runs",
@@ -82,4 +114,10 @@ __all__ = [
     "uncovered_measure",
     "validate_prefilter_tolerance",
     "write_cluster_sensitivity_csv",
+    "write_branch_fill_csv",
+    "write_branch_fill_summary_csv",
+    "write_cohort_branch_fill_checkpoints_csv",
+    "write_cohort_branch_fill_summary_csv",
+    "write_cohort_manifest_csv",
+    "write_fast_scan_benchmark_csv",
 ]

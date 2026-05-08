@@ -1,0 +1,13 @@
+{
+  "name": "Prime Reciprocal Covering branch fill cohort comparison",
+  "generated_at_utc": "2026-05-08T01:03:27.013175+00:00",
+  "python": "3.9.6 (default, Apr  7 2026, 02:38:40) \n[Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "git_sha": "237dfbe317e8b3a4157ec88687190d09c4eba1d0",
+  "command": "python -m prime_reciprocal_projection.cli covering-branch-fill-cohort-figures --summary data/summaries/prc_branch_fill_cohort_summary_v0_4.csv --checkpoints data/summaries/prc_branch_fill_cohort_checkpoints_v0_4.csv --out figures/v0",
+  "generated_files": [
+    "prc_branch_fill_cohort_k_depth_v0_4.png",
+    "prc_branch_fill_cohort_residual_v0_4.png",
+    "prc_branch_fill_cohort_checkpoint_fill_v0_4.png"
+  ]
+}

@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import csv
 import sys
+import time
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
+
+import numpy as np
 
 from .cluster_scan import ClusterScanRow, read_cluster_scan_csv, unique_certified_values
 from .covering import exact_is_completely_covered
@@ -17,8 +20,9 @@ from .projection import validate_n
 
 
 DEFAULT_PREFILTER_TOLERANCE = 1e-12
-PREFILTER_GUARANTEE_MAX_N = 1_000_000
+PREFILTER_GUARANTEE_MAX_N = 10_000_000
 PREFILTER_ERROR_SAFETY_FACTOR = 4096.0
+PREFILTER_ENGINES = {"python", "numpy"}
 
 
 @dataclass(frozen=True)
@@ -54,6 +58,58 @@ class CompleteCoveringScanResult:
     exact_complete_count: int
     prefilter_tolerance: float | None
     values: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class BlockScanSummaryRow:
+    """Summary for one contiguous prefiltered scan block."""
+
+    block_start: int
+    block_stop: int
+    checked_count: int
+    numeric_candidate_count: int
+    exact_complete_count: int
+    run_count: int
+    longest_run_length: int
+    prefilter_tolerance: float
+    engine: str
+    scan_seconds: float
+    resumed: bool
+
+
+@dataclass(frozen=True)
+class BlockScanResult:
+    """Result for a block/resume scan."""
+
+    start: int
+    stop: int
+    block_size: int
+    block_count: int
+    computed_block_count: int
+    resumed_block_count: int
+    checked_count: int
+    numeric_candidate_count: int
+    exact_complete_count: int
+    run_count: int
+    longest_run_length: int
+    engine: str
+    combined_out: str
+    summary_out: str
+
+
+@dataclass(frozen=True)
+class FastScanBenchmarkRow:
+    """Benchmark row for one prefilter engine and one window."""
+
+    label: str
+    start: int
+    stop: int
+    engine: str
+    checked_count: int
+    numeric_candidate_count: int
+    exact_complete_count: int
+    scan_seconds: float
+    items_per_second: float
 
 
 @dataclass(frozen=True)
@@ -252,6 +308,13 @@ def validate_prefilter_tolerance(
         )
 
 
+def validate_prefilter_engine(engine: str) -> str:
+    """Return a normalized prefilter engine name."""
+    if engine not in PREFILTER_ENGINES:
+        raise ValueError(f"engine must be one of {sorted(PREFILTER_ENGINES)}")
+    return engine
+
+
 def prefiltered_exact_complete_values_in_range(
     start: int,
     stop: int,
@@ -260,6 +323,7 @@ def prefiltered_exact_complete_values_in_range(
     workers: int = 1,
     chunk_size: int = 100000,
     require_guarantee: bool = True,
+    engine: str = "python",
 ) -> CompleteCoveringScanResult:
     """Numeric-prefilter a range, then exact-check every numeric candidate.
 
@@ -277,6 +341,7 @@ def prefiltered_exact_complete_values_in_range(
         tolerance=tolerance,
         require_guarantee=require_guarantee,
     )
+    engine = validate_prefilter_engine(engine)
     if workers < 1:
         raise ValueError("workers must be >= 1")
     if chunk_size < 1:
@@ -284,13 +349,16 @@ def prefiltered_exact_complete_values_in_range(
 
     chunks = _range_chunks(start, stop, chunk_size)
     if workers == 1 or len(chunks) == 1:
-        chunk_results = [_prefiltered_exact_complete_values_chunk((*chunk, tolerance)) for chunk in chunks]
+        chunk_results = [
+            _prefiltered_exact_complete_values_chunk((*chunk, tolerance, engine))
+            for chunk in chunks
+        ]
     else:
         with ProcessPoolExecutor(max_workers=workers) as executor:
             chunk_results = list(
                 executor.map(
                     _prefiltered_exact_complete_values_chunk,
-                    [(*chunk, tolerance) for chunk in chunks],
+                    [(*chunk, tolerance, engine) for chunk in chunks],
                 )
             )
 
@@ -310,6 +378,192 @@ def prefiltered_exact_complete_values_in_range(
 def exact_complete_runs_in_range(start: int, stop: int) -> list[CompleteCoveringRun]:
     """Exact-check every integer in ``[start, stop]`` and return consecutive runs."""
     return consecutive_runs(exact_complete_values_in_range(start, stop))
+
+
+def block_scan_prefilter_runs(
+    start: int,
+    stop: int,
+    *,
+    block_size: int,
+    out_dir: str | Path,
+    combined_out: str | Path,
+    summary_out: str | Path,
+    tolerance: float = DEFAULT_PREFILTER_TOLERANCE,
+    workers: int = 1,
+    chunk_size: int = 100000,
+    require_guarantee: bool = True,
+    engine: str = "numpy",
+    resume: bool = False,
+) -> BlockScanResult:
+    """Run a resumable block scan and write block, summary, and combined CSVs."""
+    start = validate_n(start)
+    stop = validate_n(stop)
+    if stop < start:
+        raise ValueError("stop must be >= start")
+    if block_size < 1:
+        raise ValueError("block_size must be >= 1")
+    engine = validate_prefilter_engine(engine)
+    validate_prefilter_tolerance(
+        stop,
+        tolerance=tolerance,
+        require_guarantee=require_guarantee,
+    )
+
+    output_dir = Path(out_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    blocks = _range_chunks(start, stop, block_size)
+    summary_rows: list[BlockScanSummaryRow] = []
+    computed_blocks = 0
+    resumed_blocks = 0
+
+    for block_start, block_stop in blocks:
+        runs_path = _block_runs_path(output_dir, block_start, block_stop)
+        summary_path = _block_summary_path(output_dir, block_start, block_stop)
+        if resume and runs_path.exists() and summary_path.exists():
+            block_rows = read_block_scan_summary_csv(summary_path)
+            if len(block_rows) != 1:
+                raise ValueError(f"expected one summary row in {summary_path}")
+            summary_rows.append(
+                _validated_resumed_block_summary(
+                    block_rows[0],
+                    block_start=block_start,
+                    block_stop=block_stop,
+                    tolerance=tolerance,
+                    engine=engine,
+                    require_guarantee=require_guarantee,
+                )
+            )
+            resumed_blocks += 1
+            continue
+
+        scan_start = time.perf_counter()
+        result = prefiltered_exact_complete_values_in_range(
+            block_start,
+            block_stop,
+            tolerance=tolerance,
+            workers=workers,
+            chunk_size=chunk_size,
+            require_guarantee=require_guarantee,
+            engine=engine,
+        )
+        scan_seconds = time.perf_counter() - scan_start
+        runs = consecutive_runs(result.values)
+        summary = summarize_runs(runs)
+        write_complete_covering_runs_csv(runs, runs_path)
+        row = BlockScanSummaryRow(
+            block_start=block_start,
+            block_stop=block_stop,
+            checked_count=result.checked_count,
+            numeric_candidate_count=result.numeric_candidate_count,
+            exact_complete_count=result.exact_complete_count,
+            run_count=summary.run_count,
+            longest_run_length=summary.longest_run_length,
+            prefilter_tolerance=tolerance,
+            engine=engine,
+            scan_seconds=scan_seconds,
+            resumed=False,
+        )
+        write_block_scan_summary_csv([row], summary_path)
+        summary_rows.append(row)
+        computed_blocks += 1
+
+    all_runs: list[CompleteCoveringRun] = []
+    for block_start, block_stop in blocks:
+        all_runs.extend(read_complete_covering_runs_csv(_block_runs_path(output_dir, block_start, block_stop)))
+    combined_runs = consecutive_runs(values_from_runs(all_runs))
+    combined_summary = summarize_runs(combined_runs)
+    write_complete_covering_runs_csv(combined_runs, combined_out)
+    write_block_scan_summary_csv(summary_rows, summary_out)
+    return BlockScanResult(
+        start=start,
+        stop=stop,
+        block_size=block_size,
+        block_count=len(blocks),
+        computed_block_count=computed_blocks,
+        resumed_block_count=resumed_blocks,
+        checked_count=sum(row.checked_count for row in summary_rows),
+        numeric_candidate_count=sum(row.numeric_candidate_count for row in summary_rows),
+        exact_complete_count=sum(row.exact_complete_count for row in summary_rows),
+        run_count=combined_summary.run_count,
+        longest_run_length=combined_summary.longest_run_length,
+        engine=engine,
+        combined_out=str(combined_out),
+        summary_out=str(summary_out),
+    )
+
+
+def benchmark_prefilter_windows(
+    windows: Iterable[tuple[int, int, str]],
+    *,
+    engines: Iterable[str],
+    tolerance: float = DEFAULT_PREFILTER_TOLERANCE,
+    chunk_size: int = 100000,
+    require_guarantee: bool = True,
+) -> list[FastScanBenchmarkRow]:
+    """Benchmark prefilter engines on deterministic windows."""
+    rows: list[FastScanBenchmarkRow] = []
+    for engine in engines:
+        engine = validate_prefilter_engine(engine)
+        for start, stop, label in windows:
+            scan_start = time.perf_counter()
+            result = prefiltered_exact_complete_values_in_range(
+                start,
+                stop,
+                tolerance=tolerance,
+                chunk_size=chunk_size,
+                require_guarantee=require_guarantee,
+                engine=engine,
+            )
+            seconds = time.perf_counter() - scan_start
+            rows.append(
+                FastScanBenchmarkRow(
+                    label=label,
+                    start=result.start,
+                    stop=result.stop,
+                    engine=engine,
+                    checked_count=result.checked_count,
+                    numeric_candidate_count=result.numeric_candidate_count,
+                    exact_complete_count=result.exact_complete_count,
+                    scan_seconds=seconds,
+                    items_per_second=result.checked_count / seconds if seconds > 0 else 0.0,
+                )
+            )
+    return rows
+
+
+def _validated_resumed_block_summary(
+    row: BlockScanSummaryRow,
+    *,
+    block_start: int,
+    block_stop: int,
+    tolerance: float,
+    engine: str,
+    require_guarantee: bool,
+) -> BlockScanSummaryRow:
+    """Return a resume-marked row after checking it matches the requested scan."""
+    expected_checked_count = block_stop - block_start + 1
+    mismatches: list[str] = []
+    if row.block_start != block_start:
+        mismatches.append(f"block_start={row.block_start}, expected {block_start}")
+    if row.block_stop != block_stop:
+        mismatches.append(f"block_stop={row.block_stop}, expected {block_stop}")
+    if row.checked_count != expected_checked_count:
+        mismatches.append(f"checked_count={row.checked_count}, expected {expected_checked_count}")
+    if row.engine != engine:
+        mismatches.append(f"engine={row.engine}, expected {engine}")
+    if row.prefilter_tolerance != tolerance:
+        mismatches.append(
+            f"prefilter_tolerance={row.prefilter_tolerance:g}, expected {tolerance:g}"
+        )
+    if mismatches:
+        raise ValueError("resumed block summary does not match requested scan: " + "; ".join(mismatches))
+
+    validate_prefilter_tolerance(
+        row.block_stop,
+        tolerance=row.prefilter_tolerance,
+        require_guarantee=require_guarantee,
+    )
+    return replace(row, resumed=True)
 
 
 def summarize_runs(runs: Iterable[CompleteCoveringRun]) -> CompleteCoveringRunSummary:
@@ -546,19 +800,28 @@ def write_complete_covering_runs_csv(
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = list(CompleteCoveringRun.__dataclass_fields__.keys())
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for run in runs:
             writer.writerow({field: getattr(run, field) for field in fieldnames})
 
 
-def write_dataclass_csv(rows: Iterable[object], output_path: str | Path, fieldnames: list[str]) -> None:
+def write_dataclass_csv(
+    rows: Iterable[object],
+    output_path: str | Path,
+    fieldnames: list[str],
+    *,
+    append: bool = False,
+) -> None:
     """Write dataclass-like rows to CSV with stable field order."""
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
+    should_write_header = not append or not path.exists() or path.stat().st_size == 0
+    mode = "a" if append else "w"
+    with path.open(mode, encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        if should_write_header:
+            writer.writeheader()
         for row in rows:
             writer.writerow(
                 {field: "" if (value := getattr(row, field)) is None else value for field in fieldnames}
@@ -592,6 +855,50 @@ def write_prefilter_validation_windows_csv(
 ) -> None:
     """Write prefilter validation window rows to CSV."""
     write_dataclass_csv(rows, output_path, list(PrefilterValidationWindowRow.__dataclass_fields__))
+
+
+def write_block_scan_summary_csv(
+    rows: Iterable[BlockScanSummaryRow],
+    output_path: str | Path,
+) -> None:
+    """Write block scan summary rows to CSV."""
+    write_dataclass_csv(rows, output_path, list(BlockScanSummaryRow.__dataclass_fields__))
+
+
+def read_block_scan_summary_csv(path: str | Path) -> list[BlockScanSummaryRow]:
+    """Read block scan summary rows from CSV."""
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        return [
+            BlockScanSummaryRow(
+                block_start=int(row["block_start"]),
+                block_stop=int(row["block_stop"]),
+                checked_count=int(row["checked_count"]),
+                numeric_candidate_count=int(row["numeric_candidate_count"]),
+                exact_complete_count=int(row["exact_complete_count"]),
+                run_count=int(row["run_count"]),
+                longest_run_length=int(row["longest_run_length"]),
+                prefilter_tolerance=float(row["prefilter_tolerance"]),
+                engine=row["engine"],
+                scan_seconds=float(row["scan_seconds"]),
+                resumed=row["resumed"] == "True",
+            )
+            for row in csv.DictReader(handle)
+        ]
+
+
+def write_fast_scan_benchmark_csv(
+    rows: Iterable[FastScanBenchmarkRow],
+    output_path: str | Path,
+    *,
+    append: bool = False,
+) -> None:
+    """Write prefilter benchmark rows to CSV."""
+    write_dataclass_csv(
+        rows,
+        output_path,
+        list(FastScanBenchmarkRow.__dataclass_fields__),
+        append=append,
+    )
 
 
 def _is_completely_covered_numeric_with_primes(
@@ -631,6 +938,86 @@ def _is_completely_covered_numeric_with_primes(
     return current_end >= 1.0 - tolerance
 
 
+def _is_completely_covered_numeric_numpy_with_primes(
+    n: int,
+    prime_values: np.ndarray,
+    *,
+    tolerance: float,
+) -> bool:
+    if prime_values.size == 0:
+        return False
+
+    residues = n % prime_values
+    denominators = 2.0 * prime_values.astype(np.float64)
+    starts = (2.0 * residues.astype(np.float64) - 1.0) / denominators
+    ends = (2.0 * residues.astype(np.float64) + 1.0) / denominators
+
+    left_wrap = starts < 0.0
+    right_wrap = ends > 1.0
+    normal = ~(left_wrap | right_wrap)
+    interval_count = int(normal.sum() + 2 * (left_wrap.sum() + right_wrap.sum()))
+    if interval_count == 0:
+        return False
+
+    interval_starts = np.empty(interval_count, dtype=np.float64)
+    interval_ends = np.empty(interval_count, dtype=np.float64)
+    index = 0
+
+    normal_count = int(normal.sum())
+    if normal_count:
+        next_index = index + normal_count
+        interval_starts[index:next_index] = starts[normal]
+        interval_ends[index:next_index] = ends[normal]
+        index = next_index
+
+    left_count = int(left_wrap.sum())
+    if left_count:
+        next_index = index + left_count
+        interval_starts[index:next_index] = 0.0
+        interval_ends[index:next_index] = ends[left_wrap]
+        index = next_index
+
+        next_index = index + left_count
+        interval_starts[index:next_index] = 1.0 + starts[left_wrap]
+        interval_ends[index:next_index] = 1.0
+        index = next_index
+
+    right_count = int(right_wrap.sum())
+    if right_count:
+        next_index = index + right_count
+        interval_starts[index:next_index] = 0.0
+        interval_ends[index:next_index] = ends[right_wrap] - 1.0
+        index = next_index
+
+        next_index = index + right_count
+        interval_starts[index:next_index] = starts[right_wrap]
+        interval_ends[index:next_index] = 1.0
+
+    order = np.argsort(interval_starts)
+    sorted_starts = interval_starts[order]
+    sorted_ends = interval_ends[order]
+    if sorted_starts[0] > tolerance:
+        return False
+
+    cumulative_end = np.maximum.accumulate(sorted_ends)
+    if sorted_starts.size == 1:
+        return bool(cumulative_end[-1] >= 1.0 - tolerance)
+
+    gaps = sorted_starts[1:] > cumulative_end[:-1] + tolerance
+    if np.any(gaps):
+        first_gap = int(np.argmax(gaps))
+        return bool(cumulative_end[first_gap] >= 1.0 - tolerance)
+    return bool(cumulative_end[-1] >= 1.0 - tolerance)
+
+
+def _block_runs_path(out_dir: Path, start: int, stop: int) -> Path:
+    return out_dir / f"prc_runs_{start}_{stop}.csv"
+
+
+def _block_summary_path(out_dir: Path, start: int, stop: int) -> Path:
+    return out_dir / f"prc_summary_{start}_{stop}.csv"
+
+
 def _residue_counts(values: Iterable[int], modulus: int) -> dict[int, int]:
     counts = {residue: 0 for residue in range(modulus)}
     for value in values:
@@ -657,10 +1044,11 @@ def _range_chunks(start: int, stop: int, chunk_size: int) -> list[tuple[int, int
 
 
 def _prefiltered_exact_complete_values_chunk(
-    args: tuple[int, int, float],
+    args: tuple[int, int, float, str],
 ) -> tuple[int, tuple[int, ...]]:
-    start, stop, tolerance = args
+    start, stop, tolerance, engine = args
     prime_pool = primes_up_to(stop)
+    prime_pool_np = np.asarray(prime_pool, dtype=np.int64)
     active_primes: list[int] = []
     prime_index = 0
     while prime_index < len(prime_pool) and prime_pool[prime_index] < start:
@@ -673,11 +1061,19 @@ def _prefiltered_exact_complete_values_chunk(
         while prime_index < len(prime_pool) and prime_pool[prime_index] <= n:
             active_primes.append(prime_pool[prime_index])
             prime_index += 1
-        if not _is_completely_covered_numeric_with_primes(
-            n,
-            active_primes,
-            tolerance=tolerance,
-        ):
+        if engine == "numpy":
+            is_numeric_candidate = _is_completely_covered_numeric_numpy_with_primes(
+                n,
+                prime_pool_np[:prime_index],
+                tolerance=tolerance,
+            )
+        else:
+            is_numeric_candidate = _is_completely_covered_numeric_with_primes(
+                n,
+                active_primes,
+                tolerance=tolerance,
+            )
+        if not is_numeric_candidate:
             continue
         numeric_candidate_count += 1
         if exact_is_completely_covered(n, primes=active_primes):

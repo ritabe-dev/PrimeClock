@@ -41,7 +41,12 @@ Every statement in this research track should be assigned one of these statuses.
 | The guarded prefiltered-and-exact-certified scan to `10^6` found longest run length `2` and no length-3 starts under the documented binary64 prefilter tolerance guarantee | Experiment / implementation-certified |
 | In the v0 forensic validation set, all 20 all-exact windows matched the numeric-prefilter exact-certified values | Experiment |
 | In the `10^6` forensic table, all length-2 runs start in residue `2` or `3` modulo `6` | Experiment |
+| The v0.2 NumPy prefilter benchmark is about 5.3x faster than the pure Python prefilter on `1,000,001 <= N <= 1,001,000` in the recorded local run | Experiment |
+| The v0.2 pilot over `1,000,001 <= N <= 1,100,000` found 2,380 exact-certified complete-covering values, 2,378 runs, longest run length `2`, and no length-3 starts | Experiment |
 | Branch-1 `G1(N)` is compared to transformed adjacent prime gaps | Experiment |
+| The v0.3 branch fill-in summary shows `K50=27` for `N=1000`, `K50=126..885` for four tested anchors, and censored `K50` for `N=1000000`; `K90/K99` are censored at `K=1000` for all tested anchors except `N=1000` | Experiment |
+| The v0.4 matched cohort selected 36 complete seeds from `1000<=N<=1000000`, excluded 0 seeds, and generated 144 branch fill-in summary rows | Experiment |
+| In the v0.4 matched cohort, complete rows have median `K50=234` and median residual at `K=1000` of `0.371519`; the three control groups have median `K50` of `211`, `160`, and `195`, and median residuals around `0.332` to `0.340` | Experiment |
 
 ## Non-Claims
 
@@ -55,9 +60,14 @@ Every statement in this research track should be assigned one of these statuses.
 - This project does not claim the selected `D_R` windows are an unbiased sample
   of all `N`; current cluster results are conditional on the seed rule.
 - The prefilter guarantee is only an implementation-level binary64 guardrail
-  for the documented v0 range `N <= 10^6`; it is not a theorem about PRC and
+  for the documented v0.2 range `N <= 10^7`; it is not a theorem about PRC and
   does not extend to larger scans without renewed justification.
+- This project does not claim `L(10^7)=2`; the full `N <= 10^7` scan has not
+  been run.
 - This project does not claim `G1(N)` is exactly the largest raw prime gap divided by `N`; the transformed gap and arc radii must be used.
+- This project does not claim from v0.4 that complete-covering values are
+  generally faster or slower branch fill-in cases; the matched cohort result is
+  only an experiment-level comparison.
 
 ## Known-Result Check
 
