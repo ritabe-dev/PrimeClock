@@ -27,6 +27,8 @@ promotion_manifest_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_weighted_covering_radius_terminology_v0_1.md
+notes/prc_weighted_bisector_candidate_lemma_v0_1.md
+notes/prc_v2_3_standalone_checker_todo.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
@@ -38,8 +40,10 @@ draft is the first compact public-candidate-shaped text, still internal. The
 outline records the three selected components: critical radius, level sets, and
 birth containment. The terminology note keeps `critical radius` as the primary
 project term and treats `weighted covering-radius` as descriptive shorthand.
-The v0.2 note explains how near-miss ranking connects to birth-parent gap
-geometry.
+The bisector note records the finite candidate lemma behind the exact
+critical-radius checker. The standalone TODO records the remaining public
+release blocker for v2.3. The v0.2 note explains how near-miss ranking connects
+to birth-parent gap geometry.
 
 ## Generate
 
@@ -63,11 +67,12 @@ From `research/`:
 Expected result:
 
 ```text
-check_v2_3_candidate: checks=11, failed=0
+check_v2_3_candidate: checks=12, failed=0
 ```
 
-The checker recomputes the current v2.3 candidate rows from the exact helpers
-and compares them with the committed internal CSV artifacts.
+The checker is helper-based and internal. It recomputes the current v2.3
+candidate rows from the exact helpers and compares them with the committed
+internal CSV artifacts.
 
 ## Candidate Scope
 

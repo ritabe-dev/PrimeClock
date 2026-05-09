@@ -76,7 +76,12 @@ interpretation of the finite critical-radius threshold. In this draft,
 `critical radius` is the project term; `weighted covering-radius` is only
 descriptive shorthand for the max-min expression above. The implementation
 computes the value exactly by evaluating weighted bisector candidates for
-lifted center pairs and selecting a bottleneck point.
+lifted center pairs and selecting a bottleneck point. The finite candidate-set
+justification is recorded as an internal certificate lemma:
+
+```text
+notes/prc_weighted_bisector_candidate_lemma_v0_1.md
+```
 
 Important boundary: this draft does not use the naive adjacent-center formula
 as a theorem. Adjacent data may be useful for certificates, but the theorem
@@ -211,8 +216,11 @@ yet a public release bundle.
 Internal checker:
 
 ```text
-check_candidate.py: checks=11, failed=0
+check_candidate.py: checks=12, failed=0
 ```
+
+The checker is internal and helper-based. A standalone checker or explicit
+waiver remains a public-release blocker for v2.3.
 
 Internal candidate bundle:
 
@@ -236,6 +244,7 @@ Before promotion to a public v2.3 release bundle, this draft still needs:
 1. a public v2.3 release manifest, SHA256 path, and allowlist.
 2. a decision on whether the public note should add formal related-work
    citations for covering-radius terminology.
+3. a standalone checker or explicit waiver before public release.
 
 ## 9. Non-Claims
 

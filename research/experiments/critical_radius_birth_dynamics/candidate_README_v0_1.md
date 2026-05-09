@@ -26,7 +26,7 @@ python -m pytest tests/test_critical_radius_birth_dynamics.py -q
 Expected result:
 
 ```text
-check_v2_3_candidate: checks=11, failed=0
+check_v2_3_candidate: checks=12, failed=0
 ```
 
 ## Scope

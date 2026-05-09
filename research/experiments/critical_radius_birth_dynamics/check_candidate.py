@@ -33,6 +33,7 @@ from tools import (
     near_miss_birth_parent_rows,
     near_miss_gap_geometry_rows,
     parse_fraction,
+    residue_is_exactly_covered,
 )
 
 
@@ -72,7 +73,8 @@ def verification_rows() -> list[dict[str, str]]:
     crossing_rows = birth_threshold_crossing_rows(min_k=5, max_k=7)
 
     checks: list[dict[str, str]] = []
-    checks.append(check_level_sets(radius_rows))
+    checks.append(check_c4_level_set(radius_rows))
+    checks.append(check_c5_level_set_matches_exact_coverage(radius_rows))
     checks.append(check_spectrum_status_counts(radius_summary_rows))
     checks.append(
         check_csv_exact(
@@ -142,19 +144,37 @@ def verification_rows() -> list[dict[str, str]]:
     return checks
 
 
-def check_level_sets(rows: Iterable[CriticalRadiusRow]) -> dict[str, str]:
-    covered_by_k: dict[int, list[int]] = {}
-    for row in rows:
-        if parse_fraction(row.lambda_fraction) <= Fraction(1, 2):
-            covered_by_k.setdefault(row.k, []).append(row.residue)
+def check_c4_level_set(rows: Iterable[CriticalRadiusRow]) -> dict[str, str]:
+    covered = {
+        row.residue
+        for row in rows
+        if row.k == 4 and parse_fraction(row.lambda_fraction) <= Fraction(1, 2)
+    }
+    return check("critical_radius_c4_level_set_exact", 1, int(covered == {2, 208}))
 
-    passed = 0
-    total = 2
-    if set(covered_by_k.get(4, [])) == {2, 208}:
-        passed += 1
-    if len(covered_by_k.get(5, [])) == 36:
-        passed += 1
-    return check("critical_radius_level_sets_exact", total, passed)
+
+def check_c5_level_set_matches_exact_coverage(
+    rows: Iterable[CriticalRadiusRow],
+) -> dict[str, str]:
+    level_set = {
+        row.residue
+        for row in rows
+        if row.k == 5 and parse_fraction(row.lambda_fraction) <= Fraction(1, 2)
+    }
+    exact_covered = {
+        row.residue
+        for row in rows
+        if row.k == 5 and residue_is_exactly_covered(row.residue, [2, 3, 5, 7, 11])
+    }
+    checks = [
+        len(level_set) == 36,
+        level_set == exact_covered,
+    ]
+    return check(
+        "critical_radius_c5_level_set_matches_exact_coverage",
+        len(checks),
+        sum(checks),
+    )
 
 
 def check_spectrum_status_counts(
@@ -193,7 +213,11 @@ def check_birth_candidate_claims(
         all(parse_fraction(row.parent_lambda_fraction) > Fraction(1, 2) for row in crossing_rows_list),
         all(parse_fraction(row.current_lambda_fraction) <= Fraction(1, 2) for row in crossing_rows_list),
     ]
-    return check("birth_dynamics_candidate_claims_exact", len(checks), sum(checks))
+    return check(
+        "birth_dynamics_b5_b6_b7_strict_single_gap_exact",
+        len(checks),
+        sum(checks),
+    )
 
 
 def check_csv_exact(

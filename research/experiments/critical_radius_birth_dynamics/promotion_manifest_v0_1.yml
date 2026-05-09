@@ -21,16 +21,17 @@ candidate_claims:
   - Near-miss ranking is a candidate generator, not a birth theorem.
 verification:
   checker: check_candidate.py
-  expected: checks=11, failed=0
+  expected: checks=12, failed=0
+  checker_scope: internal_helper_based
   output: data/prc_v2_3_candidate_verification_v0_1.csv
 candidate_bundle:
   builder: candidate_bundle.py
   default_name: PrimeClock-v2.3-candidate-v0.1
   status: internal_only
 promotion_blockers:
-  - public release manifest and SHA256 path are not yet created for v2.3.
-  - v2.3 public bundle contents are not yet allowlisted.
+  - v2.3 public release manifest, SHA256 path, and allowlist are not yet created.
   - formal related-work citations for covering-radius terminology are not yet included.
+  - standalone checker or explicit waiver is required before public release.
   - no Zenodo or GitHub release should be created from this internal manifest.
 terminology_status:
   primary_term: critical radius
