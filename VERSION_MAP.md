@@ -8,7 +8,7 @@ separate. The current public release target is:
 | Public release | `v2.2.4` |
 | Public release config | `release/public/release_config.json` |
 | Public bundle name | `PrimeClock-2.2.4` |
-| Version DOI | pending Zenodo publication for the GitHub `v2.2.4` release |
+| Version DOI | `10.5281/zenodo.20096689` |
 | Concept DOI | `10.5281/zenodo.20091722` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
 | Finite theorem note | `research/notes/prc_finite_certificate_note_v2_0.md` |

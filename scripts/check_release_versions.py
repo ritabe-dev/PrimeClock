@@ -80,12 +80,14 @@ def main() -> int:
     bundle = config["bundle_name"]
     release_url = config["github_release_url"]
     concept_doi = config["zenodo_concept_doi"]
+    version_doi = config.get("zenodo_version_doi", concept_doi)
     failures: list[str] = []
 
     citation = read(repo_root, "CITATION.cff")
     require_contains(failures, citation, f'version: "{release}"', "CITATION.cff")
     require_contains(failures, citation, f'url: "{release_url}"', "CITATION.cff")
-    require_contains(failures, citation, f'doi: "{concept_doi}"', "CITATION.cff")
+    require_contains(failures, citation, f'doi: "{version_doi}"', "CITATION.cff")
+    require_contains(failures, citation, concept_doi, "CITATION.cff")
 
     workflow = read(repo_root, ".github/workflows/verify.yml")
     require_contains(

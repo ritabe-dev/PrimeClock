@@ -6,7 +6,11 @@ authors:
     given-names: "Rio"
 version: "2.2.4"
 date-released: "2026-05-09"
-doi: "10.5281/zenodo.20091722"
+doi: "10.5281/zenodo.20096689"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20091722"
+    description: "Zenodo concept DOI"
 abstract: "A release-ready finite certificate artifact for Prime Reciprocal Covering, focused on the prime-prefix residue-covering filtration, the C4 layer, and B5 birth classes."
 license: "MIT"
 repository-code: "https://github.com/ritabe-dev/PrimeClock"
