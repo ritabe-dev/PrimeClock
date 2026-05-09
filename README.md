@@ -16,7 +16,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_1.md`
+4. `research/RELEASE_NOTES_v2_1_1.md`
 5. `research/notes/known-results.md`
 
 The finite claims are:
@@ -66,5 +66,7 @@ are not part of the narrow finite-theorem release bundle.
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The project is released under the
-MIT License; see `LICENSE`.
+Use `CITATION.cff` for citation metadata. The archived v2.1.1 release DOI is
+`10.5281/zenodo.20091723`.
+
+The project is released under the MIT License; see `LICENSE`.

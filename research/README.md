@@ -15,7 +15,7 @@ Read these files in order:
 1. `notes/prc_finite_certificate_note_v2_0.md`
 2. `notes/claims_finite_c4_b5.md`
 3. `VERIFY_FINITE_C4_B5.md`
-4. `RELEASE_NOTES_v2_1.md`
+4. `RELEASE_NOTES_v2_1_1.md`
 5. `notes/known-results.md`
 
 The narrow finite package supports:
