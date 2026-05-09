@@ -10,7 +10,7 @@ research work, including:
 - release scripts used to build a narrow public certificate bundle.
 
 Public release bundles are generated from an allowlist and have their own root
-README template at `release/public/README.template.md`. The v2.2.2 public bundle
+README template at `release/public/README.template.md`. The v2.2.3 public bundle
 contains only the finite `C_k/C_4/B_5` certificate artifact, exact rational CSVs,
 and verification tools; the historical visualization is not included in that
 bundle.
@@ -22,7 +22,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_2_2.md`
+4. `research/RELEASE_NOTES_v2_2_3.md`
 5. `research/notes/known-results.md`
 6. `VERSION_MAP.md`
 
@@ -84,8 +84,8 @@ Build and inspect a local release bundle with:
 
 ```bash
 python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.2 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.2
+python3 scripts/build_public_release.py --version 2.2.3 --out /private/tmp/primeclock-public-release --zip
+python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.3
 ```
 
 The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are
