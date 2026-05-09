@@ -57,6 +57,21 @@ def require_contains(
         failures.append(f"{relative_path} missing {needle!r}")
 
 
+def check_root_readme(failures: list[str], text: str, tag: str) -> None:
+    """Accept either the source-repo README or the generated bundle README."""
+    if f"The {tag} public bundle" in text:
+        require_contains(failures, text, "scripts/verify_public_release.py", "README.md")
+        return
+
+    bundle_needles = [
+        "public release bundle",
+        "finite `C_k/C_4/B_5`",
+        "not included in this bundle",
+    ]
+    for needle in bundle_needles:
+        require_contains(failures, text, needle, "README.md")
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     config = load_release_config(repo_root)
@@ -81,8 +96,7 @@ def main() -> int:
     )
 
     readme = read(repo_root, "README.md")
-    require_contains(failures, readme, f"The {tag} public bundle", "README.md")
-    require_contains(failures, readme, "scripts/verify_public_release.py", "README.md")
+    check_root_readme(failures, readme, tag)
 
     verify = read(repo_root, "VERIFY.md")
     require_contains(failures, verify, "scripts/verify_public_release.py", "VERIFY.md")

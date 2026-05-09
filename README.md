@@ -9,11 +9,14 @@ research work, including:
 - release scripts used to build a narrow public certificate bundle.
 
 Public release bundles are generated from an allowlist and have their own root
-README template at `release/public/README.template.md`. The v2.2.3 public bundle
+README template at `release/public/README.template.md`. The v2.2.4 public bundle
 contains only the finite `C_k/C_4/B_5` certificate artifact, exact rational CSVs,
 and verification tools; the React/Vite visualization app is not included in that
 bundle. The release version is centralized in
 `release/public/release_config.json`.
+
+The Python package keeps the historical name `prime-reciprocal-projection`.
+The finite theorem bundle is now framed as Prime Reciprocal Covering.
 
 ## Current Release Target
 
@@ -22,7 +25,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_2_3.md`
+4. `research/RELEASE_NOTES_v2_2_4.md`
 5. `research/notes/known-results.md`
 6. `VERSION_MAP.md`
 
@@ -56,7 +59,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 41 passed
+focused pytest: 46 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -94,7 +97,7 @@ recorded in `SHA256SUMS`, and version correspondence is recorded in
 ## Citation and License
 
 Use `CITATION.cff` for citation metadata. The Zenodo concept DOI for the
-release series is `10.5281/zenodo.20091722`; Zenodo assigns a version DOI for
-each GitHub release.
+release series is `10.5281/zenodo.20091722`; the v2.2.4 version DOI is pending
+Zenodo publication.
 
 The project is released under the MIT License; see `LICENSE`.

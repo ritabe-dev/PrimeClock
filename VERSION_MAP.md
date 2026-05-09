@@ -5,10 +5,10 @@ separate. The current public release target is:
 
 | Item | Version / file |
 | --- | --- |
-| Public release | `v2.2.3` |
+| Public release | `v2.2.4` |
 | Public release config | `release/public/release_config.json` |
-| Public bundle name | `PrimeClock-2.2.3` |
-| Version DOI | assigned by Zenodo for the GitHub `v2.2.3` release |
+| Public bundle name | `PrimeClock-2.2.4` |
+| Version DOI | pending Zenodo publication for the GitHub `v2.2.4` release |
 | Concept DOI | `10.5281/zenodo.20091722` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
 | Finite theorem note | `research/notes/prc_finite_certificate_note_v2_0.md` |
@@ -39,3 +39,7 @@ python3 scripts/update_public_hashes.py --check
 The public release bundle remains scoped to the finite `C_k/C_4/B_5`
 certificate artifact. Broader proof-core refactors, certificate JSON schemas,
 `B_6` exports, and bibliography expansion are future work.
+
+The Python package retains the historical name `prime-reciprocal-projection`.
+The release-facing finite theorem bundle is framed as Prime Reciprocal
+Covering.

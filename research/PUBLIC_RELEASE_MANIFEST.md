@@ -32,7 +32,7 @@ Root files:
 - `SHA256SUMS`
 - `VERSION_MAP.md`
 - `VERIFY.md`
-- `RELEASE_NOTES_v2_2_3.md`
+- `RELEASE_NOTES_v2_2_4.md`
 - `.github/workflows/verify.yml`
 - `release/public/README.template.md`
 - `release/public/release_config.json`
@@ -47,7 +47,7 @@ Research files:
 
 - `research/README.md`
 - `research/PUBLIC_RELEASE_MANIFEST.md`
-- `research/RELEASE_NOTES_v2_2_3.md`
+- `research/RELEASE_NOTES_v2_2_4.md`
 - `research/VERIFY_FINITE_C4_B5.md`
 - `research/pyproject.toml`
 - `research/setup.py`
@@ -152,4 +152,4 @@ research/notes/known-results.md
 
 The package should be read as a finite experimental-mathematics certificate
 artifact. Broader asymptotic, distributional, and complete PRC questions are
-outside the v2.2.3 release scope.
+outside the v2.2.4 release scope.

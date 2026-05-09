@@ -1394,8 +1394,8 @@ def test_public_release_build_uses_config_default_version(tmp_path: Path):
     )
 
     assert result.returncode == 0
-    assert (tmp_path / "PrimeClock-2.2.3").is_dir()
-    assert "PrimeClock-2.2.3" in result.stdout
+    assert (tmp_path / "PrimeClock-2.2.4").is_dir()
+    assert "PrimeClock-2.2.4" in result.stdout
 
 
 def test_public_release_build_fails_stale_version(tmp_path: Path):
@@ -1432,4 +1432,30 @@ def test_public_release_version_checker_passes_current_repo():
     )
 
     assert result.returncode == 0
-    assert "release version check passed: v2.2.3" in result.stdout
+    assert "release version check passed: v2.2.4" in result.stdout
+
+
+def test_public_release_version_checker_passes_generated_bundle(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    checker = bundle_root / "scripts" / "check_release_versions.py"
+    result = subprocess.run(
+        [sys.executable, str(checker)],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=bundle_root,
+    )
+
+    assert result.returncode == 0
+    assert "release version check passed: v2.2.4" in result.stdout

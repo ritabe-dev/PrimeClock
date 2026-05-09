@@ -7,6 +7,9 @@ package verification tools, and a standard-library standalone checker.
 The React/Vite PrimeClock visualization app is not included in this bundle.
 This bundle is intentionally narrower than the development repository.
 
+The Python package keeps the historical name `prime-reciprocal-projection`.
+The finite theorem bundle is now framed as Prime Reciprocal Covering.
+
 ## Read First
 
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
@@ -46,7 +49,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 41 passed
+focused pytest: 46 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -62,6 +65,7 @@ asymptotic, distributional, or complete PRC claims.
 ## Citation and License
 
 Use `CITATION.cff` for citation metadata. The Zenodo concept DOI for the release
-series is `10.5281/zenodo.20091722`.
+series is `10.5281/zenodo.20091722`; the v2.2.4 version DOI is pending Zenodo
+publication.
 
 The project is released under the MIT License; see `LICENSE`.

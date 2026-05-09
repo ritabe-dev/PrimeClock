@@ -5,8 +5,11 @@ Covering (PRC). The current external-release target is the narrow finite
 `C_k/C_4/B_5` certificate artifact.
 
 The PrimeClock visualization is origin/discovery context for the research. The
-v2.2.3 public release bundle contains the finite residue-covering research
+v2.2.4 public release bundle contains the finite residue-covering research
 package and exact certificate artifacts, not the React/Vite visualization app.
+
+The Python package keeps the historical name `prime-reciprocal-projection`.
+The finite theorem bundle is now framed as Prime Reciprocal Covering.
 
 ## Current Release Entry Point
 
@@ -15,7 +18,7 @@ Read these files in order:
 1. `notes/prc_finite_certificate_note_v2_0.md`
 2. `notes/claims_finite_c4_b5.md`
 3. `VERIFY_FINITE_C4_B5.md`
-4. `RELEASE_NOTES_v2_2_3.md`
+4. `RELEASE_NOTES_v2_2_4.md`
 5. `notes/known-results.md`
 6. `../VERSION_MAP.md`
 
@@ -28,7 +31,7 @@ The narrow finite package supports:
 - every `B_5` birth is a strict single-gap closure by the new `p=11` arc.
 
 These are finite certificate claims only. Broader asymptotic, distributional,
-and complete PRC questions are outside the v2.2.3 release scope.
+and complete PRC questions are outside the v2.2.4 release scope.
 
 ## Verify The Finite Package
 
@@ -54,7 +57,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 41 passed
+focused pytest: 46 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
