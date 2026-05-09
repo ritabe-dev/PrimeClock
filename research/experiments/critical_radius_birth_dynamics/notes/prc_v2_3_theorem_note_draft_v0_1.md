@@ -213,14 +213,17 @@ data/prc_v2_3_candidate_verification_v0_1.csv
 The implementation and tests remain under `research/experiments`; this is not
 yet a public release bundle.
 
-Internal checker:
+Internal checkers:
 
 ```text
 check_candidate.py: checks=12, failed=0
+check_candidate_standalone.py: checks=7, failed=0
 ```
 
-The checker is internal and helper-based. A standalone checker or explicit
-waiver remains a public-release blocker for v2.3.
+The helper-based checker regenerates candidate rows from experiment code. The
+standalone checker uses only the Python standard library, reads the committed
+CSV artifacts, and checks the candidate CSV SHA256 manifest plus the headline
+finite claims.
 
 Internal candidate bundle:
 
@@ -244,7 +247,6 @@ Before promotion to a public v2.3 release bundle, this draft still needs:
 1. a public v2.3 release manifest, SHA256 path, and allowlist.
 2. a decision on whether the public note should add formal related-work
    citations for covering-radius terminology.
-3. a standalone checker or explicit waiver before public release.
 
 ## 9. Non-Claims
 

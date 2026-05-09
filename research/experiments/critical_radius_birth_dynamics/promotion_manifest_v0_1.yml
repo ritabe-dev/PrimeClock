@@ -20,10 +20,14 @@ candidate_claims:
   - B_5, B_6, and B_7 are strict single-gap births in the checked finite data.
   - Near-miss ranking is a candidate generator, not a birth theorem.
 verification:
-  checker: check_candidate.py
-  expected: checks=12, failed=0
-  checker_scope: internal_helper_based
-  output: data/prc_v2_3_candidate_verification_v0_1.csv
+  helper_checker: check_candidate.py
+  helper_expected: checks=12, failed=0
+  helper_scope: internal_helper_based
+  helper_output: data/prc_v2_3_candidate_verification_v0_1.csv
+  standalone_checker: check_candidate_standalone.py
+  standalone_expected: checks=7, failed=0
+  standalone_scope: standard_library_csv_audit
+  standalone_output: data/prc_v2_3_candidate_standalone_verification_v0_1.csv
 candidate_bundle:
   builder: candidate_bundle.py
   default_name: PrimeClock-v2.3-candidate-v0.1
@@ -31,7 +35,6 @@ candidate_bundle:
 promotion_blockers:
   - v2.3 public release manifest, SHA256 path, and allowlist are not yet created.
   - formal related-work citations for covering-radius terminology are not yet included.
-  - standalone checker or explicit waiver is required before public release.
   - no Zenodo or GitHub release should be created from this internal manifest.
 terminology_status:
   primary_term: critical radius

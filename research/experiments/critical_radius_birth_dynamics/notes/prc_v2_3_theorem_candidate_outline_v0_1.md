@@ -147,9 +147,11 @@ next-prime remainders decide whether a near-miss actually births.
 Before this becomes a public v2.3 candidate, it needs:
 
 1. a polished theorem/proposition note using the three components above;
-2. an explicit checker or test path for the promoted finite claims;
-3. a decision on whether v2.3 includes only `k<=7` birth dynamics;
-4. a release manifest that keeps v2.2.3 unchanged.
+2. a decision on whether v2.3 includes only `k<=7` birth dynamics;
+3. a release manifest that keeps v2.2.3 unchanged.
+
+The internal helper checker and standard-library standalone checker now cover
+the promoted finite claims at the candidate-artifact level.
 
 ## Non-Claims
 

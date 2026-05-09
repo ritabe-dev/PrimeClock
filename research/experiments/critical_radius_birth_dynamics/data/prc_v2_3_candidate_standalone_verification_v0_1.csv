@@ -1,0 +1,8 @@
+check_name,total,passed,failed,status
+candidate_csv_hashes_exact,10,10,0,pass
+critical_radius_c4_level_set_from_csv,3,3,0,pass
+critical_radius_c5_level_set_from_csv,3,3,0,pass
+critical_radius_summary_matches_rows,2,2,0,pass
+birth_dynamics_summary_strict_single_gap,3,3,0,pass
+birth_dynamics_rows_strict_single_gap,774,774,0,pass
+birth_threshold_crossing_rows_match_births,775,775,0,pass

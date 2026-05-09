@@ -238,11 +238,11 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
     assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
-    assert "notes/prc_v2_3_standalone_checker_todo.md" in text
+    assert "notes/prc_v2_3_standalone_checker_contract_v0_1.md" in text
     assert "v2.2.3 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
     assert "Before promotion to a public v2.3 release bundle" in text
-    assert "standalone checker or record an explicit waiver" in text
+    assert "check_candidate_standalone.py: checks=7, failed=0" in text
     assert "the v2.2.3 public release has changed" in text
 
 
@@ -273,9 +273,10 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
     assert "Birth Containment" in text
     assert "check_candidate.py: checks=12, failed=0" in text
+    assert "check_candidate_standalone.py: checks=7, failed=0" in text
     assert "no B_8 or larger layers" in text
     assert "public v2.3 release manifest, SHA256 path, and allowlist" in text
-    assert "standalone checker or explicit waiver" in text
+    assert "standalone checker uses only the Python standard library" in text
     assert "any change to the v2.2.3 public release" in text
 
 
@@ -304,6 +305,31 @@ def test_v2_3_candidate_checker_passes(tmp_path):
     assert "birth_dynamics_b5_b6_b7_strict_single_gap_exact" in check_names
 
 
+def test_v2_3_candidate_standalone_checker_passes(tmp_path):
+    output = tmp_path / "v2_3_candidate_standalone_verification.csv"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(EXPERIMENT_DIR / "check_candidate_standalone.py"),
+            "--out",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "check_v2_3_candidate_standalone: checks=7, failed=0" in result.stdout
+    with output.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 7
+    assert {row["status"] for row in rows} == {"pass"}
+    check_names = {row["check_name"] for row in rows}
+    assert "candidate_csv_hashes_exact" in check_names
+    assert "critical_radius_c5_level_set_from_csv" in check_names
+    assert "birth_threshold_crossing_rows_match_births" in check_names
+
+
 def test_v2_3_promotion_manifest_fixes_candidate_scope():
     manifest = EXPERIMENT_DIR / "promotion_manifest_v0_1.yml"
     text = manifest.read_text(encoding="utf-8")
@@ -314,10 +340,11 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     assert "birth_dynamics_layers: [5, 6, 7]" in text
     assert "include_b8_or_larger: false" in text
     assert "include_asymptotic_claims: false" in text
-    assert "expected: checks=12, failed=0" in text
+    assert "helper_expected: checks=12, failed=0" in text
+    assert "standalone_expected: checks=7, failed=0" in text
     assert "builder: candidate_bundle.py" in text
-    assert "checker_scope: internal_helper_based" in text
-    assert "standalone checker or explicit waiver" in text
+    assert "helper_scope: internal_helper_based" in text
+    assert "standalone_scope: standard_library_csv_audit" in text
     assert "terminology_status:" in text
     assert "primary_term: critical radius" in text
 
@@ -353,15 +380,19 @@ def test_v2_3_weighted_bisector_candidate_lemma_keeps_scope():
     assert "certificate lemma" in text
 
 
-def test_v2_3_standalone_checker_todo_marks_public_blocker():
-    note = EXPERIMENT_DIR / "notes" / "prc_v2_3_standalone_checker_todo.md"
+def test_v2_3_standalone_checker_contract_marks_audit_scope():
+    note = (
+        EXPERIMENT_DIR
+        / "notes"
+        / "prc_v2_3_standalone_checker_contract_v0_1.md"
+    )
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal public-release blocker." in text
-    assert "package importなし" not in text
-    assert "use only the Python standard library" in text
+    assert "Status: implemented internal standalone audit" in text
+    assert "check_candidate_standalone.py" in text
+    assert "standard-library-only checker" in text
     assert "`C_4` and `C_5` critical-radius level-set claims" in text
-    assert "standalone checker or explicit waiver" in text
+    assert "check_v2_3_candidate_standalone: checks=7, failed=0" in text
 
 
 def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):
@@ -389,6 +420,10 @@ def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):
     assert (
         bundle_root
         / "research/experiments/critical_radius_birth_dynamics/check_candidate.py"
+    ).is_file()
+    assert (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py"
     ).is_file()
 
     check = subprocess.run(

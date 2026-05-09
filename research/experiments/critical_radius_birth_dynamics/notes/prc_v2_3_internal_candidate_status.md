@@ -69,7 +69,7 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_weighted_bisector_candidate_lemma_v0_1.md
-notes/prc_v2_3_standalone_checker_todo.md
+notes/prc_v2_3_standalone_checker_contract_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
@@ -86,16 +86,21 @@ data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 data/prc_v2_3_candidate_verification_v0_1.csv
+data/prc_v2_3_candidate_sha256sums_v0_1.txt
+data/prc_v2_3_candidate_standalone_verification_v0_1.csv
 ```
 
-Internal checker:
+Internal checkers:
 
 ```text
 check_candidate.py: checks=12, failed=0
+check_candidate_standalone.py: checks=7, failed=0
 ```
 
-This is an internal helper-based checker. A standalone checker or explicit
-waiver remains required before public release.
+The helper-based checker regenerates the candidate rows from experiment code.
+The standalone checker uses only the Python standard library, reads the
+committed CSV artifacts, and verifies the candidate CSV SHA256 manifest and
+headline finite claims.
 
 Internal candidate bundle:
 
@@ -121,9 +126,7 @@ Before promotion to a public v2.3 release bundle:
 1. Create the public v2.3 release manifest, SHA256 path, and allowlist.
 2. Decide whether to add formal related-work citations for covering-radius
    terminology.
-3. Add a v2.3 standalone checker or record an explicit waiver before public
-   release.
-4. Keep all statements finite; do not claim an asymptotic law or a general
+3. Keep all statements finite; do not claim an asymptotic law or a general
    single-gap birth theorem.
 
 ## Next Slice

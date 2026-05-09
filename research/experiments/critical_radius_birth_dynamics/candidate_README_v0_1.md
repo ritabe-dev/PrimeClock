@@ -10,7 +10,8 @@ certificate package. This candidate extends that line internally with:
 - `C_k = { r : lambda_k(r) <= 1/2 }` level-set checks;
 - birth dynamics for `B_5`, `B_6`, and `B_7`;
 - near-miss gap-geometry diagnostics for `k=4,5`;
-- an internal candidate checker.
+- an internal helper-based candidate checker;
+- a standard-library standalone CSV checker for the candidate artifacts.
 
 ## Verify
 
@@ -20,6 +21,7 @@ From the bundle root:
 cd research
 python -m pip install -e ".[dev]"
 python experiments/critical_radius_birth_dynamics/check_candidate.py
+python experiments/critical_radius_birth_dynamics/check_candidate_standalone.py
 python -m pytest tests/test_critical_radius_birth_dynamics.py -q
 ```
 
@@ -27,6 +29,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate: checks=12, failed=0
+check_v2_3_candidate_standalone: checks=7, failed=0
 ```
 
 ## Scope
