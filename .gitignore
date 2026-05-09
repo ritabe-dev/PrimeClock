@@ -6,3 +6,6 @@ dist
 *.tar.gz
 *.tgz
 review_packages/
+scratch/
+private_notes/
+local_notes/

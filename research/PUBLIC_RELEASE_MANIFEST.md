@@ -3,7 +3,22 @@
 Use this manifest when preparing the public release bundle for the finite
 `C_k/C_4/B_5` certificate artifact.
 
-## Release Bundle
+## Stable Public Claim
+
+The stable public claim for the current release line is limited to the finite
+`C_k/C_4/B_5` certificate artifact. In particular:
+
+- `C_4 = {2, 208} mod 210`;
+- `C_5` has 36 covered residues;
+- `B_5` has 14 births in 7 reflection pairs;
+- the public package contains exact CSV certificates plus package and
+  standalone verification paths.
+
+Any newer research line remains experimental until it has its own release
+manifest, verification path, non-claims section, hash manifest, and release
+approval.
+
+## Included
 
 The public bundle should contain only the files needed to read, verify, and
 cite the finite certificate artifact.
@@ -56,7 +71,7 @@ Finite certificate CSVs:
 - `research/data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
 - `research/data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv`
 
-## Excluded From The Public Bundle
+## Excluded
 
 Keep these in the full source repository, but do not include them in the public
 finite certificate bundle:
@@ -67,6 +82,9 @@ finite certificate bundle:
 - `k=8`, modulo-210, C0, branch-fill, branch-uniform, and residual-fragmentation diagnostics;
 - PrimeClock React/Vite visualization files;
 - historical local release bundles and archives.
+- `research/experiments/critical_radius_birth_dynamics/`, including its
+  critical-radius and birth-dynamics candidate artifacts, until explicitly
+  promoted through a future public release manifest.
 
 The Python source package is included as verifier/test support and may contain
 broader implementation modules. The public release-facing notes, CSVs, and
@@ -81,7 +99,22 @@ The bundle root `README.md` is generated from
 `release/public/README.template.md` to keep source-repository wording separate
 from public release wording.
 
-## Excluded Local Files
+## Experimental/Internal
+
+Experimental or internal-candidate work can live in the source repository, but
+must not enter the stable public release bundle until promoted. This includes:
+
+- critical-radius spectrum drafts;
+- birth-dynamics candidate artifacts beyond the stable `C_4/B_5` certificate;
+- fragmentation, p-adic, branch-fill, residual, and null-model diagnostics;
+- candidate bundles and candidate bundle manifests;
+- informal research selection notes or pasted review material.
+
+Research notes under `research/notes/` or `research/experiments/` should carry a
+clear status line such as `Status: stable`, `Status: experimental`,
+`Status: internal-candidate`, or `Status: historical`.
+
+## Never Include
 
 Never include:
 
@@ -95,7 +128,15 @@ Never include:
 - `dist/`
 - `__pycache__/`
 - `.DS_Store`
+- `review_packages/`
+- `scratch/`
+- `private_notes/`
+- `local_notes/`
+- candidate bundle directories or archives
 - generated local zip/tar archives
+
+GitHub Release and Zenodo uploads should use only a bundle that passes
+`scripts/verify_public_release.py`.
 
 ## Entry Point
 

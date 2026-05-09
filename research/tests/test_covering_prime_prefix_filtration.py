@@ -1337,6 +1337,51 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
     assert "hash mismatch for README.md" in failed_result.stdout
 
 
+def test_public_release_checker_rejects_internal_paths(tmp_path: Path):
+    release_root = tmp_path / "release"
+    release_root.mkdir()
+    readme = release_root / "README.md"
+    readme.write_text(
+        "public release bundle\n"
+        "finite `C_k/C_4/B_5`\n"
+        "not included\n",
+        encoding="utf-8",
+    )
+    private_note = release_root / "private_notes" / "secret.md"
+    private_note.parent.mkdir()
+    private_note.write_text("local note\n", encoding="utf-8")
+    experiment_file = (
+        release_root
+        / "research"
+        / "experiments"
+        / "critical_radius_birth_dynamics"
+        / "candidate_bundle_manifest_v0_1.json"
+    )
+    experiment_file.parent.mkdir(parents=True)
+    experiment_file.write_text("{}\n", encoding="utf-8")
+    manifest_lines = []
+    for path in [readme, private_note, experiment_file]:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        manifest_lines.append(f"{digest}  {path.relative_to(release_root).as_posix()}")
+    (release_root / "SHA256SUMS").write_text(
+        "\n".join(manifest_lines) + "\n",
+        encoding="utf-8",
+    )
+
+    checker = Path(__file__).parents[2] / "scripts" / "check_public_release.py"
+    result = subprocess.run(
+        [sys.executable, str(checker), str(release_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "private_notes" in result.stdout
+    assert "research/experiments" in result.stdout
+    assert "candidate_bundle_manifest" in result.stdout
+
+
 def test_public_release_build_uses_config_default_version(tmp_path: Path):
     repo_root = Path(__file__).parents[2]
     builder = repo_root / "scripts" / "build_public_release.py"
