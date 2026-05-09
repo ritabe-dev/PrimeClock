@@ -96,8 +96,8 @@ recorded in `SHA256SUMS`, and version correspondence is recorded in
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The v2.2.4 version DOI is
-`10.5281/zenodo.20096689`; the Zenodo concept DOI for the release series is
-`10.5281/zenodo.20091722`.
+Use `CITATION.cff` for citation metadata. Its top-level DOI is the Zenodo
+concept DOI for the release series: `10.5281/zenodo.20091722`. The v2.2.4
+release record also has version DOI `10.5281/zenodo.20096689`.
 
 The project is released under the MIT License; see `LICENSE`.

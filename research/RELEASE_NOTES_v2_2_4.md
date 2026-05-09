@@ -39,8 +39,8 @@ new finite claims.
 - focused pytest expected count is updated to `53 passed`;
 - release guardrails reject private notes, local scratch paths, internal
   experiment paths, and candidate bundle artifacts;
-- citation metadata uses the v2.2.4 version DOI and keeps the
-  Zenodo concept DOI as the release-series identifier;
+- citation metadata uses the Zenodo concept DOI as the stable release-series
+  identifier, while the v2.2.4 version DOI is recorded for the release record;
 - README and version map clarify that the Python package keeps the historical
   `prime-reciprocal-projection` name while the finite theorem bundle is framed
   as Prime Reciprocal Covering.
