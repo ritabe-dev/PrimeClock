@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import argparse
 from pathlib import Path
 
 from release_config import load_release_config
@@ -20,12 +21,15 @@ PUBLIC_FACING_FILES = [
     "VERSION_MAP.md",
     "CITATION.cff",
     "DATA_FILES.md",
+    "release/public/PUBLISH_CHECKLIST.md",
     "release/public/README.template.md",
     "release/public/release_config.json",
     "research/README.md",
     "research/PUBLIC_RELEASE_MANIFEST.md",
     "research/VERIFY_FINITE_C4_B5.md",
     "scripts/build_public_release.py",
+    "scripts/finalize_release_doi.py",
+    "scripts/publish_public_release.py",
     "scripts/update_public_hashes.py",
     "scripts/verify_public_release.py",
 ]
@@ -73,7 +77,11 @@ def check_root_readme(failures: list[str], text: str, tag: str) -> None:
 
 
 def main() -> int:
-    repo_root = Path(__file__).resolve().parents[1]
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo-root", type=Path, help="Repository root to check")
+    args = parser.parse_args()
+
+    repo_root = args.repo_root.resolve() if args.repo_root else Path(__file__).resolve().parents[1]
     config = load_release_config(repo_root)
     release = config["public_release"]
     tag = config["public_tag"]
@@ -96,6 +104,8 @@ def main() -> int:
         "python scripts/verify_public_release.py --out /tmp/primeclock-public-release --zip",
         ".github/workflows/verify.yml",
     )
+    require_contains(failures, workflow, "actions/checkout@v6", ".github/workflows/verify.yml")
+    require_contains(failures, workflow, "actions/setup-python@v6", ".github/workflows/verify.yml")
 
     readme = read(repo_root, "README.md")
     check_root_readme(failures, readme, tag)

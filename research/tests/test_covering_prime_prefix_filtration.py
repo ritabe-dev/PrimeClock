@@ -1459,3 +1459,100 @@ def test_public_release_version_checker_passes_generated_bundle(tmp_path: Path):
 
     assert result.returncode == 0
     assert "release version check passed: v2.2.4" in result.stdout
+
+
+def test_public_release_version_checker_rejects_old_workflow_actions(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+    checker = repo_root / "scripts" / "check_release_versions.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    workflow = bundle_root / ".github" / "workflows" / "verify.yml"
+    workflow.write_text(
+        workflow.read_text(encoding="utf-8")
+        .replace("actions/checkout@v6", "actions/checkout@v4")
+        .replace("actions/setup-python@v6", "actions/setup-python@v5"),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(checker), "--repo-root", str(bundle_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "actions/checkout@v6" in result.stdout
+    assert "actions/setup-python@v6" in result.stdout
+
+
+def test_publish_public_release_dry_run_does_not_execute_remote_writes(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    publisher = repo_root / "scripts" / "publish_public_release.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(publisher),
+            "--public-worktree",
+            str(tmp_path / "missing-public-worktree"),
+            "--build-parent",
+            str(tmp_path / "build"),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "mode: dry-run" in result.stdout
+    assert "DRY-RUN:" in result.stdout
+    assert "gh release create" in result.stdout
+    assert "PrimeClock-2.2.4.zip" in result.stdout
+
+
+def test_finalize_release_doi_reports_pending(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    finalizer = repo_root / "scripts" / "finalize_release_doi.py"
+    html = tmp_path / "zenodo.html"
+    html.write_text("concept DOI only: 10.5281/zenodo.20091722\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(finalizer), "--html-file", str(html)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "pending: no Zenodo version DOI found" in result.stdout
+
+
+def test_finalize_release_doi_detects_version_doi(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    finalizer = repo_root / "scripts" / "finalize_release_doi.py"
+    html = tmp_path / "zenodo.html"
+    html.write_text(
+        "concept 10.5281/zenodo.20091722 version 10.5281/zenodo.20096689\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(finalizer), "--html-file", str(html)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "version DOI: 10.5281/zenodo.20096689" in result.stdout
+    assert "dry-run" in result.stdout
