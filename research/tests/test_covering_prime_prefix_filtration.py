@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import subprocess
 import sys
 from fractions import Fraction
@@ -1074,6 +1075,39 @@ def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path
     assert all(line.endswith(",pass") for line in lines[1:])
 
 
+def test_covering_prime_prefix_verify_certificates_cli_fails_tampered_csv(
+    tmp_path: Path,
+):
+    paths = _write_verifier_fixture(tmp_path)
+    _mutate_csv(paths["c4_witness"], lambda rows: rows[:-1])
+    verification_out = tmp_path / "verification.csv"
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-verify-certificates",
+                "--ck-full",
+                str(paths["ck_full"]),
+                "--c4-exclusion-witnesses",
+                str(paths["c4_witness"]),
+                "--c4-exclusion-summary",
+                str(paths["c4_summary"]),
+                "--b5-birth-witnesses",
+                str(paths["b5_witness"]),
+                "--b5-birth-classification",
+                str(paths["b5_classification"]),
+                "--b5-birth-pair-summary",
+                str(paths["b5_pair"]),
+                "--out",
+                str(verification_out),
+            ]
+        )
+        == 1
+    )
+    rows = {row["check_name"]: row for row in csv.DictReader(verification_out.open())}
+    assert rows["c4_exclusion_residue_set_complete"]["status"] == "fail"
+
+
 def test_covering_prime_prefix_filtration_cli_rejects_large_k_without_flag(tmp_path: Path):
     with pytest.raises(ValueError, match="primorial-scale"):
         main(
@@ -1259,3 +1293,34 @@ def test_standalone_prime_prefix_certificate_checker_fails_missing_row(
     assert "failed=" in result.stdout
     rows = {row["check_name"]: row for row in csv.DictReader(output.open())}
     assert rows["c4_exclusion_rows_exact"]["status"] == "fail"
+
+
+def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
+    release_root = tmp_path / "release"
+    release_root.mkdir()
+    readme = release_root / "README.md"
+    readme.write_text("finite certificate bundle\n", encoding="utf-8")
+    digest = hashlib.sha256(readme.read_bytes()).hexdigest()
+    (release_root / "SHA256SUMS").write_text(
+        f"{digest}  README.md\n",
+        encoding="utf-8",
+    )
+
+    checker = Path(__file__).parents[2] / "scripts" / "check_public_release.py"
+    ok_result = subprocess.run(
+        [sys.executable, str(checker), str(release_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert ok_result.returncode == 0
+
+    readme.write_text("finite certificate bundle changed\n", encoding="utf-8")
+    failed_result = subprocess.run(
+        [sys.executable, str(checker), str(release_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert failed_result.returncode == 1
+    assert "hash mismatch for README.md" in failed_result.stdout

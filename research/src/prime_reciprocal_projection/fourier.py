@@ -33,3 +33,4 @@ def limit_fourier_coefficient(m: int, *, samples: int = 4096, k_max: int = 10000
         x = (index + 0.5) / samples
         total += rho(x, k_max=k_max) * cmath.exp(-2j * math.pi * m * x)
     return total / samples
+

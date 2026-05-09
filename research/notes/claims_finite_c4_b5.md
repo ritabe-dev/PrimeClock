@@ -1,8 +1,8 @@
 # Finite C4/B5 Claims
 
-This is the narrow claim registry for the public `C_k/C_4/B_5` finite
-certificate bundle. It only covers the finite certificate artifacts included in
-this release.
+This is the narrow claim registry for the public finite certificate bundle. It
+only covers the finite `C_k/C_4/B_5` certificate artifacts included in that
+package. Broader PRC diagnostics live in `claims.md` and are not audited here.
 
 The release-ready v2.0 theorem note is
 `prc_finite_certificate_note_v2_0.md`.
@@ -38,11 +38,9 @@ The release-ready v2.0 theorem note is
 
 ## Non-Claims
 
-- This package does not claim a new theorem about prime distribution.
-- This package does not claim a new limiting law for `{N/p}`.
-- This package does not claim an asymptotic law for `|C_k|/M_k`.
-- This package does not claim `C_4` or `C_5` explains all complete PRC events.
-- This package does not claim selected modulo-210 diagnostics are representative.
+- This package is scoped to finite `C_4/B_5` prime-prefix residue-covering
+  certificates. Broader asymptotic, distributional, complete-PRC, and
+  selected-window diagnostic questions are outside this release.
 - This package does not use floating-point coverage checks for theorem-level claims.
 - This package does not include the full historical PRC archive; claims about
   certificate depth, `k=8`, residual fragmentation, or C0 anti-clustering are

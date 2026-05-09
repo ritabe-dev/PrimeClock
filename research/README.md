@@ -1,12 +1,12 @@
 # Prime Reciprocal Covering Research Package
 
 This directory contains the reproducible research package for Prime Reciprocal
-Covering (PRC). The current public release target is the narrow finite
+Covering (PRC). The current external-release target is the narrow finite
 `C_k/C_4/B_5` certificate artifact.
 
-PrimeClock and the React/Vite visualization are the origin context. The current
-research contribution is the finite residue-covering object and its exact
-certificate artifacts.
+PrimeClock and the React/Vite visualization are the historical origin context.
+The v2.2.1 public release bundle contains the finite residue-covering research
+package and exact certificate artifacts, not the visualization.
 
 ## Current Release Entry Point
 
@@ -15,8 +15,9 @@ Read these files in order:
 1. `notes/prc_finite_certificate_note_v2_0.md`
 2. `notes/claims_finite_c4_b5.md`
 3. `VERIFY_FINITE_C4_B5.md`
-4. `RELEASE_NOTES_v2_2.md`
+4. `RELEASE_NOTES_v2_2_1.md`
 5. `notes/known-results.md`
+6. `../VERSION_MAP.md`
 
 The narrow finite package supports:
 
@@ -26,14 +27,17 @@ The narrow finite package supports:
 - `B_5` has `14` births in `7` reflection pairs;
 - every `B_5` birth is a strict single-gap closure by the new `p=11` arc.
 
-These are finite certificate claims only. They are not claims about asymptotic
-prime distribution or about all complete PRC events.
+These are finite certificate claims only. Broader asymptotic, distributional,
+and complete PRC questions are outside the v2.2.1 release scope.
 
 ## Verify The Finite Package
 
 Use a local editable install for the package verifier and tests:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
@@ -50,7 +54,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 39 passed
+focused pytest: 41 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -78,23 +82,14 @@ comparisons, and residual-fragmentation studies. Those remain useful context,
 but they are not part of the narrow `C_k/C_4/B_5` finite-theorem release
 package.
 
-The public release bundle is intentionally narrower than the full research
-archive. Use the repository root `DATA_FILES.md`, `VERIFY.md`, and
-`RELEASE_NOTES_v2_2.md` as the release manifest.
+The public bundle may include broader Python implementation modules because the
+CLI verifier and focused tests share package code. The release-facing claims,
+notes, and CSVs remain limited to the finite `C_k/C_4/B_5` artifact.
 
-## Citation
-
-The archived v2.2.0 DOI is:
-
-```text
-10.5281/zenodo.20091829
-```
+Use `PUBLIC_RELEASE_MANIFEST.md` before preparing a public release bundle.
 
 ## Non-Claims
 
-This package does not claim:
-
-- a new theorem about prime distribution;
-- a new limiting law for `{N/p}`;
-- an asymptotic law for `|C_k|/M_k`;
-- that `C_4` or `C_5` explains all complete PRC events.
+This package is scoped to finite prime-prefix residue-covering certificates,
+specifically `C_4` and `B_5`. Broader asymptotic, distributional, and complete
+PRC questions are outside this release.

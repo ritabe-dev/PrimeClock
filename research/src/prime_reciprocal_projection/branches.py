@@ -44,3 +44,4 @@ def branch_decomposition(n: int, *, max_k: int | None = None) -> list[Branch]:
         Branch(k=k, count=count, mass=count / total, limit_mass=limit_branch_mass(k))
         for k, count in sorted(counts.items())
     ]
+

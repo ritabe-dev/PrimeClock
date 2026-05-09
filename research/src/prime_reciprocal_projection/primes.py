@@ -38,3 +38,4 @@ def primes_up_to(limit: int) -> list[int]:
 def pi_count(limit: int) -> int:
     """Return ``pi(limit)``, the number of primes up to ``limit``."""
     return len(primes_up_to(limit))
+

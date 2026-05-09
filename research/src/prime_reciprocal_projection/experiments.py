@@ -58,3 +58,4 @@ def limit_cdf(x: float, *, k_max: int = 10000) -> float:
     if x >= 1:
         return 1.0
     return rho_bin_mass(0.0, x, k_max=k_max)
+

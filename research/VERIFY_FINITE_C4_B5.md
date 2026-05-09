@@ -1,14 +1,17 @@
 # Verify Finite C4/B5 Package
 
-This file is the verifier contract for the narrow `C_k/C_4/B_5` release
-bundle. It documents what the included checkers read, what they check, and
-what their passing result supports.
+This file is the verifier contract for the narrow `C_k/C_4/B_5` public
+release bundle. It documents what the included checkers read, what they check,
+and what their passing result supports.
 
 ## Setup
 
 From `research/`:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 ```
 
@@ -46,6 +49,7 @@ open-gap witnesses, rational witness points, exact interval/fraction fields,
 the `C_4` summary partition, the `B_5` classification table, the reflection
 pair quotient, and strict containment of each old open gap inside the new
 `p=11` closed arc.
+It exits with a nonzero status if any verification check fails.
 
 ## Standalone Checker
 
@@ -77,7 +81,7 @@ python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 Expected focused result:
 
 ```text
-39 passed
+41 passed
 ```
 
 ## Logical Consequence of Passing Checks
@@ -91,5 +95,5 @@ When the public CSVs and both checkers pass, the narrow package supports:
 - The `14` B5 births form `7` reflection pairs.
 - Each B5 birth is a strict single-gap closure by the new `p=11` closed arc.
 
-These are finite certificate claims only. They are not claims about asymptotic
-prime distribution or about all complete PRC events.
+These are finite certificate claims only. Broader asymptotic, distributional,
+and complete PRC questions are outside the v2.2.1 release scope.

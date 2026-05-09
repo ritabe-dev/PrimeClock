@@ -274,11 +274,9 @@ For the full verifier contract, see `VERIFY_FINITE_C4_B5.md`.
 
 ## 10. Non-claims
 
-- This note does not claim a new theorem about prime distribution.
-- This note does not claim a new limiting law for `{N/p}`.
-- This note does not claim an asymptotic law for `|C_k|/M_k`.
-- This note does not claim `C_4` or `C_5` explains all complete PRC events.
-- This note does not claim selected modulo-210 diagnostics are representative.
+- This note is scoped to finite `C_4/B_5` prime-prefix residue-covering
+  certificates. Broader asymptotic, distributional, complete-PRC, and
+  selected-window diagnostic questions are outside this release.
 - This note does not use floating-point coverage checks for theorem-level
   claims.
 - This note does not include the full historical PRC archive. Certificate

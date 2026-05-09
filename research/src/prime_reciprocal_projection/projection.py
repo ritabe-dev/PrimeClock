@@ -48,3 +48,4 @@ def empirical_cdf(values: Iterable[float], x: float) -> float:
 def fractional_part(value: float) -> float:
     """Return the fractional part of a real value in ``[0, 1)``."""
     return value - math.floor(value)
+
