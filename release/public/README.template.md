@@ -4,8 +4,8 @@ This public release bundle contains the finite `C_k/C_4/B_5` Prime Reciprocal
 Covering (PRC) research package: theorem notes, exact rational CSV certificates,
 package verification tools, and a standard-library standalone checker.
 
-The historical PrimeClock React/Vite visualization is not included in this
-bundle. This bundle is intentionally narrower than the development repository.
+The React/Vite PrimeClock visualization app is not included in this bundle.
+This bundle is intentionally narrower than the development repository.
 
 ## Read First
 
@@ -54,8 +54,8 @@ standalone checker: checks=9, failed=0
 ## Scope
 
 This public release bundle is scoped to finite prime-prefix residue-covering
-certificates, specifically `C_4` and `B_5`. It does not include the historical
-visualization, broad research archive, certificate-depth diagnostics,
+certificates, specifically `C_4` and `B_5`. It does not include the React/Vite
+PrimeClock visualization app, broad research archive, certificate-depth diagnostics,
 modulo-210 diagnostics, branch-uniform diagnostics, `B_6` exports, or broader
 asymptotic, distributional, or complete PRC claims.
 

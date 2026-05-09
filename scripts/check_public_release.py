@@ -66,6 +66,7 @@ README_REQUIRED_TEXT = [
 README_FORBIDDEN_TEXT = [
     "This source repository contains",
     "historical PrimeClock React/Vite visualization and the current",
+    "The historical PrimeClock React/Vite visualization is not included",
     "PrimeClock Development Repository",
     "working tree for PrimeClock",
 ]

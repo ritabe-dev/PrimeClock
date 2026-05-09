@@ -4,9 +4,9 @@ This directory contains the reproducible research package for Prime Reciprocal
 Covering (PRC). The current external-release target is the narrow finite
 `C_k/C_4/B_5` certificate artifact.
 
-PrimeClock and the React/Vite visualization are the historical origin context.
-The v2.2.3 public release bundle contains the finite residue-covering research
-package and exact certificate artifacts, not the visualization.
+The PrimeClock visualization is origin/discovery context for the research. The
+v2.2.3 public release bundle contains the finite residue-covering research
+package and exact certificate artifacts, not the React/Vite visualization app.
 
 ## Current Release Entry Point
 

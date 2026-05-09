@@ -4,15 +4,14 @@ This development repository is the working tree for PrimeClock and Prime
 Reciprocal Covering (PRC). It can contain broader source history and local
 research work, including:
 
-- the historical PrimeClock React/Vite visualization, when present in this
-  checkout;
+- a small React/Vite PrimeClock visualization app in `src/`;
 - the PRC research package under `research/`;
 - release scripts used to build a narrow public certificate bundle.
 
 Public release bundles are generated from an allowlist and have their own root
 README template at `release/public/README.template.md`. The v2.2.3 public bundle
 contains only the finite `C_k/C_4/B_5` certificate artifact, exact rational CSVs,
-and verification tools; the historical visualization is not included in that
+and verification tools; the React/Vite visualization app is not included in that
 bundle.
 
 ## Current Release Target
