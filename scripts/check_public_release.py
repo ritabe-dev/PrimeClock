@@ -24,8 +24,20 @@ FORBIDDEN_PATH_PARTS = {
     term("CSV_", "SUMMARY.md"),
     term("PRO", "MPT.md"),
     "dist",
+    "local_notes",
     "node_modules",
+    "private_notes",
     "review_packages",
+    "scratch",
+}
+
+FORBIDDEN_PATH_PREFIXES = {
+    "research/experiments/",
+}
+
+FORBIDDEN_FILENAME_PARTS = {
+    "candidate_bundle",
+    "candidate_bundle_manifest",
 }
 
 FORBIDDEN_TEXT_PATTERNS = [
@@ -84,22 +96,32 @@ def is_text_file(path: Path) -> bool:
     return path.suffix in TEXT_SUFFIXES or path.name in {"LICENSE"}
 
 
-def has_forbidden_path_part(path: Path) -> bool:
-    return any(part in FORBIDDEN_PATH_PARTS for part in path.parts)
+def forbidden_path_reason(path: Path) -> str | None:
+    if any(part in FORBIDDEN_PATH_PARTS for part in path.parts):
+        return "path component"
+    relative_path = path.as_posix()
+    if any(relative_path.startswith(prefix) for prefix in FORBIDDEN_PATH_PREFIXES):
+        return "path prefix"
+    if any(part in path.name for part in FORBIDDEN_FILENAME_PARTS):
+        return "filename"
+    return None
+
+
+def has_forbidden_path(path: Path) -> bool:
+    return forbidden_path_reason(path) is not None
 
 
 def check_paths(root: Path) -> list[str]:
     failures: list[str] = []
     for path in root.rglob("*"):
-        relative_parts = path.relative_to(root).parts
+        relative_path = path.relative_to(root)
         if path.name == ".DS_Store":
-            failures.append(f"forbidden local metadata file: {path.relative_to(root)}")
-        for part in relative_parts:
-            if part in FORBIDDEN_PATH_PARTS:
-                failures.append(f"forbidden path component {part}: {path.relative_to(root)}")
-                break
+            failures.append(f"forbidden local metadata file: {relative_path}")
+        reason = forbidden_path_reason(relative_path)
+        if reason:
+            failures.append(f"forbidden {reason}: {relative_path}")
         if path.suffix in {".zip", ".tar", ".tgz"} or path.name.endswith(".tar.gz"):
-            failures.append(f"forbidden archive file: {path.relative_to(root)}")
+            failures.append(f"forbidden archive file: {relative_path}")
     return failures
 
 
@@ -108,7 +130,7 @@ def check_text(root: Path) -> list[str]:
     for path in root.rglob("*"):
         if not path.is_file() or not is_text_file(path):
             continue
-        if has_forbidden_path_part(path.relative_to(root)):
+        if has_forbidden_path(path.relative_to(root)):
             continue
         text = path.read_text(encoding="utf-8")
         for pattern in FORBIDDEN_TEXT_PATTERNS:

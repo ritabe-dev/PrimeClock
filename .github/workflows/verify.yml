@@ -31,8 +31,6 @@ jobs:
           python certificates/check_prime_prefix_c4_b5.py \
             --out data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
       - name: Check release hashes
-        run: python scripts/update_public_hashes.py --check
+        run: python scripts/check_release_versions.py
       - name: Build and inspect release bundle
-        run: |
-          python scripts/build_public_release.py --version 2.2.1 --out /tmp/primeclock-public-release --zip
-          python scripts/check_public_release.py /tmp/primeclock-public-release/PrimeClock-2.2.1
+        run: python scripts/verify_public_release.py --out /tmp/primeclock-public-release --zip

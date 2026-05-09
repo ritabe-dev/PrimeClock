@@ -1,0 +1,9 @@
+{
+  "public_release": "2.2.4",
+  "public_tag": "v2.2.4",
+  "bundle_name": "PrimeClock-2.2.4",
+  "root_release_notes": "RELEASE_NOTES_v2_2_4.md",
+  "research_release_notes": "research/RELEASE_NOTES_v2_2_4.md",
+  "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.2.4",
+  "zenodo_concept_doi": "10.5281/zenodo.20091722"
+}
