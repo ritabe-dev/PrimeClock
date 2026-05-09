@@ -1,6 +1,6 @@
 # Critical Radius and Birth Dynamics Sandbox
 
-This experiment starts the post-v2.2.1 PRC research line. The public v2.2.1
+This experiment starts the post-v2.2.3 PRC research line. The public v2.2.3
 release remains the stable `C_4/B_5` finite certificate artifact; files here are
 internal research artifacts until explicitly promoted to a claim release.
 
@@ -23,18 +23,20 @@ Start with:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
 The status note summarizes the current internal milestone and promotion
-boundary. The theorem-candidate outline selects the three components that could
-later become a public v2.3 candidate: critical radius, level sets, and birth
-containment. The v0.2 note explains how near-miss ranking connects to
-birth-parent gap geometry. The v0.1 integrated note gives the broader
-critical-radius and birth-dynamics context. The shorter companion notes split
-the v0.1 content into the critical-radius and birth-dynamics sides.
+boundary. The theorem-note draft is the first compact public-candidate-shaped
+text, still internal. The outline records the three selected components:
+critical radius, level sets, and birth containment. The v0.2 note explains how
+near-miss ranking connects to birth-parent gap geometry. The v0.1 integrated
+note gives the broader critical-radius and birth-dynamics context. The shorter
+companion notes split the v0.1 content into the critical-radius and
+birth-dynamics sides.
 
 ## Generate
 
@@ -45,7 +47,7 @@ From `research/`:
 ```
 
 Generated CSVs live in `data/` inside this experiment directory. They are not
-part of the v2.2.1 public release bundle.
+part of the v2.2.3 public release bundle.
 
 ## Current Status
 

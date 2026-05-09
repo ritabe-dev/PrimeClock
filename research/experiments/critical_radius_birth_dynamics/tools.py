@@ -1,7 +1,7 @@
 """Exact helpers for the critical-radius and birth-dynamics sandbox.
 
 This module intentionally lives under ``research/experiments`` instead of the
-public package. The v2.2.1 public release remains the stable C4/B5 certificate
+public package. The v2.2.3 public release remains the stable C4/B5 certificate
 artifact; these helpers are the next internal research layer.
 """
 
