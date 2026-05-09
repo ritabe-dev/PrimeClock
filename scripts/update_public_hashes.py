@@ -10,10 +10,11 @@ from pathlib import Path
 from build_public_release import (
     EXCLUDED_DIR_NAMES,
     RESEARCH_DIRS,
-    RESEARCH_FILES,
     ROOT_FILE_MAP,
-    ROOT_FILES,
+    research_files,
+    root_files,
 )
+from release_config import load_release_config
 
 
 HASH_MANIFEST = "SHA256SUMS"
@@ -32,6 +33,7 @@ def is_excluded_path(path: Path) -> bool:
 
 
 def release_file_paths(repo_root: Path) -> list[tuple[str, str]]:
+    config = load_release_config(repo_root)
     paths: dict[str, str] = {}
     for source_path, release_path in ROOT_FILE_MAP:
         path = repo_root / source_path
@@ -42,7 +44,7 @@ def release_file_paths(repo_root: Path) -> list[tuple[str, str]]:
             raise FileNotFoundError(f"Missing release file: {source_path}")
         paths[release_path] = source_path
 
-    for relative_path in ROOT_FILES + RESEARCH_FILES:
+    for relative_path in root_files(config) + research_files(config):
         if relative_path == HASH_MANIFEST:
             continue
         path = repo_root / relative_path

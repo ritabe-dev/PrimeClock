@@ -1335,3 +1335,56 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
     )
     assert failed_result.returncode == 1
     assert "hash mismatch for README.md" in failed_result.stdout
+
+
+def test_public_release_build_uses_config_default_version(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+
+    result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert (tmp_path / "PrimeClock-2.2.3").is_dir()
+    assert "PrimeClock-2.2.3" in result.stdout
+
+
+def test_public_release_build_fails_stale_version(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(builder),
+            "--version",
+            "2.2.1",
+            "--out",
+            str(tmp_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "does not match release_config public_release" in result.stdout
+
+
+def test_public_release_version_checker_passes_current_repo():
+    repo_root = Path(__file__).parents[2]
+    checker = repo_root / "scripts" / "check_release_versions.py"
+
+    result = subprocess.run(
+        [sys.executable, str(checker)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "release version check passed: v2.2.3" in result.stdout

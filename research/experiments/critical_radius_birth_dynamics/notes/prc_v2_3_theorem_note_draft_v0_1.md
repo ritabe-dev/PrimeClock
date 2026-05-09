@@ -233,7 +233,8 @@ no B_8 or larger layers
 
 Before promotion to a public v2.3 release bundle, this draft still needs:
 
-1. a decision on whether the public note should add formal related-work
+1. a public v2.3 release manifest, SHA256 path, and allowlist.
+2. a decision on whether the public note should add formal related-work
    citations for covering-radius terminology.
 
 ## 9. Non-Claims

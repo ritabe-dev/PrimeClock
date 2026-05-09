@@ -18,7 +18,7 @@ From the bundle root:
 
 ```bash
 cd research
-python -m pip install -e .
+python -m pip install -e ".[dev]"
 python experiments/critical_radius_birth_dynamics/check_candidate.py
 python -m pytest tests/test_critical_radius_birth_dynamics.py -q
 ```

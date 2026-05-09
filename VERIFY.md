@@ -30,7 +30,6 @@ From the repository root, check the release allowlist hashes and public-bundle
 hygiene:
 
 ```bash
-python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.3 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.3
+python3 scripts/check_release_versions.py
+python3 scripts/verify_public_release.py --out /private/tmp/primeclock-public-release --zip
 ```

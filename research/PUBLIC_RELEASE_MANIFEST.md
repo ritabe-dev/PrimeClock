@@ -19,9 +19,14 @@ Root files:
 - `VERIFY.md`
 - `RELEASE_NOTES_v2_2_3.md`
 - `.github/workflows/verify.yml`
+- `release/public/README.template.md`
+- `release/public/release_config.json`
 - `scripts/build_public_release.py`
 - `scripts/check_public_release.py`
+- `scripts/check_release_versions.py`
+- `scripts/release_config.py`
 - `scripts/update_public_hashes.py`
+- `scripts/verify_public_release.py`
 
 Research files:
 
@@ -66,6 +71,7 @@ finite certificate bundle:
 The Python source package is included as verifier/test support and may contain
 broader implementation modules. The public release-facing notes, CSVs, and
 claims remain restricted to the finite `C_k/C_4/B_5` certificate artifact.
+`release/public/release_config.json` is the release-version source of truth.
 `SHA256SUMS` records hashes for the public release allowlist, and
 `VERSION_MAP.md` records the release, package, note, table, and verifier
 version correspondence.

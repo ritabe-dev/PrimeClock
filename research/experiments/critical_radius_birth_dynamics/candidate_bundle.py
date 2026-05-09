@@ -140,6 +140,24 @@ def bundle_files(bundle_root: Path) -> list[Path]:
     return sorted(files, key=lambda item: item.relative_to(bundle_root).as_posix())
 
 
+def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
+    failures: list[str] = []
+    for path in bundle_root.rglob("*"):
+        relative = path.relative_to(bundle_root)
+        if path.name == ".DS_Store":
+            failures.append(f"forbidden local metadata file: {relative.as_posix()}")
+            continue
+        for part in relative.parts:
+            if part in EXCLUDED_DIR_NAMES:
+                failures.append(f"forbidden path component {part}: {relative.as_posix()}")
+                break
+        if path.is_file() and (
+            path.suffix in {".zip", ".tar", ".tgz"} or path.name.endswith(".tar.gz")
+        ):
+            failures.append(f"forbidden archive file: {relative.as_posix()}")
+    return failures
+
+
 def write_hash_manifest(bundle_root: Path) -> None:
     lines = [
         f"{sha256_bytes(path)}  {path.relative_to(bundle_root).as_posix()}"
@@ -149,7 +167,7 @@ def write_hash_manifest(bundle_root: Path) -> None:
 
 
 def check_bundle(bundle_root: Path) -> list[str]:
-    failures: list[str] = []
+    failures: list[str] = forbidden_bundle_paths(bundle_root)
     readme = bundle_root / "README.md"
     if not readme.is_file():
         failures.append("missing README.md")

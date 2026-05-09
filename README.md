@@ -12,7 +12,8 @@ Public release bundles are generated from an allowlist and have their own root
 README template at `release/public/README.template.md`. The v2.2.3 public bundle
 contains only the finite `C_k/C_4/B_5` certificate artifact, exact rational CSVs,
 and verification tools; the React/Vite visualization app is not included in that
-bundle.
+bundle. The release version is centralized in
+`release/public/release_config.json`.
 
 ## Current Release Target
 
@@ -82,9 +83,8 @@ the finite certificate artifact.
 Build and inspect a local release bundle with:
 
 ```bash
-python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.3 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.3
+python3 scripts/check_release_versions.py
+python3 scripts/verify_public_release.py --out /private/tmp/primeclock-public-release --zip
 ```
 
 The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are

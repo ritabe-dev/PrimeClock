@@ -6,6 +6,8 @@ separate. The current public release target is:
 | Item | Version / file |
 | --- | --- |
 | Public release | `v2.2.3` |
+| Public release config | `release/public/release_config.json` |
+| Public bundle name | `PrimeClock-2.2.3` |
 | Version DOI | assigned by Zenodo for the GitHub `v2.2.3` release |
 | Concept DOI | `10.5281/zenodo.20091722` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
@@ -30,6 +32,7 @@ python3 scripts/update_public_hashes.py
 Check it with:
 
 ```bash
+python3 scripts/check_release_versions.py
 python3 scripts/update_public_hashes.py --check
 ```
 

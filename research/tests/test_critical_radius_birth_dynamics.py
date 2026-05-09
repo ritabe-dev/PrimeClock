@@ -270,6 +270,7 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "Birth Containment" in text
     assert "check_candidate.py: checks=11, failed=0" in text
     assert "no B_8 or larger layers" in text
+    assert "public v2.3 release manifest, SHA256 path, and allowlist" in text
     assert "any change to the v2.2.3 public release" in text
 
 
@@ -360,3 +361,42 @@ def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):
         text=True,
     )
     assert f"OK: {bundle_root}" in check.stdout
+
+
+def test_v2_3_candidate_bundle_check_rejects_forbidden_paths(tmp_path):
+    builder = EXPERIMENT_DIR / "candidate_bundle.py"
+    bundle_name = "PrimeClock-v2.3-candidate-test"
+    subprocess.run(
+        [
+            sys.executable,
+            str(builder),
+            "--out",
+            str(tmp_path),
+            "--name",
+            bundle_name,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    bundle_root = tmp_path / bundle_name
+    forbidden_file = bundle_root / ".venv" / "secret.txt"
+    forbidden_file.parent.mkdir()
+    forbidden_file.write_text("must fail\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(builder), "--check", str(bundle_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "forbidden path component .venv" in result.stdout
+
+
+def test_v2_3_candidate_readme_uses_dev_install():
+    readme = EXPERIMENT_DIR / "candidate_README_v0_1.md"
+    text = readme.read_text(encoding="utf-8")
+
+    assert 'python -m pip install -e ".[dev]"' in text

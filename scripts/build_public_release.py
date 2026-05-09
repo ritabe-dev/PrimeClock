@@ -7,29 +7,34 @@ import argparse
 import shutil
 from pathlib import Path
 
+from release_config import load_release_config, require_matching_version
+
 
 ROOT_FILE_MAP = [
     ("release/public/README.template.md", "README.md"),
 ]
 
-ROOT_FILES = [
+BASE_ROOT_FILES = [
     "LICENSE",
     "CITATION.cff",
     "DATA_FILES.md",
     "SHA256SUMS",
     "VERSION_MAP.md",
     "VERIFY.md",
-    "RELEASE_NOTES_v2_2_3.md",
     ".github/workflows/verify.yml",
+    "release/public/README.template.md",
+    "release/public/release_config.json",
     "scripts/build_public_release.py",
     "scripts/check_public_release.py",
+    "scripts/check_release_versions.py",
+    "scripts/release_config.py",
     "scripts/update_public_hashes.py",
+    "scripts/verify_public_release.py",
 ]
 
-RESEARCH_FILES = [
+BASE_RESEARCH_FILES = [
     "research/README.md",
     "research/PUBLIC_RELEASE_MANIFEST.md",
-    "research/RELEASE_NOTES_v2_2_3.md",
     "research/VERIFY_FINITE_C4_B5.md",
     "research/pyproject.toml",
     "research/setup.py",
@@ -68,6 +73,14 @@ EXCLUDED_DIR_NAMES = {
 }
 
 
+def root_files(config: dict[str, str]) -> list[str]:
+    return BASE_ROOT_FILES + [config["root_release_notes"]]
+
+
+def research_files(config: dict[str, str]) -> list[str]:
+    return BASE_RESEARCH_FILES + [config["research_release_notes"]]
+
+
 def copy_file(
     repo_root: Path,
     release_root: Path,
@@ -104,15 +117,17 @@ def copy_dir(repo_root: Path, release_root: Path, relative_path: str) -> None:
     shutil.copytree(source, target, ignore=ignore_release_noise)
 
 
-def build_release(repo_root: Path, output_dir: Path, version: str) -> Path:
-    release_root = output_dir / f"PrimeClock-{version}"
+def build_release(repo_root: Path, output_dir: Path, version: str | None = None) -> Path:
+    config = load_release_config(repo_root)
+    require_matching_version(config, version)
+    release_root = output_dir / config["bundle_name"]
     if release_root.exists():
         shutil.rmtree(release_root)
     release_root.mkdir(parents=True)
 
     for source_path, release_path in ROOT_FILE_MAP:
         copy_file(repo_root, release_root, source_path, release_path)
-    for relative_path in ROOT_FILES + RESEARCH_FILES:
+    for relative_path in root_files(config) + research_files(config):
         copy_file(repo_root, release_root, relative_path)
     for relative_path in RESEARCH_DIRS:
         copy_dir(repo_root, release_root, relative_path)
@@ -122,13 +137,20 @@ def build_release(repo_root: Path, output_dir: Path, version: str) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", required=True, help="Release version, for example 2.2.3")
+    parser.add_argument(
+        "--version",
+        help="Release version. If set, it must match release/public/release_config.json.",
+    )
     parser.add_argument("--out", required=True, type=Path, help="Output parent directory")
     parser.add_argument("--zip", action="store_true", help="Also create a .zip archive beside the bundle")
     args = parser.parse_args()
 
     repo_root = Path(__file__).resolve().parents[1]
-    release_root = build_release(repo_root, args.out.resolve(), args.version)
+    try:
+        release_root = build_release(repo_root, args.out.resolve(), args.version)
+    except ValueError as error:
+        print(f"FAIL: {error}")
+        return 1
     print(release_root)
     if args.zip:
         archive_base = release_root
