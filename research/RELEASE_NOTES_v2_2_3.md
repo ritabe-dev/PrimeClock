@@ -1,8 +1,8 @@
-# PRC Finite Theorem Bundle v2.2.2 Release Notes
+# PRC Finite Theorem Bundle v2.2.3 Release Notes
 
 Release date: 2026-05-09 JST
 
-Version DOI: assigned by Zenodo for the GitHub `v2.2.2` release.
+Version DOI: assigned by Zenodo for the GitHub `v2.2.3` release.
 
 Concept DOI: `10.5281/zenodo.20091722`
 

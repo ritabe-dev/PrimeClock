@@ -96,4 +96,4 @@ When the public CSVs and both checkers pass, the narrow package supports:
 - Each B5 birth is a strict single-gap closure by the new `p=11` closed arc.
 
 These are finite certificate claims only. Broader asymptotic, distributional,
-and complete PRC questions are outside the v2.2.2 release scope.
+and complete PRC questions are outside the v2.2.3 release scope.
