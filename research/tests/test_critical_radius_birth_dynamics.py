@@ -302,3 +302,40 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     assert "include_b8_or_larger: false" in text
     assert "include_asymptotic_claims: false" in text
     assert "expected: checks=11, failed=0" in text
+    assert "builder: candidate_bundle.py" in text
+
+
+def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):
+    builder = EXPERIMENT_DIR / "candidate_bundle.py"
+    bundle_name = "PrimeClock-v2.3-candidate-test"
+    build = subprocess.run(
+        [
+            sys.executable,
+            str(builder),
+            "--out",
+            str(tmp_path),
+            "--name",
+            bundle_name,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    bundle_root = tmp_path / bundle_name
+
+    assert str(bundle_root) in build.stdout
+    assert (bundle_root / "SHA256SUMS").is_file()
+    assert (bundle_root / "README.md").is_file()
+    assert (bundle_root / "research/src/prime_reciprocal_projection").is_dir()
+    assert (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/check_candidate.py"
+    ).is_file()
+
+    check = subprocess.run(
+        [sys.executable, str(builder), "--check", str(bundle_root)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert f"OK: {bundle_root}" in check.stdout

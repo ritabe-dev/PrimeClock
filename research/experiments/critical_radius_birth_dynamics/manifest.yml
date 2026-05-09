@@ -7,6 +7,8 @@ purpose: >
   and finite birth-dynamics classification without changing the stable public
   v2.2.3 release.
 artifacts:
+  - candidate_README_v0_1.md
+  - candidate_bundle.py
   - promotion_manifest_v0_1.yml
   - check_candidate.py
   - data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv

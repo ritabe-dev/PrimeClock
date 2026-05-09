@@ -91,6 +91,12 @@ Internal checker:
 check_candidate.py: checks=11, failed=0
 ```
 
+Internal candidate bundle:
+
+```text
+candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
+```
+
 ## Promotion Boundary
 
 This is ready as an internal research milestone, but not yet a public release.
@@ -121,9 +127,10 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 ```
 
-The next useful slice is still not brute force. The checker path and internal
-promotion manifest now exist, so the next step should define the v2.3 public
-bundle allowlist and hash path. Only after that should new data be added.
+The next useful slice is still not brute force. The checker path, promotion
+manifest, and internal candidate bundle path now exist, so the next step should
+decide whether to run an external review on the candidate or polish terminology
+before public release. Only after that should new data be added.
 
 ## Non-Claims
 

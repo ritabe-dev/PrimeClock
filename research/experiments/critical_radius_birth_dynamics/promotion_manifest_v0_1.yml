@@ -22,6 +22,10 @@ verification:
   checker: check_candidate.py
   expected: checks=11, failed=0
   output: data/prc_v2_3_candidate_verification_v0_1.csv
+candidate_bundle:
+  builder: candidate_bundle.py
+  default_name: PrimeClock-v2.3-candidate-v0.1
+  status: internal_only
 promotion_blockers:
   - public release manifest and SHA256 path are not yet created for v2.3.
   - v2.3 public bundle contents are not yet allowlisted.

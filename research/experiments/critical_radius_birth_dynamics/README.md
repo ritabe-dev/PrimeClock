@@ -78,6 +78,20 @@ no B_8 or larger layers
 no asymptotic or prime-distribution claims
 ```
 
+## Candidate Bundle
+
+An internal candidate bundle can be generated without touching the v2.2.3 public
+release line:
+
+```bash
+.venv/bin/python experiments/critical_radius_birth_dynamics/candidate_bundle.py \
+  --out /private/tmp/primeclock-v2-3-candidate
+.venv/bin/python experiments/critical_radius_birth_dynamics/candidate_bundle.py \
+  --check /private/tmp/primeclock-v2-3-candidate/PrimeClock-v2.3-candidate-v0.1
+```
+
+This bundle has its own `SHA256SUMS` and is for internal promotion testing only.
+
 ## Current Status
 
 This is an internal v2.3 candidate, not a public release. It makes finite claims

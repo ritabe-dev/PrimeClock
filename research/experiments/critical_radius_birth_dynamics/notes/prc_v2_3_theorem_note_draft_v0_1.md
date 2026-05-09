@@ -202,6 +202,12 @@ Internal checker:
 check_candidate.py: checks=11, failed=0
 ```
 
+Internal candidate bundle:
+
+```text
+candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
+```
+
 ## 8. Promotion Boundary
 
 The internal promotion manifest fixes this draft's candidate scope:
@@ -215,8 +221,7 @@ no B_8 or larger layers
 
 Before promotion to a public v2.3 release bundle, this draft still needs:
 
-1. a public manifest and hash path separate from v2.2.3;
-2. review of the weighted covering-radius statement against nearby covering
+1. review of the weighted covering-radius statement against nearby covering
    radius terminology.
 
 ## 9. Non-Claims
