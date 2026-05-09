@@ -71,6 +71,9 @@ Interpretation:
 - `C_5` already contains two robust covered residues.
 - The `B_5` robust birth pair is `849/1461`, with `lambda_5=4/9`.
 - The other six `B_5` reflection pairs land exactly at `lambda_5=1/2`.
+- Threshold-crossing rows now cover `B_5`, `B_6`, and `B_7`, so all early
+  birth layers can be read as parent `lambda>1/2` to child `lambda<=1/2`
+  transitions.
 
 ## Birth Dynamics
 
@@ -117,6 +120,7 @@ In short: this is not a general theorem for all levels.
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
 data/prc_prime_prefix_critical_radius_summary_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
+data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 ```
@@ -125,10 +129,9 @@ data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 
 The next useful steps are deliberately finite:
 
-1. Extend threshold-crossing rows from `B_5` to `B_6` and `B_7`.
-2. Identify near-miss residues just above `lambda=1/2`.
-3. Search for the first multi-gap birth without brute-forcing `k=9`.
-4. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
+1. Identify near-miss residues just above `lambda=1/2`.
+2. Search for the first multi-gap birth without brute-forcing `k=9`.
+3. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
    public candidate.
 
 ## Non-Claims

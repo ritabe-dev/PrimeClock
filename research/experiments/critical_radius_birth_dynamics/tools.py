@@ -190,30 +190,42 @@ def critical_radius_summary_rows(
     return summaries
 
 
-def birth_threshold_crossing_rows(*, k: int = 5) -> list[BirthThresholdCrossingRow]:
-    """Return how one birth layer crosses the critical-radius threshold."""
-    if k < 2:
-        raise ValueError("k must be >= 2")
+def birth_threshold_crossing_rows(
+    *,
+    min_k: int = 5,
+    max_k: int | None = None,
+) -> list[BirthThresholdCrossingRow]:
+    """Return how birth layers cross the critical-radius threshold."""
+    if max_k is None:
+        max_k = min_k
+    if min_k < 2:
+        raise ValueError("min_k must be >= 2")
+    if max_k < min_k:
+        raise ValueError("max_k must be >= min_k")
+
     full_rows = [
         row
-        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=k > 6)
-        if row.k == k and row.status == "birth"
+        for row in prime_prefix_residue_full_rows(max_k=max_k, allow_large_k=max_k > 6)
+        if min_k <= row.k <= max_k and row.status == "birth"
     ]
-    prefix_primes = first_primes(k)
-    previous_primes = prefix_primes[:-1]
-    new_prime = prefix_primes[-1]
-    previous_modulus = primorial(previous_primes)
-    modulus = primorial(prefix_primes)
-    birth_types = {row.residue: row.birth_type for row in birth_dynamics_rows(min_k=k, max_k=k)}
+    birth_types = {
+        (row.k, row.residue): row.birth_type
+        for row in birth_dynamics_rows(min_k=min_k, max_k=max_k)
+    }
 
     rows: list[BirthThresholdCrossingRow] = []
     for row in full_rows:
+        prefix_primes = first_primes(row.k)
+        previous_primes = prefix_primes[:-1]
+        new_prime = prefix_primes[-1]
+        previous_modulus = primorial(previous_primes)
+        modulus = primorial(prefix_primes)
         parent_residue = row.residue % previous_modulus
         parent_lambda = critical_radius_certificate(parent_residue, previous_primes)[0]
         current_lambda = critical_radius_certificate(row.residue, prefix_primes)[0]
         rows.append(
             BirthThresholdCrossingRow(
-                k=k,
+                k=row.k,
                 new_prime=new_prime,
                 primorial=modulus,
                 residue=row.residue,
@@ -224,7 +236,7 @@ def birth_threshold_crossing_rows(*, k: int = 5) -> list[BirthThresholdCrossingR
                 current_lambda_decimal=float(current_lambda),
                 parent_status=critical_radius_status(parent_lambda),
                 current_status=critical_radius_status(current_lambda),
-                birth_type=birth_types[row.residue],
+                birth_type=birth_types[(row.k, row.residue)],
             )
         )
     return rows

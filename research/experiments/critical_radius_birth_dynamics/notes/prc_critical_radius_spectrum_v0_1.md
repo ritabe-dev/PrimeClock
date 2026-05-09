@@ -46,6 +46,7 @@ Initial artifact:
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
 data/prc_prime_prefix_critical_radius_summary_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
+data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 ```
 
 The first validation target is exact agreement with the existing finite

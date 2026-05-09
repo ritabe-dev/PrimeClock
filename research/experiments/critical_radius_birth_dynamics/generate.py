@@ -27,7 +27,8 @@ def main() -> int:
     radius_summary_rows = critical_radius_summary_rows(radius_rows)
     birth_rows = birth_dynamics_rows(min_k=5, max_k=7)
     summary_rows = birth_dynamics_summary_rows(birth_rows)
-    crossing_rows = birth_threshold_crossing_rows(k=5)
+    crossing_rows = birth_threshold_crossing_rows(min_k=5, max_k=7)
+    b5_crossing_rows = [row for row in crossing_rows if row.k == 5]
 
     write_critical_radius_csv(
         radius_rows,
@@ -38,8 +39,12 @@ def main() -> int:
         DATA_DIR / "prc_prime_prefix_critical_radius_summary_v0_1.csv",
     )
     write_birth_threshold_crossing_csv(
-        crossing_rows,
+        b5_crossing_rows,
         DATA_DIR / "prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv",
+    )
+    write_birth_threshold_crossing_csv(
+        crossing_rows,
+        DATA_DIR / "prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv",
     )
     write_birth_dynamics_csv(
         birth_rows,

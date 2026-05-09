@@ -93,9 +93,22 @@ def test_critical_radius_summary_counts_match_level_sets():
 
 
 def test_b5_threshold_crossing_rows_connect_parent_and_child_radius():
-    rows = tools.birth_threshold_crossing_rows(k=5)
+    rows = tools.birth_threshold_crossing_rows(min_k=5)
 
     assert len(rows) == 14
+    assert {row.birth_type for row in rows} == {"strict_single_gap_birth"}
+    for row in rows:
+        assert Fraction(row.parent_lambda_fraction) > Fraction(1, 2)
+        assert Fraction(row.current_lambda_fraction) <= Fraction(1, 2)
+        assert row.parent_status == "uncovered"
+        assert row.current_status in {"robust_covered", "endpoint_covered"}
+
+
+def test_threshold_crossing_rows_cover_b5_b6_b7_births():
+    rows = tools.birth_threshold_crossing_rows(min_k=5, max_k=7)
+    counts = {k: sum(row.k == k for row in rows) for k in [5, 6, 7]}
+
+    assert counts == {5: 14, 6: 42, 7: 714}
     assert {row.birth_type for row in rows} == {"strict_single_gap_birth"}
     for row in rows:
         assert Fraction(row.parent_lambda_fraction) > Fraction(1, 2)
