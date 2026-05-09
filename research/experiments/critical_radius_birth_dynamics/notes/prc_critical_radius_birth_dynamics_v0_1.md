@@ -74,6 +74,8 @@ Interpretation:
 - Threshold-crossing rows now cover `B_5`, `B_6`, and `B_7`, so all early
   birth layers can be read as parent `lambda>1/2` to child `lambda<=1/2`
   transitions.
+- The near-miss table lists the closest uncovered `k=4,5` residues above
+  `lambda=1/2`; it is a candidate generator, not a claim about later levels.
 
 ## Birth Dynamics
 
@@ -119,6 +121,7 @@ In short: this is not a general theorem for all levels.
 ```text
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
 data/prc_prime_prefix_critical_radius_summary_v0_1.csv
+data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
@@ -130,8 +133,9 @@ data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 The next useful steps are deliberately finite:
 
 1. Identify near-miss residues just above `lambda=1/2`.
-2. Search for the first multi-gap birth without brute-forcing `k=9`.
-3. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
+2. Compare near-miss parents against later birth layers.
+3. Search for the first multi-gap birth without brute-forcing `k=9`.
+4. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
    public candidate.
 
 ## Non-Claims

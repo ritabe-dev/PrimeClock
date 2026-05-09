@@ -92,6 +92,25 @@ def test_critical_radius_summary_counts_match_level_sets():
     )
 
 
+def test_critical_radius_near_misses_are_sorted_uncovered_rows():
+    rows = tools.critical_radius_rows(min_k=4, max_k=5)
+    near_misses = tools.critical_radius_near_miss_rows(rows, limit_per_k=5)
+    grouped = {
+        k: [row for row in near_misses if row.k == k]
+        for k in [4, 5]
+    }
+
+    assert {k: len(group) for k, group in grouped.items()} == {4: 5, 5: 5}
+    assert grouped[4][0].lambda_fraction == "5/9"
+    assert grouped[5][0].lambda_fraction == "7/13"
+
+    for group in grouped.values():
+        margins = [Fraction(row.lambda_minus_half_fraction) for row in group]
+        assert margins == sorted(margins)
+        assert all(margin > 0 for margin in margins)
+        assert [row.near_miss_rank for row in group] == list(range(1, len(group) + 1))
+
+
 def test_b5_threshold_crossing_rows_connect_parent_and_child_radius():
     rows = tools.birth_threshold_crossing_rows(min_k=5)
 

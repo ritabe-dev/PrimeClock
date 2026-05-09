@@ -54,6 +54,20 @@ class CriticalRadiusSummaryRow:
 
 
 @dataclass(frozen=True)
+class CriticalRadiusNearMissRow:
+    k: int
+    primorial: int
+    near_miss_rank: int
+    residue: int
+    reflection_residue: int
+    lambda_fraction: str
+    lambda_minus_half_fraction: str
+    bottleneck_point: str
+    active_primes: str
+    active_centers: str
+
+
+@dataclass(frozen=True)
 class BirthThresholdCrossingRow:
     k: int
     new_prime: int
@@ -188,6 +202,49 @@ def critical_radius_summary_rows(
             )
         )
     return summaries
+
+
+def critical_radius_near_miss_rows(
+    rows: Iterable[CriticalRadiusRow],
+    *,
+    limit_per_k: int = 20,
+) -> list[CriticalRadiusNearMissRow]:
+    """Return uncovered residues nearest to the covering threshold."""
+    if limit_per_k < 1:
+        raise ValueError("limit_per_k must be >= 1")
+
+    grouped: dict[int, list[CriticalRadiusRow]] = {}
+    for row in rows:
+        if row.status == "uncovered":
+            grouped.setdefault(row.k, []).append(row)
+
+    threshold = Fraction(1, 2)
+    near_misses: list[CriticalRadiusNearMissRow] = []
+    for k, group in sorted(grouped.items()):
+        ordered = sorted(
+            group,
+            key=lambda row: (
+                parse_fraction(row.lambda_fraction) - threshold,
+                row.residue,
+            ),
+        )
+        for rank, row in enumerate(ordered[:limit_per_k], start=1):
+            lambda_value = parse_fraction(row.lambda_fraction)
+            near_misses.append(
+                CriticalRadiusNearMissRow(
+                    k=row.k,
+                    primorial=row.primorial,
+                    near_miss_rank=rank,
+                    residue=row.residue,
+                    reflection_residue=(-row.residue) % row.primorial,
+                    lambda_fraction=row.lambda_fraction,
+                    lambda_minus_half_fraction=format_fraction(lambda_value - threshold),
+                    bottleneck_point=row.bottleneck_point,
+                    active_primes=row.active_primes,
+                    active_centers=row.active_centers,
+                )
+            )
+    return near_misses
 
 
 def birth_threshold_crossing_rows(
@@ -481,6 +538,13 @@ def write_critical_radius_summary_csv(
     output_path: str | Path,
 ) -> None:
     write_dataclass_csv(rows, output_path, CriticalRadiusSummaryRow)
+
+
+def write_critical_radius_near_miss_csv(
+    rows: Iterable[CriticalRadiusNearMissRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, CriticalRadiusNearMissRow)
 
 
 def write_birth_threshold_crossing_csv(

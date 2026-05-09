@@ -10,6 +10,7 @@ internal research artifacts until explicitly promoted to a claim release.
   coverings;
 - verify `C_k = {r : lambda_k(r) <= 1/2}` for `k=4,5`;
 - summarize the `k=4,5` spectrum and the `B_5/B_6/B_7` threshold crossings;
+- list the nearest uncovered `k=4,5` residues just above `lambda=1/2`;
 - express births as old residual gaps contained in the new prime arc;
 - classify `B_5`, `B_6`, and `B_7` births as strict/endpoint and
   single-gap/multi-gap events.
