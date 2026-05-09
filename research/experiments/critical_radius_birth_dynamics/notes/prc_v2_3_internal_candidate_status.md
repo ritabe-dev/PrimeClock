@@ -64,6 +64,7 @@ Read in this order:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
@@ -96,13 +97,15 @@ Before promotion to a v2.3 public candidate:
 
 ## Next Slice
 
-The next useful slice is design, not brute force:
+The design slice now has a first internal outline:
 
 ```text
-Define the minimal v2.3 public-candidate theorem note outline.
+notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 ```
 
-Only after that should new data be added.
+The next useful slice is still not brute force. It should turn the outline into
+a compact draft theorem note or add a checker path for the finite v2.3 candidate
+claims. Only after that should new data be added.
 
 ## Non-Claims
 

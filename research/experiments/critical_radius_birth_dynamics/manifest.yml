@@ -17,6 +17,7 @@ artifacts:
   - data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
   - data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
   - notes/prc_v2_3_internal_candidate_status.md
+  - notes/prc_v2_3_theorem_candidate_outline_v0_1.md
   - notes/prc_critical_radius_birth_dynamics_v0_1.md
   - notes/prc_near_miss_birth_predictor_v0_2.md
   - notes/prc_critical_radius_spectrum_v0_1.md

@@ -231,7 +231,20 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     text = note.read_text(encoding="utf-8")
 
     assert "Status: internal candidate, not a public release." in text
+    assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
     assert "v2.2.1 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
     assert "Before promotion to a v2.3 public candidate" in text
     assert "the v2.2.1 public release has changed" in text
+
+
+def test_v2_3_theorem_candidate_outline_keeps_scope_and_claims():
+    note = EXPERIMENT_DIR / "notes" / "prc_v2_3_theorem_candidate_outline_v0_1.md"
+    text = note.read_text(encoding="utf-8")
+
+    assert "Status: internal theorem-candidate outline, not a public release." in text
+    assert "C_k = { r : lambda_k(r) <= 1/2 }" in text
+    assert "B_7: 714 strict single-gap births" in text
+    assert "naive adjacent-center formula" in text
+    assert "birth containment identity" in text
+    assert "This outline does not claim" in text

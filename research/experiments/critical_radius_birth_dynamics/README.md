@@ -23,15 +23,18 @@ Start with:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
 The status note summarizes the current internal milestone and promotion
-boundary. The v0.2 note explains how near-miss ranking connects to birth-parent
-gap geometry. The v0.1 integrated note gives the broader critical-radius and
-birth-dynamics context. The shorter companion notes split the v0.1 content into
-the critical-radius and birth-dynamics sides.
+boundary. The theorem-candidate outline selects the three components that could
+later become a public v2.3 candidate: critical radius, level sets, and birth
+containment. The v0.2 note explains how near-miss ranking connects to
+birth-parent gap geometry. The v0.1 integrated note gives the broader
+critical-radius and birth-dynamics context. The shorter companion notes split
+the v0.1 content into the critical-radius and birth-dynamics sides.
 
 ## Generate
 
