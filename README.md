@@ -66,8 +66,10 @@ are not part of the narrow finite-theorem release bundle.
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The project is released under the
-MIT License; see `LICENSE`.
+Use `CITATION.cff` for citation metadata. The archived v2.2.0 DOI is:
 
-The archived DOI is added to `CITATION.cff` after the public GitHub release is
-preserved by Zenodo.
+```text
+10.5281/zenodo.20091829
+```
+
+The project is released under the MIT License; see `LICENSE`.

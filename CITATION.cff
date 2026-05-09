@@ -10,3 +10,4 @@ abstract: "A release-ready finite certificate artifact for Prime Reciprocal Cove
 license: "MIT"
 repository-code: "https://github.com/ritabe-dev/PrimeClock"
 url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.2.0"
+doi: "10.5281/zenodo.20091829"

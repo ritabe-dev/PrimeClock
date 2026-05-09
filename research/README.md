@@ -1,7 +1,7 @@
 # Prime Reciprocal Covering Research Package
 
 This directory contains the reproducible research package for Prime Reciprocal
-Covering (PRC). The current external-release target is the narrow finite
+Covering (PRC). The current public release target is the narrow finite
 `C_k/C_4/B_5` certificate artifact.
 
 PrimeClock and the React/Vite visualization are the origin context. The current
@@ -78,7 +78,17 @@ comparisons, and residual-fragmentation studies. Those remain useful context,
 but they are not part of the narrow `C_k/C_4/B_5` finite-theorem release
 package.
 
-Use `PUBLIC_ARTIFACTS.md` before preparing a review or release zip.
+The public release bundle is intentionally narrower than the full research
+archive. Use the repository root `DATA_FILES.md`, `VERIFY.md`, and
+`RELEASE_NOTES_v2_2.md` as the release manifest.
+
+## Citation
+
+The archived v2.2.0 DOI is:
+
+```text
+10.5281/zenodo.20091829
+```
 
 ## Non-Claims
 

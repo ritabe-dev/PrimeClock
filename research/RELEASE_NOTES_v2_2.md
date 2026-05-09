@@ -2,6 +2,8 @@
 
 Release date: 2026-05-09 JST
 
+Archived DOI: `10.5281/zenodo.20091829`
+
 ## Purpose
 
 This release publishes a clean-history public bundle for the narrow
@@ -24,7 +26,7 @@ release archive have been rebuilt from a clean tree.
 - `VERIFY_FINITE_C4_B5.md`, the verifier contract.
 - `DATA_FILES.md`, a compact guide to the finite certificate CSVs.
 - `CITATION.cff`, pointing at the public GitHub repository and v2.2.0 release
-  URL.
+  URL, with the archived v2.2.0 DOI.
 - `LICENSE`, using the MIT License.
 - Existing public finite-theorem CSVs through the v1.8 standalone verification
   output.
