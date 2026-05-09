@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import importlib.util
+import json
 import subprocess
 import sys
 from fractions import Fraction
@@ -238,6 +239,7 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
     assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
+    assert "notes/prc_v2_3_related_work_decision_v0_1.md" in text
     assert "notes/prc_v2_3_standalone_checker_contract_v0_1.md" in text
     assert "v2.2.3 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
@@ -275,7 +277,7 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "check_candidate.py: checks=12, failed=0" in text
     assert "check_candidate_standalone.py: checks=7, failed=0" in text
     assert "no B_8 or larger layers" in text
-    assert "public v2.3 release manifest, SHA256 path, and allowlist" in text
+    assert "candidate_bundle_manifest_v0_1.json" in text
     assert "standalone checker uses only the Python standard library" in text
     assert "any change to the v2.2.3 public release" in text
 
@@ -343,10 +345,25 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     assert "helper_expected: checks=12, failed=0" in text
     assert "standalone_expected: checks=7, failed=0" in text
     assert "builder: candidate_bundle.py" in text
+    assert "manifest: candidate_bundle_manifest_v0_1.json" in text
     assert "helper_scope: internal_helper_based" in text
     assert "standalone_scope: standard_library_csv_audit" in text
     assert "terminology_status:" in text
     assert "primary_term: critical radius" in text
+    assert "decision_note: notes/prc_v2_3_related_work_decision_v0_1.md" in text
+
+
+def test_v2_3_candidate_bundle_manifest_fixes_allowlist():
+    manifest = EXPERIMENT_DIR / "candidate_bundle_manifest_v0_1.json"
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+
+    assert data["status"] == "internal_candidate_manifest"
+    assert data["public_release"] is False
+    assert data["base_public_release"] == "v2.2.3"
+    assert data["default_name"] == "PrimeClock-v2.3-candidate-v0.1"
+    assert "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py" in data["research_files"]
+    assert "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_decision_v0_1.md" in data["research_files"]
+    assert "convert this manifest into a release/public config only after promotion" in data["promotion_boundary"]
 
 
 def test_v2_3_weighted_covering_radius_terminology_note_keeps_scope():
@@ -363,6 +380,16 @@ def test_v2_3_weighted_covering_radius_terminology_note_keeps_scope():
     assert "descriptive shorthand" in text
     assert "naive adjacent-center formula" in text
     assert "does not claim novelty" in text
+
+
+def test_v2_3_related_work_decision_keeps_internal_boundary():
+    note = EXPERIMENT_DIR / "notes" / "prc_v2_3_related_work_decision_v0_1.md"
+    text = note.read_text(encoding="utf-8")
+
+    assert "Status: internal terminology decision" in text
+    assert "use `critical radius` as the primary" in text
+    assert "Do not delay internal v2.3 candidate review" in text
+    assert "formal related-work citations" in text
 
 
 def test_v2_3_weighted_bisector_candidate_lemma_keeps_scope():
@@ -424,6 +451,10 @@ def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):
     assert (
         bundle_root
         / "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py"
+    ).is_file()
+    assert (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json"
     ).is_file()
 
     check = subprocess.run(

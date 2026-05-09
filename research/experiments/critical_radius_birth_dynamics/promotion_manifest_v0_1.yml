@@ -30,12 +30,14 @@ verification:
   standalone_output: data/prc_v2_3_candidate_standalone_verification_v0_1.csv
 candidate_bundle:
   builder: candidate_bundle.py
+  manifest: candidate_bundle_manifest_v0_1.json
   default_name: PrimeClock-v2.3-candidate-v0.1
   status: internal_only
 promotion_blockers:
-  - v2.3 public release manifest, SHA256 path, and allowlist are not yet created.
-  - formal related-work citations for covering-radius terminology are not yet included.
+  - candidate bundle manifest must be converted into release/public config before any public release.
+  - GitHub/Zenodo metadata and DOI flow are not created for v2.3.
   - no Zenodo or GitHub release should be created from this internal manifest.
 terminology_status:
   primary_term: critical radius
   weighted_covering_radius: descriptive finite max-min shorthand
+  decision_note: notes/prc_v2_3_related_work_decision_v0_1.md

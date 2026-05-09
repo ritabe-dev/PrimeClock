@@ -33,5 +33,6 @@ check_v2_3_candidate_standalone: checks=7, failed=0
 ```
 
 This does not make v2.3 a public release. Public promotion still requires a
-v2.3 public release manifest, public bundle allowlist and SHA256 path, and a
-final related-work terminology decision for the critical-radius language.
+v2.3 public release config with GitHub/Zenodo metadata. The related-work
+terminology decision is recorded separately in
+`notes/prc_v2_3_related_work_decision_v0_1.md`.

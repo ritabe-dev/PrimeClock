@@ -1,0 +1,67 @@
+{
+  "id": "prc_v2_3_candidate_bundle_v0_1",
+  "status": "internal_candidate_manifest",
+  "public_release": false,
+  "base_public_release": "v2.2.3",
+  "default_name": "PrimeClock-v2.3-candidate-v0.1",
+  "hash_manifest": "SHA256SUMS",
+  "root_file_map": [
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/candidate_README_v0_1.md",
+      "target": "README.md"
+    }
+  ],
+  "root_files": [
+    "LICENSE"
+  ],
+  "research_files": [
+    "research/pyproject.toml",
+    "research/setup.py",
+    "research/tests/test_critical_radius_birth_dynamics.py",
+    "research/experiments/critical_radius_birth_dynamics/README.md",
+    "research/experiments/critical_radius_birth_dynamics/manifest.yml",
+    "research/experiments/critical_radius_birth_dynamics/promotion_manifest_v0_1.yml",
+    "research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json",
+    "research/experiments/critical_radius_birth_dynamics/generate.py",
+    "research/experiments/critical_radius_birth_dynamics/check_candidate.py",
+    "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py",
+    "research/experiments/critical_radius_birth_dynamics/tools.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_verification_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_sha256sums_v0_1.txt",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_standalone_verification_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_internal_candidate_status.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_note_draft_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_candidate_outline_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_weighted_covering_radius_terminology_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_weighted_bisector_candidate_lemma_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_decision_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_standalone_checker_contract_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_critical_radius_birth_dynamics_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_near_miss_birth_predictor_v0_2.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_critical_radius_spectrum_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_birth_dynamics_v0_1.md"
+  ],
+  "research_dirs": [
+    "research/src/prime_reciprocal_projection"
+  ],
+  "required_readme_phrases": [
+    "internal candidate bundle",
+    "not a public release",
+    "v2.2.3",
+    "no B_8 or larger layers"
+  ],
+  "promotion_boundary": [
+    "do not upload this candidate bundle to Zenodo",
+    "do not replace the stable v2.2.3 public release",
+    "convert this manifest into a release/public config only after promotion"
+  ]
+}

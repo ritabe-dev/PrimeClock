@@ -5,58 +5,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import shutil
+from typing import Any
 from pathlib import Path
 
 
 EXPERIMENT_REL = "research/experiments/critical_radius_birth_dynamics"
-
-ROOT_FILE_MAP = [
-    (f"{EXPERIMENT_REL}/candidate_README_v0_1.md", "README.md"),
-]
-
-ROOT_FILES = [
-    "LICENSE",
-]
-
-RESEARCH_FILES = [
-    "research/pyproject.toml",
-    "research/setup.py",
-    "research/tests/test_critical_radius_birth_dynamics.py",
-    f"{EXPERIMENT_REL}/README.md",
-    f"{EXPERIMENT_REL}/manifest.yml",
-    f"{EXPERIMENT_REL}/promotion_manifest_v0_1.yml",
-    f"{EXPERIMENT_REL}/generate.py",
-    f"{EXPERIMENT_REL}/check_candidate.py",
-    f"{EXPERIMENT_REL}/check_candidate_standalone.py",
-    f"{EXPERIMENT_REL}/tools.py",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_critical_radius_summary_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_v2_3_candidate_verification_v0_1.csv",
-    f"{EXPERIMENT_REL}/data/prc_v2_3_candidate_sha256sums_v0_1.txt",
-    f"{EXPERIMENT_REL}/data/prc_v2_3_candidate_standalone_verification_v0_1.csv",
-    f"{EXPERIMENT_REL}/notes/prc_v2_3_internal_candidate_status.md",
-    f"{EXPERIMENT_REL}/notes/prc_v2_3_theorem_note_draft_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_v2_3_theorem_candidate_outline_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_weighted_covering_radius_terminology_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_weighted_bisector_candidate_lemma_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_v2_3_standalone_checker_contract_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_critical_radius_birth_dynamics_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_near_miss_birth_predictor_v0_2.md",
-    f"{EXPERIMENT_REL}/notes/prc_critical_radius_spectrum_v0_1.md",
-    f"{EXPERIMENT_REL}/notes/prc_birth_dynamics_v0_1.md",
-]
-
-RESEARCH_DIRS = [
-    "research/src/prime_reciprocal_projection",
-]
+MANIFEST_REL = f"{EXPERIMENT_REL}/candidate_bundle_manifest_v0_1.json"
 
 EXCLUDED_DIR_NAMES = {
     ".git",
@@ -74,6 +30,12 @@ EXCLUDED_DIR_NAMES = {
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def load_manifest(source_root: Path) -> dict[str, Any]:
+    path = source_root / MANIFEST_REL
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
 
 
 def copy_file(
@@ -108,17 +70,22 @@ def copy_dir(source_root: Path, bundle_root: Path, relative_path: str) -> None:
     shutil.copytree(source, target, ignore=ignore_noise)
 
 
-def build_bundle(source_root: Path, output_parent: Path, name: str) -> Path:
+def build_bundle(
+    source_root: Path,
+    output_parent: Path,
+    name: str,
+    manifest: dict[str, Any],
+) -> Path:
     bundle_root = output_parent / name
     if bundle_root.exists():
         shutil.rmtree(bundle_root)
     bundle_root.mkdir(parents=True)
 
-    for source_path, bundle_path in ROOT_FILE_MAP:
-        copy_file(source_root, bundle_root, source_path, bundle_path)
-    for relative_path in ROOT_FILES + RESEARCH_FILES:
+    for entry in manifest["root_file_map"]:
+        copy_file(source_root, bundle_root, entry["source"], entry["target"])
+    for relative_path in manifest["root_files"] + manifest["research_files"]:
         copy_file(source_root, bundle_root, relative_path)
-    for relative_dir in RESEARCH_DIRS:
+    for relative_dir in manifest["research_dirs"]:
         copy_dir(source_root, bundle_root, relative_dir)
 
     write_hash_manifest(bundle_root)
@@ -171,19 +138,14 @@ def write_hash_manifest(bundle_root: Path) -> None:
     (bundle_root / "SHA256SUMS").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def check_bundle(bundle_root: Path) -> list[str]:
+def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
     failures: list[str] = forbidden_bundle_paths(bundle_root)
     readme = bundle_root / "README.md"
     if not readme.is_file():
         failures.append("missing README.md")
     else:
         text = readme.read_text(encoding="utf-8")
-        for required in [
-            "internal candidate bundle",
-            "not a public release",
-            "v2.2.3",
-            "no B_8 or larger layers",
-        ]:
+        for required in manifest["required_readme_phrases"]:
             if required not in text:
                 failures.append(f"README.md missing required text: {required}")
 
@@ -218,14 +180,16 @@ def check_bundle(bundle_root: Path) -> list[str]:
 
 
 def main() -> int:
+    source_root = repo_root()
+    manifest = load_manifest(source_root)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, help="output parent directory")
-    parser.add_argument("--name", default="PrimeClock-v2.3-candidate-v0.1")
+    parser.add_argument("--name", default=manifest["default_name"])
     parser.add_argument("--check", type=Path, help="check an existing candidate bundle")
     args = parser.parse_args()
 
     if args.check:
-        failures = check_bundle(args.check.resolve())
+        failures = check_bundle(args.check.resolve(), manifest)
         if failures:
             for failure in failures:
                 print(f"FAIL: {failure}")
@@ -235,7 +199,7 @@ def main() -> int:
 
     if not args.out:
         raise SystemExit("--out is required unless --check is used")
-    bundle_root = build_bundle(repo_root(), args.out.resolve(), args.name)
+    bundle_root = build_bundle(source_root, args.out.resolve(), args.name, manifest)
     print(bundle_root)
     return 0
 

@@ -69,6 +69,7 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_weighted_bisector_candidate_lemma_v0_1.md
+notes/prc_v2_3_related_work_decision_v0_1.md
 notes/prc_v2_3_standalone_checker_contract_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
@@ -105,6 +106,7 @@ headline finite claims.
 Internal candidate bundle:
 
 ```text
+candidate_bundle_manifest_v0_1.json
 candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
 ```
 
@@ -123,9 +125,11 @@ no B_8 or larger layers
 
 Before promotion to a public v2.3 release bundle:
 
-1. Create the public v2.3 release manifest, SHA256 path, and allowlist.
-2. Decide whether to add formal related-work citations for covering-radius
-   terminology.
+1. Convert `candidate_bundle_manifest_v0_1.json` into a `release/public`
+   config with GitHub/Zenodo metadata.
+2. Keep the related-work decision fixed: use `critical radius` as the project
+   term, and add formal covering-radius citations only if the public note leans
+   on that external terminology.
 3. Keep all statements finite; do not claim an asymptotic law or a general
    single-gap birth theorem.
 

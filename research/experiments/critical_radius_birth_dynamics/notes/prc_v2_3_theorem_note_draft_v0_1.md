@@ -244,9 +244,11 @@ no B_8 or larger layers
 
 Before promotion to a public v2.3 release bundle, this draft still needs:
 
-1. a public v2.3 release manifest, SHA256 path, and allowlist.
-2. a decision on whether the public note should add formal related-work
-   citations for covering-radius terminology.
+1. conversion of `candidate_bundle_manifest_v0_1.json` into a `release/public`
+   config with GitHub/Zenodo metadata.
+2. the related-work decision kept fixed: use `critical radius` as the project
+   term, and add formal covering-radius citations only if the public note leans
+   on that external terminology.
 
 ## 9. Non-Claims
 

@@ -28,6 +28,7 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_weighted_bisector_candidate_lemma_v0_1.md
+notes/prc_v2_3_related_work_decision_v0_1.md
 notes/prc_v2_3_standalone_checker_contract_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
@@ -41,9 +42,11 @@ outline records the three selected components: critical radius, level sets, and
 birth containment. The terminology note keeps `critical radius` as the primary
 project term and treats `weighted covering-radius` as descriptive shorthand.
 The bisector note records the finite candidate lemma behind the exact
-critical-radius checker. The standalone checker contract records the
-standard-library audit added for the v2.3 candidate CSVs. The v0.2 note
-explains how near-miss ranking connects to birth-parent gap geometry.
+critical-radius checker. The related-work decision note keeps bibliography
+expansion from blocking internal candidate review while preserving the public
+release boundary. The standalone checker contract records the standard-library
+audit added for the v2.3 candidate CSVs. The v0.2 note explains how near-miss
+ranking connects to birth-parent gap geometry.
 
 ## Generate
 

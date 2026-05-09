@@ -8,6 +8,7 @@ purpose: >
   v2.2.3 release.
 artifacts:
   - candidate_README_v0_1.md
+  - candidate_bundle_manifest_v0_1.json
   - candidate_bundle.py
   - promotion_manifest_v0_1.yml
   - check_candidate.py
@@ -29,6 +30,7 @@ artifacts:
   - notes/prc_v2_3_theorem_candidate_outline_v0_1.md
   - notes/prc_weighted_covering_radius_terminology_v0_1.md
   - notes/prc_weighted_bisector_candidate_lemma_v0_1.md
+  - notes/prc_v2_3_related_work_decision_v0_1.md
   - notes/prc_v2_3_standalone_checker_contract_v0_1.md
   - notes/prc_critical_radius_birth_dynamics_v0_1.md
   - notes/prc_near_miss_birth_predictor_v0_2.md
@@ -38,4 +40,5 @@ promotion_requirements:
   - exact tests pass for k=4 and k=5 critical radius level sets
   - B5/B6/B7 birth counts match exact filtration counts
   - no broad asymptotic or prime-distribution claims
-  - public release manifest is updated only after claim promotion
+  - candidate bundle manifest remains separate from public release config
+  - public release config is updated only after claim promotion
