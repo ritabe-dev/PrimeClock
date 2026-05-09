@@ -138,8 +138,8 @@ data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 
 The next useful steps are deliberately finite:
 
-1. Identify near-miss residues just above `lambda=1/2`.
-2. Use the gap-geometry table to define a sharper near-miss predictor.
+1. Use `prc_near_miss_birth_predictor_v0_2.md` as the current predictor note.
+2. Test whether the same two-stage predictor remains useful beyond `k=5`.
 3. Search for the first multi-gap birth without brute-forcing `k=9`.
 4. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
    public candidate.

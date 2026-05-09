@@ -213,3 +213,14 @@ def test_integrated_experiment_note_keeps_scope_narrow():
     assert "B_7: 714 strict single-gap births" in text
     assert "not a general theorem for all levels" in text
     assert "does not claim" in text
+
+
+def test_near_miss_predictor_note_keeps_gap_geometry_boundary():
+    note = EXPERIMENT_DIR / "notes" / "prc_near_miss_birth_predictor_v0_2.md"
+    text = note.read_text(encoding="utf-8")
+
+    assert "k=4 near-misses: 13/20 are B_5 birth parents" in text
+    assert "k=5 near-misses: 19/20 are B_6 birth parents" in text
+    assert "near-miss rank is useful but not sufficient" in text
+    assert "near-miss candidate + containing next-prime remainder" in text
+    assert "does not claim" in text

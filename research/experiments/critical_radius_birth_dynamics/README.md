@@ -22,11 +22,14 @@ internal research artifacts until explicitly promoted to a claim release.
 Start with:
 
 ```text
+notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
-The shorter companion notes split the same content into the critical-radius and
-birth-dynamics sides.
+The v0.2 note explains how near-miss ranking connects to birth-parent gap
+geometry. The v0.1 integrated note gives the broader critical-radius and
+birth-dynamics context. The shorter companion notes split the v0.1 content into
+the critical-radius and birth-dynamics sides.
 
 ## Generate
 
