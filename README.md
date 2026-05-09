@@ -2,7 +2,7 @@
 
 This source repository contains the historical PrimeClock React/Vite
 visualization and the current Prime Reciprocal Covering (PRC) research package.
-The v2.2.0 public release bundle is narrower: it contains the finite
+The v2.2.1 public release bundle is narrower: it contains the finite
 `C_k/C_4/B_5` research package, certificate CSVs, and verification tools. The
 visualization remains origin context and is not included in that release bundle.
 
@@ -13,7 +13,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_2.md`
+4. `research/RELEASE_NOTES_v2_2_1.md`
 5. `research/notes/known-results.md`
 6. `VERSION_MAP.md`
 
@@ -75,8 +75,8 @@ Build and inspect a local release bundle with:
 
 ```bash
 python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.0 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.0
+python3 scripts/build_public_release.py --version 2.2.1 --out /private/tmp/primeclock-public-release --zip
+python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.1
 ```
 
 The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are
@@ -86,6 +86,6 @@ recorded in `SHA256SUMS`, and version correspondence is recorded in
 ## Citation and License
 
 Use `CITATION.cff` for citation metadata. The current public DOI is
-`10.5281/zenodo.20091829`.
+`pending Zenodo publication`.
 
 The project is released under the MIT License; see `LICENSE`.

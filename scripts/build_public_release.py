@@ -16,7 +16,7 @@ ROOT_FILES = [
     "SHA256SUMS",
     "VERSION_MAP.md",
     "VERIFY.md",
-    "RELEASE_NOTES_v2_2.md",
+    "RELEASE_NOTES_v2_2_1.md",
     ".github/workflows/verify.yml",
     "scripts/build_public_release.py",
     "scripts/check_public_release.py",
@@ -26,7 +26,7 @@ ROOT_FILES = [
 RESEARCH_FILES = [
     "research/README.md",
     "research/PUBLIC_RELEASE_MANIFEST.md",
-    "research/RELEASE_NOTES_v2_2.md",
+    "research/RELEASE_NOTES_v2_2_1.md",
     "research/VERIFY_FINITE_C4_B5.md",
     "research/pyproject.toml",
     "research/setup.py",
@@ -108,7 +108,7 @@ def build_release(repo_root: Path, output_dir: Path, version: str) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", required=True, help="Release version, for example 2.2.0")
+    parser.add_argument("--version", required=True, help="Release version, for example 2.2.1")
     parser.add_argument("--out", required=True, type=Path, help="Output parent directory")
     parser.add_argument("--zip", action="store_true", help="Also create a .zip archive beside the bundle")
     args = parser.parse_args()

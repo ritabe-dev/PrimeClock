@@ -70,6 +70,10 @@ def is_text_file(path: Path) -> bool:
     return path.suffix in TEXT_SUFFIXES or path.name in {"LICENSE"}
 
 
+def has_forbidden_path_part(path: Path) -> bool:
+    return any(part in FORBIDDEN_PATH_PARTS for part in path.parts)
+
+
 def check_paths(root: Path) -> list[str]:
     failures: list[str] = []
     for path in root.rglob("*"):
@@ -89,6 +93,8 @@ def check_text(root: Path) -> list[str]:
     failures: list[str] = []
     for path in root.rglob("*"):
         if not path.is_file() or not is_text_file(path):
+            continue
+        if has_forbidden_path_part(path.relative_to(root)):
             continue
         text = path.read_text(encoding="utf-8")
         for pattern in FORBIDDEN_TEXT_PATTERNS:

@@ -5,8 +5,8 @@ separate. The current public release target is:
 
 | Item | Version / file |
 | --- | --- |
-| Public release | `v2.2.0` |
-| DOI | `10.5281/zenodo.20091829` |
+| Public release | `v2.2.1` |
+| DOI | `pending Zenodo publication` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
 | Finite theorem note | `research/notes/prc_finite_certificate_note_v2_0.md` |
 | Narrow claims | `research/notes/claims_finite_c4_b5.md` |
