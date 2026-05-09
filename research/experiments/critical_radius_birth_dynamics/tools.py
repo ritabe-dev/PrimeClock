@@ -68,6 +68,25 @@ class CriticalRadiusNearMissRow:
 
 
 @dataclass(frozen=True)
+class NearMissBirthParentRow:
+    k: int
+    primorial: int
+    near_miss_rank: int
+    residue: int
+    reflection_residue: int
+    lambda_fraction: str
+    lambda_minus_half_fraction: str
+    next_k: int
+    new_prime: int
+    birth_lift_count: int
+    birth_lift_residues: str
+    birth_lift_remainders: str
+    child_lambda_fractions: str
+    child_statuses: str
+    birth_types: str
+
+
+@dataclass(frozen=True)
 class BirthThresholdCrossingRow:
     k: int
     new_prime: int
@@ -245,6 +264,56 @@ def critical_radius_near_miss_rows(
                 )
             )
     return near_misses
+
+
+def near_miss_birth_parent_rows(
+    near_miss_rows: Iterable[CriticalRadiusNearMissRow],
+) -> list[NearMissBirthParentRow]:
+    """Connect near-miss residues to birth lifts at the next prime level."""
+    near_misses = list(near_miss_rows)
+    if not near_misses:
+        return []
+
+    min_next_k = min(row.k for row in near_misses) + 1
+    max_next_k = max(row.k for row in near_misses) + 1
+    crossing_rows = birth_threshold_crossing_rows(min_k=min_next_k, max_k=max_next_k)
+    births_by_parent: dict[tuple[int, int], list[BirthThresholdCrossingRow]] = {}
+    for crossing in crossing_rows:
+        parent_k = crossing.k - 1
+        key = (parent_k, crossing.parent_residue_mod_previous)
+        births_by_parent.setdefault(key, []).append(crossing)
+
+    rows: list[NearMissBirthParentRow] = []
+    for near_miss in near_misses:
+        next_k = near_miss.k + 1
+        next_primes = first_primes(next_k)
+        new_prime = next_primes[-1]
+        matches = sorted(
+            births_by_parent.get((near_miss.k, near_miss.residue), []),
+            key=lambda row: row.residue,
+        )
+        rows.append(
+            NearMissBirthParentRow(
+                k=near_miss.k,
+                primorial=near_miss.primorial,
+                near_miss_rank=near_miss.near_miss_rank,
+                residue=near_miss.residue,
+                reflection_residue=near_miss.reflection_residue,
+                lambda_fraction=near_miss.lambda_fraction,
+                lambda_minus_half_fraction=near_miss.lambda_minus_half_fraction,
+                next_k=next_k,
+                new_prime=new_prime,
+                birth_lift_count=len(matches),
+                birth_lift_residues=" ".join(str(row.residue) for row in matches),
+                birth_lift_remainders=" ".join(
+                    str(row.residue % new_prime) for row in matches
+                ),
+                child_lambda_fractions=" ".join(row.current_lambda_fraction for row in matches),
+                child_statuses=" ".join(row.current_status for row in matches),
+                birth_types=" ".join(row.birth_type for row in matches),
+            )
+        )
+    return rows
 
 
 def birth_threshold_crossing_rows(
@@ -545,6 +614,13 @@ def write_critical_radius_near_miss_csv(
     output_path: str | Path,
 ) -> None:
     write_dataclass_csv(rows, output_path, CriticalRadiusNearMissRow)
+
+
+def write_near_miss_birth_parent_csv(
+    rows: Iterable[NearMissBirthParentRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, NearMissBirthParentRow)
 
 
 def write_birth_threshold_crossing_csv(

@@ -76,6 +76,8 @@ Interpretation:
   transitions.
 - The near-miss table lists the closest uncovered `k=4,5` residues above
   `lambda=1/2`; it is a candidate generator, not a claim about later levels.
+- The near-miss parent-overlap table records whether those near-miss residues
+  actually produce birth lifts at the next prime level.
 
 ## Birth Dynamics
 
@@ -122,6 +124,7 @@ In short: this is not a general theorem for all levels.
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
 data/prc_prime_prefix_critical_radius_summary_v0_1.csv
 data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv
+data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
@@ -133,7 +136,7 @@ data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 The next useful steps are deliberately finite:
 
 1. Identify near-miss residues just above `lambda=1/2`.
-2. Compare near-miss parents against later birth layers.
+2. Use the parent-overlap table to define a sharper near-miss predictor.
 3. Search for the first multi-gap birth without brute-forcing `k=9`.
 4. Decide whether the v0.1 sandbox is mature enough to promote into a v2.3
    public candidate.

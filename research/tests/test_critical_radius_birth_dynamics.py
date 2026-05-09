@@ -111,6 +111,29 @@ def test_critical_radius_near_misses_are_sorted_uncovered_rows():
         assert [row.near_miss_rank for row in group] == list(range(1, len(group) + 1))
 
 
+def test_near_miss_birth_parent_overlap_links_next_birth_layer():
+    radius_rows = tools.critical_radius_rows(min_k=4, max_k=5)
+    near_misses = tools.critical_radius_near_miss_rows(radius_rows, limit_per_k=20)
+    parent_rows = tools.near_miss_birth_parent_rows(near_misses)
+    grouped = {
+        k: [row for row in parent_rows if row.k == k]
+        for k in [4, 5]
+    }
+
+    assert {k: len(group) for k, group in grouped.items()} == {4: 20, 5: 20}
+    assert sum(row.birth_lift_count > 0 for row in grouped[4]) == 13
+    assert sum(row.birth_lift_count > 0 for row in grouped[5]) == 19
+
+    for row in parent_rows:
+        assert row.next_k == row.k + 1
+        if row.birth_lift_count:
+            residues = row.birth_lift_residues.split()
+            remainders = row.birth_lift_remainders.split()
+            assert len(residues) == row.birth_lift_count
+            assert len(remainders) == row.birth_lift_count
+            assert set(row.birth_types.split()) == {"strict_single_gap_birth"}
+
+
 def test_b5_threshold_crossing_rows_connect_parent_and_child_radius():
     rows = tools.birth_threshold_crossing_rows(min_k=5)
 
