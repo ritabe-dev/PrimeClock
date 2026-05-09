@@ -39,7 +39,7 @@ CSV certificates, package verifier, and standard-library standalone checker.
 From `research/`:
 
 ```text
-focused pytest: 39 passed
+focused pytest: 40 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```

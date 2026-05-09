@@ -1307,7 +1307,7 @@ def main(argv: list[str] | None = None) -> int:
             "covering-prime-prefix-verify-certificates: "
             f"checks={len(rows)}, failed={failed}, out={args.out}"
         )
-        return 0
+        return 1 if failed else 0
     if args.command == "covering-prime-prefix-certificates":
         rows = prime_prefix_certificate_rows_from_runs_csv(
             args.complete_source,

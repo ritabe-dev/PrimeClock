@@ -24,6 +24,7 @@ Research files:
 - `research/RELEASE_NOTES_v2_2.md`
 - `research/VERIFY_FINITE_C4_B5.md`
 - `research/pyproject.toml`
+- `research/setup.py`
 - `research/src/prime_reciprocal_projection/`
 - `research/tests/test_covering_prime_prefix_filtration.py`
 - `research/certificates/check_prime_prefix_c4_b5.py`
@@ -55,6 +56,10 @@ finite certificate bundle:
 - `k=8`, modulo-210, C0, branch-fill, branch-uniform, and residual-fragmentation diagnostics;
 - PrimeClock React/Vite visualization files;
 - historical local release bundles and archives.
+
+The Python source package is included as verifier/test support and may contain
+broader implementation modules. The public release-facing notes, CSVs, and
+claims remain restricted to the finite `C_k/C_4/B_5` certificate artifact.
 
 ## Excluded Local Files
 

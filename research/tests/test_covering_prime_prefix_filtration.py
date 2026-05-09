@@ -1074,6 +1074,39 @@ def test_covering_prime_prefix_verify_certificates_cli_writes_csv(tmp_path: Path
     assert all(line.endswith(",pass") for line in lines[1:])
 
 
+def test_covering_prime_prefix_verify_certificates_cli_fails_tampered_csv(
+    tmp_path: Path,
+):
+    paths = _write_verifier_fixture(tmp_path)
+    _mutate_csv(paths["c4_witness"], lambda rows: rows[:-1])
+    verification_out = tmp_path / "verification.csv"
+
+    assert (
+        main(
+            [
+                "covering-prime-prefix-verify-certificates",
+                "--ck-full",
+                str(paths["ck_full"]),
+                "--c4-exclusion-witnesses",
+                str(paths["c4_witness"]),
+                "--c4-exclusion-summary",
+                str(paths["c4_summary"]),
+                "--b5-birth-witnesses",
+                str(paths["b5_witness"]),
+                "--b5-birth-classification",
+                str(paths["b5_classification"]),
+                "--b5-birth-pair-summary",
+                str(paths["b5_pair"]),
+                "--out",
+                str(verification_out),
+            ]
+        )
+        == 1
+    )
+    rows = {row["check_name"]: row for row in csv.DictReader(verification_out.open())}
+    assert rows["c4_exclusion_residue_set_complete"]["status"] == "fail"
+
+
 def test_covering_prime_prefix_filtration_cli_rejects_large_k_without_flag(tmp_path: Path):
     with pytest.raises(ValueError, match="primorial-scale"):
         main(

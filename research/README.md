@@ -34,6 +34,9 @@ prime distribution or about all complete PRC events.
 Use a local editable install for the package verifier and tests:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
@@ -50,7 +53,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 39 passed
+focused pytest: 40 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -77,6 +80,10 @@ experiments, `k=8` extensions, branch-fill experiments, branch-uniform null
 comparisons, and residual-fragmentation studies. Those remain useful context,
 but they are not part of the narrow `C_k/C_4/B_5` finite-theorem release
 package.
+
+The public bundle may include broader Python implementation modules because the
+CLI verifier and focused tests share package code. The release-facing claims,
+notes, and CSVs remain limited to the finite `C_k/C_4/B_5` artifact.
 
 Use `PUBLIC_RELEASE_MANIFEST.md` before preparing a public release bundle.
 

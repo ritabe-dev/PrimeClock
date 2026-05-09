@@ -9,6 +9,9 @@ and what their passing result supports.
 From `research/`:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 ```
 
@@ -46,6 +49,7 @@ open-gap witnesses, rational witness points, exact interval/fraction fields,
 the `C_4` summary partition, the `B_5` classification table, the reflection
 pair quotient, and strict containment of each old open gap inside the new
 `p=11` closed arc.
+It exits with a nonzero status if any verification check fails.
 
 ## Standalone Checker
 
@@ -77,7 +81,7 @@ python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 Expected focused result:
 
 ```text
-39 passed
+40 passed
 ```
 
 ## Logical Consequence of Passing Checks

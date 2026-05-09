@@ -4,6 +4,9 @@ From `research/`, install the package in editable mode and run the focused
 finite theorem checks:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
@@ -15,7 +18,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 39 passed
+focused pytest: 40 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```

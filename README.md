@@ -35,6 +35,9 @@ verifier, and a standard-library standalone checker.
 From `research/`:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
 python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
@@ -46,7 +49,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 39 passed
+focused pytest: 40 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -69,6 +72,9 @@ are not part of the narrow finite-theorem release bundle.
 Public releases are built from an explicit allowlist. The source repository can
 contain broader research history, but the release bundle contains only the
 finite `C_k/C_4/B_5` certificate artifact and its verification path.
+The bundled Python package source includes broader implementation modules needed
+by the verifier and tests; the public claims, notes, and CSVs remain limited to
+the finite certificate artifact.
 
 Build and inspect a local release bundle with:
 

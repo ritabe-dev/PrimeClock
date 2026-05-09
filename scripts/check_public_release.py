@@ -12,6 +12,7 @@ FORBIDDEN_PATH_PARTS = {
     ".git",
     ".pytest_cache",
     ".ruff_cache",
+    ".matplotlib-cache",
     ".uv-cache",
     ".venv",
     "__pycache__",
