@@ -10,14 +10,14 @@ cite the finite certificate artifact.
 
 Root files:
 
-- `README.md`
+- `README.md` (generated from `release/public/README.template.md`)
 - `LICENSE`
 - `CITATION.cff`
 - `DATA_FILES.md`
 - `SHA256SUMS`
 - `VERSION_MAP.md`
 - `VERIFY.md`
-- `RELEASE_NOTES_v2_2_1.md`
+- `RELEASE_NOTES_v2_2_2.md`
 - `.github/workflows/verify.yml`
 - `scripts/build_public_release.py`
 - `scripts/check_public_release.py`
@@ -27,7 +27,7 @@ Research files:
 
 - `research/README.md`
 - `research/PUBLIC_RELEASE_MANIFEST.md`
-- `research/RELEASE_NOTES_v2_2_1.md`
+- `research/RELEASE_NOTES_v2_2_2.md`
 - `research/VERIFY_FINITE_C4_B5.md`
 - `research/pyproject.toml`
 - `research/setup.py`
@@ -70,6 +70,11 @@ claims remain restricted to the finite `C_k/C_4/B_5` certificate artifact.
 `VERSION_MAP.md` records the release, package, note, table, and verifier
 version correspondence.
 
+The source repository root `README.md` is not copied into the public bundle.
+The bundle root `README.md` is generated from
+`release/public/README.template.md` to keep source-repository wording separate
+from public release wording.
+
 ## Excluded Local Files
 
 Never include:
@@ -100,4 +105,4 @@ research/notes/known-results.md
 
 The package should be read as a finite experimental-mathematics certificate
 artifact. Broader asymptotic, distributional, and complete PRC questions are
-outside the v2.2.1 release scope.
+outside the v2.2.2 release scope.

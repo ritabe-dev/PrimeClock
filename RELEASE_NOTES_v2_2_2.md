@@ -1,8 +1,8 @@
-# PRC Finite Theorem Bundle v2.2.1 Release Notes
+# PRC Finite Theorem Bundle v2.2.2 Release Notes
 
 Release date: 2026-05-09 JST
 
-Version DOI: `10.5281/zenodo.20092329`
+Version DOI: assigned by Zenodo for the GitHub `v2.2.2` release.
 
 Concept DOI: `10.5281/zenodo.20091722`
 
@@ -11,8 +11,10 @@ Concept DOI: `10.5281/zenodo.20091722`
 This release contains the narrow `C_k/C_4/B_5` finite certificate artifact for
 Prime Reciprocal Covering. It is a release bundle for the finite theorem note,
 CSV certificates, package verifier, and standard-library standalone checker.
-The historical PrimeClock React/Vite visualization remains in the source
-repository as origin context and is not included in this release bundle.
+This patch release separates the development-repository README from the public
+release-bundle README so the bundle entrypoint cannot inherit source-only
+wording. The historical PrimeClock React/Vite visualization remains source
+context and is not included in this release bundle.
 
 ## Included
 
@@ -25,6 +27,14 @@ repository as origin context and is not included in this release bundle.
 - version correspondence: `VERSION_MAP.md`
 - GitHub Actions verification workflow
 - `CITATION.cff` and `LICENSE`
+
+## Change Since v2.2.1
+
+- public bundle root `README.md` is now generated from
+  `release/public/README.template.md`;
+- source/development README wording is no longer copied into public bundles;
+- release hygiene checks now fail if source-repository README wording appears in
+  the public bundle root README.
 
 ## Finite Claims
 
