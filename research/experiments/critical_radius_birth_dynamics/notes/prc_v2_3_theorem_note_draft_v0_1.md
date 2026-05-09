@@ -1,6 +1,6 @@
 # Critical Radius Spectra and Birth Dynamics in Prime-Prefix Coverings
 
-Status: internal theorem-note draft, not a public release.
+Status: internal public-candidate theorem-note draft, not a public release.
 
 ## 1. Introduction
 
@@ -204,11 +204,19 @@ check_candidate.py: checks=11, failed=0
 
 ## 8. Promotion Boundary
 
-Before promotion to a v2.3 public candidate, this draft still needs:
+The internal promotion manifest fixes this draft's candidate scope:
 
-1. a decision on whether to include only `k<=7` birth dynamics;
-2. a public manifest and hash path separate from v2.2.3;
-3. review of the weighted covering-radius statement against nearby covering
+```text
+critical radius: k=4,5
+birth dynamics: k=5,6,7
+near-miss discussion: k=4,5
+no B_8 or larger layers
+```
+
+Before promotion to a public v2.3 release bundle, this draft still needs:
+
+1. a public manifest and hash path separate from v2.2.3;
+2. review of the weighted covering-radius statement against nearby covering
    radius terminology.
 
 ## 9. Non-Claims

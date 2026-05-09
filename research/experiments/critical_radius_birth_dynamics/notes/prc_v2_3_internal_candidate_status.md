@@ -64,6 +64,7 @@ Read in this order:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+promotion_manifest_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
@@ -94,12 +95,20 @@ check_candidate.py: checks=11, failed=0
 
 This is ready as an internal research milestone, but not yet a public release.
 
-Before promotion to a v2.3 public candidate:
+The internal promotion manifest fixes the candidate scope:
 
-1. Add a compact theorem/proposition note for the critical-radius formula.
-2. Add a finite proposition for the birth-containment identity.
-3. Decide whether to include only `k<=7` birth dynamics or extend the same
-   checker format one level further.
+```text
+critical radius: k=4,5
+birth dynamics: k=5,6,7
+near-miss discussion: k=4,5
+no B_8 or larger layers
+```
+
+Before promotion to a public v2.3 release bundle:
+
+1. Create the public release manifest and SHA256 path for v2.3.
+2. Decide the exact allowlist for a v2.3 public bundle.
+3. Review the weighted covering-radius wording against nearby terminology.
 4. Keep all statements finite; do not claim an asymptotic law or a general
    single-gap birth theorem.
 
@@ -112,10 +121,9 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 ```
 
-The next useful slice is still not brute force. The compact checker path now
-exists, so the next step should polish the draft into a public-candidate note or
-decide the exact v2.3 promotion manifest. Only after that should new data be
-added.
+The next useful slice is still not brute force. The checker path and internal
+promotion manifest now exist, so the next step should define the v2.3 public
+bundle allowlist and hash path. Only after that should new data be added.
 
 ## Non-Claims
 

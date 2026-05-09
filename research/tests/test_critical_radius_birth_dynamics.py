@@ -233,11 +233,12 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     text = note.read_text(encoding="utf-8")
 
     assert "Status: internal candidate, not a public release." in text
+    assert "promotion_manifest_v0_1.yml" in text
     assert "notes/prc_v2_3_theorem_note_draft_v0_1.md" in text
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
     assert "v2.2.3 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
-    assert "Before promotion to a v2.3 public candidate" in text
+    assert "Before promotion to a public v2.3 release bundle" in text
     assert "the v2.2.3 public release has changed" in text
 
 
@@ -257,7 +258,7 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_theorem_note_draft_v0_1.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal theorem-note draft, not a public release." in text
+    assert "Status: internal public-candidate theorem-note draft, not a public release." in text
     assert "C_k = { r : lambda_k(r) <= 1/2 }" in text
     assert "B_7: 714 strict single-gap births" in text
     assert "weighted covering-radius" in text
@@ -265,6 +266,7 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "naive adjacent-center formula" in text
     assert "Birth Containment" in text
     assert "check_candidate.py: checks=11, failed=0" in text
+    assert "no B_8 or larger layers" in text
     assert "any change to the v2.2.3 public release" in text
 
 
@@ -287,3 +289,16 @@ def test_v2_3_candidate_checker_passes(tmp_path):
         rows = list(csv.DictReader(handle))
     assert len(rows) == 11
     assert {row["status"] for row in rows} == {"pass"}
+
+
+def test_v2_3_promotion_manifest_fixes_candidate_scope():
+    manifest = EXPERIMENT_DIR / "promotion_manifest_v0_1.yml"
+    text = manifest.read_text(encoding="utf-8")
+
+    assert "status: internal_promotion_manifest" in text
+    assert "base_public_release: v2.2.3" in text
+    assert "critical_radius_layers: [4, 5]" in text
+    assert "birth_dynamics_layers: [5, 6, 7]" in text
+    assert "include_b8_or_larger: false" in text
+    assert "include_asymptotic_claims: false" in text
+    assert "expected: checks=11, failed=0" in text

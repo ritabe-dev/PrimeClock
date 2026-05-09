@@ -23,20 +23,20 @@ Start with:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+promotion_manifest_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
-The status note summarizes the current internal milestone and promotion
-boundary. The theorem-note draft is the first compact public-candidate-shaped
-text, still internal. The outline records the three selected components:
-critical radius, level sets, and birth containment. The v0.2 note explains how
-near-miss ranking connects to birth-parent gap geometry. The v0.1 integrated
-note gives the broader critical-radius and birth-dynamics context. The shorter
-companion notes split the v0.1 content into the critical-radius and
-birth-dynamics sides.
+The status note summarizes the current internal milestone. The promotion
+manifest fixes the candidate scope: critical-radius layers `k=4,5`, birth
+dynamics layers `k=5,6,7`, and no `B_8` or asymptotic claims. The theorem-note
+draft is the first compact public-candidate-shaped text, still internal. The
+outline records the three selected components: critical radius, level sets, and
+birth containment. The v0.2 note explains how near-miss ranking connects to
+birth-parent gap geometry.
 
 ## Generate
 
@@ -65,6 +65,18 @@ check_v2_3_candidate: checks=11, failed=0
 
 The checker recomputes the current v2.3 candidate rows from the exact helpers
 and compares them with the committed internal CSV artifacts.
+
+## Candidate Scope
+
+The current internal promotion manifest fixes the first v2.3 candidate scope:
+
+```text
+critical radius: k=4,5
+birth dynamics: k=5,6,7
+near-miss discussion: k=4,5
+no B_8 or larger layers
+no asymptotic or prime-distribution claims
+```
 
 ## Current Status
 
