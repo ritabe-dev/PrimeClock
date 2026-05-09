@@ -34,11 +34,14 @@ Root files:
 - `VERIFY.md`
 - `RELEASE_NOTES_v2_2_4.md`
 - `.github/workflows/verify.yml`
+- `release/public/PUBLISH_CHECKLIST.md`
 - `release/public/README.template.md`
 - `release/public/release_config.json`
 - `scripts/build_public_release.py`
 - `scripts/check_public_release.py`
 - `scripts/check_release_versions.py`
+- `scripts/finalize_release_doi.py`
+- `scripts/publish_public_release.py`
 - `scripts/release_config.py`
 - `scripts/update_public_hashes.py`
 - `scripts/verify_public_release.py`
@@ -137,6 +140,12 @@ Never include:
 
 GitHub Release and Zenodo uploads should use only a bundle that passes
 `scripts/verify_public_release.py`.
+Use `release/public/PUBLISH_CHECKLIST.md` for the two-stage GitHub release and
+Zenodo DOI metadata workflow.
+Zenodo uploads are allowed only when
+`release/public/release_config.json` sets `release_kind` to `doi_release`.
+Normal GitHub review and cleanup work must use `maintenance_sync`, which pushes
+public `main` without creating a tag, GitHub Release, or Zenodo archive.
 
 ## Entry Point
 

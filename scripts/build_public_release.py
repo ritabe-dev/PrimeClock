@@ -22,11 +22,14 @@ BASE_ROOT_FILES = [
     "VERSION_MAP.md",
     "VERIFY.md",
     ".github/workflows/verify.yml",
+    "release/public/PUBLISH_CHECKLIST.md",
     "release/public/README.template.md",
     "release/public/release_config.json",
     "scripts/build_public_release.py",
     "scripts/check_public_release.py",
     "scripts/check_release_versions.py",
+    "scripts/finalize_release_doi.py",
+    "scripts/publish_public_release.py",
     "scripts/release_config.py",
     "scripts/update_public_hashes.py",
     "scripts/verify_public_release.py",
@@ -154,7 +157,7 @@ def main() -> int:
     print(release_root)
     if args.zip:
         archive_base = release_root
-        existing_archive = archive_base.with_suffix(".zip")
+        existing_archive = archive_base.parent / f"{archive_base.name}.zip"
         if existing_archive.exists():
             existing_archive.unlink()
         archive_path = shutil.make_archive(str(archive_base), "zip", release_root.parent, release_root.name)

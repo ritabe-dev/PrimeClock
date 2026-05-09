@@ -43,3 +43,7 @@ certificate artifact. Broader proof-core refactors, certificate JSON schemas,
 The Python package retains the historical name `prime-reciprocal-projection`.
 The release-facing finite theorem bundle is framed as Prime Reciprocal
 Covering.
+
+`CITATION.cff` uses the Zenodo concept DOI as its top-level DOI. Version DOIs
+are recorded here and in release notes for DOI releases, but ordinary
+maintenance syncs do not create GitHub Releases or Zenodo archives.
