@@ -9,6 +9,8 @@ DOI: `10.5281/zenodo.20091829`
 This release contains the narrow `C_k/C_4/B_5` finite certificate artifact for
 Prime Reciprocal Covering. It is a release bundle for the finite theorem note,
 CSV certificates, package verifier, and standard-library standalone checker.
+The historical PrimeClock React/Vite visualization remains in the source
+repository as origin context and is not included in this release bundle.
 
 ## Included
 
@@ -17,6 +19,9 @@ CSV certificates, package verifier, and standard-library standalone checker.
 - verifier contract: `VERIFY.md` and `research/VERIFY_FINITE_C4_B5.md`
 - finite certificate CSVs listed in `DATA_FILES.md`
 - package verifier source, standalone checker, and focused test suite
+- public release file hashes: `SHA256SUMS`
+- version correspondence: `VERSION_MAP.md`
+- GitHub Actions verification workflow
 - `CITATION.cff` and `LICENSE`
 
 ## Finite Claims
@@ -30,7 +35,7 @@ CSV certificates, package verifier, and standard-library standalone checker.
 ## Expected Verification Results
 
 ```text
-focused pytest: 40 passed
+focused pytest: 41 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
@@ -42,4 +47,4 @@ standalone checker: checks=9, failed=0
 - no certificate-depth, modulo-210, branch-uniform, or residual-fragmentation diagnostics
 - no arXiv submission
 - no broad related-work rewrite
-- no claim of a new prime-distribution theorem or asymptotic law
+- no broader asymptotic, distributional, or complete PRC claim

@@ -1,13 +1,10 @@
 # PrimeClock / Prime Reciprocal Covering
 
-This repository contains two related artifacts:
-
-- a small React/Vite PrimeClock visualization in `src/`;
-- a research package in `research/` for Prime Reciprocal Covering (PRC).
-
-The current release-ready research artifact is intentionally narrow. It focuses
-on a finite prime-prefix residue-covering problem and the checked `C_4/B_5`
-certificate package, not on a broad theorem about prime distribution.
+This source repository contains the historical PrimeClock React/Vite
+visualization and the current Prime Reciprocal Covering (PRC) research package.
+The v2.2.0 public release bundle is narrower: it contains the finite
+`C_k/C_4/B_5` research package, certificate CSVs, and verification tools. The
+visualization remains origin context and is not included in that release bundle.
 
 ## Current Release Target
 
@@ -18,6 +15,7 @@ Read these files first:
 3. `research/VERIFY_FINITE_C4_B5.md`
 4. `research/RELEASE_NOTES_v2_2.md`
 5. `research/notes/known-results.md`
+6. `VERSION_MAP.md`
 
 The finite claims are:
 
@@ -49,19 +47,16 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 40 passed
+focused pytest: 41 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
 
 ## Non-Claims
 
-This repository does not claim:
-
-- a new theorem about prime distribution;
-- a new limiting law for `{N/p}`;
-- an asymptotic law for `|C_k|/M_k`;
-- that `C_4` or `C_5` explains all complete PRC events.
+This release is scoped to finite prime-prefix residue-covering certificates,
+specifically `C_4` and `B_5`. Broader asymptotic, distributional, and complete
+PRC questions are outside this release.
 
 Historical PRC diagnostics, certificate-depth work, `k=8` experiments, and
 residual-fragmentation studies remain in the full repository as context. They
@@ -79,11 +74,14 @@ the finite certificate artifact.
 Build and inspect a local release bundle with:
 
 ```bash
+python3 scripts/update_public_hashes.py --check
 python3 scripts/build_public_release.py --version 2.2.0 --out /private/tmp/primeclock-public-release --zip
 python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.0
 ```
 
-The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`.
+The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are
+recorded in `SHA256SUMS`, and version correspondence is recorded in
+`VERSION_MAP.md`.
 
 ## Citation and License
 

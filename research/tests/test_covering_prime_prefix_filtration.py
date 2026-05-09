@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import subprocess
 import sys
 from fractions import Fraction
@@ -1292,3 +1293,34 @@ def test_standalone_prime_prefix_certificate_checker_fails_missing_row(
     assert "failed=" in result.stdout
     rows = {row["check_name"]: row for row in csv.DictReader(output.open())}
     assert rows["c4_exclusion_rows_exact"]["status"] == "fail"
+
+
+def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
+    release_root = tmp_path / "release"
+    release_root.mkdir()
+    readme = release_root / "README.md"
+    readme.write_text("finite certificate bundle\n", encoding="utf-8")
+    digest = hashlib.sha256(readme.read_bytes()).hexdigest()
+    (release_root / "SHA256SUMS").write_text(
+        f"{digest}  README.md\n",
+        encoding="utf-8",
+    )
+
+    checker = Path(__file__).parents[2] / "scripts" / "check_public_release.py"
+    ok_result = subprocess.run(
+        [sys.executable, str(checker), str(release_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert ok_result.returncode == 0
+
+    readme.write_text("finite certificate bundle changed\n", encoding="utf-8")
+    failed_result = subprocess.run(
+        [sys.executable, str(checker), str(release_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert failed_result.returncode == 1
+    assert "hash mismatch for README.md" in failed_result.stdout

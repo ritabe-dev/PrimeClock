@@ -3,6 +3,9 @@
 This public finite certificate bundle includes only the CSV files needed to
 read and verify the `C_k/C_4/B_5` claims.
 
+See `VERSION_MAP.md` for the release-to-table version map and `SHA256SUMS` for
+the public release file hashes.
+
 ## Finite Certificate Tables
 
 - `research/data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`

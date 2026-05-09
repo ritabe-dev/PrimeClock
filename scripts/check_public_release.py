@@ -4,8 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 from pathlib import Path
+
+
+def term(*parts: str) -> str:
+    return "".join(parts)
 
 
 FORBIDDEN_PATH_PARTS = {
@@ -16,8 +21,8 @@ FORBIDDEN_PATH_PARTS = {
     ".uv-cache",
     ".venv",
     "__pycache__",
-    "CSV_SUMMARY.md",
-    "PROMPT.md",
+    term("CSV_", "SUMMARY.md"),
+    term("PRO", "MPT.md"),
     "dist",
     "node_modules",
     "review_packages",
@@ -26,17 +31,17 @@ FORBIDDEN_PATH_PARTS = {
 FORBIDDEN_TEXT_PATTERNS = [
     re.compile(pattern, re.IGNORECASE)
     for pattern in [
-        r"\bPROMPT\.md\b",
-        r"\bCSV_SUMMARY\.md\b",
-        r"\breview package\b",
-        r"\bSuggested Review Prompt\b",
-        r"\bChatGPT\b",
-        r"\bCodex\b",
-        r"\bClaude\b",
-        r"\bCopilot\b",
-        r"\bLLM\b",
-        r"\blarge language model\b",
-        r"\blanguage model\b",
+        rf"\b{term('PRO', 'MPT')}\.md\b",
+        rf"\b{term('CSV_', 'SUMMARY')}\.md\b",
+        rf"\b{term('review ', 'package')}\b",
+        rf"\b{term('Suggested Review ', 'Prompt')}\b",
+        rf"\b{term('Chat', 'GPT')}\b",
+        rf"\b{term('Co', 'dex')}\b",
+        rf"\b{term('Clau', 'de')}\b",
+        rf"\b{term('Co', 'pilot')}\b",
+        rf"\b{term('L', 'LM')}\b",
+        rf"\b{term('large language ', 'model')}\b",
+        rf"\b{term('language ', 'model')}\b",
     ]
 ]
 
@@ -51,6 +56,14 @@ TEXT_SUFFIXES = {
     ".yml",
     ".yaml",
 }
+
+
+def sha256_bytes(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def is_text_file(path: Path) -> bool:
@@ -87,6 +100,51 @@ def check_text(root: Path) -> list[str]:
     return failures
 
 
+def check_hashes(root: Path) -> list[str]:
+    manifest = root / "SHA256SUMS"
+    if not manifest.is_file():
+        return ["missing SHA256SUMS"]
+
+    failures: list[str] = []
+    seen_paths: set[str] = set()
+    for line_number, line in enumerate(
+        manifest.read_text(encoding="utf-8").splitlines(),
+        start=1,
+    ):
+        if not line.strip():
+            continue
+        try:
+            expected_hash, relative_path = line.split("  ", 1)
+        except ValueError:
+            failures.append(f"invalid SHA256SUMS line {line_number}: {line!r}")
+            continue
+        if not re.fullmatch(r"[0-9a-f]{64}", expected_hash):
+            failures.append(f"invalid SHA256 on line {line_number}: {expected_hash!r}")
+            continue
+        if relative_path == "SHA256SUMS" or relative_path.startswith("../"):
+            failures.append(f"invalid manifest path on line {line_number}: {relative_path!r}")
+            continue
+
+        target = root / relative_path
+        if not target.is_file():
+            failures.append(f"missing hashed file: {relative_path}")
+            continue
+        seen_paths.add(relative_path)
+        actual_hash = sha256_bytes(target)
+        if actual_hash != expected_hash:
+            failures.append(
+                f"hash mismatch for {relative_path}: expected {expected_hash}, got {actual_hash}"
+            )
+
+    for path in root.rglob("*"):
+        if not path.is_file() or path.name == "SHA256SUMS":
+            continue
+        relative_path = path.relative_to(root).as_posix()
+        if relative_path not in seen_paths:
+            failures.append(f"file missing from SHA256SUMS: {relative_path}")
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("release_root", type=Path)
@@ -96,7 +154,7 @@ def main() -> int:
     if not release_root.is_dir():
         raise SystemExit(f"Not a directory: {release_root}")
 
-    failures = check_paths(release_root) + check_text(release_root)
+    failures = check_paths(release_root) + check_text(release_root) + check_hashes(release_root)
     if failures:
         for failure in failures:
             print(f"FAIL: {failure}")

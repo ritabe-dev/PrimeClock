@@ -81,7 +81,7 @@ python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 Expected focused result:
 
 ```text
-40 passed
+41 passed
 ```
 
 ## Logical Consequence of Passing Checks
@@ -95,5 +95,5 @@ When the public CSVs and both checkers pass, the narrow package supports:
 - The `14` B5 births form `7` reflection pairs.
 - Each B5 birth is a strict single-gap closure by the new `p=11` closed arc.
 
-These are finite certificate claims only. They are not claims about asymptotic
-prime distribution or about all complete PRC events.
+These are finite certificate claims only. Broader asymptotic, distributional,
+and complete PRC questions are outside the v2.2.0 release scope.

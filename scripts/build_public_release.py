@@ -13,8 +13,14 @@ ROOT_FILES = [
     "LICENSE",
     "CITATION.cff",
     "DATA_FILES.md",
+    "SHA256SUMS",
+    "VERSION_MAP.md",
     "VERIFY.md",
     "RELEASE_NOTES_v2_2.md",
+    ".github/workflows/verify.yml",
+    "scripts/build_public_release.py",
+    "scripts/check_public_release.py",
+    "scripts/update_public_hashes.py",
 ]
 
 RESEARCH_FILES = [

@@ -14,8 +14,14 @@ Root files:
 - `LICENSE`
 - `CITATION.cff`
 - `DATA_FILES.md`
+- `SHA256SUMS`
+- `VERSION_MAP.md`
 - `VERIFY.md`
 - `RELEASE_NOTES_v2_2.md`
+- `.github/workflows/verify.yml`
+- `scripts/build_public_release.py`
+- `scripts/check_public_release.py`
+- `scripts/update_public_hashes.py`
 
 Research files:
 
@@ -60,6 +66,9 @@ finite certificate bundle:
 The Python source package is included as verifier/test support and may contain
 broader implementation modules. The public release-facing notes, CSVs, and
 claims remain restricted to the finite `C_k/C_4/B_5` certificate artifact.
+`SHA256SUMS` records hashes for the public release allowlist, and
+`VERSION_MAP.md` records the release, package, note, table, and verifier
+version correspondence.
 
 ## Excluded Local Files
 
@@ -90,5 +99,5 @@ research/notes/known-results.md
 ```
 
 The package should be read as a finite experimental-mathematics certificate
-artifact. It does not claim a new theorem about prime distribution, a law for
-complete covering, or an asymptotic law for `|C_k|/M_k`.
+artifact. Broader asymptotic, distributional, and complete PRC questions are
+outside the v2.2.0 release scope.
