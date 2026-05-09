@@ -35,6 +35,9 @@ def release_file_paths(repo_root: Path) -> list[tuple[str, str]]:
     paths: dict[str, str] = {}
     for source_path, release_path in ROOT_FILE_MAP:
         path = repo_root / source_path
+        if not path.is_file() and (repo_root / release_path).is_file():
+            path = repo_root / release_path
+            source_path = release_path
         if not path.is_file():
             raise FileNotFoundError(f"Missing release file: {source_path}")
         paths[release_path] = source_path
