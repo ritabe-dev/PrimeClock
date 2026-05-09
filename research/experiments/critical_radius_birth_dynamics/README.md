@@ -49,6 +49,23 @@ From `research/`:
 Generated CSVs live in `data/` inside this experiment directory. They are not
 part of the v2.2.3 public release bundle.
 
+## Check
+
+From `research/`:
+
+```bash
+.venv/bin/python experiments/critical_radius_birth_dynamics/check_candidate.py
+```
+
+Expected result:
+
+```text
+check_v2_3_candidate: checks=11, failed=0
+```
+
+The checker recomputes the current v2.3 candidate rows from the exact helpers
+and compares them with the committed internal CSV artifacts.
+
 ## Current Status
 
 This is an internal v2.3 candidate, not a public release. It makes finite claims

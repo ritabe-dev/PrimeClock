@@ -190,19 +190,25 @@ data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
+data/prc_v2_3_candidate_verification_v0_1.csv
 ```
 
 The implementation and tests remain under `research/experiments`; this is not
 yet a public release bundle.
 
+Internal checker:
+
+```text
+check_candidate.py: checks=11, failed=0
+```
+
 ## 8. Promotion Boundary
 
 Before promotion to a v2.3 public candidate, this draft still needs:
 
-1. a compact finite checker path for the promoted v2.3 claims;
-2. a decision on whether to include only `k<=7` birth dynamics;
-3. a public manifest and hash path separate from v2.2.3;
-4. review of the weighted covering-radius statement against nearby covering
+1. a decision on whether to include only `k<=7` birth dynamics;
+2. a public manifest and hash path separate from v2.2.3;
+3. review of the weighted covering-radius statement against nearby covering
    radius terminology.
 
 ## 9. Non-Claims

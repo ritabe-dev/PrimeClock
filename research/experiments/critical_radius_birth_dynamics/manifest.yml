@@ -7,6 +7,7 @@ purpose: >
   and finite birth-dynamics classification without changing the stable public
   v2.2.3 release.
 artifacts:
+  - check_candidate.py
   - data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
   - data/prc_prime_prefix_critical_radius_summary_v0_1.csv
   - data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv
@@ -16,6 +17,7 @@ artifacts:
   - data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
   - data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
   - data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
+  - data/prc_v2_3_candidate_verification_v0_1.csv
   - notes/prc_v2_3_internal_candidate_status.md
   - notes/prc_v2_3_theorem_note_draft_v0_1.md
   - notes/prc_v2_3_theorem_candidate_outline_v0_1.md

@@ -81,6 +81,13 @@ data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv
 data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
 data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
+data/prc_v2_3_candidate_verification_v0_1.csv
+```
+
+Internal checker:
+
+```text
+check_candidate.py: checks=11, failed=0
 ```
 
 ## Promotion Boundary
@@ -105,9 +112,10 @@ notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 ```
 
-The next useful slice is still not brute force. It should turn the outline into
-a compact checker path for the finite v2.3 candidate claims, or polish the draft
-into a public-candidate note. Only after that should new data be added.
+The next useful slice is still not brute force. The compact checker path now
+exists, so the next step should polish the draft into a public-candidate note or
+decide the exact v2.3 promotion manifest. Only after that should new data be
+added.
 
 ## Non-Claims
 

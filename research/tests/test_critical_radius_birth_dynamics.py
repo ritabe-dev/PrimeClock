@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import csv
 import importlib.util
+import subprocess
 import sys
 from fractions import Fraction
 from pathlib import Path
@@ -262,4 +264,26 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "formula" in text
     assert "naive adjacent-center formula" in text
     assert "Birth Containment" in text
+    assert "check_candidate.py: checks=11, failed=0" in text
     assert "any change to the v2.2.3 public release" in text
+
+
+def test_v2_3_candidate_checker_passes(tmp_path):
+    output = tmp_path / "v2_3_candidate_verification.csv"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(EXPERIMENT_DIR / "check_candidate.py"),
+            "--out",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "check_v2_3_candidate: checks=11, failed=0" in result.stdout
+    with output.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 11
+    assert {row["status"] for row in rows} == {"pass"}
