@@ -1,16 +1,16 @@
-# PRC Finite Theorem Bundle v2.0 Release Notes
+# PRC Finite Theorem Bundle v2.1 Release Notes
 
 Release date: 2026-05-09 JST
 
 ## Purpose
 
-This release prepares the `C_k/C_4/B_5` finite theorem package for external
-review, citation, and later archival release. It is a narrow finite-certificate
-bundle, not the full historical PRC archive.
+This release prepares the narrow `C_k/C_4/B_5` finite theorem package for
+external review, citation, and later archival release. It is a finite
+certificate bundle, not the full historical PRC archive.
 
 ## Included
 
-- `prc_finite_certificate_note_v2_0.md`, a short theorem note centered on:
+- `prc_finite_certificate_note_v2_0.md`, the theorem note centered on:
   - the prime-prefix residue-covering filtration `C_k`;
   - closed-arc endpoint convention;
   - lift monotonicity, density monotonicity, and reflection symmetry;
@@ -20,8 +20,7 @@ bundle, not the full historical PRC archive.
 - `claims_finite_c4_b5.md`, the narrow claim registry for this release.
 - `VERIFY_FINITE_C4_B5.md`, the verifier contract.
 - `CITATION.cff`, a DOI-free citation metadata file for the local release.
-- `LICENSE`, using the MIT License for the software and accompanying
-  documentation in the release bundle.
+- `LICENSE`, using the MIT License.
 - Existing public finite-theorem CSVs through the v1.8 standalone verification
   output.
 
@@ -29,6 +28,9 @@ bundle, not the full historical PRC archive.
 
 - No `B_6` export or classification.
 - No new `k=8` or complete-covering analysis.
+- No certificate-depth, modulo-210, branch-uniform, or residual-fragmentation
+  diagnostics.
+- No PrimeClock React/Vite visualization files.
 - No GitHub release, Zenodo DOI registration, or arXiv submission.
 - No broad related-work rewrite.
 - No claim of a new prime-distribution theorem or asymptotic law.
@@ -51,21 +53,14 @@ full pytest: 193 passed
 npm run build: pass
 ```
 
-## Difference from v1.10
+## Difference from v2.0
 
-v1.10 was a narrow review package. v2.0 turns the same finite certificate
-material into a release-ready bundle by adding a standalone theorem note,
-citation metadata, and release notes while keeping the mathematical scope
-unchanged.
-
-## v2.1 Packaging Cleanup
-
-The v2.1 bundle keeps the same mathematical scope and finite CSV artifacts as
-v2.0, but tightens the release package:
+v2.1 keeps the same mathematical scope and finite CSV artifacts as v2.0, but
+tightens the release package:
 
 - adds `LICENSE`;
+- marks `CITATION.cff` as MIT-licensed and updates the artifact version;
 - points the root and research README files at the narrow `C_k/C_4/B_5`
   artifact first;
 - removes older v1.1 and historical theme notes from the sendable zip;
-- keeps certificate-depth, `k=8`, modulo-210, branch-uniform, and
-  residual-fragmentation material in the full repository only.
+- keeps broad PRC diagnostics in the full repository only.

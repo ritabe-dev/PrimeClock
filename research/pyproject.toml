@@ -7,6 +7,7 @@ name = "prime-reciprocal-projection"
 version = "0.1.0"
 description = "Reproducible experiments for Prime Reciprocal Projection."
 readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.9"
 dependencies = [
   "numpy>=1.24",
@@ -36,4 +37,3 @@ pythonpath = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py39"
-
