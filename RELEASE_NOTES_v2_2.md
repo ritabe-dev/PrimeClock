@@ -1,0 +1,45 @@
+# PRC Finite Theorem Bundle v2.2.0 Release Notes
+
+Release date: 2026-05-09 JST
+
+DOI: `10.5281/zenodo.20091829`
+
+## Purpose
+
+This release contains the narrow `C_k/C_4/B_5` finite certificate artifact for
+Prime Reciprocal Covering. It is a release bundle for the finite theorem note,
+CSV certificates, package verifier, and standard-library standalone checker.
+
+## Included
+
+- finite theorem note: `research/notes/prc_finite_certificate_note_v2_0.md`
+- narrow claims: `research/notes/claims_finite_c4_b5.md`
+- verifier contract: `VERIFY.md` and `research/VERIFY_FINITE_C4_B5.md`
+- finite certificate CSVs listed in `DATA_FILES.md`
+- package verifier source, standalone checker, and focused test suite
+- `CITATION.cff` and `LICENSE`
+
+## Finite Claims
+
+- `C_4={2,208} mod 210`
+- `C_5` has `36` covered residues
+- `Lift_5(C_4)` has `22` inherited residues
+- `B_5` has `14` births in `7` reflection pairs
+- every `B_5` birth is a strict single-gap closure by the new `p=11` arc
+
+## Expected Verification Results
+
+```text
+focused pytest: 39 passed
+package verifier: checks=14, failed=0
+standalone checker: checks=9, failed=0
+```
+
+## Not Included
+
+- no `B_6` export or classification
+- no new `k=8` or complete-covering analysis
+- no certificate-depth, modulo-210, branch-uniform, or residual-fragmentation diagnostics
+- no arXiv submission
+- no broad related-work rewrite
+- no claim of a new prime-distribution theorem or asymptotic law

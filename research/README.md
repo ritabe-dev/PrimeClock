@@ -15,7 +15,7 @@ Read these files in order:
 1. `notes/prc_finite_certificate_note_v2_0.md`
 2. `notes/claims_finite_c4_b5.md`
 3. `VERIFY_FINITE_C4_B5.md`
-4. `RELEASE_NOTES_v2_1_1.md`
+4. `RELEASE_NOTES_v2_2.md`
 5. `notes/known-results.md`
 
 The narrow finite package supports:
@@ -78,7 +78,7 @@ comparisons, and residual-fragmentation studies. Those remain useful context,
 but they are not part of the narrow `C_k/C_4/B_5` finite-theorem release
 package.
 
-Use `PUBLIC_ARTIFACTS.md` before preparing a review or release zip.
+Use `PUBLIC_RELEASE_MANIFEST.md` before preparing a public release bundle.
 
 ## Non-Claims
 

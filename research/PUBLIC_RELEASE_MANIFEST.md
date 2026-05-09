@@ -1,31 +1,29 @@
-# Public Artifact Manifest
+# Public Release Manifest
 
-Use this manifest when preparing the narrow external package for the finite
-`C_k/C_4/B_5` theorem track.
+Use this manifest when preparing the public release bundle for the finite
+`C_k/C_4/B_5` certificate artifact.
 
-## Release-Ready Finite Bundle
+## Release Bundle
 
-The current sendable package should contain only the files needed to read,
-verify, and cite the `C_4/B_5` finite certificate artifact.
+The public bundle should contain only the files needed to read, verify, and
+cite the finite certificate artifact.
 
 Root files:
 
 - `README.md`
 - `LICENSE`
 - `CITATION.cff`
-- `CSV_SUMMARY.md`
-- `PROMPT.md`
-- `RELEASE_NOTES_v2_1.md`
+- `DATA_FILES.md`
 - `VERIFY.md`
+- `RELEASE_NOTES_v2_2.md`
 
 Research files:
 
 - `research/README.md`
-- `research/PUBLIC_ARTIFACTS.md`
-- `research/RELEASE_NOTES_v2_1.md`
+- `research/PUBLIC_RELEASE_MANIFEST.md`
+- `research/RELEASE_NOTES_v2_2.md`
 - `research/VERIFY_FINITE_C4_B5.md`
 - `research/pyproject.toml`
-- `research/uv.lock`
 - `research/src/prime_reciprocal_projection/`
 - `research/tests/test_covering_prime_prefix_filtration.py`
 - `research/certificates/check_prime_prefix_c4_b5.py`
@@ -46,19 +44,17 @@ Finite certificate CSVs:
 - `research/data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
 - `research/data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv`
 
-## Excluded From The Narrow Bundle
+## Excluded From The Public Bundle
 
-Keep these in the full repository, but do not include them in the finite
-theorem review/release zip unless a reviewer explicitly asks for broader
-context:
+Keep these in the full source repository, but do not include them in the public
+finite certificate bundle:
 
 - broad `research/notes/claims.md`;
-- older `research/notes/prc_prime_prefix_finite_note_v1_1.md`;
-- historical `research/notes/prc_mathematical_theme_prime_prefix_filtration_v0_1.md`;
+- older finite-note drafts and theme notes;
 - certificate-depth notes and CSVs;
 - `k=8`, modulo-210, C0, branch-fill, branch-uniform, and residual-fragmentation diagnostics;
 - PrimeClock React/Vite visualization files;
-- `review_packages/` snapshots.
+- historical local release bundles and archives.
 
 ## Excluded Local Files
 
@@ -74,11 +70,11 @@ Never include:
 - `dist/`
 - `__pycache__/`
 - `.DS_Store`
-- generated local zip/tar archives from older review packages
+- generated local zip/tar archives
 
-## Review Entry Point
+## Entry Point
 
-For a finite-theorem review, start with:
+For the finite theorem artifact, start with:
 
 ```text
 README.md

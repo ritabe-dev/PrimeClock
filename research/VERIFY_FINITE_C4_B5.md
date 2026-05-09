@@ -1,7 +1,7 @@
 # Verify Finite C4/B5 Package
 
-This file is the verifier contract for the narrow `C_k/C_4/B_5` external
-review package. It documents what the included checkers read, what they check,
+This file is the verifier contract for the narrow `C_k/C_4/B_5` public
+release bundle. It documents what the included checkers read, what they check,
 and what their passing result supports.
 
 ## Setup

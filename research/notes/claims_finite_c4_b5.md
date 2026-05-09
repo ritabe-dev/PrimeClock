@@ -1,6 +1,6 @@
 # Finite C4/B5 Claims
 
-This is the narrow claim registry for the minimal external review package. It
+This is the narrow claim registry for the public finite certificate bundle. It
 only covers the finite `C_k/C_4/B_5` certificate artifacts included in that
 package. Broader PRC diagnostics live in `claims.md` and are not audited here.
 

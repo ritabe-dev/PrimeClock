@@ -16,7 +16,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_1_1.md`
+4. `research/RELEASE_NOTES_v2_2.md`
 5. `research/notes/known-results.md`
 
 The finite claims are:
@@ -64,9 +64,24 @@ Historical PRC diagnostics, certificate-depth work, `k=8` experiments, and
 residual-fragmentation studies remain in the full repository as context. They
 are not part of the narrow finite-theorem release bundle.
 
+## Public Release Bundle
+
+Public releases are built from an explicit allowlist. The source repository can
+contain broader research history, but the release bundle contains only the
+finite `C_k/C_4/B_5` certificate artifact and its verification path.
+
+Build and inspect a local release bundle with:
+
+```bash
+python3 scripts/build_public_release.py --version 2.2.0 --out /private/tmp/primeclock-public-release --zip
+python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.0
+```
+
+The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`.
+
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The archived v2.1.1 release DOI is
-`10.5281/zenodo.20091723`.
+Use `CITATION.cff` for citation metadata. The current public DOI is
+`10.5281/zenodo.20091829`.
 
 The project is released under the MIT License; see `LICENSE`.

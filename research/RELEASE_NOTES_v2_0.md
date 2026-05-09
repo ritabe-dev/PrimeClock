@@ -53,10 +53,9 @@ npm run build: pass
 
 ## Difference from v1.10
 
-v1.10 was a narrow review package. v2.0 turns the same finite certificate
-material into a release-ready bundle by adding a standalone theorem note,
-citation metadata, and release notes while keeping the mathematical scope
-unchanged.
+v2.0 turns the same finite certificate material into a release-ready bundle by
+adding a standalone theorem note, citation metadata, and release notes while
+keeping the mathematical scope unchanged.
 
 ## v2.1 Packaging Cleanup
 
