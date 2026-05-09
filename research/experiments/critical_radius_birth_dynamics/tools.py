@@ -87,6 +87,25 @@ class NearMissBirthParentRow:
 
 
 @dataclass(frozen=True)
+class NearMissGapGeometryRow:
+    k: int
+    primorial: int
+    near_miss_rank: int
+    residue: int
+    lambda_fraction: str
+    next_k: int
+    new_prime: int
+    previous_open_gap_count: int
+    previous_uncovered_measure_fraction: str
+    max_previous_open_gap_length_fraction: str
+    previous_open_gap_boundary_endpoints: str
+    containing_remainder_count: int
+    containing_remainders: str
+    containment_margins: str
+    best_containment_margin_fraction: str
+
+
+@dataclass(frozen=True)
 class BirthThresholdCrossingRow:
     k: int
     new_prime: int
@@ -311,6 +330,55 @@ def near_miss_birth_parent_rows(
                 child_lambda_fractions=" ".join(row.current_lambda_fraction for row in matches),
                 child_statuses=" ".join(row.current_status for row in matches),
                 birth_types=" ".join(row.birth_type for row in matches),
+            )
+        )
+    return rows
+
+
+def near_miss_gap_geometry_rows(
+    near_miss_rows: Iterable[CriticalRadiusNearMissRow],
+) -> list[NearMissGapGeometryRow]:
+    """Return old-gap geometry explaining whether near-misses can birth."""
+    rows: list[NearMissGapGeometryRow] = []
+    for near_miss in near_miss_rows:
+        primes = first_primes(near_miss.k)
+        next_primes = first_primes(near_miss.k + 1)
+        new_prime = next_primes[-1]
+        previous_gaps = residue_uncovered_intervals(near_miss.residue, primes)
+        containing_remainders: list[int] = []
+        margins: list[Fraction] = []
+        for remainder in range(new_prime):
+            new_arcs = exact_arc_intervals_for_residue(remainder, new_prime)
+            try:
+                containment = classify_birth_containment(previous_gaps, new_arcs)
+            except ValueError:
+                continue
+            containing_remainders.append(remainder)
+            margins.append(containment.margin)
+
+        rows.append(
+            NearMissGapGeometryRow(
+                k=near_miss.k,
+                primorial=near_miss.primorial,
+                near_miss_rank=near_miss.near_miss_rank,
+                residue=near_miss.residue,
+                lambda_fraction=near_miss.lambda_fraction,
+                next_k=near_miss.k + 1,
+                new_prime=new_prime,
+                previous_open_gap_count=len(previous_gaps),
+                previous_uncovered_measure_fraction=format_fraction(
+                    residue_uncovered_measure(near_miss.residue, primes)
+                ),
+                max_previous_open_gap_length_fraction=format_fraction(
+                    max(interval_length(gap) for gap in previous_gaps)
+                ),
+                previous_open_gap_boundary_endpoints=format_intervals(previous_gaps),
+                containing_remainder_count=len(containing_remainders),
+                containing_remainders=" ".join(str(value) for value in containing_remainders),
+                containment_margins=" ".join(format_fraction(value) for value in margins),
+                best_containment_margin_fraction=(
+                    format_fraction(max(margins)) if margins else ""
+                ),
             )
         )
     return rows
@@ -570,6 +638,10 @@ def split_interval(interval: ExactInterval) -> list[ExactInterval]:
     return [(start, Fraction(1)), (Fraction(0), end)]
 
 
+def interval_length(interval: ExactInterval) -> Fraction:
+    return sum(end - start for start, end in split_interval(interval))
+
+
 def format_fraction(value: Fraction) -> str:
     if value.denominator == 1:
         return str(value.numerator)
@@ -621,6 +693,13 @@ def write_near_miss_birth_parent_csv(
     output_path: str | Path,
 ) -> None:
     write_dataclass_csv(rows, output_path, NearMissBirthParentRow)
+
+
+def write_near_miss_gap_geometry_csv(
+    rows: Iterable[NearMissGapGeometryRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, NearMissGapGeometryRow)
 
 
 def write_birth_threshold_crossing_csv(

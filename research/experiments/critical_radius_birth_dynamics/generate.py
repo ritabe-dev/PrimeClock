@@ -12,6 +12,7 @@ from tools import (
     critical_radius_near_miss_rows,
     critical_radius_summary_rows,
     near_miss_birth_parent_rows,
+    near_miss_gap_geometry_rows,
     write_birth_threshold_crossing_csv,
     write_birth_dynamics_csv,
     write_birth_dynamics_summary_csv,
@@ -19,6 +20,7 @@ from tools import (
     write_critical_radius_near_miss_csv,
     write_critical_radius_summary_csv,
     write_near_miss_birth_parent_csv,
+    write_near_miss_gap_geometry_csv,
 )
 
 
@@ -31,6 +33,7 @@ def main() -> int:
     radius_summary_rows = critical_radius_summary_rows(radius_rows)
     near_miss_rows = critical_radius_near_miss_rows(radius_rows, limit_per_k=20)
     near_miss_parent_rows = near_miss_birth_parent_rows(near_miss_rows)
+    near_miss_gap_rows = near_miss_gap_geometry_rows(near_miss_rows)
     birth_rows = birth_dynamics_rows(min_k=5, max_k=7)
     summary_rows = birth_dynamics_summary_rows(birth_rows)
     crossing_rows = birth_threshold_crossing_rows(min_k=5, max_k=7)
@@ -51,6 +54,10 @@ def main() -> int:
     write_near_miss_birth_parent_csv(
         near_miss_parent_rows,
         DATA_DIR / "prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv",
+    )
+    write_near_miss_gap_geometry_csv(
+        near_miss_gap_rows,
+        DATA_DIR / "prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv",
     )
     write_birth_threshold_crossing_csv(
         b5_crossing_rows,

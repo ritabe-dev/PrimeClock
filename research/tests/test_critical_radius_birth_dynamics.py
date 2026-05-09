@@ -134,6 +134,26 @@ def test_near_miss_birth_parent_overlap_links_next_birth_layer():
             assert set(row.birth_types.split()) == {"strict_single_gap_birth"}
 
 
+def test_near_miss_gap_geometry_matches_birth_parent_overlap():
+    radius_rows = tools.critical_radius_rows(min_k=4, max_k=5)
+    near_misses = tools.critical_radius_near_miss_rows(radius_rows, limit_per_k=20)
+    parent_rows = tools.near_miss_birth_parent_rows(near_misses)
+    gap_rows = tools.near_miss_gap_geometry_rows(near_misses)
+
+    parent_by_key = {(row.k, row.residue): row for row in parent_rows}
+    assert len(gap_rows) == 40
+    for row in gap_rows:
+        parent = parent_by_key[(row.k, row.residue)]
+        assert row.containing_remainder_count == parent.birth_lift_count
+        assert row.containing_remainders == parent.birth_lift_remainders
+        assert row.previous_open_gap_count >= 1
+        assert Fraction(row.previous_uncovered_measure_fraction) > 0
+        assert Fraction(row.max_previous_open_gap_length_fraction) > 0
+        if row.containing_remainder_count:
+            assert row.best_containment_margin_fraction
+            assert Fraction(row.best_containment_margin_fraction) > 0
+
+
 def test_b5_threshold_crossing_rows_connect_parent_and_child_radius():
     rows = tools.birth_threshold_crossing_rows(min_k=5)
 
