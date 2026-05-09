@@ -88,14 +88,15 @@ def main() -> int:
     bundle = config["bundle_name"]
     release_url = config["github_release_url"]
     concept_doi = config["zenodo_concept_doi"]
-    version_doi = config.get("zenodo_version_doi", concept_doi)
+    version_doi = config.get("zenodo_version_doi")
     failures: list[str] = []
 
     citation = read(repo_root, "CITATION.cff")
     require_contains(failures, citation, f'version: "{release}"', "CITATION.cff")
     require_contains(failures, citation, f'url: "{release_url}"', "CITATION.cff")
-    require_contains(failures, citation, f'doi: "{version_doi}"', "CITATION.cff")
-    require_contains(failures, citation, concept_doi, "CITATION.cff")
+    require_contains(failures, citation, f'doi: "{concept_doi}"', "CITATION.cff")
+    if version_doi and re.search(rf'^doi: "{re.escape(version_doi)}"$', citation, re.MULTILINE):
+        failures.append("CITATION.cff uses version DOI as top-level doi")
 
     workflow = read(repo_root, ".github/workflows/verify.yml")
     require_contains(
@@ -121,6 +122,11 @@ def main() -> int:
     require_contains(failures, manifest, config["root_release_notes"], "research/PUBLIC_RELEASE_MANIFEST.md")
     require_contains(failures, manifest, config["research_release_notes"], "research/PUBLIC_RELEASE_MANIFEST.md")
     require_contains(failures, manifest, "release/public/release_config.json", "research/PUBLIC_RELEASE_MANIFEST.md")
+
+    config_text = read(repo_root, "release/public/release_config.json")
+    require_contains(failures, config_text, '"release_kind":', "release/public/release_config.json")
+    require_contains(failures, config_text, '"zenodo_expected":', "release/public/release_config.json")
+    require_contains(failures, config_text, '"allow_github_release":', "release/public/release_config.json")
 
     for relative_path in PUBLIC_FACING_FILES:
         text = read(repo_root, relative_path)

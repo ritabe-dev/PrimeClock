@@ -81,7 +81,7 @@ python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 Expected focused result:
 
 ```text
-50 passed
+53 passed
 ```
 
 ## Logical Consequence of Passing Checks

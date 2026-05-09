@@ -1,5 +1,6 @@
 import csv
 import hashlib
+import json
 import subprocess
 import sys
 from fractions import Fraction
@@ -1515,29 +1516,93 @@ def test_publish_public_release_dry_run_does_not_execute_remote_writes(tmp_path:
 
     assert result.returncode == 0
     assert "mode: dry-run" in result.stdout
+    assert "GitHub Release: no" in result.stdout
+    assert "Zenodo target: no" in result.stdout
     assert "DRY-RUN:" in result.stdout
+    assert "git push origin HEAD:main" in result.stdout
+    assert "git tag" not in result.stdout
+    assert "gh release create" not in result.stdout
+
+
+def test_publish_public_release_doi_release_dry_run_creates_release_commands(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["release_kind"] = "doi_release"
+    config["zenodo_expected"] = True
+    config["allow_github_release"] = True
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
+    publisher = bundle_root / "scripts" / "publish_public_release.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(publisher),
+            "--public-worktree",
+            str(tmp_path / "missing-public-worktree"),
+            "--build-parent",
+            str(tmp_path / "build"),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=bundle_root,
+    )
+
+    assert result.returncode == 0
+    assert "GitHub Release: yes" in result.stdout
+    assert "Zenodo target: yes" in result.stdout
+    assert "git tag" in result.stdout
     assert "gh release create" in result.stdout
     assert "PrimeClock-2.2.4.zip" in result.stdout
 
 
-def test_finalize_release_doi_reports_pending(tmp_path: Path):
+def test_release_version_checker_rejects_top_level_version_doi(tmp_path: Path):
     repo_root = Path(__file__).parents[2]
-    finalizer = repo_root / "scripts" / "finalize_release_doi.py"
-    html = tmp_path / "zenodo.html"
-    html.write_text("concept DOI only: 10.5281/zenodo.20091722\n", encoding="utf-8")
+    builder = repo_root / "scripts" / "build_public_release.py"
+    checker = repo_root / "scripts" / "check_release_versions.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    citation = bundle_root / "CITATION.cff"
+    citation.write_text(
+        citation.read_text(encoding="utf-8").replace(
+            'doi: "10.5281/zenodo.20091722"',
+            'doi: "10.5281/zenodo.20096689"',
+        ),
+        encoding="utf-8",
+    )
 
     result = subprocess.run(
-        [sys.executable, str(finalizer), "--html-file", str(html)],
+        [sys.executable, str(checker), "--repo-root", str(bundle_root)],
         check=False,
         capture_output=True,
         text=True,
     )
 
-    assert result.returncode == 0
-    assert "pending: no Zenodo version DOI found" in result.stdout
+    assert result.returncode == 1
+    assert "CITATION.cff uses version DOI as top-level doi" in result.stdout
 
 
-def test_finalize_release_doi_detects_version_doi(tmp_path: Path):
+def test_finalize_release_doi_rejects_maintenance_sync(tmp_path: Path):
     repo_root = Path(__file__).parents[2]
     finalizer = repo_root / "scripts" / "finalize_release_doi.py"
     html = tmp_path / "zenodo.html"
@@ -1553,6 +1618,97 @@ def test_finalize_release_doi_detects_version_doi(tmp_path: Path):
         text=True,
     )
 
+    assert result.returncode == 1
+    assert "refusing DOI finalization for release_kind=maintenance_sync" in result.stdout
+
+
+def test_finalize_release_doi_reports_pending_for_doi_release(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+    finalizer = repo_root / "scripts" / "finalize_release_doi.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["release_kind"] = "doi_release"
+    config["zenodo_expected"] = True
+    config["allow_github_release"] = True
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
+    html = tmp_path / "zenodo.html"
+    html.write_text("concept DOI only: 10.5281/zenodo.20091722\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(finalizer),
+            "--repo-root",
+            str(bundle_root),
+            "--html-file",
+            str(html),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "pending: no Zenodo version DOI found" in result.stdout
+
+
+def test_finalize_release_doi_detects_version_doi_without_changing_citation(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+    finalizer = repo_root / "scripts" / "finalize_release_doi.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["release_kind"] = "doi_release"
+    config["zenodo_expected"] = True
+    config["allow_github_release"] = True
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
+    html = tmp_path / "zenodo.html"
+    html.write_text(
+        "concept 10.5281/zenodo.20091722 version 10.5281/zenodo.20096689\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(finalizer),
+            "--repo-root",
+            str(bundle_root),
+            "--html-file",
+            str(html),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
     assert result.returncode == 0
     assert "version DOI: 10.5281/zenodo.20096689" in result.stdout
     assert "dry-run" in result.stdout
+
+    assert 'doi: "10.5281/zenodo.20091722"' in (bundle_root / "CITATION.cff").read_text(
+        encoding="utf-8"
+    )

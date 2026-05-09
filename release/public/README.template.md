@@ -49,7 +49,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 50 passed
+focused pytest: 53 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```

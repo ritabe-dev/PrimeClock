@@ -1,6 +1,8 @@
 # Public Release Checklist
 
 Use this checklist for the finite `C_k/C_4/B_5` public release line.
+GitHub main is the public working surface. GitHub Release and Zenodo are only
+for important fixed versions.
 
 ## Preflight
 
@@ -11,7 +13,38 @@ python3 scripts/verify_public_release.py --out /private/tmp/primeclock-public-re
 cd research && .venv/bin/python -m pytest tests/test_covering_prime_prefix_filtration.py -q
 ```
 
-## Stage A: GitHub Release
+## GitHub-only Improvement Loop
+
+Use this for ordinary cleanup, CI, README, verifier, or review-driven changes.
+It updates public `main` only and does not create a tag, GitHub Release, or
+Zenodo archive.
+
+```bash
+python3 scripts/publish_public_release.py
+python3 scripts/publish_public_release.py --execute
+```
+
+The config must say:
+
+```json
+"release_kind": "maintenance_sync",
+"zenodo_expected": false,
+"allow_github_release": false
+```
+
+For external review snapshots, send a commit or tree URL, not a
+GitHub Release URL.
+
+## DOI Release Loop
+
+Use this only for important fixed versions that should be archived by Zenodo.
+The config must say:
+
+```json
+"release_kind": "doi_release",
+"zenodo_expected": true,
+"allow_github_release": true
+```
 
 Dry-run first:
 
@@ -27,7 +60,8 @@ python3 scripts/publish_public_release.py --execute
 
 This script fetches the public repository, reapplies the generated bundle on top
 of `origin/main`, verifies the public worktree, pushes `main`, creates the tag,
-and creates the GitHub release with the generated zip asset.
+and creates the GitHub Release with the generated zip asset only for
+`doi_release`.
 
 ## Stage B: Zenodo DOI Metadata
 

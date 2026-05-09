@@ -50,6 +50,8 @@ def main() -> int:
     config = load_release_config(repo_root)
     tag = config["public_tag"]
     bundle_name = config["bundle_name"]
+    allow_github_release = config["allow_github_release"]
+    zenodo_expected = config["zenodo_expected"]
     public_worktree = args.public_worktree.resolve()
     build_parent = args.build_parent.resolve()
     release_root = build_parent / bundle_name
@@ -57,6 +59,9 @@ def main() -> int:
 
     print(f"release: {tag}")
     print(f"mode: {'execute' if args.execute else 'dry-run'}")
+    print(f"release kind: {config['release_kind']}")
+    print(f"GitHub Release: {'yes' if allow_github_release else 'no'}")
+    print(f"Zenodo target: {'yes' if zenodo_expected else 'no'}")
 
     run([sys.executable, "scripts/check_release_versions.py"], repo_root, execute=args.execute, mutating=True)
     run([sys.executable, "scripts/update_public_hashes.py", "--check"], repo_root, execute=args.execute, mutating=True)
@@ -96,10 +101,17 @@ def main() -> int:
     )
     run(["git", "diff", "--check"], public_worktree, execute=args.execute, mutating=True)
 
-    commit_message = f"Release PRC finite certificate bundle {tag}"
+    if allow_github_release:
+        commit_message = f"Release PRC finite certificate bundle {tag}"
+    else:
+        commit_message = f"Sync PRC public bundle {tag}"
     run(["git", "add", "-A"], public_worktree, execute=args.execute, mutating=True)
     run(["git", "commit", "-m", commit_message], public_worktree, execute=args.execute, mutating=True)
     run(["git", "push", "origin", "HEAD:main"], public_worktree, execute=args.execute, mutating=True)
+    if not allow_github_release:
+        print("skipping tag and GitHub Release because release_kind is maintenance_sync")
+        return 0
+
     run(["git", "tag", "-a", tag, "-m", f"PRC finite theorem bundle {tag}"], public_worktree, execute=args.execute, mutating=True)
     run(["git", "push", "origin", tag], public_worktree, execute=args.execute, mutating=True)
 

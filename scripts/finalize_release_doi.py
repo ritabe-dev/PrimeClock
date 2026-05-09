@@ -55,32 +55,14 @@ def replace_pending_or_doi(text: str, version_doi: str) -> str:
 
 
 def update_citation(text: str, version_doi: str, concept_doi: str) -> str:
-    text = re.sub(r'doi: "10\.5281/zenodo\.\d+"', f'doi: "{version_doi}"', text, count=1)
-    if "identifiers:" not in text:
-        marker = f'doi: "{version_doi}"\n'
-        text = text.replace(
-            marker,
-            marker
-            + "identifiers:\n"
-            + "  - type: doi\n"
-            + f'    value: "{concept_doi}"\n'
-            + '    description: "Zenodo concept DOI"\n',
-        )
-    elif concept_doi not in text:
-        text = text.replace(
-            "identifiers:\n",
-            "identifiers:\n"
-            + "  - type: doi\n"
-            + f'    value: "{concept_doi}"\n'
-            + '    description: "Zenodo concept DOI"\n',
-        )
-    return text
+    return re.sub(r'doi: "10\.5281/zenodo\.\d+"', f'doi: "{concept_doi}"', text, count=1)
 
 
 def update_files(repo_root: Path, version_doi: str) -> None:
     config_path = repo_root / CONFIG_PATH
     config = load_release_config(repo_root)
     concept_doi = config["zenodo_concept_doi"]
+
     config["zenodo_version_doi"] = version_doi
     config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
@@ -167,6 +149,10 @@ def main() -> int:
     repo_root = args.repo_root.resolve() if args.repo_root else Path(__file__).resolve().parents[1]
     config = load_release_config(repo_root)
     concept_doi = config["zenodo_concept_doi"]
+
+    if config["release_kind"] != "doi_release":
+        print(f"refusing DOI finalization for release_kind={config['release_kind']}")
+        return 1
 
     if args.version_doi:
         version_doi = args.version_doi

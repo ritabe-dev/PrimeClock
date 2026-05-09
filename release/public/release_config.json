@@ -5,6 +5,9 @@
   "root_release_notes": "RELEASE_NOTES_v2_2_4.md",
   "research_release_notes": "research/RELEASE_NOTES_v2_2_4.md",
   "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.2.4",
+  "release_kind": "maintenance_sync",
+  "zenodo_expected": false,
+  "allow_github_release": false,
   "zenodo_version_doi": "10.5281/zenodo.20096689",
   "zenodo_concept_doi": "10.5281/zenodo.20091722"
 }
