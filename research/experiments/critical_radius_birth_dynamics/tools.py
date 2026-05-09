@@ -1,0 +1,362 @@
+"""Exact helpers for the critical-radius and birth-dynamics sandbox.
+
+This module intentionally lives under ``research/experiments`` instead of the
+public package. The v2.2.1 public release remains the stable C4/B5 certificate
+artifact; these helpers are the next internal research layer.
+"""
+
+from __future__ import annotations
+
+import csv
+from dataclasses import dataclass
+from fractions import Fraction
+from pathlib import Path
+from typing import Iterable
+
+from prime_reciprocal_projection.covering_prime_prefix_filtration import (
+    prime_prefix_residue_full_rows,
+    residue_is_exactly_covered,
+    residue_uncovered_intervals,
+    residue_uncovered_measure,
+)
+from prime_reciprocal_projection.primes import primes_up_to
+
+ExactInterval = tuple[Fraction, Fraction]
+
+
+@dataclass(frozen=True)
+class CriticalRadiusRow:
+    k: int
+    primorial: int
+    residue: int
+    lambda_fraction: str
+    lambda_decimal: float
+    status: str
+    bottleneck_point: str
+    active_primes: str
+    active_centers: str
+    current_covering_residue: bool
+
+
+@dataclass(frozen=True)
+class BirthDynamicsRow:
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    parent_residue_mod_previous: int
+    reflection_residue: int
+    birth_type: str
+    previous_open_gap_count: int
+    previous_uncovered_measure_fraction: str
+    previous_open_gap_boundary_endpoints: str
+    new_prime_remainder: int
+    new_prime_closed_arc_boundary_endpoints: str
+    containment_margin_fraction: str
+    uses_endpoint_touching: bool
+
+
+@dataclass(frozen=True)
+class BirthDynamicsSummaryRow:
+    k: int
+    new_prime: int
+    primorial: int
+    birth_count: int
+    strict_single_gap_birth: int
+    endpoint_single_gap_birth: int
+    strict_multi_gap_birth: int
+    endpoint_multi_gap_birth: int
+    max_previous_open_gap_count: int
+    previous_uncovered_measure_fractions: str
+
+
+def first_primes(count: int) -> list[int]:
+    """Return the first ``count`` primes."""
+    if count < 1:
+        raise ValueError("count must be >= 1")
+    limit = 32
+    while True:
+        primes = primes_up_to(limit)
+        if len(primes) >= count:
+            return primes[:count]
+        limit *= 2
+
+
+def primorial(primes: Iterable[int]) -> int:
+    value = 1
+    for p in primes:
+        value *= p
+    return value
+
+
+def center_for_residue(residue: int, p: int) -> Fraction:
+    return Fraction(residue % p, p)
+
+
+def critical_radius_rows(*, min_k: int = 4, max_k: int = 5) -> list[CriticalRadiusRow]:
+    """Return exact critical-radius rows for all residues at ``min_k..max_k``."""
+    rows: list[CriticalRadiusRow] = []
+    for k in range(min_k, max_k + 1):
+        primes = first_primes(k)
+        modulus = primorial(primes)
+        for residue in range(modulus):
+            radius, point, active = critical_radius_certificate(residue, primes)
+            covered = residue_is_exactly_covered(residue, primes)
+            rows.append(
+                CriticalRadiusRow(
+                    k=k,
+                    primorial=modulus,
+                    residue=residue,
+                    lambda_fraction=format_fraction(radius),
+                    lambda_decimal=float(radius),
+                    status=critical_radius_status(radius),
+                    bottleneck_point=format_fraction(point),
+                    active_primes=" ".join(str(p) for p in active),
+                    active_centers=" ".join(
+                        format_fraction(center_for_residue(residue, p)) for p in active
+                    ),
+                    current_covering_residue=covered,
+                )
+            )
+    return rows
+
+
+def critical_radius_certificate(
+    residue: int,
+    primes: Iterable[int],
+) -> tuple[Fraction, Fraction, tuple[int, ...]]:
+    """Return ``lambda_k(r)``, a bottleneck point, and active primes.
+
+    The current PRC arcs have radius ``1/(2p)``. With scaled arcs
+    ``[c_p-lambda/p, c_p+lambda/p]``, the covering threshold is the maximum of
+    ``min_p p*d_T(x,c_p)`` over the circle. We enumerate exact weighted
+    bisectors of all lifted center pairs and evaluate the lower envelope.
+    """
+    prime_values = list(primes)
+    if not prime_values:
+        raise ValueError("primes must be nonempty")
+
+    centers = [(p, center_for_residue(residue, p)) for p in prime_values]
+    candidates: set[Fraction] = {Fraction(0)}
+    signs = (-1, 1)
+    offsets = (-1, 0, 1)
+
+    for left_index, (left_p, left_center) in enumerate(centers):
+        for right_p, right_center in centers[left_index + 1 :]:
+            for left_offset in offsets:
+                lifted_left = left_center + left_offset
+                for right_offset in offsets:
+                    lifted_right = right_center + right_offset
+                    for left_sign in signs:
+                        for right_sign in signs:
+                            denominator = left_p * left_sign - right_p * right_sign
+                            if denominator == 0:
+                                continue
+                            numerator = (
+                                left_p * left_sign * lifted_left
+                                - right_p * right_sign * lifted_right
+                            )
+                            point = numerator / denominator
+                            if not Fraction(0) <= point <= Fraction(1):
+                                continue
+                            if left_sign * (point - lifted_left) < 0:
+                                continue
+                            if right_sign * (point - lifted_right) < 0:
+                                continue
+                            candidates.add(point % 1)
+
+    best_radius = Fraction(-1)
+    best_point = Fraction(0)
+    best_active: tuple[int, ...] = ()
+    for point in sorted(candidates):
+        distances = [
+            (p * circular_distance(point, center), p)
+            for p, center in centers
+        ]
+        radius = min(value for value, _ in distances)
+        active = tuple(sorted(p for value, p in distances if value == radius))
+        if radius > best_radius or (radius == best_radius and point < best_point):
+            best_radius = radius
+            best_point = point
+            best_active = active
+
+    return best_radius, best_point, best_active
+
+
+def critical_radius_status(radius: Fraction) -> str:
+    threshold = Fraction(1, 2)
+    if radius < threshold:
+        return "robust_covered"
+    if radius == threshold:
+        return "endpoint_covered"
+    return "uncovered"
+
+
+def circular_distance(left: Fraction, right: Fraction) -> Fraction:
+    delta = abs((left - right) % 1)
+    return min(delta, Fraction(1) - delta)
+
+
+def birth_dynamics_rows(*, min_k: int = 5, max_k: int = 7) -> list[BirthDynamicsRow]:
+    """Return exact birth-mechanism rows for birth layers ``min_k..max_k``."""
+    full_rows = prime_prefix_residue_full_rows(max_k=max_k, allow_large_k=max_k > 6)
+    birth_rows = [
+        row
+        for row in full_rows
+        if min_k <= row.k <= max_k and row.status == "birth"
+    ]
+
+    rows: list[BirthDynamicsRow] = []
+    for row in birth_rows:
+        primes = first_primes(row.k)
+        previous_primes = primes[:-1]
+        new_prime = primes[-1]
+        previous_modulus = primorial(previous_primes)
+        previous_gaps = residue_uncovered_intervals(row.residue, previous_primes)
+        new_arcs = exact_arc_intervals_for_residue(row.residue, new_prime)
+        containment = classify_birth_containment(previous_gaps, new_arcs)
+        birth_type = (
+            ("endpoint" if containment.uses_endpoint_touching else "strict")
+            + ("_single_gap_birth" if len(previous_gaps) == 1 else "_multi_gap_birth")
+        )
+        rows.append(
+            BirthDynamicsRow(
+                k=row.k,
+                new_prime=new_prime,
+                primorial=row.primorial,
+                residue=row.residue,
+                parent_residue_mod_previous=row.residue % previous_modulus,
+                reflection_residue=row.reflection_residue,
+                birth_type=birth_type,
+                previous_open_gap_count=len(previous_gaps),
+                previous_uncovered_measure_fraction=format_fraction(
+                    residue_uncovered_measure(row.residue, previous_primes)
+                ),
+                previous_open_gap_boundary_endpoints=format_intervals(previous_gaps),
+                new_prime_remainder=row.residue % new_prime,
+                new_prime_closed_arc_boundary_endpoints=format_intervals(new_arcs),
+                containment_margin_fraction=format_fraction(containment.margin),
+                uses_endpoint_touching=containment.uses_endpoint_touching,
+            )
+        )
+    return rows
+
+
+def birth_dynamics_summary_rows(rows: Iterable[BirthDynamicsRow]) -> list[BirthDynamicsSummaryRow]:
+    grouped: dict[int, list[BirthDynamicsRow]] = {}
+    for row in rows:
+        grouped.setdefault(row.k, []).append(row)
+
+    summary: list[BirthDynamicsSummaryRow] = []
+    for k, group in sorted(grouped.items()):
+        counts = {
+            "strict_single_gap_birth": 0,
+            "endpoint_single_gap_birth": 0,
+            "strict_multi_gap_birth": 0,
+            "endpoint_multi_gap_birth": 0,
+        }
+        for row in group:
+            counts[row.birth_type] += 1
+        measures = sorted({row.previous_uncovered_measure_fraction for row in group})
+        summary.append(
+            BirthDynamicsSummaryRow(
+                k=k,
+                new_prime=group[0].new_prime,
+                primorial=group[0].primorial,
+                birth_count=len(group),
+                strict_single_gap_birth=counts["strict_single_gap_birth"],
+                endpoint_single_gap_birth=counts["endpoint_single_gap_birth"],
+                strict_multi_gap_birth=counts["strict_multi_gap_birth"],
+                endpoint_multi_gap_birth=counts["endpoint_multi_gap_birth"],
+                max_previous_open_gap_count=max(row.previous_open_gap_count for row in group),
+                previous_uncovered_measure_fractions=" ".join(measures),
+            )
+        )
+    return summary
+
+
+@dataclass(frozen=True)
+class BirthContainment:
+    margin: Fraction
+    uses_endpoint_touching: bool
+
+
+def classify_birth_containment(
+    previous_gaps: Iterable[ExactInterval],
+    new_arcs: Iterable[ExactInterval],
+) -> BirthContainment:
+    """Return exact containment margin of old open gaps in new closed arcs."""
+    arc_segments = [segment for interval in new_arcs for segment in split_interval(interval)]
+    margins: list[Fraction] = []
+    for gap in previous_gaps:
+        for gap_segment in split_interval(gap):
+            containing = [
+                (gap_segment[0] - arc[0], arc[1] - gap_segment[1])
+                for arc in arc_segments
+                if arc[0] <= gap_segment[0] and gap_segment[1] <= arc[1]
+            ]
+            if not containing:
+                raise ValueError("birth gap is not contained in the new prime arc")
+            margins.append(max(min(left_margin, right_margin) for left_margin, right_margin in containing))
+    margin = min(margins) if margins else Fraction(0)
+    return BirthContainment(margin=margin, uses_endpoint_touching=margin == 0)
+
+
+def exact_arc_intervals_for_residue(residue: int, p: int) -> list[ExactInterval]:
+    remainder = residue % p
+    center = Fraction(remainder, p)
+    radius = Fraction(1, 2 * p)
+    start = center - radius
+    end = center + radius
+    one = Fraction(1)
+    if start < 0:
+        return [(Fraction(0), end), (one + start, one)]
+    if end > one:
+        return [(Fraction(0), end - one), (start, one)]
+    return [(start, end)]
+
+
+def split_interval(interval: ExactInterval) -> list[ExactInterval]:
+    start, end = interval
+    if end >= start:
+        return [(start, end)]
+    return [(start, Fraction(1)), (Fraction(0), end)]
+
+
+def format_fraction(value: Fraction) -> str:
+    if value.denominator == 1:
+        return str(value.numerator)
+    return f"{value.numerator}/{value.denominator}"
+
+
+def format_intervals(intervals: Iterable[ExactInterval]) -> str:
+    return ";".join(
+        f"{format_fraction(start)}-{format_fraction(end)}"
+        for start, end in intervals
+    )
+
+
+def write_dataclass_csv(rows: Iterable[object], output_path: str | Path, row_type: type) -> None:
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = list(row_type.__dataclass_fields__.keys())  # type: ignore[attr-defined]
+    with output.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({field: getattr(row, field) for field in fieldnames})
+
+
+def write_critical_radius_csv(rows: Iterable[CriticalRadiusRow], output_path: str | Path) -> None:
+    write_dataclass_csv(rows, output_path, CriticalRadiusRow)
+
+
+def write_birth_dynamics_csv(rows: Iterable[BirthDynamicsRow], output_path: str | Path) -> None:
+    write_dataclass_csv(rows, output_path, BirthDynamicsRow)
+
+
+def write_birth_dynamics_summary_csv(
+    rows: Iterable[BirthDynamicsSummaryRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, BirthDynamicsSummaryRow)

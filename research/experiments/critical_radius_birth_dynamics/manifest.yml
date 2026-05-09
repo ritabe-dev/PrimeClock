@@ -1,0 +1,19 @@
+id: critical_radius_birth_dynamics
+status: internal_experiment
+public_release: false
+base_release: v2.2.1
+purpose: >
+  Extend the finite C4/B5 certificate line toward exact critical-radius spectra
+  and finite birth-dynamics classification without changing the stable public
+  v2.2.1 release.
+artifacts:
+  - data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
+  - data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
+  - data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
+  - notes/prc_critical_radius_spectrum_v0_1.md
+  - notes/prc_birth_dynamics_v0_1.md
+promotion_requirements:
+  - exact tests pass for k=4 and k=5 critical radius level sets
+  - B5/B6/B7 birth counts match exact filtration counts
+  - no broad asymptotic or prime-distribution claims
+  - public release manifest is updated only after claim promotion
