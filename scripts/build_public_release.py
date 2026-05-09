@@ -75,6 +75,10 @@ def copy_file(
     release_relative_path: str | None = None,
 ) -> None:
     source = repo_root / relative_path
+    if not source.is_file() and release_relative_path is not None:
+        fallback_source = repo_root / release_relative_path
+        if fallback_source.is_file():
+            source = fallback_source
     if not source.is_file():
         raise FileNotFoundError(f"Missing release file: {relative_path}")
     target = release_root / (release_relative_path or relative_path)
