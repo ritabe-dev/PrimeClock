@@ -13,8 +13,8 @@ Prime Reciprocal Covering. It is a release bundle for the finite theorem note,
 CSV certificates, package verifier, and standard-library standalone checker.
 This patch release separates the development-repository README from the public
 release-bundle README so the bundle entrypoint cannot inherit source-only
-wording. The historical PrimeClock React/Vite visualization remains source
-context and is not included in this release bundle.
+wording. The React/Vite PrimeClock visualization app remains source context and
+is not included in this release bundle.
 
 ## Included
 
