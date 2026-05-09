@@ -6,6 +6,7 @@ authors:
     given-names: "Rio"
 version: "2.2.1"
 date-released: "2026-05-09"
+doi: "10.5281/zenodo.20092329"
 abstract: "A release-ready finite certificate artifact for Prime Reciprocal Covering, focused on the prime-prefix residue-covering filtration, the C4 layer, and B5 birth classes."
 license: "MIT"
 repository-code: "https://github.com/ritabe-dev/PrimeClock"

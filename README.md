@@ -85,7 +85,8 @@ recorded in `SHA256SUMS`, and version correspondence is recorded in
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The current public DOI is
-`pending Zenodo publication`.
+Use `CITATION.cff` for citation metadata. The current version DOI is
+`10.5281/zenodo.20092329`; the Zenodo concept DOI for the release series is
+`10.5281/zenodo.20091722`.
 
 The project is released under the MIT License; see `LICENSE`.

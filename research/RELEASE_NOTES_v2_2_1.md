@@ -2,7 +2,9 @@
 
 Release date: 2026-05-09 JST
 
-DOI: `pending Zenodo publication`
+Version DOI: `10.5281/zenodo.20092329`
+
+Concept DOI: `10.5281/zenodo.20091722`
 
 ## Purpose
 
