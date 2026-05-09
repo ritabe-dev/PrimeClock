@@ -14,6 +14,7 @@ candidate_scope:
   include_prime_distribution_claims: false
 candidate_claims:
   - C_k is the 1/2 level set of the exact critical-radius spectrum.
+  - Critical radius is described by a finite weighted covering-radius max-min expression.
   - C_4 equals {2, 208} modulo 210 by the critical-radius level-set check.
   - C_5 has 36 covered residues by the critical-radius level-set check.
   - B_5, B_6, and B_7 are strict single-gap births in the checked finite data.
@@ -29,5 +30,8 @@ candidate_bundle:
 promotion_blockers:
   - public release manifest and SHA256 path are not yet created for v2.3.
   - v2.3 public bundle contents are not yet allowlisted.
-  - weighted covering-radius wording still needs external terminology review.
+  - formal related-work citations for covering-radius terminology are not yet included.
   - no Zenodo or GitHub release should be created from this internal manifest.
+terminology_status:
+  primary_term: critical radius
+  weighted_covering_radius: descriptive finite max-min shorthand

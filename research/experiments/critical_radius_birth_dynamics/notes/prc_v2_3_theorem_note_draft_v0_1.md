@@ -72,12 +72,24 @@ lambda_k(r) = max_x min_{i<=k} p_i * d_T(x, c_{p_i}(r)),
 ```
 
 where `d_T` is circular distance on `R/Z`. This is a weighted covering-radius
-formula. The implementation computes it exactly by evaluating weighted bisector
-candidates for lifted center pairs and selecting a bottleneck point.
+interpretation of the finite critical-radius threshold. In this draft,
+`critical radius` is the project term; `weighted covering-radius` is only
+descriptive shorthand for the max-min expression above. The implementation
+computes the value exactly by evaluating weighted bisector candidates for
+lifted center pairs and selecting a bottleneck point.
 
 Important boundary: this draft does not use the naive adjacent-center formula
 as a theorem. Adjacent data may be useful for certificates, but the theorem
 candidate is the weighted covering-radius statement above.
+
+Terminology boundary: this draft does not claim novelty for the phrase
+`weighted covering-radius`, and it does not import any external covering-radius
+theorem without citation. A separate internal terminology note records this
+scope:
+
+```text
+notes/prc_weighted_covering_radius_terminology_v0_1.md
+```
 
 ## 4. Level-Set Proposition
 
@@ -221,8 +233,8 @@ no B_8 or larger layers
 
 Before promotion to a public v2.3 release bundle, this draft still needs:
 
-1. review of the weighted covering-radius statement against nearby covering
-   radius terminology.
+1. a decision on whether the public note should add formal related-work
+   citations for covering-radius terminology.
 
 ## 9. Non-Claims
 

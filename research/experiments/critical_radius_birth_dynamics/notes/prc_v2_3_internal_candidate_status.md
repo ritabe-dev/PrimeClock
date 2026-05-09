@@ -67,6 +67,7 @@ notes/prc_v2_3_internal_candidate_status.md
 promotion_manifest_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
+notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
@@ -114,7 +115,8 @@ Before promotion to a public v2.3 release bundle:
 
 1. Create the public release manifest and SHA256 path for v2.3.
 2. Decide the exact allowlist for a v2.3 public bundle.
-3. Review the weighted covering-radius wording against nearby terminology.
+3. Decide whether to add formal related-work citations for covering-radius
+   terminology.
 4. Keep all statements finite; do not claim an asymptotic law or a general
    single-gap birth theorem.
 
@@ -128,9 +130,10 @@ notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 ```
 
 The next useful slice is still not brute force. The checker path, promotion
-manifest, and internal candidate bundle path now exist, so the next step should
-decide whether to run an external review on the candidate or polish terminology
-before public release. Only after that should new data be added.
+manifest, internal candidate bundle path, and terminology boundary note now
+exist, so the next step should decide whether to run an external review on the
+candidate or prepare the public v2.3 release manifest. Only after that should
+new data be added.
 
 ## Non-Claims
 

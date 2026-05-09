@@ -236,6 +236,7 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     assert "promotion_manifest_v0_1.yml" in text
     assert "notes/prc_v2_3_theorem_note_draft_v0_1.md" in text
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
+    assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "v2.2.3 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
     assert "Before promotion to a public v2.3 release bundle" in text
@@ -264,6 +265,8 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "weighted covering-radius" in text
     assert "formula" in text
     assert "naive adjacent-center formula" in text
+    assert "Terminology boundary" in text
+    assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "Birth Containment" in text
     assert "check_candidate.py: checks=11, failed=0" in text
     assert "no B_8 or larger layers" in text
@@ -303,6 +306,24 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     assert "include_asymptotic_claims: false" in text
     assert "expected: checks=11, failed=0" in text
     assert "builder: candidate_bundle.py" in text
+    assert "terminology_status:" in text
+    assert "primary_term: critical radius" in text
+
+
+def test_v2_3_weighted_covering_radius_terminology_note_keeps_scope():
+    note = (
+        EXPERIMENT_DIR
+        / "notes"
+        / "prc_weighted_covering_radius_terminology_v0_1.md"
+    )
+    text = note.read_text(encoding="utf-8")
+
+    assert "Status: internal terminology note, not a related-work survey." in text
+    assert "critical radius" in text
+    assert "finite max-min expression" in text
+    assert "descriptive shorthand" in text
+    assert "naive adjacent-center formula" in text
+    assert "does not claim novelty" in text
 
 
 def test_v2_3_candidate_bundle_builds_and_checks(tmp_path):

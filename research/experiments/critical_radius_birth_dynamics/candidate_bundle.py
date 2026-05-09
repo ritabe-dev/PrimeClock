@@ -42,6 +42,7 @@ RESEARCH_FILES = [
     f"{EXPERIMENT_REL}/notes/prc_v2_3_internal_candidate_status.md",
     f"{EXPERIMENT_REL}/notes/prc_v2_3_theorem_note_draft_v0_1.md",
     f"{EXPERIMENT_REL}/notes/prc_v2_3_theorem_candidate_outline_v0_1.md",
+    f"{EXPERIMENT_REL}/notes/prc_weighted_covering_radius_terminology_v0_1.md",
     f"{EXPERIMENT_REL}/notes/prc_critical_radius_birth_dynamics_v0_1.md",
     f"{EXPERIMENT_REL}/notes/prc_near_miss_birth_predictor_v0_2.md",
     f"{EXPERIMENT_REL}/notes/prc_critical_radius_spectrum_v0_1.md",

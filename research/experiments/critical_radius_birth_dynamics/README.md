@@ -26,6 +26,7 @@ notes/prc_v2_3_internal_candidate_status.md
 promotion_manifest_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
 notes/prc_v2_3_theorem_candidate_outline_v0_1.md
+notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
@@ -35,8 +36,10 @@ manifest fixes the candidate scope: critical-radius layers `k=4,5`, birth
 dynamics layers `k=5,6,7`, and no `B_8` or asymptotic claims. The theorem-note
 draft is the first compact public-candidate-shaped text, still internal. The
 outline records the three selected components: critical radius, level sets, and
-birth containment. The v0.2 note explains how near-miss ranking connects to
-birth-parent gap geometry.
+birth containment. The terminology note keeps `critical radius` as the primary
+project term and treats `weighted covering-radius` as descriptive shorthand.
+The v0.2 note explains how near-miss ranking connects to birth-parent gap
+geometry.
 
 ## Generate
 
