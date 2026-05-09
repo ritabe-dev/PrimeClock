@@ -22,12 +22,14 @@ internal research artifacts until explicitly promoted to a claim release.
 Start with:
 
 ```text
+notes/prc_v2_3_internal_candidate_status.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
-The v0.2 note explains how near-miss ranking connects to birth-parent gap
-geometry. The v0.1 integrated note gives the broader critical-radius and
+The status note summarizes the current internal milestone and promotion
+boundary. The v0.2 note explains how near-miss ranking connects to birth-parent
+gap geometry. The v0.1 integrated note gives the broader critical-radius and
 birth-dynamics context. The shorter companion notes split the v0.1 content into
 the critical-radius and birth-dynamics sides.
 
@@ -44,6 +46,6 @@ part of the v2.2.1 public release bundle.
 
 ## Current Status
 
-This is an internal v0.1 sandbox. It makes finite claims only for the generated
-levels and does not assert an asymptotic law or a general birth theorem beyond
-the exact containment identity.
+This is an internal v2.3 candidate, not a public release. It makes finite claims
+only for the generated levels and does not assert an asymptotic law or a general
+birth theorem beyond the exact containment identity.

@@ -224,3 +224,14 @@ def test_near_miss_predictor_note_keeps_gap_geometry_boundary():
     assert "near-miss rank is useful but not sufficient" in text
     assert "near-miss candidate + containing next-prime remainder" in text
     assert "does not claim" in text
+
+
+def test_v2_3_internal_status_note_keeps_release_boundary():
+    note = EXPERIMENT_DIR / "notes" / "prc_v2_3_internal_candidate_status.md"
+    text = note.read_text(encoding="utf-8")
+
+    assert "Status: internal candidate, not a public release." in text
+    assert "v2.2.1 public release remains the stable finite certificate artifact" in text
+    assert "near-miss candidate + containing next-prime remainder" in text
+    assert "Before promotion to a v2.3 public candidate" in text
+    assert "the v2.2.1 public release has changed" in text
