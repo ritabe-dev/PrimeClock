@@ -128,3 +128,13 @@ def test_b5_births_are_strict_single_gap_births():
     assert {row.birth_type for row in rows} == {"strict_single_gap_birth"}
     assert all(row.previous_open_gap_count == 1 for row in rows)
     assert all(not row.uses_endpoint_touching for row in rows)
+
+
+def test_integrated_experiment_note_keeps_scope_narrow():
+    note = EXPERIMENT_DIR / "notes" / "prc_critical_radius_birth_dynamics_v0_1.md"
+    text = note.read_text(encoding="utf-8")
+
+    assert "C_k = { r : lambda_k(r) <= 1/2 }" in text
+    assert "B_7: 714 strict single-gap births" in text
+    assert "not a general theorem for all levels" in text
+    assert "does not claim" in text

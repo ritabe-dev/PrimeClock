@@ -14,6 +14,17 @@ internal research artifacts until explicitly promoted to a claim release.
 - classify `B_5`, `B_6`, and `B_7` births as strict/endpoint and
   single-gap/multi-gap events.
 
+## Read First
+
+Start with:
+
+```text
+notes/prc_critical_radius_birth_dynamics_v0_1.md
+```
+
+The shorter companion notes split the same content into the critical-radius and
+birth-dynamics sides.
+
 ## Generate
 
 From `research/`:
