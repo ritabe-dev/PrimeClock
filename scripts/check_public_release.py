@@ -57,6 +57,19 @@ TEXT_SUFFIXES = {
     ".yaml",
 }
 
+README_REQUIRED_TEXT = [
+    "public release bundle",
+    "finite `C_k/C_4/B_5`",
+    "not included",
+]
+
+README_FORBIDDEN_TEXT = [
+    "This source repository contains",
+    "historical PrimeClock React/Vite visualization and the current",
+    "PrimeClock Development Repository",
+    "working tree for PrimeClock",
+]
+
 
 def sha256_bytes(path: Path) -> str:
     digest = hashlib.sha256()
@@ -151,6 +164,22 @@ def check_hashes(root: Path) -> list[str]:
     return failures
 
 
+def check_readme_guard(root: Path) -> list[str]:
+    readme = root / "README.md"
+    if not readme.is_file():
+        return ["missing root README.md"]
+
+    text = readme.read_text(encoding="utf-8")
+    failures: list[str] = []
+    for required in README_REQUIRED_TEXT:
+        if required not in text:
+            failures.append(f"root README.md missing required public-bundle text: {required!r}")
+    for forbidden in README_FORBIDDEN_TEXT:
+        if forbidden in text:
+            failures.append(f"root README.md contains source-repository text: {forbidden!r}")
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("release_root", type=Path)
@@ -160,7 +189,12 @@ def main() -> int:
     if not release_root.is_dir():
         raise SystemExit(f"Not a directory: {release_root}")
 
-    failures = check_paths(release_root) + check_text(release_root) + check_hashes(release_root)
+    failures = (
+        check_paths(release_root)
+        + check_text(release_root)
+        + check_readme_guard(release_root)
+        + check_hashes(release_root)
+    )
     if failures:
         for failure in failures:
             print(f"FAIL: {failure}")

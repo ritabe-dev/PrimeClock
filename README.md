@@ -1,10 +1,19 @@
-# PrimeClock / Prime Reciprocal Covering
+# PrimeClock Development Repository
 
-This source repository contains the historical PrimeClock React/Vite
-visualization and the current Prime Reciprocal Covering (PRC) research package.
-The v2.2.1 public release bundle is narrower: it contains the finite
-`C_k/C_4/B_5` research package, certificate CSVs, and verification tools. The
-visualization remains origin context and is not included in that release bundle.
+This development repository is the working tree for PrimeClock and Prime
+Reciprocal Covering (PRC). It can contain broader source history and local
+research work, including:
+
+- the historical PrimeClock React/Vite visualization, when present in this
+  checkout;
+- the PRC research package under `research/`;
+- release scripts used to build a narrow public certificate bundle.
+
+Public release bundles are generated from an allowlist and have their own root
+README template at `release/public/README.template.md`. The v2.2.2 public bundle
+contains only the finite `C_k/C_4/B_5` certificate artifact, exact rational CSVs,
+and verification tools; the historical visualization is not included in that
+bundle.
 
 ## Current Release Target
 
@@ -13,7 +22,7 @@ Read these files first:
 1. `research/notes/prc_finite_certificate_note_v2_0.md`
 2. `research/notes/claims_finite_c4_b5.md`
 3. `research/VERIFY_FINITE_C4_B5.md`
-4. `research/RELEASE_NOTES_v2_2_1.md`
+4. `research/RELEASE_NOTES_v2_2_2.md`
 5. `research/notes/known-results.md`
 6. `VERSION_MAP.md`
 
@@ -75,8 +84,8 @@ Build and inspect a local release bundle with:
 
 ```bash
 python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.1 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.1
+python3 scripts/build_public_release.py --version 2.2.2 --out /private/tmp/primeclock-public-release --zip
+python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.2
 ```
 
 The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are
@@ -85,8 +94,8 @@ recorded in `SHA256SUMS`, and version correspondence is recorded in
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The current version DOI is
-`10.5281/zenodo.20092329`; the Zenodo concept DOI for the release series is
-`10.5281/zenodo.20091722`.
+Use `CITATION.cff` for citation metadata. The Zenodo concept DOI for the
+release series is `10.5281/zenodo.20091722`; Zenodo assigns a version DOI for
+each GitHub release.
 
 The project is released under the MIT License; see `LICENSE`.

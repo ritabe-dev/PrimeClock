@@ -1299,7 +1299,12 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
     release_root = tmp_path / "release"
     release_root.mkdir()
     readme = release_root / "README.md"
-    readme.write_text("finite certificate bundle\n", encoding="utf-8")
+    readme.write_text(
+        "public release bundle\n"
+        "finite `C_k/C_4/B_5`\n"
+        "not included\n",
+        encoding="utf-8",
+    )
     digest = hashlib.sha256(readme.read_bytes()).hexdigest()
     (release_root / "SHA256SUMS").write_text(
         f"{digest}  README.md\n",
@@ -1315,7 +1320,13 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
     )
     assert ok_result.returncode == 0
 
-    readme.write_text("finite certificate bundle changed\n", encoding="utf-8")
+    readme.write_text(
+        "public release bundle\n"
+        "finite `C_k/C_4/B_5`\n"
+        "not included\n"
+        "changed\n",
+        encoding="utf-8",
+    )
     failed_result = subprocess.run(
         [sys.executable, str(checker), str(release_root)],
         check=False,

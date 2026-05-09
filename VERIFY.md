@@ -31,6 +31,6 @@ hygiene:
 
 ```bash
 python3 scripts/update_public_hashes.py --check
-python3 scripts/build_public_release.py --version 2.2.1 --out /private/tmp/primeclock-public-release --zip
-python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.1
+python3 scripts/build_public_release.py --version 2.2.2 --out /private/tmp/primeclock-public-release --zip
+python3 scripts/check_public_release.py /private/tmp/primeclock-public-release/PrimeClock-2.2.2
 ```

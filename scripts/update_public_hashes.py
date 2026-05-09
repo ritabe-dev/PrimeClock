@@ -7,7 +7,13 @@ import argparse
 import hashlib
 from pathlib import Path
 
-from build_public_release import EXCLUDED_DIR_NAMES, RESEARCH_DIRS, RESEARCH_FILES, ROOT_FILES
+from build_public_release import (
+    EXCLUDED_DIR_NAMES,
+    RESEARCH_DIRS,
+    RESEARCH_FILES,
+    ROOT_FILE_MAP,
+    ROOT_FILES,
+)
 
 
 HASH_MANIFEST = "SHA256SUMS"
@@ -25,15 +31,21 @@ def is_excluded_path(path: Path) -> bool:
     return any(part in EXCLUDED_DIR_NAMES for part in path.parts) or path.name == ".DS_Store"
 
 
-def release_file_paths(repo_root: Path) -> list[str]:
-    paths: set[str] = set()
+def release_file_paths(repo_root: Path) -> list[tuple[str, str]]:
+    paths: dict[str, str] = {}
+    for source_path, release_path in ROOT_FILE_MAP:
+        path = repo_root / source_path
+        if not path.is_file():
+            raise FileNotFoundError(f"Missing release file: {source_path}")
+        paths[release_path] = source_path
+
     for relative_path in ROOT_FILES + RESEARCH_FILES:
         if relative_path == HASH_MANIFEST:
             continue
         path = repo_root / relative_path
         if not path.is_file():
             raise FileNotFoundError(f"Missing release file: {relative_path}")
-        paths.add(relative_path)
+        paths[relative_path] = relative_path
 
     for relative_dir in RESEARCH_DIRS:
         root = repo_root / relative_dir
@@ -42,14 +54,15 @@ def release_file_paths(repo_root: Path) -> list[str]:
         for path in root.rglob("*"):
             if not path.is_file() or is_excluded_path(path.relative_to(repo_root)):
                 continue
-            paths.add(path.relative_to(repo_root).as_posix())
-    return sorted(paths)
+            relative_path = path.relative_to(repo_root).as_posix()
+            paths[relative_path] = relative_path
+    return sorted(paths.items())
 
 
 def render_manifest(repo_root: Path) -> str:
     lines = []
-    for relative_path in release_file_paths(repo_root):
-        lines.append(f"{sha256_bytes(repo_root / relative_path)}  {relative_path}")
+    for release_path, source_path in release_file_paths(repo_root):
+        lines.append(f"{sha256_bytes(repo_root / source_path)}  {release_path}")
     return "\n".join(lines) + "\n"
 
 

@@ -8,15 +8,18 @@ import shutil
 from pathlib import Path
 
 
+ROOT_FILE_MAP = [
+    ("release/public/README.template.md", "README.md"),
+]
+
 ROOT_FILES = [
-    "README.md",
     "LICENSE",
     "CITATION.cff",
     "DATA_FILES.md",
     "SHA256SUMS",
     "VERSION_MAP.md",
     "VERIFY.md",
-    "RELEASE_NOTES_v2_2_1.md",
+    "RELEASE_NOTES_v2_2_2.md",
     ".github/workflows/verify.yml",
     "scripts/build_public_release.py",
     "scripts/check_public_release.py",
@@ -26,7 +29,7 @@ ROOT_FILES = [
 RESEARCH_FILES = [
     "research/README.md",
     "research/PUBLIC_RELEASE_MANIFEST.md",
-    "research/RELEASE_NOTES_v2_2_1.md",
+    "research/RELEASE_NOTES_v2_2_2.md",
     "research/VERIFY_FINITE_C4_B5.md",
     "research/pyproject.toml",
     "research/setup.py",
@@ -65,11 +68,16 @@ EXCLUDED_DIR_NAMES = {
 }
 
 
-def copy_file(repo_root: Path, release_root: Path, relative_path: str) -> None:
+def copy_file(
+    repo_root: Path,
+    release_root: Path,
+    relative_path: str,
+    release_relative_path: str | None = None,
+) -> None:
     source = repo_root / relative_path
     if not source.is_file():
         raise FileNotFoundError(f"Missing release file: {relative_path}")
-    target = release_root / relative_path
+    target = release_root / (release_relative_path or relative_path)
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, target)
 
@@ -98,6 +106,8 @@ def build_release(repo_root: Path, output_dir: Path, version: str) -> Path:
         shutil.rmtree(release_root)
     release_root.mkdir(parents=True)
 
+    for source_path, release_path in ROOT_FILE_MAP:
+        copy_file(repo_root, release_root, source_path, release_path)
     for relative_path in ROOT_FILES + RESEARCH_FILES:
         copy_file(repo_root, release_root, relative_path)
     for relative_path in RESEARCH_DIRS:
@@ -108,7 +118,7 @@ def build_release(repo_root: Path, output_dir: Path, version: str) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", required=True, help="Release version, for example 2.2.1")
+    parser.add_argument("--version", required=True, help="Release version, for example 2.2.2")
     parser.add_argument("--out", required=True, type=Path, help="Output parent directory")
     parser.add_argument("--zip", action="store_true", help="Also create a .zip archive beside the bundle")
     args = parser.parse_args()
