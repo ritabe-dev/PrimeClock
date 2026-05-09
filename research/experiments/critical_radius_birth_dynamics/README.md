@@ -9,6 +9,7 @@ internal research artifacts until explicitly promoted to a claim release.
 - define the exact critical radius `lambda_k(r)` for prime-prefix residue
   coverings;
 - verify `C_k = {r : lambda_k(r) <= 1/2}` for `k=4,5`;
+- summarize the `k=4,5` spectrum and the `B_5` threshold crossings;
 - express births as old residual gaps contained in the new prime arc;
 - classify `B_5`, `B_6`, and `B_7` births as strict/endpoint and
   single-gap/multi-gap events.

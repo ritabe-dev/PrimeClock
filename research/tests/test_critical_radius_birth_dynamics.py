@@ -75,6 +75,35 @@ def test_critical_radius_rows_have_stable_statuses():
     assert sum(row.current_covering_residue for row in rows) == 2
 
 
+def test_critical_radius_summary_counts_match_level_sets():
+    rows = tools.critical_radius_rows(min_k=4, max_k=5)
+    summary = {row.k: row for row in tools.critical_radius_summary_rows(rows)}
+
+    assert summary[4].residue_count == 210
+    assert summary[4].covered_count == 2
+    assert summary[4].endpoint_covered_count == 2
+    assert summary[4].robust_covered_count == 0
+    assert summary[4].nearest_uncovered_lambda_fraction
+
+    assert summary[5].residue_count == 2310
+    assert summary[5].covered_count == 36
+    assert summary[5].covered_count == (
+        summary[5].robust_covered_count + summary[5].endpoint_covered_count
+    )
+
+
+def test_b5_threshold_crossing_rows_connect_parent_and_child_radius():
+    rows = tools.birth_threshold_crossing_rows(k=5)
+
+    assert len(rows) == 14
+    assert {row.birth_type for row in rows} == {"strict_single_gap_birth"}
+    for row in rows:
+        assert Fraction(row.parent_lambda_fraction) > Fraction(1, 2)
+        assert Fraction(row.current_lambda_fraction) <= Fraction(1, 2)
+        assert row.parent_status == "uncovered"
+        assert row.current_status in {"robust_covered", "endpoint_covered"}
+
+
 def test_birth_dynamics_counts_and_summary_through_k7():
     rows = tools.birth_dynamics_rows(min_k=5, max_k=7)
     summary = {row.k: row for row in tools.birth_dynamics_summary_rows(rows)}

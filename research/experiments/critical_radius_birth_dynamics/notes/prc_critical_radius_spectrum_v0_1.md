@@ -44,6 +44,8 @@ Initial artifact:
 
 ```text
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
+data/prc_prime_prefix_critical_radius_summary_v0_1.csv
+data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
 ```
 
 The first validation target is exact agreement with the existing finite
@@ -53,3 +55,21 @@ filtration:
 C_4 = {r : lambda_4(r) <= 1/2} = {2,208} mod 210,
 |{r : lambda_5(r) <= 1/2}| = |C_5| = 36.
 ```
+
+The threshold-crossing table records the birth-specific transition from an
+uncovered parent residue at `k=4` to a covered child residue at `k=5`. This is
+the first connection point between the critical spectrum and the birth
+dynamics.
+
+Initial generated summary:
+
+```text
+k=4: robust=0, endpoint=2, uncovered=208, nearest uncovered lambda=5/9
+k=5: robust=2, endpoint=34, uncovered=2274, nearest uncovered lambda=7/13
+```
+
+Thus the first covered layer `C_4` is entirely endpoint-critical, while `C_5`
+already contains two robust covered residues. In the `B_5` threshold-crossing
+table, the `849/1461` reflection pair is the robust birth pair with
+`lambda_5=4/9`; the other six pairs land at the endpoint threshold
+`lambda_5=1/2`.

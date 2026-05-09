@@ -39,6 +39,37 @@ class CriticalRadiusRow:
 
 
 @dataclass(frozen=True)
+class CriticalRadiusSummaryRow:
+    k: int
+    primorial: int
+    residue_count: int
+    robust_covered_count: int
+    endpoint_covered_count: int
+    uncovered_count: int
+    covered_count: int
+    min_lambda_fraction: str
+    max_lambda_fraction: str
+    distinct_lambda_count: int
+    nearest_uncovered_lambda_fraction: str
+
+
+@dataclass(frozen=True)
+class BirthThresholdCrossingRow:
+    k: int
+    new_prime: int
+    primorial: int
+    residue: int
+    parent_residue_mod_previous: int
+    parent_lambda_fraction: str
+    parent_lambda_decimal: float
+    current_lambda_fraction: str
+    current_lambda_decimal: float
+    parent_status: str
+    current_status: str
+    birth_type: str
+
+
+@dataclass(frozen=True)
 class BirthDynamicsRow:
     k: int
     new_prime: int
@@ -118,6 +149,84 @@ def critical_radius_rows(*, min_k: int = 4, max_k: int = 5) -> list[CriticalRadi
                     current_covering_residue=covered,
                 )
             )
+    return rows
+
+
+def critical_radius_summary_rows(
+    rows: Iterable[CriticalRadiusRow],
+) -> list[CriticalRadiusSummaryRow]:
+    grouped: dict[int, list[CriticalRadiusRow]] = {}
+    for row in rows:
+        grouped.setdefault(row.k, []).append(row)
+
+    summaries: list[CriticalRadiusSummaryRow] = []
+    for k, group in sorted(grouped.items()):
+        lambda_values = [parse_fraction(row.lambda_fraction) for row in group]
+        uncovered_values = [
+            parse_fraction(row.lambda_fraction)
+            for row in group
+            if row.status == "uncovered"
+        ]
+        robust_count = sum(row.status == "robust_covered" for row in group)
+        endpoint_count = sum(row.status == "endpoint_covered" for row in group)
+        uncovered_count = sum(row.status == "uncovered" for row in group)
+        summaries.append(
+            CriticalRadiusSummaryRow(
+                k=k,
+                primorial=group[0].primorial,
+                residue_count=len(group),
+                robust_covered_count=robust_count,
+                endpoint_covered_count=endpoint_count,
+                uncovered_count=uncovered_count,
+                covered_count=robust_count + endpoint_count,
+                min_lambda_fraction=format_fraction(min(lambda_values)),
+                max_lambda_fraction=format_fraction(max(lambda_values)),
+                distinct_lambda_count=len(set(lambda_values)),
+                nearest_uncovered_lambda_fraction=(
+                    format_fraction(min(uncovered_values)) if uncovered_values else ""
+                ),
+            )
+        )
+    return summaries
+
+
+def birth_threshold_crossing_rows(*, k: int = 5) -> list[BirthThresholdCrossingRow]:
+    """Return how one birth layer crosses the critical-radius threshold."""
+    if k < 2:
+        raise ValueError("k must be >= 2")
+    full_rows = [
+        row
+        for row in prime_prefix_residue_full_rows(max_k=k, allow_large_k=k > 6)
+        if row.k == k and row.status == "birth"
+    ]
+    prefix_primes = first_primes(k)
+    previous_primes = prefix_primes[:-1]
+    new_prime = prefix_primes[-1]
+    previous_modulus = primorial(previous_primes)
+    modulus = primorial(prefix_primes)
+    birth_types = {row.residue: row.birth_type for row in birth_dynamics_rows(min_k=k, max_k=k)}
+
+    rows: list[BirthThresholdCrossingRow] = []
+    for row in full_rows:
+        parent_residue = row.residue % previous_modulus
+        parent_lambda = critical_radius_certificate(parent_residue, previous_primes)[0]
+        current_lambda = critical_radius_certificate(row.residue, prefix_primes)[0]
+        rows.append(
+            BirthThresholdCrossingRow(
+                k=k,
+                new_prime=new_prime,
+                primorial=modulus,
+                residue=row.residue,
+                parent_residue_mod_previous=parent_residue,
+                parent_lambda_fraction=format_fraction(parent_lambda),
+                parent_lambda_decimal=float(parent_lambda),
+                current_lambda_fraction=format_fraction(current_lambda),
+                current_lambda_decimal=float(current_lambda),
+                parent_status=critical_radius_status(parent_lambda),
+                current_status=critical_radius_status(current_lambda),
+                birth_type=birth_types[row.residue],
+            )
+        )
     return rows
 
 
@@ -329,6 +438,10 @@ def format_fraction(value: Fraction) -> str:
     return f"{value.numerator}/{value.denominator}"
 
 
+def parse_fraction(value: str) -> Fraction:
+    return Fraction(value)
+
+
 def format_intervals(intervals: Iterable[ExactInterval]) -> str:
     return ";".join(
         f"{format_fraction(start)}-{format_fraction(end)}"
@@ -349,6 +462,20 @@ def write_dataclass_csv(rows: Iterable[object], output_path: str | Path, row_typ
 
 def write_critical_radius_csv(rows: Iterable[CriticalRadiusRow], output_path: str | Path) -> None:
     write_dataclass_csv(rows, output_path, CriticalRadiusRow)
+
+
+def write_critical_radius_summary_csv(
+    rows: Iterable[CriticalRadiusSummaryRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, CriticalRadiusSummaryRow)
+
+
+def write_birth_threshold_crossing_csv(
+    rows: Iterable[BirthThresholdCrossingRow],
+    output_path: str | Path,
+) -> None:
+    write_dataclass_csv(rows, output_path, BirthThresholdCrossingRow)
 
 
 def write_birth_dynamics_csv(rows: Iterable[BirthDynamicsRow], output_path: str | Path) -> None:

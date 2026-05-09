@@ -43,4 +43,15 @@ The finite checks are deliberately limited:
 - `B_7` has `714` births.
 - The summary records how many are strict/endpoint and single/multi-gap.
 
+Initial generated summary:
+
+```text
+B_5: 14 strict single-gap births
+B_6: 42 strict single-gap births
+B_7: 714 strict single-gap births
+```
+
+This is finite evidence for a simple early birth mechanism. It is not stated as
+a theorem for all levels.
+
 No general claim is made from these initial levels.
