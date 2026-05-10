@@ -45,6 +45,9 @@ CHECK_IGNORED_DIR_SUFFIXES = (
     ".dist-info",
     ".egg-info",
 )
+CHECK_TEXT_IGNORED_FILE_PATTERNS = (
+    re.compile(r"candidate_workflow_.*\.ya?ml$"),
+)
 
 FORBIDDEN_PATH_MARKERS = {
     "AGENTS",
@@ -275,6 +278,8 @@ def forbidden_bundle_text(bundle_root: Path) -> list[str]:
             ".yml",
         }:
             continue
+        if any(pattern.fullmatch(path.name) for pattern in CHECK_TEXT_IGNORED_FILE_PATTERNS):
+            continue
         relative = relative_path.as_posix()
         text = path.read_text(encoding="utf-8")
         for marker in FORBIDDEN_TEXT_MARKERS:
@@ -284,7 +289,8 @@ def forbidden_bundle_text(bundle_root: Path) -> list[str]:
             match = pattern.search(text)
             if match:
                 failures.append(
-                    f"forbidden candidate text {match.group(0)!r}: {relative}"
+                    "process/private wording is not allowed in candidate artifacts: "
+                    f"{match.group(0)!r} in {relative}"
                 )
     return failures
 

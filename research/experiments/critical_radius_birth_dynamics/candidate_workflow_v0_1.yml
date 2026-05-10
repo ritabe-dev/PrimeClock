@@ -7,6 +7,7 @@ goal: >
   reproducible as an internal candidate for external inspection without promoting it to
   GitHub Release or Zenodo.
 readiness:
+  current_completion_percent: "98"
   reusable_workflow_percent: "92-95"
   estimated_slices_to_target: "1-2"
 
@@ -67,6 +68,36 @@ manifest_consistency:
     - data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
     - data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
     - data/prc_v2_3_candidate_verification_v0_1.csv
+
+process_hygiene:
+  status_report_required_fields:
+    - goal
+    - current_completion_percent
+    - remaining_slices_estimate
+  status_report_sources:
+    - pr_body_optional
+    - promotion_readiness_report_required
+  timezone_docs:
+    - path: .github/workflows/verify.yml
+      required_text: "Sunday 18:20 UTC = Monday 03:20 JST"
+  artifact_forbidden_terms:
+    - Obsidian
+    - myContextVault
+    - Northstar
+    - Gmail
+    - Google Calendar
+    - Todoist
+    - Notion
+  process_wording_forbidden_terms:
+    - ChatGPT
+    - AI
+    - LLM
+    - prompt
+    - review package
+    - generated-review
+  artifact_scan_exclude_paths:
+    - research/tests/test_critical_radius_birth_dynamics.py
+    - research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml
 
 gates:
   quick:

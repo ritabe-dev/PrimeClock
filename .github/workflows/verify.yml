@@ -5,6 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
+    # Weekly candidate slow gate: Sunday 18:20 UTC = Monday 03:20 JST.
     - cron: "20 18 * * 0"
 
 jobs:
@@ -57,6 +58,11 @@ jobs:
           /usr/bin/time -p python scripts/verify_candidate_workflow.py \
             --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
             quick
+      - name: Run candidate process hygiene gate
+        run: |
+          python scripts/verify_candidate_workflow.py \
+            --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
+            process-hygiene
 
   v2_3_candidate_bundle:
     runs-on: ubuntu-latest

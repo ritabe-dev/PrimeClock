@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -33,6 +35,7 @@ MODES = {
     "slow",
     "artifact-freshness",
     "manifest-consistency",
+    "process-hygiene",
     "promotion-readiness",
     "all",
 }
@@ -230,13 +233,215 @@ def check_manifest_consistency(config: dict[str, Any], *, repo_root: Path) -> No
     print("candidate manifest consistency check passed")
 
 
-def write_promotion_readiness_report(
+def status_report_failures(
+    text: str,
+    *,
+    source: str,
+    required_fields: list[str] | None = None,
+) -> list[str]:
+    required = set(required_fields or [
+        "goal",
+        "current_completion_percent",
+        "remaining_slices_estimate",
+    ])
+    failures: list[str] = []
+    if "goal" in required and not re.search(r"\bGoal\b|目的", text, re.IGNORECASE):
+        failures.append(f"{source}: missing goal/purpose section")
+    if "current_completion_percent" in required and not re.search(
+        r"\b\d{1,3}(?:\s*(?:-|to|〜)\s*\d{1,3})?\s*%",
+        text,
+    ):
+        failures.append(f"{source}: missing current completion percent")
+    if "remaining_slices_estimate" in required and not (
+        re.search(
+            r"\b\d+(?:\s*(?:-|to|〜)\s*\d+)?\s*(?:slice|slices)\b",
+            text,
+            re.IGNORECASE,
+        )
+        or re.search(
+            r"\b(?:slice|slices)\b.*\b\d+",
+            text,
+            re.IGNORECASE,
+        )
+        or re.search(
+            r"\d+(?:\s*(?:-|to|〜)\s*\d+)?\s*スライス",
+            text,
+        )
+        or re.search(
+            r"スライス.*\d+",
+            text,
+        )
+    ):
+        failures.append(f"{source}: missing remaining slice estimate")
+    return failures
+
+
+def load_pr_body_from_event() -> tuple[str | None, str | None]:
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    event_name = os.environ.get("GITHUB_EVENT_NAME")
+    if event_name != "pull_request" or not event_path:
+        return None, None
+    path = Path(event_path)
+    if not path.is_file():
+        return None, f"pull_request event missing GITHUB_EVENT_PATH file: {path}"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    body = data.get("pull_request", {}).get("body")
+    return body or "", None
+
+
+def candidate_bundle_source_paths(
     config: dict[str, Any],
     *,
-    report_path: Path | None,
+    repo_root: Path,
+) -> set[str]:
+    paths = config["paths"]
+    bundle_manifest = load_json(resolve_path(repo_root, paths["bundle_manifest"]))
+    sources: set[str] = set()
+    for entry in bundle_manifest.get("root_file_map", []):
+        sources.add(entry["source"])
+    for key in ["root_files", "research_files"]:
+        sources.update(bundle_manifest.get(key, []))
+    for relative_dir in bundle_manifest.get("research_dirs", []):
+        root = resolve_path(repo_root, relative_dir)
+        if not root.is_dir():
+            continue
+        for path in root.rglob("*"):
+            if path.is_file():
+                sources.add(path.relative_to(repo_root).as_posix())
+    return sources
+
+
+def should_scan_text_path(relative_path: str, hygiene: dict[str, Any]) -> bool:
+    path = Path(relative_path)
+    if path.suffix.lower() not in {".json", ".md", ".py", ".txt", ".yaml", ".yml"}:
+        return False
+    excluded = set(hygiene.get("artifact_scan_exclude_paths", []))
+    if relative_path in excluded or path.name in excluded:
+        return False
+    for prefix in hygiene.get("artifact_scan_exclude_prefixes", []):
+        if relative_path.startswith(prefix.rstrip("/") + "/"):
+            return False
+    return True
+
+
+def forbidden_term_matches(text: str, terms: list[str]) -> list[str]:
+    matches: list[str] = []
+    for term in terms:
+        pattern = r"(?<![A-Za-z0-9_])" + re.escape(term) + r"(?![A-Za-z0-9_])"
+        if re.search(pattern, text, re.IGNORECASE):
+            matches.append(term)
+    return matches
+
+
+def check_artifact_text_hygiene(
+    config: dict[str, Any],
+    *,
+    repo_root: Path,
+) -> list[str]:
+    hygiene = config.get("process_hygiene", {})
+    terms = list(hygiene.get("artifact_forbidden_terms", []))
+    terms.extend(hygiene.get("process_wording_forbidden_terms", []))
+    failures: list[str] = []
+    for relative_path in sorted(candidate_bundle_source_paths(config, repo_root=repo_root)):
+        if not should_scan_text_path(relative_path, hygiene):
+            continue
+        path = resolve_path(repo_root, relative_path)
+        if not path.is_file():
+            failures.append(f"artifact text scan missing source file: {relative_path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for term in forbidden_term_matches(text, terms):
+            failures.append(
+                "process/private wording is not allowed in candidate artifacts: "
+                f"{term!r} in {relative_path}"
+            )
+    return failures
+
+
+def check_timezone_docs(config: dict[str, Any], *, repo_root: Path) -> list[str]:
+    failures: list[str] = []
+    for item in config.get("process_hygiene", {}).get("timezone_docs", []):
+        path = resolve_path(repo_root, item["path"])
+        text = path.read_text(encoding="utf-8")
+        required = item.get("required_text")
+        if required:
+            if required not in text:
+                failures.append(f"{item['path']}: missing timezone text {required!r}")
+            continue
+        label = item.get("label", item["path"])
+        if not re.search(r"\bUTC\b", text) or not re.search(r"\bJST\b", text):
+            failures.append(f"{label}: important schedule time must include UTC and JST")
+    return failures
+
+
+def process_hygiene_failures(
+    config: dict[str, Any],
+    *,
+    repo_root: Path,
+    readiness_text: str | None = None,
+    pr_body: str | None = None,
+    require_pr_body: bool = False,
+) -> list[str]:
+    failures: list[str] = []
+    required_fields = config.get("process_hygiene", {}).get("status_report_required_fields")
+    report_text = readiness_text or promotion_readiness_report_text(config)
+    failures.extend(
+        status_report_failures(
+            report_text,
+            source="promotion readiness report",
+            required_fields=required_fields,
+        )
+    )
+    event_body, event_failure = load_pr_body_from_event()
+    if event_failure:
+        failures.append(event_failure)
+    if pr_body is None:
+        pr_body = event_body
+    if require_pr_body and pr_body is None:
+        failures.append("pull_request event requires PR body hygiene validation")
+    if pr_body is not None:
+        failures.extend(
+            status_report_failures(
+                pr_body,
+                source="PR body",
+                required_fields=required_fields,
+            )
+        )
+    failures.extend(check_timezone_docs(config, repo_root=repo_root))
+    failures.extend(check_artifact_text_hygiene(config, repo_root=repo_root))
+    return failures
+
+
+def check_process_hygiene(
+    config: dict[str, Any],
+    *,
+    repo_root: Path,
+    readiness_text: str | None = None,
+    pr_body_path: Path | None = None,
 ) -> None:
+    pr_body = pr_body_path.read_text(encoding="utf-8") if pr_body_path else None
+    require_pr_body = os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+    failures = process_hygiene_failures(
+        config,
+        repo_root=repo_root,
+        readiness_text=readiness_text,
+        pr_body=pr_body,
+        require_pr_body=require_pr_body,
+    )
+    if failures:
+        for failure in failures:
+            print(f"FAIL: {failure}")
+        raise SystemExit(1)
+    print("candidate process hygiene check passed")
+
+
+def promotion_readiness_report_text(config: dict[str, Any]) -> str:
     policy = config["promotion_policy"]
     readiness = config.get("readiness", {})
+    current_completion = readiness.get("current_completion_percent")
+    if current_completion is None:
+        current_completion = readiness.get("reusable_workflow_percent", "unknown")
+    remaining_slices = readiness.get("estimated_slices_to_target", "unknown")
     lines = [
         f"# Candidate Promotion Readiness: {config['candidate_id']}",
         "",
@@ -244,12 +449,19 @@ def write_promotion_readiness_report(
         f"- Public release allowed: {policy['public_release_allowed']}",
         f"- Zenodo allowed: {policy['zenodo_allowed']}",
         f"- Base public release: {config['base_public_release']}",
-        f"- Workflow reuse target: {readiness.get('reusable_workflow_percent', 'unknown')}%",
-        f"- Estimated slices to target: {readiness.get('estimated_slices_to_target', 'unknown')}",
         "",
         "## Goal",
         "",
         config.get("goal", "No goal recorded."),
+        "",
+        "## Current Completion",
+        "",
+        f"- Current completion percent: {current_completion}%",
+        f"- Workflow reuse target: {readiness.get('reusable_workflow_percent', 'unknown')}%",
+        "",
+        "## Remaining Slice Estimate",
+        "",
+        f"- Remaining slice estimate: {remaining_slices} slices",
         "",
         "## Promotion Blockers",
         "",
@@ -265,13 +477,26 @@ def write_promotion_readiness_report(
             "",
         ]
     )
-    text = "\n".join(lines)
+    return "\n".join(lines)
+
+
+def write_promotion_readiness_report(
+    config: dict[str, Any],
+    *,
+    report_path: Path | None,
+) -> str:
+    text = promotion_readiness_report_text(config)
     if report_path:
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(text, encoding="utf-8")
         print(f"wrote promotion readiness report: {report_path}")
     else:
         print(text)
+    return text
+
+
+def resolve_optional_path(path: Path | None) -> Path | None:
+    return path.resolve() if path else None
 
 
 def main() -> int:
@@ -279,11 +504,13 @@ def main() -> int:
     parser.add_argument("mode", choices=sorted(MODES))
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--report", type=Path)
+    parser.add_argument("--pr-body", type=Path)
     args = parser.parse_args()
 
     repo_root = repo_root_from_script()
     config_path = args.config.resolve()
     config = load_config(config_path)
+    pr_body_path = resolve_optional_path(args.pr_body)
     with tempfile.TemporaryDirectory(prefix="primeclock-candidate-workflow-") as temp_dir:
         variables = {
             "repo_root": str(repo_root),
@@ -302,7 +529,15 @@ def main() -> int:
         if args.mode in {"slow", "all"}:
             run_gate(config, "slow", repo_root=repo_root, variables=variables)
         if args.mode in {"promotion-readiness", "all"}:
-            write_promotion_readiness_report(config, report_path=args.report)
+            text = write_promotion_readiness_report(config, report_path=args.report)
+            check_process_hygiene(
+                config,
+                repo_root=repo_root,
+                readiness_text=text,
+                pr_body_path=pr_body_path,
+            )
+        elif args.mode == "process-hygiene":
+            check_process_hygiene(config, repo_root=repo_root, pr_body_path=pr_body_path)
     return 0
 
 

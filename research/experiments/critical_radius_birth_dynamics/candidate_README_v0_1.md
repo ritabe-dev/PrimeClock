@@ -43,7 +43,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate_standalone: checks=10, failed=0
-quick pytest: 27 passed, 29 deselected
+quick pytest: 32 passed, 29 deselected
 ```
 
 This quick path uses the standard-library standalone checker and lightweight
@@ -80,7 +80,7 @@ python -m pytest tests/test_critical_radius_birth_dynamics.py -q -m "bundle and 
 Expected bundle pytest result:
 
 ```text
-bundle pytest: 18 passed, 38 deselected
+bundle pytest: 18 passed, 43 deselected
 ```
 
 The nested self-contained ZIP test is slower and belongs to the full internal
@@ -101,7 +101,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate: checks=13, failed=0
-slow pytest: 11 passed, 45 deselected
+slow pytest: 11 passed, 50 deselected
 ```
 
 This is the full internal slow regression path. It is intended for promotion
@@ -132,11 +132,17 @@ python scripts/verify_candidate_workflow.py \
 python scripts/verify_candidate_workflow.py \
   --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
   manifest-consistency
+python scripts/verify_candidate_workflow.py \
+  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
+  process-hygiene
 ```
 
 This workflow may build temporary candidate packages and readiness reports, but
-it must not create tags, GitHub Releases, or Zenodo archives. Future candidates
-should add their own workflow config instead of changing the engine.
+it must not create tags, GitHub Releases, or Zenodo archives. The
+process-hygiene gate checks PR/report status metadata, schedule timezone
+labels, and candidate-facing wording without adding work report metadata to
+this candidate README. Future candidates should add their own workflow config
+instead of changing the engine.
 
 ## Scope
 

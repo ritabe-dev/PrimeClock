@@ -25,6 +25,9 @@ EXPERIMENT_DIR = (
     / "experiments"
     / "critical_radius_birth_dynamics"
 )
+REPO_ROOT = EXPERIMENT_DIR.parents[2]
+WORKFLOW_CONFIG = EXPERIMENT_DIR / "candidate_workflow_v0_1.yml"
+WORKFLOW_ENGINE = REPO_ROOT / "scripts" / "verify_candidate_workflow.py"
 
 
 def _load_tools():
@@ -65,6 +68,21 @@ def _load_standalone_checker():
 
 
 standalone_checker = _load_standalone_checker()
+
+
+def _load_candidate_workflow_engine():
+    spec = importlib.util.spec_from_file_location(
+        "primeclock_candidate_workflow_engine",
+        WORKFLOW_ENGINE,
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+candidate_workflow_engine = _load_candidate_workflow_engine()
 
 BUNDLE_SUBPROCESS_TIMEOUT_SECONDS = 120
 SLOW_SUBPROCESS_TIMEOUT_SECONDS = 900
@@ -1351,3 +1369,139 @@ def test_v2_3_verification_docs_split_fast_and_slow_paths():
         assert "*.dist-info" in text
         assert "check_candidate_standalone.py" in text
         assert "check_candidate.py" in text
+        assert "process-hygiene" in text
+        assert "schedule timezone" in text
+        assert "labels" in text
+        assert "without adding work" in text
+        assert "report metadata" in text
+
+
+def test_candidate_workflow_process_hygiene_passes_current_config(monkeypatch):
+    monkeypatch.delenv("GITHUB_EVENT_NAME", raising=False)
+    monkeypatch.delenv("GITHUB_EVENT_PATH", raising=False)
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+
+    failures = candidate_workflow_engine.process_hygiene_failures(
+        config,
+        repo_root=REPO_ROOT,
+    )
+
+    assert failures == []
+
+
+def test_candidate_workflow_status_report_requires_goal_percent_and_slice():
+    valid = (
+        "## Goal\n"
+        "Keep the candidate workflow reusable.\n"
+        "Current completion: 98%.\n"
+        "Remaining slice estimate: 1-2 slices.\n"
+    )
+    assert candidate_workflow_engine.status_report_failures(valid, source="fixture") == []
+
+    missing_percent = valid.replace("98%", "nearly complete")
+    assert "missing current completion percent" in "\n".join(
+        candidate_workflow_engine.status_report_failures(
+            missing_percent,
+            source="fixture",
+        )
+    )
+
+    missing_slice = valid.replace("1-2 slices", "a small amount")
+    assert "missing remaining slice estimate" in "\n".join(
+        candidate_workflow_engine.status_report_failures(
+            missing_slice,
+            source="fixture",
+        )
+    )
+
+
+def test_candidate_workflow_pr_body_hygiene_uses_pull_request_event(
+    tmp_path,
+    monkeypatch,
+):
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+    event_path = tmp_path / "event.json"
+    event_path.write_text(
+        json.dumps(
+            {
+                "pull_request": {
+                    "body": (
+                        "## Goal\n"
+                        "Add reusable candidate workflow checks.\n"
+                        "Current completion: 98%.\n"
+                        "Remaining slice estimate: 0.5-1 slices.\n"
+                    )
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event_path))
+
+    assert (
+        candidate_workflow_engine.process_hygiene_failures(
+            config,
+            repo_root=REPO_ROOT,
+            require_pr_body=True,
+        )
+        == []
+    )
+
+    event_path.write_text(
+        json.dumps({"pull_request": {"body": "## Goal\nNo percent here.\n1 slice left."}}),
+        encoding="utf-8",
+    )
+    failures = candidate_workflow_engine.process_hygiene_failures(
+        config,
+        repo_root=REPO_ROOT,
+        require_pr_body=True,
+    )
+    assert any("PR body: missing current completion percent" in failure for failure in failures)
+
+
+def test_candidate_workflow_schedule_docs_include_utc_and_jst(tmp_path):
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+
+    assert candidate_workflow_engine.check_timezone_docs(config, repo_root=REPO_ROOT) == []
+
+    utc_only = tmp_path / "schedule.md"
+    utc_only.write_text("Weekly candidate slow gate: Sunday 18:20 UTC.\n", encoding="utf-8")
+    bad_config = dict(config)
+    bad_config["process_hygiene"] = {
+        "timezone_docs": [{"path": str(utc_only), "label": "fixture"}]
+    }
+    failures = candidate_workflow_engine.check_timezone_docs(bad_config, repo_root=REPO_ROOT)
+    assert "UTC and JST" in failures[0]
+
+    bad_config["process_hygiene"] = dict(config["process_hygiene"])
+    bad_config["process_hygiene"]["timezone_docs"] = [
+        {
+            "path": ".github/workflows/verify.yml",
+            "required_text": "Sunday 18:20 UTC = Monday 04:20 JST",
+        }
+    ]
+    failures = candidate_workflow_engine.check_timezone_docs(bad_config, repo_root=REPO_ROOT)
+    assert "missing timezone text" in failures[0]
+
+
+def test_candidate_workflow_artifact_wording_detector_is_neutral():
+    private_terms = [
+        "Ob" + "sidian",
+        "my" + "ContextVault",
+        "North" + "star",
+        "G" + "mail",
+        "Google " + "Calendar",
+        "Todo" + "ist",
+        "No" + "tion",
+        "Chat" + "GPT",
+        "A" + "I",
+        "L" + "LM",
+        "pro" + "mpt",
+    ]
+
+    text = "This candidate artifact mentions " + private_terms[0] + "."
+
+    assert candidate_workflow_engine.forbidden_term_matches(text, private_terms) == [
+        private_terms[0]
+    ]
