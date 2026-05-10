@@ -36,6 +36,7 @@ def validate_release_config(config: dict[str, Any]) -> None:
         "release_kind",
         "zenodo_expected",
         "allow_github_release",
+        "doi_policy",
         "zenodo_concept_doi",
     }
     missing = sorted(required.difference(config))
@@ -64,6 +65,14 @@ def validate_release_config(config: dict[str, Any]) -> None:
         raise ValueError("zenodo_expected must match release_kind")
     if config["allow_github_release"] != expected_release:
         raise ValueError("allow_github_release must match release_kind")
+    if (
+        config["doi_policy"]
+        != "concept_doi_in_citation_version_doi_in_release_notes"
+    ):
+        raise ValueError(
+            "doi_policy must be "
+            "'concept_doi_in_citation_version_doi_in_release_notes'"
+        )
 
 
 def require_matching_version(config: dict[str, Any], requested_version: str | None) -> str:

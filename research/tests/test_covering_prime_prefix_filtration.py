@@ -1436,6 +1436,36 @@ def test_public_release_version_checker_passes_current_repo():
     assert "release version check passed: v2.2.4" in result.stdout
 
 
+def test_public_release_version_checker_rejects_wrong_doi_policy(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+    checker = repo_root / "scripts" / "check_release_versions.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["doi_policy"] = "version_doi_in_citation"
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(checker), "--repo-root", str(bundle_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "doi_policy must be" in result.stderr
+
+
 def test_public_release_version_checker_passes_generated_bundle(tmp_path: Path):
     repo_root = Path(__file__).parents[2]
     builder = repo_root / "scripts" / "build_public_release.py"

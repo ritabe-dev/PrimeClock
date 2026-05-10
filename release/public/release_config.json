@@ -8,6 +8,7 @@
   "release_kind": "maintenance_sync",
   "zenodo_expected": false,
   "allow_github_release": false,
+  "doi_policy": "concept_doi_in_citation_version_doi_in_release_notes",
   "zenodo_version_doi": "10.5281/zenodo.20096689",
   "zenodo_concept_doi": "10.5281/zenodo.20091722"
 }

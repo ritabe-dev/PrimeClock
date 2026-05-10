@@ -127,6 +127,12 @@ def main() -> int:
     require_contains(failures, config_text, '"release_kind":', "release/public/release_config.json")
     require_contains(failures, config_text, '"zenodo_expected":', "release/public/release_config.json")
     require_contains(failures, config_text, '"allow_github_release":', "release/public/release_config.json")
+    require_contains(
+        failures,
+        config_text,
+        '"doi_policy": "concept_doi_in_citation_version_doi_in_release_notes"',
+        "release/public/release_config.json",
+    )
 
     for relative_path in PUBLIC_FACING_FILES:
         text = read(repo_root, relative_path)

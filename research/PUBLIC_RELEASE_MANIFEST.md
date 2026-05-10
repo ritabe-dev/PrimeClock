@@ -116,6 +116,17 @@ must not enter the stable public release bundle until promoted. This includes:
 Research notes under `research/notes/` or `research/experiments/` should carry a
 clear status line such as `Status: stable`, `Status: experimental`,
 `Status: internal-candidate`, or `Status: historical`.
+New candidate/future-work notes should also carry a `Release eligibility:` line
+that says whether the note is included in, or excluded from, candidate/public
+bundles until promotion.
+
+Recommended status values:
+
+- `stable-public`
+- `internal-candidate`
+- `future-work`
+- `historical`
+- `private/local`
 
 ## Never Include
 
@@ -146,6 +157,10 @@ Zenodo uploads are allowed only when
 `release/public/release_config.json` sets `release_kind` to `doi_release`.
 Normal GitHub review and cleanup work must use `maintenance_sync`, which pushes
 public `main` without creating a tag, GitHub Release, or Zenodo archive.
+The release config DOI policy is
+`concept_doi_in_citation_version_doi_in_release_notes`: `CITATION.cff` keeps the
+Zenodo concept DOI as the top-level DOI, while version DOIs are recorded in
+release notes, `VERSION_MAP.md`, and GitHub Release text for DOI releases.
 
 ## Entry Point
 
