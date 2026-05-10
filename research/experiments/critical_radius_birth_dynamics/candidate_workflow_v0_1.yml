@@ -17,6 +17,27 @@ paths:
   bundle_manifest: research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json
   standalone_checker: research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py
 
+research_review:
+  note: research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_research_review_note_v0_1.md
+  required_sections:
+    - Core idea
+    - Claim shape
+    - Why now
+    - Stop line
+    - Risks
+    - Decision
+  allowed_decisions:
+    - package as candidate
+    - continue research
+    - defer
+  candidate_packaging_decision: package as candidate
+  forbidden_artifact_basis_terms:
+    - ZIP
+    - SHA256SUMS
+    - BUNDLE_FILE_MANIFEST
+    - manifest consistency
+    - bundle check
+
 promotion_policy:
   public_release_allowed: false
   zenodo_allowed: false

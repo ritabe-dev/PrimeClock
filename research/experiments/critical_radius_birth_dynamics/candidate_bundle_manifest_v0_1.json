@@ -16,7 +16,9 @@
     }
   ],
   "root_files": [
-    "LICENSE"
+    ".github/workflows/verify.yml",
+    "LICENSE",
+    "scripts/verify_candidate_workflow.py"
   ],
   "research_files": [
     "research/pyproject.toml",
@@ -47,6 +49,7 @@
     "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_sha256sums_v0_1.txt",
     "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_standalone_verification_v0_1.csv",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_internal_candidate_status.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_research_review_note_v0_1.md",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_note_draft_v0_1.md",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_candidate_outline_v0_1.md",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_weighted_covering_radius_terminology_v0_1.md",

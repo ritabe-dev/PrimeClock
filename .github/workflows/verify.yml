@@ -9,6 +9,25 @@ on:
     - cron: "20 18 * * 0"
 
 jobs:
+  v2_3_research_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install research package
+        working-directory: research
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e ".[dev]"
+      - name: Run research review gate
+        run: |
+          python scripts/verify_candidate_workflow.py \
+            --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
+            research-review
+
   v2_2_public:
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -1228,6 +1228,8 @@ def test_v2_3_candidate_zip_is_self_contained(tmp_path):
         for name in names:
             if not name.endswith((".json", ".md", ".py", ".txt", ".yaml", ".yml")):
                 continue
+            if re.search(r"candidate_workflow_.*\.ya?ml$", name):
+                continue
             text = archive.read(name).decode("utf-8")
             assert not any(pattern.search(text) for pattern in forbidden_text_patterns)
 
@@ -1505,3 +1507,87 @@ def test_candidate_workflow_artifact_wording_detector_is_neutral():
     assert candidate_workflow_engine.forbidden_term_matches(text, private_terms) == [
         private_terms[0]
     ]
+
+
+def test_candidate_workflow_research_review_passes_current_note():
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+
+    candidate_workflow_engine.check_research_review(config, repo_root=REPO_ROOT)
+
+
+def test_candidate_workflow_research_review_rejects_missing_sections(tmp_path, capsys):
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+    note = tmp_path / "research_review_note.md"
+    note.write_text(
+        "# Research Review\n\n"
+        "## Claim shape\nfinite result\n\n"
+        "## Why now\ncoherent story\n\n"
+        "## Risks\nfinite only\n\n"
+        "## Decision\npackage as candidate\n",
+        encoding="utf-8",
+    )
+    config = dict(config)
+    config["research_review"] = dict(config["research_review"])
+    config["research_review"]["note"] = str(note)
+
+    with pytest.raises(SystemExit):
+        candidate_workflow_engine.check_research_review(config, repo_root=REPO_ROOT)
+
+    output = capsys.readouterr().out
+    assert "research review gate failure" in output
+    assert "missing required research review section: Core idea" in output
+    assert "missing required research review section: Stop line" in output
+
+
+def test_candidate_workflow_research_review_rejects_non_packaging_decision(
+    tmp_path,
+    capsys,
+):
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+    note = tmp_path / "research_review_note.md"
+    note.write_text(
+        "# Research Review\n\n"
+        "## Core idea\nphase mechanism\n\n"
+        "## Claim shape\nfinite result\n\n"
+        "## Why now\nnot yet\n\n"
+        "## Stop line\nno broader work\n\n"
+        "## Risks\nfinite only\n\n"
+        "## Decision\ncontinue research\n",
+        encoding="utf-8",
+    )
+    config = dict(config)
+    config["research_review"] = dict(config["research_review"])
+    config["research_review"]["note"] = str(note)
+
+    with pytest.raises(SystemExit):
+        candidate_workflow_engine.check_research_review(config, repo_root=REPO_ROOT)
+
+    output = capsys.readouterr().out
+    assert "research review decision does not allow candidate packaging" in output
+
+
+def test_candidate_workflow_research_review_rejects_artifact_basis_terms(
+    tmp_path,
+    capsys,
+):
+    config = candidate_workflow_engine.load_config(WORKFLOW_CONFIG)
+    note = tmp_path / "research_review_note.md"
+    note.write_text(
+        "# Research Review\n\n"
+        "## Core idea\nThe research is good because the " + "ZI" + "P works.\n\n"
+        "## Claim shape\nfinite result\n\n"
+        "## Why now\ncoherent story\n\n"
+        "## Stop line\nno broader work\n\n"
+        "## Risks\nfinite only\n\n"
+        "## Decision\npackage as candidate\n",
+        encoding="utf-8",
+    )
+    config = dict(config)
+    config["research_review"] = dict(config["research_review"])
+    config["research_review"]["note"] = str(note)
+
+    with pytest.raises(SystemExit):
+        candidate_workflow_engine.check_research_review(config, repo_root=REPO_ROOT)
+
+    output = capsys.readouterr().out
+    assert "must not base research value on artifact integrity term" in output

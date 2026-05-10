@@ -43,7 +43,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate_standalone: checks=10, failed=0
-quick pytest: 32 passed, 29 deselected
+quick pytest: 36 passed, 29 deselected
 ```
 
 This quick path uses the standard-library standalone checker and lightweight
@@ -80,7 +80,7 @@ python -m pytest tests/test_critical_radius_birth_dynamics.py -q -m "bundle and 
 Expected bundle pytest result:
 
 ```text
-bundle pytest: 18 passed, 43 deselected
+bundle pytest: 18 passed, 47 deselected
 ```
 
 The nested self-contained ZIP test is slower and belongs to the full internal
@@ -101,7 +101,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate: checks=13, failed=0
-slow pytest: 11 passed, 50 deselected
+slow pytest: 11 passed, 54 deselected
 ```
 
 This is the full internal slow regression path. It is intended for promotion

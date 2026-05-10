@@ -33,6 +33,7 @@ MODES = {
     "quick",
     "bundle",
     "slow",
+    "research-review",
     "artifact-freshness",
     "manifest-consistency",
     "process-hygiene",
@@ -231,6 +232,67 @@ def check_manifest_consistency(config: dict[str, Any], *, repo_root: Path) -> No
             print(f"FAIL: {failure}")
         raise SystemExit(1)
     print("candidate manifest consistency check passed")
+
+
+def markdown_section_bodies(text: str) -> dict[str, str]:
+    sections: dict[str, list[str]] = {}
+    current: str | None = None
+    for line in text.splitlines():
+        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
+        if match:
+            current = match.group(1).strip()
+            sections.setdefault(current, [])
+            continue
+        if current is not None:
+            sections[current].append(line)
+    return {heading: "\n".join(lines).strip() for heading, lines in sections.items()}
+
+
+def check_research_review(config: dict[str, Any], *, repo_root: Path) -> None:
+    review = config.get("research_review")
+    if not isinstance(review, dict):
+        raise SystemExit("research review gate failure: missing research_review config")
+
+    note_path = resolve_path(repo_root, review["note"])
+    if not note_path.is_file():
+        raise SystemExit(f"research review gate failure: missing note {note_path}")
+
+    text = note_path.read_text(encoding="utf-8")
+    sections = markdown_section_bodies(text)
+    failures: list[str] = []
+
+    for section in review.get("required_sections", []):
+        if not sections.get(section):
+            failures.append(f"missing required research review section: {section}")
+
+    decision_body = sections.get("Decision", "")
+    allowed_decisions = set(review.get("allowed_decisions", []))
+    candidate_decision = review.get("candidate_packaging_decision")
+    matching_decisions = [
+        decision
+        for decision in sorted(allowed_decisions)
+        if re.search(rf"(?<![A-Za-z0-9_-]){re.escape(decision)}(?![A-Za-z0-9_-])", decision_body)
+    ]
+    if not matching_decisions:
+        failures.append("missing or unknown research review decision")
+    elif candidate_decision not in matching_decisions:
+        failures.append(
+            "research review decision does not allow candidate packaging: "
+            + ", ".join(matching_decisions)
+        )
+
+    for term in review.get("forbidden_artifact_basis_terms", []):
+        if re.search(re.escape(term), text, re.IGNORECASE):
+            failures.append(
+                "research review note must not base research value on artifact "
+                f"integrity term: {term}"
+            )
+
+    if failures:
+        for failure in failures:
+            print(f"FAIL: research review gate failure: {failure}")
+        raise SystemExit(1)
+    print("candidate research review gate passed")
 
 
 def status_report_failures(
@@ -518,6 +580,8 @@ def main() -> int:
             "tmp": temp_dir,
             "python": sys.executable,
         }
+        if args.mode in {"research-review", "all"}:
+            check_research_review(config, repo_root=repo_root)
         if args.mode in {"artifact-freshness", "all"}:
             check_artifact_freshness(config, repo_root=repo_root, variables=variables)
         if args.mode in {"manifest-consistency", "all"}:

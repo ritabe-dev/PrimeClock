@@ -27,6 +27,7 @@ Start with:
 
 ```text
 notes/prc_v2_3_internal_candidate_status.md
+notes/prc_v2_3_research_review_note_v0_1.md
 promotion_manifest_v0_1.yml
 candidate_workflow_v0_1.yml
 notes/prc_v2_3_theorem_note_draft_v0_1.md
@@ -40,11 +41,14 @@ notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
 ```
 
-The status note summarizes the current internal milestone. The promotion
+The status note summarizes the current internal milestone. The research review
+note records Gate R: whether the research story is worth packaging before
+artifact integrity checks start. The promotion
 manifest fixes the candidate scope: critical-radius layers `k=4,5`, birth
 dynamics layers `k=5,6,7`, and no `B_8` or asymptotic claims. The candidate
 workflow config drives the reusable non-publishing quick, bundle, slow,
-artifact-freshness, manifest-consistency, and promotion-readiness gates. The
+research-review, artifact-freshness, manifest-consistency, and
+promotion-readiness gates. The
 theorem-note draft is the first compact public-candidate-shaped text, still internal. The
 outline records the three selected components: critical radius, level sets, and
 birth containment. The terminology note keeps `critical radius` as the primary
@@ -82,7 +86,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate_standalone: checks=10, failed=0
-quick pytest: 32 passed, 29 deselected
+quick pytest: 36 passed, 29 deselected
 ```
 
 This is the path intended for external reviewers who want a short check. The
@@ -122,7 +126,7 @@ For CI or internal hygiene testing, also run:
 Expected bundle pytest result:
 
 ```text
-bundle pytest: 18 passed, 43 deselected
+bundle pytest: 18 passed, 47 deselected
 ```
 
 The nested self-contained ZIP test is slower and belongs to the full internal
@@ -142,7 +146,7 @@ Expected result:
 
 ```text
 check_v2_3_candidate: checks=13, failed=0
-slow pytest: 11 passed, 50 deselected
+slow pytest: 11 passed, 54 deselected
 ```
 
 The helper checker is an internal slow regression checker. It recomputes the
@@ -159,6 +163,9 @@ gates from `candidate_workflow_v0_1.yml`:
 ```bash
 research/.venv/bin/python scripts/verify_candidate_workflow.py \
   --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
+  research-review
+research/.venv/bin/python scripts/verify_candidate_workflow.py \
+  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
   quick
 research/.venv/bin/python scripts/verify_candidate_workflow.py \
   --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v0_1.yml \
@@ -171,12 +178,23 @@ research/.venv/bin/python scripts/verify_candidate_workflow.py \
   process-hygiene
 ```
 
+The gates answer separate questions:
+
+```text
+Gate R: Is this research story worth packaging?
+Gate C: Is this package reproducible and clean?
+Gate P: Is this stable enough to cite?
+```
+
 The workflow engine is non-publishing. It may build temporary candidate
 packages and readiness reports, but it must not create tags, GitHub Releases,
-or Zenodo archives. The process-hygiene gate checks PR/report status metadata,
-schedule timezone labels, and candidate-facing wording without adding work
-report metadata to the candidate README. Future candidates should add a new
-workflow config instead of hard-coding their scope into the engine.
+or Zenodo archives. The research-review gate is intentionally upstream of ZIP,
+hash, manifest, and reproducibility checks; it records the research decision
+without treating package validity as research value. The process-hygiene gate
+checks PR/report status metadata, schedule timezone labels, and candidate-facing
+wording without adding work report metadata to the candidate README. Future
+candidates should add a new workflow config and research review note instead of
+hard-coding their scope into the engine.
 
 ## Dependency Note
 
