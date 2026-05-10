@@ -4,7 +4,7 @@ Status: internal candidate, not a public release.
 
 ## Objective
 
-The v2.2.3 public release remains the stable finite certificate artifact for:
+The v2.2.4 public release remains the stable finite certificate artifact for:
 
 ```text
 C_4 = {2,208} mod 210
@@ -110,6 +110,14 @@ candidate_bundle_manifest_v0_1.json
 candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
 ```
 
+The v2.4 future-work notes are tracked internally but excluded from this
+candidate bundle:
+
+```text
+notes/prc_no_multigap_birth_note_v0_1.md
+notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
+```
+
 ## Promotion Boundary
 
 This is ready as an internal research milestone, but not yet a public release.
@@ -155,4 +163,4 @@ This internal candidate does not claim:
 - that all births are single-gap births;
 - that near-miss rank alone predicts births;
 - that the checked finite layers imply an asymptotic law;
-- that the v2.2.3 public release has changed.
+- that the v2.2.4 public release has changed.

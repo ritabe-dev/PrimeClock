@@ -1,6 +1,6 @@
 # Critical Radius and Birth Dynamics Sandbox
 
-This experiment starts the post-v2.2.3 PRC research line. The public v2.2.3
+This experiment starts the post-v2.2.4 PRC research line. The public v2.2.4
 release remains the stable `C_4/B_5` finite certificate artifact; files here are
 internal research artifacts until explicitly promoted to a claim release.
 
@@ -57,7 +57,7 @@ From `research/`:
 ```
 
 Generated CSVs live in `data/` inside this experiment directory. They are not
-part of the v2.2.3 public release bundle.
+part of the v2.2.4 public release bundle.
 
 ## Check
 
@@ -95,7 +95,7 @@ no asymptotic or prime-distribution claims
 
 ## Candidate Bundle
 
-An internal candidate bundle can be generated without touching the v2.2.3 public
+An internal candidate bundle can be generated without touching the v2.2.4 public
 release line:
 
 ```bash

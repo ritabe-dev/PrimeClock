@@ -9,7 +9,7 @@ the smallest theorem-candidate shape that could later become a v2.3 public
 candidate. It does not add new data. It selects the finite claims that are
 already supported by the existing exact CSVs and tests.
 
-The v2.2.3 public release remains the stable public artifact for the
+The v2.2.4 public release remains the stable public artifact for the
 `C_4/B_5` finite certificate package. The material below is internal research
 until it is promoted through a separate release process.
 
@@ -148,7 +148,7 @@ Before this becomes a public v2.3 candidate, it needs:
 
 1. a polished theorem/proposition note using the three components above;
 2. a decision on whether v2.3 includes only `k<=7` birth dynamics;
-3. a release manifest that keeps v2.2.3 unchanged.
+3. a release manifest that keeps v2.2.4 unchanged.
 
 The internal helper checker and standard-library standalone checker now cover
 the promoted finite claims at the candidate-artifact level.
@@ -161,4 +161,4 @@ This outline does not claim:
 - that near-miss rank alone predicts births;
 - an asymptotic law for `lambda_k`;
 - a new theorem about prime distribution;
-- any change to the v2.2.3 public release.
+- any change to the v2.2.4 public release.

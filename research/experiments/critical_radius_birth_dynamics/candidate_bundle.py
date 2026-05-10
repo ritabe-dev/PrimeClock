@@ -27,6 +27,16 @@ EXCLUDED_DIR_NAMES = {
     "review_packages",
 }
 
+FORBIDDEN_PATH_MARKERS = {
+    "AGENTS",
+    "no_multigap",
+    "prc_no_multigap",
+    "prc_v2_4",
+    "private_notes",
+    "review_packages",
+    "scratch",
+}
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -116,17 +126,22 @@ def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
     failures: list[str] = []
     for path in bundle_root.rglob("*"):
         relative = path.relative_to(bundle_root)
+        relative_text = relative.as_posix()
         if path.name == ".DS_Store":
-            failures.append(f"forbidden local metadata file: {relative.as_posix()}")
+            failures.append(f"forbidden local metadata file: {relative_text}")
             continue
+        for marker in FORBIDDEN_PATH_MARKERS:
+            if marker in relative_text:
+                failures.append(f"forbidden candidate path marker {marker}: {relative_text}")
+                break
         for part in relative.parts:
             if part in EXCLUDED_DIR_NAMES:
-                failures.append(f"forbidden path component {part}: {relative.as_posix()}")
+                failures.append(f"forbidden path component {part}: {relative_text}")
                 break
         if path.is_file() and (
             path.suffix in {".zip", ".tar", ".tgz"} or path.name.endswith(".tar.gz")
         ):
-            failures.append(f"forbidden archive file: {relative.as_posix()}")
+            failures.append(f"forbidden archive file: {relative_text}")
     return failures
 
 

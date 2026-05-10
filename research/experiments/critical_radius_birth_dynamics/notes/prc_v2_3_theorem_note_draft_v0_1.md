@@ -4,7 +4,7 @@ Status: internal public-candidate theorem-note draft, not a public release.
 
 ## 1. Introduction
 
-The v2.2.3 public release gives a finite certificate package for the first
+The v2.2.4 public release gives a finite certificate package for the first
 nontrivial prime-prefix covering layers:
 
 ```text
@@ -231,7 +231,15 @@ Internal candidate bundle:
 candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
 ```
 
-## 8. Promotion Boundary
+## 8. Future Work
+
+The next direction is a v2.4 residual-gap transition graph, where each old gap
+is classified as missed, trimmed, split, or closed by the next prime arc. That
+future-work direction is not part of this v2.3 candidate. The no-multi-gap
+birth idea is also kept as an internal lemma candidate rather than a theorem in
+this draft.
+
+## 9. Promotion Boundary
 
 The internal promotion manifest fixes this draft's candidate scope:
 
@@ -250,7 +258,7 @@ Before promotion to a public v2.3 release bundle, this draft still needs:
    term, and add formal covering-radius citations only if the public note leans
    on that external terminology.
 
-## 9. Non-Claims
+## 10. Non-Claims
 
 This draft does not claim:
 
@@ -259,4 +267,4 @@ This draft does not claim:
 - an asymptotic law for `lambda_k`;
 - a new theorem about prime distribution;
 - an explanation of all complete PRC events;
-- any change to the v2.2.3 public release.
+- any change to the v2.2.4 public release.

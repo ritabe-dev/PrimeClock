@@ -1,11 +1,11 @@
 # Critical Radius Spectra and Birth Dynamics v0.1
 
-Status: internal experiment after the v2.2.3 finite `C_4/B_5` certificate
+Status: internal experiment after the v2.2.4 finite `C_4/B_5` certificate
 release.
 
 ## Purpose
 
-The v2.2.3 public artifact proves and verifies a narrow finite certificate:
+The v2.2.4 public artifact proves and verifies a narrow finite certificate:
 
 ```text
 C_4 = {2,208} mod 210,

@@ -1,7 +1,7 @@
 # PRC Birth Dynamics v0.1
 
 This note records the finite birth mechanism used by the critical-radius
-sandbox. It is an internal experiment, not part of the stable v2.2.3 public
+sandbox. It is an internal experiment, not part of the stable v2.2.4 public
 release.
 
 Let `q=p_{k+1}`. A lift from `Z/M_kZ` to `Z/M_{k+1}Z` fixes a parent residue

@@ -3,7 +3,7 @@
 This internal candidate bundle contains the v2.3 critical-radius and
 birth-dynamics research artifacts. It is not a public release.
 
-The stable public release remains v2.2.3, focused on the `C_4/B_5` finite
+The stable public release remains v2.2.4, focused on the `C_4/B_5` finite
 certificate package. This candidate extends that line internally with:
 
 - exact critical-radius spectra for `k=4,5`;

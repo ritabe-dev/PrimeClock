@@ -241,11 +241,12 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
     assert "notes/prc_v2_3_related_work_decision_v0_1.md" in text
     assert "notes/prc_v2_3_standalone_checker_contract_v0_1.md" in text
-    assert "v2.2.3 public release remains the stable finite certificate artifact" in text
+    assert "v2.2.4 public release remains the stable finite certificate artifact" in text
     assert "near-miss candidate + containing next-prime remainder" in text
+    assert "v2.4 future-work notes are tracked internally but excluded" in text
     assert "Before promotion to a public v2.3 release bundle" in text
     assert "check_candidate_standalone.py: checks=7, failed=0" in text
-    assert "the v2.2.3 public release has changed" in text
+    assert "the v2.2.4 public release has changed" in text
 
 
 def test_v2_3_theorem_candidate_outline_keeps_scope_and_claims():
@@ -279,7 +280,9 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "no B_8 or larger layers" in text
     assert "candidate_bundle_manifest_v0_1.json" in text
     assert "standalone checker uses only the Python standard library" in text
-    assert "any change to the v2.2.3 public release" in text
+    assert "Future Work" in text
+    assert "v2.4 residual-gap transition graph" in text
+    assert "any change to the v2.2.4 public release" in text
 
 
 def test_v2_3_candidate_checker_passes(tmp_path):
@@ -337,7 +340,7 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     text = manifest.read_text(encoding="utf-8")
 
     assert "status: internal_promotion_manifest" in text
-    assert "base_public_release: v2.2.3" in text
+    assert "base_public_release: v2.2.4" in text
     assert "critical_radius_layers: [4, 5]" in text
     assert "birth_dynamics_layers: [5, 6, 7]" in text
     assert "include_b8_or_larger: false" in text
@@ -351,6 +354,8 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     assert "terminology_status:" in text
     assert "primary_term: critical radius" in text
     assert "decision_note: notes/prc_v2_3_related_work_decision_v0_1.md" in text
+    assert "future_work_excluded:" in text
+    assert "v2.4 future-work notes are tracked internally but excluded" in text
 
 
 def test_v2_3_candidate_bundle_manifest_fixes_allowlist():
@@ -359,11 +364,12 @@ def test_v2_3_candidate_bundle_manifest_fixes_allowlist():
 
     assert data["status"] == "internal_candidate_manifest"
     assert data["public_release"] is False
-    assert data["base_public_release"] == "v2.2.3"
+    assert data["base_public_release"] == "v2.2.4"
     assert data["default_name"] == "PrimeClock-v2.3-candidate-v0.1"
     assert "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py" in data["research_files"]
     assert "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_decision_v0_1.md" in data["research_files"]
     assert "convert this manifest into a release/public config only after promotion" in data["promotion_boundary"]
+    assert "do not include v2.4 or no-multigap future-work notes in this candidate bundle" in data["promotion_boundary"]
 
 
 def test_v2_3_weighted_covering_radius_terminology_note_keeps_scope():
@@ -496,6 +502,53 @@ def test_v2_3_candidate_bundle_check_rejects_forbidden_paths(tmp_path):
 
     assert result.returncode == 1
     assert "forbidden path component .venv" in result.stdout
+
+
+def test_v2_3_candidate_bundle_check_rejects_future_work_notes(tmp_path):
+    builder = EXPERIMENT_DIR / "candidate_bundle.py"
+    bundle_name = "PrimeClock-v2.3-candidate-test"
+    subprocess.run(
+        [
+            sys.executable,
+            str(builder),
+            "--out",
+            str(tmp_path),
+            "--name",
+            bundle_name,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    bundle_root = tmp_path / bundle_name
+    future_note = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_example.md"
+    )
+    future_note.write_text("must fail\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(builder), "--check", str(bundle_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "forbidden candidate path marker prc_v2_4" in result.stdout
+
+
+def test_v2_3_future_work_notes_are_tracked_but_not_bundled():
+    manifest = EXPERIMENT_DIR / "manifest.yml"
+    candidate_manifest = EXPERIMENT_DIR / "candidate_bundle_manifest_v0_1.json"
+    manifest_text = manifest.read_text(encoding="utf-8")
+    data = json.loads(candidate_manifest.read_text(encoding="utf-8"))
+    candidate_files = "\n".join(data["research_files"])
+
+    assert "notes/prc_no_multigap_birth_note_v0_1.md" in manifest_text
+    assert "notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md" in manifest_text
+    assert "prc_no_multigap_birth_note_v0_1.md" not in candidate_files
+    assert "prc_v2_4_residual_gap_transition_graph_idea_v0_1.md" not in candidate_files
 
 
 def test_v2_3_candidate_readme_uses_dev_install():

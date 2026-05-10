@@ -2,7 +2,7 @@
   "id": "prc_v2_3_candidate_bundle_v0_1",
   "status": "internal_candidate_manifest",
   "public_release": false,
-  "base_public_release": "v2.2.3",
+  "base_public_release": "v2.2.4",
   "default_name": "PrimeClock-v2.3-candidate-v0.1",
   "hash_manifest": "SHA256SUMS",
   "root_file_map": [
@@ -56,12 +56,13 @@
   "required_readme_phrases": [
     "internal candidate bundle",
     "not a public release",
-    "v2.2.3",
+    "v2.2.4",
     "no B_8 or larger layers"
   ],
   "promotion_boundary": [
     "do not upload this candidate bundle to Zenodo",
-    "do not replace the stable v2.2.3 public release",
+    "do not replace the stable v2.2.4 public release",
+    "do not include v2.4 or no-multigap future-work notes in this candidate bundle",
     "convert this manifest into a release/public config only after promotion"
   ]
 }

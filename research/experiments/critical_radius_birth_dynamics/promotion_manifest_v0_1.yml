@@ -1,10 +1,10 @@
 id: prc_v2_3_public_candidate
 status: internal_promotion_manifest
 public_release: false
-base_public_release: v2.2.3
+base_public_release: v2.2.4
 candidate_goal: >
   Promote the critical-radius and birth-dynamics sandbox into a narrow v2.3
-  public candidate without changing the stable v2.2.3 C4/B5 release line.
+  public candidate without changing the stable v2.2.4 C4/B5 release line.
 candidate_scope:
   critical_radius_layers: [4, 5]
   birth_dynamics_layers: [5, 6, 7]
@@ -33,6 +33,10 @@ candidate_bundle:
   manifest: candidate_bundle_manifest_v0_1.json
   default_name: PrimeClock-v2.3-candidate-v0.1
   status: internal_only
+future_work_excluded:
+  - notes/prc_no_multigap_birth_note_v0_1.md
+  - notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
+  - v2.4 future-work notes are tracked internally but excluded from the candidate bundle.
 promotion_blockers:
   - candidate bundle manifest must be converted into release/public config before any public release.
   - GitHub/Zenodo metadata and DOI flow are not created for v2.3.

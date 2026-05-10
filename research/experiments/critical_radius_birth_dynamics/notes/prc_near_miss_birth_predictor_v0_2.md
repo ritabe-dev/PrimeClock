@@ -1,6 +1,6 @@
 # Near-Miss Birth Predictor v0.2
 
-Status: internal experiment after the v2.2.3 finite `C_4/B_5` certificate
+Status: internal experiment after the v2.2.4 finite `C_4/B_5` certificate
 release.
 
 ## Purpose
