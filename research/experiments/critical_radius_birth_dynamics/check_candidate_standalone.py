@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import re
 from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
@@ -33,6 +34,24 @@ DEFAULT_PATHS = {
 }
 
 EXPECTED_BIRTH_COUNTS = {5: 14, 6: 42, 7: 714}
+PRIMES_BY_K = {
+    4: [2, 3, 5, 7],
+    5: [2, 3, 5, 7, 11],
+}
+EXPECTED_HASH_PATHS = {
+    "data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv",
+    "data/prc_prime_prefix_critical_radius_summary_v0_1.csv",
+    "data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv",
+    "data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv",
+    "data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv",
+    "data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv",
+    "data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv",
+    "data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
+    "data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv",
+    "data/prc_v2_3_candidate_verification_v0_1.csv",
+}
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+ExactInterval = tuple[Fraction, Fraction]
 
 
 @dataclass(frozen=True)
@@ -61,21 +80,36 @@ def sha256_bytes(path: Path) -> str:
 
 
 def check_hash_manifest(manifest_path: Path) -> CheckResult:
-    failures = 0
-    total = 0
+    checks: list[bool] = []
     manifest_root = manifest_path.parent.parent
+    seen_paths: set[str] = set()
     for line in manifest_path.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
-        total += 1
         try:
             expected, relative_path = line.split("  ", 1)
         except ValueError:
-            failures += 1
+            checks.append(False)
             continue
+        checks.append(True)
+        if not SHA256_RE.fullmatch(expected):
+            checks.append(False)
+            continue
+        checks.append(True)
+        if relative_path in seen_paths:
+            checks.append(False)
+            continue
+        checks.append(True)
+        seen_paths.add(relative_path)
+        if relative_path not in EXPECTED_HASH_PATHS:
+            checks.append(False)
+            continue
+        checks.append(True)
         target = manifest_root / relative_path
-        if not target.is_file() or sha256_bytes(target) != expected:
-            failures += 1
+        checks.append(target.is_file() and sha256_bytes(target) == expected)
+    checks.extend(path in seen_paths for path in EXPECTED_HASH_PATHS)
+    total = len(checks)
+    failures = sum(1 for passed in checks if not passed)
     return CheckResult(
         "candidate_csv_hashes_exact",
         total,
@@ -90,6 +124,112 @@ def level_set_residues(rows: list[dict[str, str]], k: int) -> set[int]:
         for row in rows
         if int(row["k"]) == k and Fraction(row["lambda_fraction"]) <= Fraction(1, 2)
     }
+
+
+def center_for_residue(residue: int, p: int) -> Fraction:
+    return Fraction(residue % p, p)
+
+
+def circular_distance(left: Fraction, right: Fraction) -> Fraction:
+    delta = abs((left - right) % 1)
+    return min(delta, Fraction(1) - delta)
+
+
+def critical_radius_from_definition(
+    residue: int,
+    primes: list[int],
+) -> tuple[Fraction, Fraction, tuple[int, ...]]:
+    centers = [(p, center_for_residue(residue, p)) for p in primes]
+    candidates: set[Fraction] = {Fraction(0)}
+    for _, center in centers:
+        candidates.add(center % 1)
+        candidates.add((center + Fraction(1, 2)) % 1)
+
+    signs = (-1, 1)
+    offsets = (-1, 0, 1)
+    for left_index, (left_p, left_center) in enumerate(centers):
+        for right_p, right_center in centers[left_index + 1 :]:
+            for left_offset in offsets:
+                lifted_left = left_center + left_offset
+                for right_offset in offsets:
+                    lifted_right = right_center + right_offset
+                    for left_sign in signs:
+                        for right_sign in signs:
+                            denominator = left_p * left_sign - right_p * right_sign
+                            if denominator == 0:
+                                continue
+                            numerator = (
+                                left_p * left_sign * lifted_left
+                                - right_p * right_sign * lifted_right
+                            )
+                            point = numerator / denominator
+                            if not Fraction(0) <= point <= Fraction(1):
+                                continue
+                            if left_sign * (point - lifted_left) < 0:
+                                continue
+                            if right_sign * (point - lifted_right) < 0:
+                                continue
+                            candidates.add(point % 1)
+
+    best_radius = Fraction(-1)
+    best_point = Fraction(0)
+    best_active: tuple[int, ...] = ()
+    for point in sorted(candidates):
+        distances = [
+            (p * circular_distance(point, center), p)
+            for p, center in centers
+        ]
+        radius = min(value for value, _ in distances)
+        active = tuple(sorted(p for value, p in distances if value == radius))
+        if radius > best_radius or (radius == best_radius and point < best_point):
+            best_radius = radius
+            best_point = point
+            best_active = active
+
+    return best_radius, best_point, best_active
+
+
+def check_critical_radius_zero_residue(rows: list[dict[str, str]]) -> CheckResult:
+    rows_by_k = {
+        int(row["k"]): row
+        for row in rows
+        if row["residue"] == "0" and int(row["k"]) in PRIMES_BY_K
+    }
+    failures = 0
+    for k in PRIMES_BY_K:
+        row = rows_by_k.get(k)
+        if row is None or Fraction(row["lambda_fraction"]) != Fraction(1):
+            failures += 1
+    total = len(PRIMES_BY_K)
+    return CheckResult(
+        "critical_radius_zero_residue_cusp_exact",
+        total,
+        total - failures,
+        failures,
+    )
+
+
+def check_critical_radius_values_recomputed(rows: list[dict[str, str]]) -> CheckResult:
+    failures = 0
+    total = 0
+    for row in rows:
+        k = int(row["k"])
+        primes = PRIMES_BY_K.get(k)
+        if primes is None:
+            continue
+        total += 1
+        expected_radius, _, _ = critical_radius_from_definition(
+            int(row["residue"]),
+            primes,
+        )
+        if Fraction(row["lambda_fraction"]) != expected_radius:
+            failures += 1
+    return CheckResult(
+        "critical_radius_values_recomputed_from_definition",
+        total,
+        total - failures,
+        failures,
+    )
 
 
 def check_c4_level_set(rows: list[dict[str, str]]) -> CheckResult:
@@ -196,6 +336,118 @@ def check_birth_dynamics_rows(rows: list[dict[str, str]]) -> CheckResult:
     return CheckResult("birth_dynamics_rows_strict_single_gap", total + 4, total + 4 - failures, failures)
 
 
+def split_interval(interval: ExactInterval) -> list[ExactInterval]:
+    start, end = interval
+    if end >= start:
+        return [(start, end)]
+    return [(start, Fraction(1)), (Fraction(0), end)]
+
+
+def parse_intervals(value: str) -> list[ExactInterval]:
+    intervals: list[ExactInterval] = []
+    if not value:
+        return intervals
+    for item in value.split(";"):
+        start, end = item.split("-", 1)
+        intervals.append((Fraction(start), Fraction(end)))
+    return intervals
+
+
+def exact_arc_intervals_for_remainder(remainder: int, p: int) -> list[ExactInterval]:
+    center = Fraction(remainder % p, p)
+    radius = Fraction(1, 2 * p)
+    start = center - radius
+    end = center + radius
+    if start < 0:
+        return [(Fraction(0), end), (Fraction(1) + start, Fraction(1))]
+    if end > 1:
+        return [(Fraction(0), end - 1), (start, Fraction(1))]
+    return [(start, end)]
+
+
+def strict_containment_margin(
+    previous_gaps: list[ExactInterval],
+    new_arcs: list[ExactInterval],
+) -> Fraction | None:
+    arc_segments = [segment for arc in new_arcs for segment in split_interval(arc)]
+    margins: list[Fraction] = []
+    for gap in previous_gaps:
+        for gap_segment in split_interval(gap):
+            containing = [
+                (gap_segment[0] - arc[0], arc[1] - gap_segment[1])
+                for arc in arc_segments
+                if arc[0] <= gap_segment[0] and gap_segment[1] <= arc[1]
+            ]
+            if not containing:
+                return None
+            margins.append(
+                max(
+                    min(left_margin, right_margin)
+                    for left_margin, right_margin in containing
+                )
+            )
+    if not margins:
+        return Fraction(0)
+    return min(margins)
+
+
+def check_unique_strict_single_gap_remainders(
+    rows: list[dict[str, str]],
+) -> CheckResult:
+    failures = 0
+    groups: dict[tuple[int, int], list[dict[str, str]]] = {}
+    for row in rows:
+        groups.setdefault(
+            (int(row["k"]), int(row["parent_residue_mod_previous"])),
+            [],
+        ).append(row)
+    total = len(rows) * 4 + len(EXPECTED_BIRTH_COUNTS) + len(groups)
+
+    for k in EXPECTED_BIRTH_COUNTS:
+        birth_count = sum(1 for row in rows if int(row["k"]) == k)
+        parent_count = len(
+            {
+                int(row["parent_residue_mod_previous"])
+                for row in rows
+                if int(row["k"]) == k
+            }
+        )
+        if birth_count != parent_count:
+            failures += 1
+
+    for group in groups.values():
+        if len(group) != 1:
+            failures += 1
+
+    for row in rows:
+        if row["birth_type"] != "strict_single_gap_birth":
+            failures += 1
+        if int(row["previous_open_gap_count"]) != 1:
+            failures += 1
+        if row["uses_endpoint_touching"] != "False":
+            failures += 1
+
+        previous_gaps = parse_intervals(row["previous_open_gap_boundary_endpoints"])
+        new_prime = int(row["new_prime"])
+        valid_remainders = []
+        for remainder in range(new_prime):
+            margin = strict_containment_margin(
+                previous_gaps,
+                exact_arc_intervals_for_remainder(remainder, new_prime),
+            )
+            if margin is not None and margin > 0:
+                valid_remainders.append(remainder)
+        if valid_remainders != [int(row["new_prime_remainder"])]:
+            failures += 1
+
+    return CheckResult(
+        "birth_dynamics_b5_b6_b7_unique_strict_single_gap_remainders",
+        total,
+        total - failures,
+        failures,
+    )
+
+
 def check_threshold_crossing(
     crossing_rows: list[dict[str, str]],
     birth_rows: list[dict[str, str]],
@@ -237,6 +489,7 @@ def write_results(path: Path, results: list[CheckResult]) -> None:
         writer = csv.DictWriter(
             handle,
             fieldnames=["check_name", "total", "passed", "failed", "status"],
+            lineterminator="\n",
         )
         writer.writeheader()
         for result in results:
@@ -282,11 +535,14 @@ def main() -> int:
 
     results = [
         check_hash_manifest(args.hash_manifest),
+        check_critical_radius_zero_residue(critical_rows),
+        check_critical_radius_values_recomputed(critical_rows),
         check_c4_level_set(critical_rows),
         check_c5_level_set(critical_rows),
         check_critical_radius_summary(critical_rows, critical_summary_rows),
         check_birth_dynamics_summary(birth_summary_rows),
         check_birth_dynamics_rows(birth_rows),
+        check_unique_strict_single_gap_remainders(birth_rows),
         check_threshold_crossing(crossing_rows, birth_rows),
     ]
     write_results(args.out, results)

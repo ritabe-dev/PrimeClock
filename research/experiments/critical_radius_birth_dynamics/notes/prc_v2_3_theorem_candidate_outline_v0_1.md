@@ -109,26 +109,29 @@ iff
 s notin C_k and R_k(s) subset I_q(r).
 ```
 
-This is the structural form of the birth definition. It reframes the birth
-layer as old-gap containment rather than only full enumeration.
+This is the structural form of the birth definition. The theorem-note draft
+sharpens it into a gap-aperture formula: old residual gaps define dual
+containment windows, and births are counted by next-prime q-grid centers inside
+those windows.
 
 The current finite evidence is:
 
 ```text
-B_5: 14 strict single-gap births
-B_6: 42 strict single-gap births
-B_7: 714 strict single-gap births
+B_5: 14 unique strict single-gap births
+B_6: 42 unique strict single-gap births
+B_7: 714 unique strict single-gap births
 ```
 
 In these checked layers, every birth closes exactly one old open gap by strict
-containment in the new prime arc. This is finite evidence only.
+containment in the new prime arc, and each birth parent has exactly one valid
+new-prime remainder. This is finite evidence only.
 
 ## Discussion Candidate
 
 The near-miss predictor should be stated conservatively:
 
 ```text
-near-miss candidate + containing next-prime remainder
+near-miss candidate + q-grid phase in the dual containment window
 ```
 
 Observed finite overlap:
@@ -139,8 +142,8 @@ k=5 top-20 near-misses: 19 are B_6 birth parents
 ```
 
 This suggests that `lambda_k(r)` is useful for finding likely birth parents, but
-`lambda` rank alone is not sufficient. The old-gap geometry and available
-next-prime remainders decide whether a near-miss actually births.
+`lambda` rank alone is not sufficient. The old-gap geometry and q-grid phase
+decide whether a near-miss actually births.
 
 ## Public-Candidate Boundary
 

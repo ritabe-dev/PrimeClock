@@ -11,9 +11,10 @@ import csv
 from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Sequence
 
 from prime_reciprocal_projection.covering_prime_prefix_filtration import (
+    PrimePrefixResidueFullRow,
     prime_prefix_residue_full_rows,
     residue_is_exactly_covered,
     residue_uncovered_intervals,
@@ -388,6 +389,8 @@ def birth_threshold_crossing_rows(
     *,
     min_k: int = 5,
     max_k: int | None = None,
+    full_rows: Sequence[PrimePrefixResidueFullRow] | None = None,
+    birth_rows: Sequence[BirthDynamicsRow] | None = None,
 ) -> list[BirthThresholdCrossingRow]:
     """Return how birth layers cross the critical-radius threshold."""
     if max_k is None:
@@ -397,18 +400,31 @@ def birth_threshold_crossing_rows(
     if max_k < min_k:
         raise ValueError("max_k must be >= min_k")
 
-    full_rows = [
+    source_rows = full_rows
+    if source_rows is None:
+        source_rows = prime_prefix_residue_full_rows(
+            max_k=max_k,
+            allow_large_k=max_k > 6,
+        )
+    full_birth_rows = [
         row
-        for row in prime_prefix_residue_full_rows(max_k=max_k, allow_large_k=max_k > 6)
+        for row in source_rows
         if min_k <= row.k <= max_k and row.status == "birth"
     ]
+    source_birth_rows = birth_rows
+    if source_birth_rows is None:
+        source_birth_rows = birth_dynamics_rows(
+            min_k=min_k,
+            max_k=max_k,
+            full_rows=source_rows,
+        )
     birth_types = {
         (row.k, row.residue): row.birth_type
-        for row in birth_dynamics_rows(min_k=min_k, max_k=max_k)
+        for row in source_birth_rows
     }
 
     rows: list[BirthThresholdCrossingRow] = []
-    for row in full_rows:
+    for row in full_birth_rows:
         prefix_primes = first_primes(row.k)
         previous_primes = prefix_primes[:-1]
         new_prime = prefix_primes[-1]
@@ -453,6 +469,9 @@ def critical_radius_certificate(
 
     centers = [(p, center_for_residue(residue, p)) for p in prime_values]
     candidates: set[Fraction] = {Fraction(0)}
+    for _, center in centers:
+        candidates.add(center % 1)
+        candidates.add((center + Fraction(1, 2)) % 1)
     signs = (-1, 1)
     offsets = (-1, 0, 1)
 
@@ -512,9 +531,15 @@ def circular_distance(left: Fraction, right: Fraction) -> Fraction:
     return min(delta, Fraction(1) - delta)
 
 
-def birth_dynamics_rows(*, min_k: int = 5, max_k: int = 7) -> list[BirthDynamicsRow]:
+def birth_dynamics_rows(
+    *,
+    min_k: int = 5,
+    max_k: int = 7,
+    full_rows: Sequence[PrimePrefixResidueFullRow] | None = None,
+) -> list[BirthDynamicsRow]:
     """Return exact birth-mechanism rows for birth layers ``min_k..max_k``."""
-    full_rows = prime_prefix_residue_full_rows(max_k=max_k, allow_large_k=max_k > 6)
+    if full_rows is None:
+        full_rows = prime_prefix_residue_full_rows(max_k=max_k, allow_large_k=max_k > 6)
     birth_rows = [
         row
         for row in full_rows

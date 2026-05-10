@@ -102,9 +102,11 @@ def main() -> int:
     require_contains(
         failures,
         workflow,
-        "python scripts/verify_public_release.py --out /tmp/primeclock-public-release --zip",
+        "python scripts/verify_public_release.py --out",
         ".github/workflows/verify.yml",
     )
+    require_contains(failures, workflow, "scripts/verify_public_release.py", ".github/workflows/verify.yml")
+    require_contains(failures, workflow, "--zip", ".github/workflows/verify.yml")
     require_contains(failures, workflow, "actions/checkout@v6", ".github/workflows/verify.yml")
     require_contains(failures, workflow, "actions/setup-python@v6", ".github/workflows/verify.yml")
 

@@ -1,0 +1,145 @@
+candidate_id: prc_v2_3_critical_radius_birth_dynamics
+status: internal_candidate
+public_release: false
+base_public_release: v2.2.4
+goal: >
+  Keep the v2.3 critical-radius and gap-aperture birth-dynamics candidate
+  reproducible as an internal candidate for external inspection without promoting it to
+  GitHub Release or Zenodo.
+readiness:
+  reusable_workflow_percent: "92-95"
+  estimated_slices_to_target: "1-2"
+
+paths:
+  experiment_dir: research/experiments/critical_radius_birth_dynamics
+  experiment_manifest: research/experiments/critical_radius_birth_dynamics/manifest.yml
+  bundle_manifest: research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json
+  standalone_checker: research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py
+
+promotion_policy:
+  public_release_allowed: false
+  zenodo_allowed: false
+  public_release_config: release/public/release_config.json
+  required_base_public_release: v2.2.4
+  blockers:
+    - v2.3 remains an internal candidate for external inspection until explicit promotion.
+    - Do not create a GitHub Release from this candidate workflow.
+    - Do not upload this candidate package to Zenodo.
+    - Keep v2.4 and no-multigap future-work notes excluded from the candidate package.
+    - Convert candidate metadata into release/public config only after promotion review.
+
+artifact_freshness:
+  - name: standalone_verification_csv
+    cwd: research
+    command:
+      - "{python}"
+      - experiments/critical_radius_birth_dynamics/check_candidate_standalone.py
+      - --out
+      - "{tmp}/prc-v2.3-standalone-check.csv"
+    output: "{tmp}/prc-v2.3-standalone-check.csv"
+    committed: research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_standalone_verification_v0_1.csv
+    expected_stdout: "check_v2_3_candidate_standalone: checks=10, failed=0"
+  - name: helper_verification_csv
+    cwd: research
+    command:
+      - "{python}"
+      - experiments/critical_radius_birth_dynamics/check_candidate.py
+      - --out
+      - "{tmp}/prc-v2.3-helper-check.csv"
+    output: "{tmp}/prc-v2.3-helper-check.csv"
+    committed: research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_verification_v0_1.csv
+    expected_stdout: "check_v2_3_candidate: checks=13, failed=0"
+
+manifest_consistency:
+  included_artifacts_key: artifacts
+  excluded_artifacts_key: tracked_internal_notes_excluded_from_candidate
+  excluded_internal_notes:
+    - notes/prc_no_multigap_birth_note_v0_1.md
+    - notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
+  expected_hash_paths:
+    - data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
+    - data/prc_prime_prefix_critical_radius_summary_v0_1.csv
+    - data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv
+    - data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv
+    - data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv
+    - data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv
+    - data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv
+    - data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv
+    - data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
+    - data/prc_v2_3_candidate_verification_v0_1.csv
+
+gates:
+  quick:
+    description: reviewer short path
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_candidate_standalone.py
+          - --out
+          - "{tmp}/prc-v2.3-standalone-check.csv"
+        expected_stdout: "check_v2_3_candidate_standalone: checks=10, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - -m
+          - pytest
+          - tests/test_critical_radius_birth_dynamics.py
+          - -q
+          - -m
+          - not slow and not bundle
+          - --durations=20
+  bundle:
+    description: package hygiene and reviewer ZIP path
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/candidate_bundle.py
+          - --out
+          - "{tmp}/prc-v2.3-candidate"
+          - --name
+          - PrimeClock-v2.3-candidate-ci
+          - --zip
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/candidate_bundle.py
+          - --check
+          - "{tmp}/prc-v2.3-candidate/PrimeClock-v2.3-candidate-ci"
+      - cwd: "{repo_root}"
+        command:
+          - unzip
+          - -t
+          - "{tmp}/prc-v2.3-candidate/PrimeClock-v2.3-candidate-ci.zip"
+      - cwd: research
+        command:
+          - "{python}"
+          - -m
+          - pytest
+          - tests/test_critical_radius_birth_dynamics.py
+          - -q
+          - -m
+          - bundle and not slow
+          - --durations=20
+  slow:
+    description: internal slow regression and helper regeneration
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_candidate.py
+          - --progress
+          - --out
+          - "{tmp}/prc-v2.3-helper-check.csv"
+        expected_stdout: "check_v2_3_candidate: checks=13, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - -m
+          - pytest
+          - tests/test_critical_radius_birth_dynamics.py
+          - -q
+          - -m
+          - slow and not bundle
+          - --durations=20

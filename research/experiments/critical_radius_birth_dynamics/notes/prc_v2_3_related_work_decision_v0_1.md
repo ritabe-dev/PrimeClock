@@ -17,8 +17,8 @@ This decision is enough for internal candidate review because the finite claims
 are checked directly by:
 
 ```text
-check_candidate.py: checks=12, failed=0
-check_candidate_standalone.py: checks=7, failed=0
+check_candidate.py: checks=13, failed=0
+check_candidate_standalone.py: checks=10, failed=0
 ```
 
 Before a public release, either:

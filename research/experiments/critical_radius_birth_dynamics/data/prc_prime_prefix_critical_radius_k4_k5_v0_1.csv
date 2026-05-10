@@ -1,5 +1,5 @@
 k,primorial,residue,lambda_fraction,lambda_decimal,status,bottleneck_point,active_primes,active_centers,current_covering_residue
-4,210,0,8/9,0.8888888888888888,uncovered,5/9,2,0,False
+4,210,0,1,1.0,uncovered,1/2,2,0,False
 4,210,1,1,1.0,uncovered,0,2 3 5 7,1/2 1/3 1/5 1/7,False
 4,210,2,1/2,0.5,endpoint_covered,1/2,3 5,2/3 2/5,True
 4,210,3,3/5,0.6,uncovered,1/5,2 3,1/2 0,False
@@ -209,7 +209,7 @@ k,primorial,residue,lambda_fraction,lambda_decimal,status,bottleneck_point,activ
 4,210,207,3/5,0.6,uncovered,1/5,2 3,1/2 0,False
 4,210,208,1/2,0.5,endpoint_covered,1/2,3 5,1/3 3/5,True
 4,210,209,1,1.0,uncovered,0,2 3 5 7,1/2 2/3 4/5 6/7,False
-5,2310,0,8/9,0.8888888888888888,uncovered,5/9,2,0,False
+5,2310,0,1,1.0,uncovered,1/2,2,0,False
 5,2310,1,1,1.0,uncovered,0,2 3 5 7 11,1/2 1/3 1/5 1/7 1/11,False
 5,2310,2,1/2,0.5,endpoint_covered,1/2,3 5,2/3 2/5,True
 5,2310,3,3/5,0.6,uncovered,1/5,2 3,1/2 0,False

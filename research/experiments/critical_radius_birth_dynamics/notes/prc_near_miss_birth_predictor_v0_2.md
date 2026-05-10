@@ -20,8 +20,9 @@ birth parent at the next prime?
 ```
 
 The answer is not determined by `lambda_k(r)` alone. The near-miss rank is a
-useful candidate generator, but the birth decision is made by old-gap
-containment in the next prime arc.
+useful candidate generator for small old gaps, but the birth decision is made
+by q-grid phase: whether the next-prime center lands in the old gap's dual
+containment window.
 
 ## Exact Predictor
 
@@ -32,16 +33,18 @@ at level `k+1` exactly when some `q`-arc contains the whole old residual set:
 R_k(s) subset I_q(a)
 ```
 
-Thus the finite predictor has two stages:
+Equivalently, each old gap defines a dual containment window for the next-prime
+center `a/q`. A birth occurs only when a `q`-grid point lies in the intersection
+of the required windows. Thus the finite predictor has two stages:
 
 ```text
 stage 1: rank uncovered parents by lambda_k(s)-1/2
-stage 2: keep only parents with at least one containing q-remainder
+stage 2: keep only parents with q-grid phase inside the dual window
 ```
 
 The second stage is the mechanism. It separates residues that are merely close
-to the threshold from residues whose old gaps can actually be swallowed by the
-next prime arc.
+to the threshold from residues whose old gaps are aligned with the next prime
+grid.
 
 ## Generated Results
 
@@ -68,7 +71,8 @@ k=5 miss:
   rank 18: residue 603, lambda=5/9
 ```
 
-The gap-geometry table explains these misses. Among the top 20 near-misses:
+The gap-geometry table explains these misses as phase misses. Among the top 20
+near-misses:
 
 ```text
 k=4:
@@ -84,8 +88,13 @@ k=5:
 So near-miss rank is useful but not sufficient. The sharper finite test is:
 
 ```text
-near-miss candidate + containing next-prime remainder
+near-miss candidate + q-grid phase in the dual containment window
 ```
+
+For example, the top two `k=4` near-misses, residues `99` and `111`, have
+`lambda=5/9` but no containing `q=11` remainder. Their old gap is close to
+being small enough, yet the `11`-grid has no center in the needed dual window.
+They are therefore phase misses, not counterexamples to the birth mechanism.
 
 ## Artifacts
 
@@ -100,7 +109,8 @@ data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv
 This turns the previous observations into a finite workflow:
 
 1. Use `lambda_k(r)` to find residues close to becoming covered.
-2. Use old-gap containment to decide which ones can birth at the next prime.
+2. Use q-grid phase in the dual containment window to decide which ones can
+   birth at the next prime.
 3. Treat non-birth near-misses as diagnostic examples, not failures of the
    framework.
 
@@ -111,6 +121,6 @@ This is the right bridge from the `lambda` spectrum to birth dynamics.
 This note does not claim:
 
 - that all near-misses become births;
-- that near-miss rank predicts birth without gap geometry;
+- that near-miss rank predicts birth without q-grid phase and gap geometry;
 - that all later births are single-gap births;
 - an asymptotic law for the near-miss distribution.

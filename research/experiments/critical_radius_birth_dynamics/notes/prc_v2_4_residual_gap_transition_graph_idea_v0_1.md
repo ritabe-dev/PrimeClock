@@ -3,9 +3,9 @@
 Status: future-work.
 Release eligibility: excluded from v2.3 candidate bundle until promoted.
 
-The likely v2.4 direction is to extend v2.3 birth dynamics from "the final old
-gap closes" to the full exact transition of residual gaps as prime-prefix arcs
-are added.
+The likely v2.4 direction is to extend the v2.3 gap-aperture birth view from
+"which `q`-grid centers close the final old gap?" to the full exact transition
+of residual gaps as prime-prefix arcs are added.
 
 Working title:
 
@@ -31,9 +31,11 @@ split  : the new arc enters the gap interior and leaves multiple child gaps
 close  : the new arc covers the gap
 ```
 
-In this language, a birth is an extinction event: every old gap is closed by
-the new arc. The existing v2.3 `B_5/B_6/B_7` strict single-gap results become
-the first finite cases of this transition-graph view.
+In this language, v2.3 gap-aperture births are the `close` case: the aperture
+window counts the `q`-grid centers whose new arc closes the relevant old gap.
+A birth is then an extinction event: every old gap is closed by the new arc.
+The existing v2.3 `B_5/B_6/B_7` unique strict single-gap results become the
+first finite cases of this transition-graph view.
 
 Likely v2.4 scope:
 
@@ -47,5 +49,5 @@ Likely v2.4 scope:
 ```
 
 Do not add this to v2.3 except as a short future-work pointer. Finish v2.3
-first around critical radius, birth containment, strict single-gap finite
-evidence, and near-miss/alignment diagnostics.
+first around critical radius, the gap-aperture birth formula, unique strict
+single-gap finite evidence, and near-miss/q-grid phase diagnostics.

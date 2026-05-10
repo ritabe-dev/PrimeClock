@@ -8,6 +8,7 @@ critical_radius_near_misses_csv_exact,40,40,0,pass
 near_miss_parent_overlap_csv_exact,40,40,0,pass
 near_miss_gap_geometry_csv_exact,40,40,0,pass
 birth_dynamics_b5_b6_b7_strict_single_gap_exact,9,9,0,pass
+birth_dynamics_b5_b6_b7_unique_strict_single_gap_remainders,3853,3853,0,pass
 birth_threshold_crossing_csv_exact,770,770,0,pass
 birth_dynamics_rows_csv_exact,770,770,0,pass
 birth_dynamics_summary_csv_exact,3,3,0,pass

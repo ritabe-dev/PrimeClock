@@ -13,6 +13,7 @@ from tools import (
     critical_radius_summary_rows,
     near_miss_birth_parent_rows,
     near_miss_gap_geometry_rows,
+    prime_prefix_residue_full_rows,
     write_birth_threshold_crossing_csv,
     write_birth_dynamics_csv,
     write_birth_dynamics_summary_csv,
@@ -34,9 +35,15 @@ def main() -> int:
     near_miss_rows = critical_radius_near_miss_rows(radius_rows, limit_per_k=20)
     near_miss_parent_rows = near_miss_birth_parent_rows(near_miss_rows)
     near_miss_gap_rows = near_miss_gap_geometry_rows(near_miss_rows)
-    birth_rows = birth_dynamics_rows(min_k=5, max_k=7)
+    full_rows = prime_prefix_residue_full_rows(max_k=7, allow_large_k=True)
+    birth_rows = birth_dynamics_rows(min_k=5, max_k=7, full_rows=full_rows)
     summary_rows = birth_dynamics_summary_rows(birth_rows)
-    crossing_rows = birth_threshold_crossing_rows(min_k=5, max_k=7)
+    crossing_rows = birth_threshold_crossing_rows(
+        min_k=5,
+        max_k=7,
+        full_rows=full_rows,
+        birth_rows=birth_rows,
+    )
     b5_crossing_rows = [row for row in crossing_rows if row.k == 5]
 
     write_critical_radius_csv(

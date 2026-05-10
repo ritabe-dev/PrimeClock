@@ -16,8 +16,8 @@ C_4 = {2,208} mod 210
 This v2.3 internal line asks a narrower follow-up question:
 
 ```text
-Can exact critical-radius spectra explain early birth dynamics through old-gap
-containment?
+Can exact critical-radius spectra and gap-aperture windows explain early birth
+dynamics through the next prime q-grid?
 ```
 
 The current answer is yes for the checked finite layers, with explicit limits.
@@ -41,10 +41,14 @@ k=5: robust=2, endpoint=34, uncovered=2274, nearest uncovered lambda=7/13
 Birth dynamics:
 
 ```text
-B_5: 14 strict single-gap births
-B_6: 42 strict single-gap births
-B_7: 714 strict single-gap births
+B_5: 14 unique strict single-gap births
+B_6: 42 unique strict single-gap births
+B_7: 714 unique strict single-gap births
 ```
+
+Here `unique` means that each birth parent has exactly one admissible
+next-prime remainder in the dual containment window, and it matches the
+committed birth row.
 
 Near-miss predictor:
 
@@ -56,8 +60,11 @@ k=5 top-20 near-misses: 19 are B_6 birth parents
 The useful finite predictor is not `lambda` rank alone. It is:
 
 ```text
-near-miss candidate + containing next-prime remainder
+near-miss candidate + q-grid phase in the dual containment window
 ```
+
+The non-birth near-misses are phase misses: the old gaps are close to the
+threshold, but no next-prime grid point lies in the needed window.
 
 ## Artifact Map
 
@@ -71,6 +78,7 @@ notes/prc_v2_3_theorem_candidate_outline_v0_1.md
 notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_weighted_bisector_candidate_lemma_v0_1.md
 notes/prc_v2_3_related_work_decision_v0_1.md
+notes/prc_v2_3_related_work_v0_2.md
 notes/prc_v2_3_standalone_checker_contract_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
@@ -95,14 +103,46 @@ data/prc_v2_3_candidate_standalone_verification_v0_1.csv
 Internal checkers:
 
 ```text
-check_candidate.py: checks=12, failed=0
-check_candidate_standalone.py: checks=7, failed=0
+check_candidate.py: checks=13, failed=0
+check_candidate_standalone.py: checks=10, failed=0
 ```
 
 The helper-based checker regenerates the candidate rows from experiment code.
 The standalone checker uses only the Python standard library, reads the
-committed CSV artifacts, and verifies the candidate CSV SHA256 manifest and
-headline finite claims.
+committed CSV artifacts, recomputes the k=4,5 critical-radius values from the
+definition, and verifies the candidate CSV SHA256 manifest and headline finite
+claims.
+
+Quick verification is the standalone checker plus the lightweight non-bundle
+pytest path:
+
+```text
+check_candidate_standalone.py: checks=10, failed=0
+pytest -m "not slow and not bundle": 27 passed, 29 deselected
+```
+
+Bundle verification is separate because it builds temporary candidate packages
+and exercises package hygiene guards:
+
+```text
+candidate_bundle.py --check <printed-candidate-package-directory>
+candidate_bundle.py --zip
+unzip -t <printed-candidate-zip-path>
+pytest -m "bundle and not slow"  # CI/internal hygiene path
+```
+
+Current bundle pytest result:
+
+```text
+pytest -m "bundle and not slow": 18 passed, 38 deselected
+```
+
+Full internal verification remains helper-based and intentionally slower:
+
+```text
+check_candidate.py --progress: checks=13, failed=0
+pytest -m slow: 11 passed, 45 deselected
+```
 
 Internal candidate bundle:
 
@@ -140,7 +180,7 @@ Before promotion to a public v2.3 release bundle:
    term, and add formal covering-radius citations only if the public note leans
    on that external terminology.
 3. Keep all statements finite; do not claim an asymptotic law or a general
-   single-gap birth theorem.
+   unique single-gap birth theorem.
 
 ## Next Slice
 

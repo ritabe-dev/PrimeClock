@@ -110,13 +110,13 @@ endpoint_multi_gap_birth
 Generated finite summary:
 
 ```text
-B_5: 14 strict single-gap births
-B_6: 42 strict single-gap births
-B_7: 714 strict single-gap births
+B_5: 14 unique strict single-gap births
+B_6: 42 unique strict single-gap births
+B_7: 714 unique strict single-gap births
 ```
 
-This is finite evidence for a simple early birth mechanism, not a general
-theorem for all levels.
+This is finite evidence for a simple early birth mechanism; it is not a general
+unique single-gap theorem for all levels.
 
 In short: this is not a general theorem for all levels.
 

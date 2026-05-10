@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import sys
 from dataclasses import fields
 from fractions import Fraction
 from pathlib import Path
@@ -22,17 +23,21 @@ from tools import (
     CriticalRadiusNearMissRow,
     CriticalRadiusRow,
     CriticalRadiusSummaryRow,
+    ExactInterval,
     NearMissBirthParentRow,
     NearMissGapGeometryRow,
     birth_dynamics_rows,
     birth_dynamics_summary_rows,
     birth_threshold_crossing_rows,
+    classify_birth_containment,
     critical_radius_near_miss_rows,
     critical_radius_rows,
     critical_radius_summary_rows,
+    exact_arc_intervals_for_residue,
     near_miss_birth_parent_rows,
     near_miss_gap_geometry_rows,
     parse_fraction,
+    prime_prefix_residue_full_rows,
     residue_is_exactly_covered,
 )
 
@@ -50,9 +55,14 @@ def main() -> int:
         default=DATA_DIR / "prc_v2_3_candidate_verification_v0_1.csv",
         help="verification summary CSV path",
     )
+    parser.add_argument(
+        "--progress",
+        action="store_true",
+        help="print phase progress messages to stderr",
+    )
     args = parser.parse_args()
 
-    rows = verification_rows()
+    rows = verification_rows(progress=args.progress)
     write_checks(rows, args.out)
     failed = sum(int(row["failed"]) for row in rows)
     print(
@@ -62,16 +72,35 @@ def main() -> int:
     return 0 if failed == 0 else 1
 
 
-def verification_rows() -> list[dict[str, str]]:
+def log_progress(enabled: bool, message: str) -> None:
+    if enabled:
+        print(f"[check_candidate] {message}", file=sys.stderr)
+
+
+def verification_rows(*, progress: bool = False) -> list[dict[str, str]]:
+    log_progress(progress, "computing critical-radius rows")
     radius_rows = critical_radius_rows(min_k=4, max_k=5)
     radius_summary_rows = critical_radius_summary_rows(radius_rows)
     near_miss_rows = critical_radius_near_miss_rows(radius_rows, limit_per_k=20)
     near_miss_parent_rows = near_miss_birth_parent_rows(near_miss_rows)
     near_miss_gap_rows = near_miss_gap_geometry_rows(near_miss_rows)
-    birth_rows = birth_dynamics_rows(min_k=5, max_k=7)
-    birth_summary_rows = birth_dynamics_summary_rows(birth_rows)
-    crossing_rows = birth_threshold_crossing_rows(min_k=5, max_k=7)
 
+    log_progress(progress, "computing prime-prefix full rows through k=7")
+    full_rows = prime_prefix_residue_full_rows(max_k=7, allow_large_k=True)
+
+    log_progress(progress, "computing birth-dynamics rows")
+    birth_rows = birth_dynamics_rows(min_k=5, max_k=7, full_rows=full_rows)
+    birth_summary_rows = birth_dynamics_summary_rows(birth_rows)
+
+    log_progress(progress, "computing birth threshold-crossing rows")
+    crossing_rows = birth_threshold_crossing_rows(
+        min_k=5,
+        max_k=7,
+        full_rows=full_rows,
+        birth_rows=birth_rows,
+    )
+
+    log_progress(progress, "checking generated rows against committed CSVs")
     checks: list[dict[str, str]] = []
     checks.append(check_c4_level_set(radius_rows))
     checks.append(check_c5_level_set_matches_exact_coverage(radius_rows))
@@ -117,6 +146,7 @@ def verification_rows() -> list[dict[str, str]]:
         )
     )
     checks.append(check_birth_candidate_claims(birth_rows, crossing_rows))
+    checks.append(check_unique_strict_single_gap_remainders(birth_rows))
     checks.append(
         check_csv_exact(
             "birth_threshold_crossing_csv_exact",
@@ -218,6 +248,65 @@ def check_birth_candidate_claims(
         len(checks),
         sum(checks),
     )
+
+
+def check_unique_strict_single_gap_remainders(
+    birth_rows: Iterable[BirthDynamicsRow],
+) -> dict[str, str]:
+    """Check that each birth parent has exactly one strict q-remainder."""
+    rows = list(birth_rows)
+    rows_by_parent: dict[tuple[int, int], list[BirthDynamicsRow]] = {}
+    for row in rows:
+        rows_by_parent.setdefault((row.k, row.parent_residue_mod_previous), []).append(row)
+
+    checks: list[bool] = [
+        len(group) == 1
+        for group in rows_by_parent.values()
+    ]
+    checks.extend(
+        len([row for row in rows if row.k == k]) == len(
+            {
+                row.parent_residue_mod_previous
+                for row in rows
+                if row.k == k
+            }
+        )
+        for k in [5, 6, 7]
+    )
+
+    for row in rows:
+        previous_gaps = parse_intervals(row.previous_open_gap_boundary_endpoints)
+        valid_remainders = []
+        for remainder in range(row.new_prime):
+            try:
+                containment = classify_birth_containment(
+                    previous_gaps,
+                    exact_arc_intervals_for_residue(remainder, row.new_prime),
+                )
+            except ValueError:
+                continue
+            if containment.margin > 0:
+                valid_remainders.append(remainder)
+        checks.append(valid_remainders == [row.new_prime_remainder])
+        checks.append(row.birth_type == "strict_single_gap_birth")
+        checks.append(row.previous_open_gap_count == 1)
+        checks.append(not row.uses_endpoint_touching)
+
+    return check(
+        "birth_dynamics_b5_b6_b7_unique_strict_single_gap_remainders",
+        len(checks),
+        sum(checks),
+    )
+
+
+def parse_intervals(value: str) -> list[ExactInterval]:
+    intervals: list[ExactInterval] = []
+    if not value:
+        return intervals
+    for item in value.split(";"):
+        start, end = item.split("-", 1)
+        intervals.append((parse_fraction(start), parse_fraction(end)))
+    return intervals
 
 
 def check_csv_exact(
