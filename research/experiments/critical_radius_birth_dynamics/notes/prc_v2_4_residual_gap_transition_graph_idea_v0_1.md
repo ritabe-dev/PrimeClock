@@ -1,6 +1,7 @@
 # PRC v2.4 Idea: Residual Gap Transition Graphs
 
-Status: future-work idea, not part of the v2.3 candidate.
+Status: future-work.
+Release eligibility: excluded from v2.3 candidate bundle until promoted.
 
 The likely v2.4 direction is to extend v2.3 birth dynamics from "the final old
 gap closes" to the full exact transition of residual gaps as prime-prefix arcs

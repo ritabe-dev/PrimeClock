@@ -1,6 +1,7 @@
 # Critical Radius Spectra and Birth Dynamics in Prime-Prefix Coverings
 
-Status: internal public-candidate theorem-note draft, not a public release.
+Status: internal-candidate.
+Release eligibility: included in v2.3 candidate bundle, excluded from public release until promoted.
 
 ## 1. Introduction
 

@@ -233,7 +233,8 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_internal_candidate_status.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal candidate, not a public release." in text
+    assert "Status: internal-candidate." in text
+    assert "Release eligibility: included in v2.3 candidate bundle" in text
     assert "promotion_manifest_v0_1.yml" in text
     assert "notes/prc_v2_3_theorem_note_draft_v0_1.md" in text
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
@@ -265,7 +266,8 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_theorem_note_draft_v0_1.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal public-candidate theorem-note draft, not a public release." in text
+    assert "Status: internal-candidate." in text
+    assert "Release eligibility: included in v2.3 candidate bundle" in text
     assert "C_k = { r : lambda_k(r) <= 1/2 }" in text
     assert "B_7: 714 strict single-gap births" in text
     assert "weighted covering-radius" in text
@@ -536,6 +538,41 @@ def test_v2_3_candidate_bundle_check_rejects_future_work_notes(tmp_path):
 
     assert result.returncode == 1
     assert "forbidden candidate path marker prc_v2_4" in result.stdout
+
+
+def test_v2_3_candidate_bundle_check_rejects_future_work_status(tmp_path):
+    builder = EXPERIMENT_DIR / "candidate_bundle.py"
+    bundle_name = "PrimeClock-v2.3-candidate-test"
+    subprocess.run(
+        [
+            sys.executable,
+            str(builder),
+            "--out",
+            str(tmp_path),
+            "--name",
+            bundle_name,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    bundle_root = tmp_path / bundle_name
+    note = bundle_root / "research/experiments/critical_radius_birth_dynamics/notes/future.md"
+    note.write_text(
+        "Status: future-work.\n"
+        "Release eligibility: excluded from v2.3 candidate bundle until promoted.\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(builder), "--check", str(bundle_root)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "forbidden candidate text marker Status: future-work" in result.stdout
 
 
 def test_v2_3_future_work_notes_are_tracked_but_not_bundled():

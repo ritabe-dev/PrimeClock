@@ -20,7 +20,7 @@ new finite claims.
 - public release versioning remains config-driven through
   `release/public/release_config.json`;
 - the public bundle README template is included in the generated bundle;
-- focused pytest expected count is updated to `53 passed`;
+- focused pytest expected count is updated to `54 passed`;
 - release guardrails reject private notes, local scratch paths, internal
   experiment paths, and candidate bundle artifacts;
 - citation metadata uses the Zenodo concept DOI as the stable release-series
@@ -40,7 +40,7 @@ new finite claims.
 ## Expected Verification Results
 
 ```text
-focused pytest: 53 passed
+focused pytest: 54 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```

@@ -1,6 +1,7 @@
 # PRC No Multi-Gap Birth Note v0.1
 
-Status: internal mechanism note / lemma candidate.
+Status: future-work.
+Release eligibility: excluded from v2.3 candidate bundle until promoted.
 
 In the prime-prefix PRC process, a later birth arc is always shorter than any
 earlier arc that could have split one old gap into two gaps. If two old gaps are

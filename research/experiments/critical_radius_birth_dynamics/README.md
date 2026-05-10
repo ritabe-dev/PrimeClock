@@ -1,5 +1,8 @@
 # Critical Radius and Birth Dynamics Sandbox
 
+Status: internal-candidate.
+Release eligibility: excluded from public release until promoted.
+
 This experiment starts the post-v2.2.4 PRC research line. The public v2.2.4
 release remains the stable `C_4/B_5` finite certificate artifact; files here are
 internal research artifacts until explicitly promoted to a claim release.

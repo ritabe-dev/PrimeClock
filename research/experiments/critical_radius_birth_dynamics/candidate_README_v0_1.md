@@ -1,5 +1,8 @@
 # PRC v2.3 Internal Candidate Bundle
 
+Status: internal-candidate.
+Release eligibility: external review bundle only; not a public release.
+
 This internal candidate bundle contains the v2.3 critical-radius and
 birth-dynamics research artifacts. It is not a public release.
 

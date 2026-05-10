@@ -47,3 +47,5 @@ Covering.
 `CITATION.cff` uses the Zenodo concept DOI as its top-level DOI. Version DOIs
 are recorded here and in release notes for DOI releases, but ordinary
 maintenance syncs do not create GitHub Releases or Zenodo archives.
+The release config fixes this as
+`concept_doi_in_citation_version_doi_in_release_notes`.

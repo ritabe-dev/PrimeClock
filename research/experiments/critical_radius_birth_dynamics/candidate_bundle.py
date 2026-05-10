@@ -37,6 +37,11 @@ FORBIDDEN_PATH_MARKERS = {
     "scratch",
 }
 
+FORBIDDEN_TEXT_MARKERS = {
+    "Release eligibility: excluded from v2.3 candidate bundle until promoted",
+    "Status: future-work",
+}
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -145,6 +150,19 @@ def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
     return failures
 
 
+def forbidden_bundle_text(bundle_root: Path) -> list[str]:
+    failures: list[str] = []
+    for path in bundle_root.rglob("*"):
+        if not path.is_file() or path.suffix not in {".md", ".txt", ".yml", ".yaml", ".json"}:
+            continue
+        relative = path.relative_to(bundle_root).as_posix()
+        text = path.read_text(encoding="utf-8")
+        for marker in FORBIDDEN_TEXT_MARKERS:
+            if marker in text:
+                failures.append(f"forbidden candidate text marker {marker}: {relative}")
+    return failures
+
+
 def write_hash_manifest(bundle_root: Path) -> None:
     lines = [
         f"{sha256_bytes(path)}  {path.relative_to(bundle_root).as_posix()}"
@@ -154,7 +172,7 @@ def write_hash_manifest(bundle_root: Path) -> None:
 
 
 def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
-    failures: list[str] = forbidden_bundle_paths(bundle_root)
+    failures: list[str] = forbidden_bundle_paths(bundle_root) + forbidden_bundle_text(bundle_root)
     readme = bundle_root / "README.md"
     if not readme.is_file():
         failures.append("missing README.md")

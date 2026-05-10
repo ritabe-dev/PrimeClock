@@ -40,6 +40,17 @@ The finite claims are:
 These are finite certificate claims supported by exact rational CSVs, a package
 verifier, and a standard-library standalone checker.
 
+## Review Workflow
+
+For current public citation, use the `v2.2.4` release and `CITATION.cff`.
+For v2.3 internal review, use the generated candidate bundle or a specific
+commit/tree URL. Do not treat the full `research/experiments/` tree as public
+claims.
+
+Normal cleanup and review-driven edits are pushed to GitHub `main` through
+`maintenance_sync`. GitHub Release and Zenodo are used only when
+`release/public/release_config.json` is explicitly switched to `doi_release`.
+
 ## Verify
 
 From `research/`:
@@ -59,7 +70,7 @@ python certificates/check_prime_prefix_c4_b5.py \
 Expected focused results:
 
 ```text
-focused pytest: 53 passed
+focused pytest: 54 passed
 package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```

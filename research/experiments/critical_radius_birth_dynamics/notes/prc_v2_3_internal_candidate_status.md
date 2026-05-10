@@ -1,6 +1,7 @@
 # PRC v2.3 Internal Candidate Status
 
-Status: internal candidate, not a public release.
+Status: internal-candidate.
+Release eligibility: included in v2.3 candidate bundle, excluded from public release until promoted.
 
 ## Objective
 
