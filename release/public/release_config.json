@@ -9,5 +9,6 @@
   "zenodo_expected": true,
   "allow_github_release": true,
   "doi_policy": "concept_doi_in_citation_version_doi_in_release_notes",
-  "zenodo_concept_doi": "10.5281/zenodo.20091722"
+  "zenodo_concept_doi": "10.5281/zenodo.20091722",
+  "zenodo_version_doi": "10.5281/zenodo.20119473"
 }

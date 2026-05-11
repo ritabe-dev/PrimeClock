@@ -1,6 +1,6 @@
 # PRC v2.3.0 Research Release Notes
 
-Version DOI: pending Zenodo publication for the GitHub `v2.3.0` release.
+Version DOI: `10.5281/zenodo.20119473`
 Concept DOI: `10.5281/zenodo.20091722`.
 
 This research release promotes the v2.3 critical-radius and gap-aperture
