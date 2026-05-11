@@ -1,7 +1,7 @@
 # PRC Critical Radius Spectrum v0.1
 
-This note defines the next internal PRC observable after the v2.2.4
-`C_4/B_5` finite certificate release.
+This note defines the v2.3.0 critical-radius observable built on top of the
+v2.2.4 `C_4/B_5` finite certificate release.
 
 For the first `k` primes and a residue `r mod M_k`, let
 

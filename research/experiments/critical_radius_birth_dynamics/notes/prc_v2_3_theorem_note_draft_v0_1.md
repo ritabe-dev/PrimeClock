@@ -1,11 +1,11 @@
 # Critical Radius Spectra and Birth Dynamics in Prime-Prefix Coverings
 
-Status: internal-candidate.
-Release eligibility: included in v2.3 candidate bundle, excluded from public release until promoted.
+Status: public v2.3.0 finite theorem note.
+Release eligibility: included in the v2.3.0 public release bundle.
 
 ## 1. Introduction
 
-The v2.2.4 public release gives a finite certificate package for the first
+The v2.2.4 public release gave a finite certificate package for the first
 nontrivial prime-prefix covering layers:
 
 ```text
@@ -14,8 +14,9 @@ C_4 = {2,208} mod 210,
 |B_5| = 14.
 ```
 
-This draft keeps that public release fixed and develops the next internal
-research layer. The goal is to replace a purely binary view of residues,
+The v2.3.0 release keeps those finite claims and adds the checked
+critical-radius and birth-dynamics mechanism. The goal is to replace a purely
+binary view of residues,
 
 ```text
 r in C_k or r notin C_k,
@@ -73,28 +74,26 @@ lambda_k(r) = max_x min_{i<=k} p_i * d_T(x, c_{p_i}(r)),
 ```
 
 where `d_T` is circular distance on `R/Z`. This is a weighted covering-radius
-interpretation of the finite critical-radius threshold. In this draft,
+interpretation of the finite critical-radius threshold. In this release,
 `critical radius` is the project term; `weighted covering-radius` is only
 descriptive shorthand for the max-min expression above. The implementation
 computes the value exactly by evaluating weighted bisector candidates for
 lifted center pairs and selecting a bottleneck point. The finite candidate-set
-justification is recorded as an internal certificate lemma:
+justification is recorded in the certificate lemma:
 
 ```text
 notes/prc_weighted_bisector_candidate_lemma_v0_1.md
 ```
 
-Important boundary: this draft does not use the naive adjacent-center formula
+Important boundary: this release does not use the naive adjacent-center formula
 as a theorem. Adjacent data may be useful for certificates, but the theorem
-candidate is the weighted covering-radius statement above.
+claim is the weighted covering-radius statement above.
 
-Terminology boundary: this draft does not claim novelty for the phrase
+Terminology boundary: this release does not claim novelty for the phrase
 `weighted covering-radius`, and it does not import any external covering-radius
-theorem without citation. A separate internal terminology note records this
-scope:
+theorem without citation. The related-work note records this scope:
 
 ```text
-notes/prc_weighted_covering_radius_terminology_v0_1.md
 notes/prc_v2_3_related_work_v0_2.md
 ```
 
@@ -248,7 +247,7 @@ candidate list; birth is decided by q-grid phase.
 
 ## 7. Certificate Artifacts
 
-The current draft is supported by the internal experiment artifacts:
+The v2.3.0 release is supported by these exact finite artifacts:
 
 ```text
 data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv
@@ -262,40 +261,35 @@ data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv
 data/prc_v2_3_candidate_verification_v0_1.csv
 ```
 
-The implementation and tests remain under `research/experiments`; this is not
-yet a public release bundle.
+The implementation and tests remain under `research/experiments` because this
+release promotes the critical-radius birth-dynamics experiment as a finite
+public artifact without moving its historical path.
 
-Internal checkers:
+Public release checkers:
 
 ```text
 check_candidate.py: checks=13, failed=0
 check_candidate_standalone.py: checks=10, failed=0
 ```
 
-The helper-based checker regenerates candidate rows from experiment code. The
+The helper-based checker regenerates v2.3 rows from experiment code. The
 standalone checker uses only the Python standard library, reads the committed
 CSV artifacts, recomputes the k=4,5 critical-radius values from the definition,
 and checks the candidate CSV SHA256 manifest plus the headline finite claims.
-
-Internal candidate bundle:
-
-```text
-candidate_bundle.py -> PrimeClock-v2.3-candidate-v0.1
-```
 
 ## 8. Future Work
 
 The next direction is a v2.4 residual-gap transition graph, where each old gap
 is classified as missed, trimmed, split, or closed by the next prime arc. That
-future-work direction is not part of this v2.3 candidate. The no-multi-gap
-birth idea is also kept as an internal lemma candidate rather than a theorem in
-this draft. Active-prime taxonomy and any null model for q-grid phase are also
-future work; v2.3 only records the finite spectrum, the gap-aperture birth
+future-work direction is not part of this v2.3.0 release. The no-multi-gap
+birth idea is also kept as future work rather than a theorem in this release.
+Active-prime taxonomy and any null model for q-grid phase are also
+future work; v2.3.0 only records the finite spectrum, the gap-aperture birth
 formula, and the checked unique strict single-gap layers.
 
-## 9. Promotion Boundary
+## 9. Release Boundary
 
-The internal promotion manifest fixes this draft's candidate scope:
+The v2.3.0 public release scope is:
 
 ```text
 critical radius: k=4,5
@@ -304,21 +298,17 @@ near-miss discussion: k=4,5
 no B_8 or larger layers
 ```
 
-Before promotion to a public v2.3 release bundle, this draft still needs:
-
-1. conversion of `candidate_bundle_manifest_v0_1.json` into a `release/public`
-   config with GitHub/Zenodo metadata.
-2. the related-work decision kept fixed: use `critical radius` as the project
-   term, and add formal covering-radius citations only if the public note leans
-   on that external terminology.
+The related-work decision is fixed: use `critical radius` as the project term,
+and treat weighted covering-radius / one-center language as descriptive context
+rather than a novelty claim.
 
 ## 10. Non-Claims
 
-This draft does not claim:
+This release does not claim:
 
 - a general theorem that all births are single-gap births;
 - that near-miss rank alone predicts births;
 - an asymptotic law for `lambda_k`;
 - a new theorem about prime distribution;
 - an explanation of all complete PRC events;
-- any change to the v2.2.4 public release.
+- that v2.2.4 tags or DOI records should be rewritten.

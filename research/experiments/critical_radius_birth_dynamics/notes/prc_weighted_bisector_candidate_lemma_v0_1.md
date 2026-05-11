@@ -1,6 +1,6 @@
 # Weighted Bisector Candidate Lemma v0.1
 
-Status: internal certificate lemma note, not a public release.
+Status: public v2.3.0 finite certificate lemma note.
 
 ## Statement
 
@@ -43,6 +43,5 @@ bottleneck has already been computed and checked.
 
 ## Promotion Use
 
-Before a public v2.3 release, this note should either be folded into the theorem
-note as a short proof paragraph or cited as the internal certificate lemma for
-the checker path.
+For v2.3.0, this note is cited as the finite certificate lemma for the exact
+critical-radius checker path.

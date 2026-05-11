@@ -1,11 +1,11 @@
 id: critical_radius_birth_dynamics
-status: internal_experiment
-public_release: false
+status: public_v2_3_0_release_artifact
+public_release: true
 base_release: v2.2.4
 purpose: >
   Extend the finite C4/B5 certificate line toward exact critical-radius spectra
-  and finite birth-dynamics classification without changing the stable public
-  v2.2.4 release.
+  and finite birth-dynamics classification in the v2.3.0 public release without
+  rewriting the stable public v2.2.4 release.
 artifacts:
   - README.md
   - candidate_README_v0_1.md
@@ -52,5 +52,5 @@ promotion_requirements:
   - B5/B6/B7 birth counts match exact filtration counts
   - no broad asymptotic or prime-distribution claims
   - candidate bundle manifest remains separate from public release config
-  - public release config is updated only after claim promotion
+  - public release config is set to v2.3.0 doi_release
   - v2.4 future-work notes remain excluded from the v2.3 candidate bundle

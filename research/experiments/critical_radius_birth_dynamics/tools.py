@@ -462,6 +462,11 @@ def critical_radius_certificate(
     ``[c_p-lambda/p, c_p+lambda/p]``, the covering threshold is the maximum of
     ``min_p p*d_T(x,c_p)`` over the circle. We enumerate exact weighted
     bisectors of all lifted center pairs and evaluate the lower envelope.
+
+    This exact candidate enumeration is intentionally sized for the public
+    ``k=4,5`` spectra. Larger prefixes create quadratically more weighted
+    center-pair candidates and should be treated as a separate scalability
+    experiment before being promoted.
     """
     prime_values = list(primes)
     if not prime_values:

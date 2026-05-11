@@ -31,13 +31,17 @@ FORBIDDEN_PATH_PARTS = {
     "scratch",
 }
 
-FORBIDDEN_PATH_PREFIXES = {
-    "research/experiments/",
-}
+FORBIDDEN_PATH_PREFIXES: set[str] = set()
 
 FORBIDDEN_FILENAME_PARTS = {
     "candidate_bundle",
     "candidate_bundle_manifest",
+    "candidate_workflow",
+    "candidate_README",
+    "candidate_research_README",
+    "promotion_manifest",
+    "prc_no_multigap",
+    "prc_v2_4",
 }
 
 FORBIDDEN_TEXT_PATTERNS = [
@@ -71,8 +75,8 @@ TEXT_SUFFIXES = {
 
 README_REQUIRED_TEXT = [
     "public release bundle",
-    "finite `C_k/C_4/B_5`",
-    "not included",
+    "critical-radius",
+    "gap-aperture",
 ]
 
 README_FORBIDDEN_TEXT = [
@@ -81,6 +85,14 @@ README_FORBIDDEN_TEXT = [
     "The historical PrimeClock React/Vite visualization is not included",
     "PrimeClock Development Repository",
     "working tree for PrimeClock",
+]
+
+WORKFLOW_FORBIDDEN_TEXT = [
+    "verify_candidate_workflow.py",
+    "candidate_workflow_v0_1.yml",
+    "v2_3_candidate",
+    "candidate_quick",
+    "candidate_bundle",
 ]
 
 
@@ -203,6 +215,30 @@ def check_readme_guard(root: Path) -> list[str]:
     return failures
 
 
+def check_workflow_guard(root: Path) -> list[str]:
+    workflow = root / ".github" / "workflows" / "verify.yml"
+    if not workflow.is_file():
+        return ["missing public workflow: .github/workflows/verify.yml"]
+
+    text = workflow.read_text(encoding="utf-8")
+    failures: list[str] = []
+    for forbidden in WORKFLOW_FORBIDDEN_TEXT:
+        if forbidden in text:
+            failures.append(
+                f"public workflow contains source-only candidate reference: {forbidden!r}"
+            )
+    for required in [
+        "tests/test_critical_radius_birth_dynamics_public.py",
+        "tests/test_covering_prime_prefix_filtration.py",
+        "check_candidate.py",
+        "check_candidate_standalone.py",
+        "scripts/verify_public_release.py",
+    ]:
+        if required not in text:
+            failures.append(f"public workflow missing required check: {required!r}")
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("release_root", type=Path)
@@ -216,6 +252,7 @@ def main() -> int:
         check_paths(release_root)
         + check_text(release_root)
         + check_readme_guard(release_root)
+        + check_workflow_guard(release_root)
         + check_hashes(release_root)
     )
     if failures:

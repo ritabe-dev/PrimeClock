@@ -1,11 +1,14 @@
-id: prc_v2_3_public_candidate
-status: internal_promotion_manifest
-public_release: false
+id: prc_v2_3_0_public_promotion
+status: public_promotion_candidate
+public_release: true
 base_public_release: v2.2.4
 candidate_goal: >
-  Promote the critical-radius and gap-aperture birth-dynamics sandbox into a
-  narrow v2.3 public candidate without changing the stable v2.2.4 C4/B5
-  release line.
+  Promote the critical-radius and gap-aperture birth-dynamics sandbox into the
+  conservative v2.3.0 public DOI release without rewriting the stable v2.2.4
+  tag or DOI record.
+gate_p:
+  question: Is this stable enough to cite?
+  decision: promote to public v2.3.0
 candidate_scope:
   critical_radius_layers: [4, 5]
   birth_dynamics_layers: [5, 6, 7]
@@ -34,15 +37,15 @@ candidate_bundle:
   builder: candidate_bundle.py
   manifest: candidate_bundle_manifest_v0_1.json
   default_name: PrimeClock-v2.3-candidate-v0.1
-  status: internal_only
+  status: historical_candidate_input
 future_work_excluded:
   - notes/prc_no_multigap_birth_note_v0_1.md
   - notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
   - v2.4 future-work notes are tracked internally but excluded from the candidate bundle.
 promotion_blockers:
-  - candidate bundle manifest must be converted into release/public config before any public release.
-  - GitHub/Zenodo metadata and DOI flow are not created for v2.3.
-  - no Zenodo or GitHub release should be created from this internal manifest.
+  - public release must use release/public config and publish_public_release.py, not the candidate workflow.
+  - GitHub/Zenodo publication is allowed only after v2.3.0 doi_release dry-run output is correct.
+  - v2.4 and no-multigap future-work notes remain excluded from the public release bundle.
 terminology_status:
   primary_term: critical radius
   weighted_covering_radius: descriptive finite max-min shorthand

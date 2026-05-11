@@ -1,11 +1,14 @@
-# PRC v2.3 Internal Candidate Status
+# PRC v2.3 Public Promotion Candidate Status
 
-Status: internal-candidate.
-Release eligibility: included in v2.3 candidate bundle, excluded from public release until promoted.
+Status: public-promotion-candidate.
+Release eligibility: included in the v2.3.0 public release bundle; GitHub
+Release and Zenodo publication remain gated by the v2.3.0 `doi_release`
+dry-run and explicit execution step.
 
 ## Objective
 
-The v2.2.4 public release remains the stable finite certificate artifact for:
+The v2.2.4 public release remains the historical finite certificate artifact
+for:
 
 ```text
 C_4 = {2,208} mod 210
@@ -13,7 +16,7 @@ C_4 = {2,208} mod 210
 |B_5| = 14
 ```
 
-This v2.3 internal line asks a narrower follow-up question:
+The v2.3.0 public promotion candidate adds a narrower follow-up question:
 
 ```text
 Can exact critical-radius spectra and gap-aperture windows explain early birth
@@ -144,7 +147,7 @@ check_candidate.py --progress: checks=13, failed=0
 pytest -m slow: 11 passed, 45 deselected
 ```
 
-Internal candidate bundle:
+Internal candidate bundle used for review:
 
 ```text
 candidate_bundle_manifest_v0_1.json
@@ -161,7 +164,9 @@ notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
 
 ## Promotion Boundary
 
-This is ready as an internal research milestone, but not yet a public release.
+This is ready as a v2.3.0 public promotion candidate. The candidate workflow
+does not publish; public release and Zenodo publication must go through
+`release/public/release_config.json` and `scripts/publish_public_release.py`.
 
 The internal promotion manifest fixes the candidate scope:
 
@@ -172,10 +177,10 @@ near-miss discussion: k=4,5
 no B_8 or larger layers
 ```
 
-Before promotion to a public v2.3 release bundle:
+Before executing the public v2.3.0 release:
 
-1. Convert `candidate_bundle_manifest_v0_1.json` into a `release/public`
-   config with GitHub/Zenodo metadata.
+1. Confirm `scripts/publish_public_release.py` dry-run reports `v2.3.0`,
+   `doi_release`, `GitHub Release: yes`, and `Zenodo target: yes`.
 2. Keep the related-work decision fixed: use `critical radius` as the project
    term, and add formal covering-radius citations only if the public note leans
    on that external terminology.
@@ -204,4 +209,4 @@ This internal candidate does not claim:
 - that all births are single-gap births;
 - that near-miss rank alone predicts births;
 - that the checked finite layers imply an asymptotic law;
-- that the v2.2.4 public release has changed.
+- that v2.2.4 tags or DOI records should be rewritten.

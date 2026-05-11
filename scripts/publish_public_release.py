@@ -10,20 +10,39 @@ import argparse
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from release_config import load_release_config
 
 
-DEFAULT_PUBLIC_WORKTREE = Path("/private/tmp/primeclock-public-release")
-DEFAULT_BUILD_PARENT = Path("/private/tmp/primeclock-public-publish-build")
+DEFAULT_PUBLIC_WORKTREE = Path(tempfile.gettempdir()) / "primeclock-public-release"
+DEFAULT_BUILD_PARENT = Path(tempfile.gettempdir()) / "primeclock-public-publish-build"
+DEFAULT_CHECK_PARENT = Path(tempfile.gettempdir()) / "primeclock-public-release-check"
 
 
-def run(command: list[str], cwd: Path, *, execute: bool, mutating: bool = False) -> None:
-    prefix = "+" if execute or not mutating else "DRY-RUN:"
-    print(f"{prefix} ({cwd}) {' '.join(command)}")
-    if execute or not mutating:
+def run(command: list[str], cwd: Path, *, execute: bool) -> None:
+    prefix = "+" if execute else "DRY-RUN:"
+    print(f"{prefix} ({cwd}) {' '.join(command)}", flush=True)
+    if execute:
         subprocess.run(command, cwd=cwd, check=True)
+
+
+def run_checked(command: list[str], cwd: Path) -> None:
+    print(f"+ ({cwd}) {' '.join(command)}", flush=True)
+    subprocess.run(command, cwd=cwd, check=True)
+
+
+def require_tool(name: str) -> None:
+    if not shutil.which(name):
+        raise SystemExit(f"required tool not found on PATH: {name}")
+
+
+def preflight_execute_tools(*, allow_github_release: bool) -> None:
+    for tool in ["git", "rsync"]:
+        require_tool(tool)
+    if allow_github_release:
+        require_tool("gh")
 
 
 def sync_bundle(source: Path, target: Path, *, execute: bool) -> None:
@@ -36,7 +55,7 @@ def sync_bundle(source: Path, target: Path, *, execute: bool) -> None:
         f"{source}/",
         f"{target}/",
     ]
-    run(command, Path.cwd(), execute=execute, mutating=True)
+    run(command, Path.cwd(), execute=execute)
 
 
 def main() -> int:
@@ -57,15 +76,25 @@ def main() -> int:
     release_root = build_parent / bundle_name
     release_zip = release_root.parent / f"{release_root.name}.zip"
 
-    print(f"release: {tag}")
-    print(f"mode: {'execute' if args.execute else 'dry-run'}")
-    print(f"release kind: {config['release_kind']}")
-    print(f"GitHub Release: {'yes' if allow_github_release else 'no'}")
-    print(f"Zenodo target: {'yes' if zenodo_expected else 'no'}")
+    print(f"release: {tag}", flush=True)
+    print(
+        "mode: execute"
+        if args.execute
+        else "mode: dry-run: local checks run, mutating release steps previewed",
+        flush=True,
+    )
+    print(f"release kind: {config['release_kind']}", flush=True)
+    print(f"GitHub Release: {'yes' if allow_github_release else 'no'}", flush=True)
+    print(f"Zenodo target: {'yes' if zenodo_expected else 'no'}", flush=True)
 
-    run([sys.executable, "scripts/check_release_versions.py"], repo_root, execute=args.execute, mutating=True)
-    run([sys.executable, "scripts/update_public_hashes.py", "--check"], repo_root, execute=args.execute, mutating=True)
-    run(
+    if args.execute:
+        preflight_execute_tools(allow_github_release=allow_github_release)
+        if not public_worktree.is_dir():
+            raise SystemExit(f"public worktree does not exist: {public_worktree}")
+
+    run_checked([sys.executable, "scripts/check_release_versions.py"], repo_root)
+    run_checked([sys.executable, "scripts/update_public_hashes.py", "--check"], repo_root)
+    run_checked(
         [
             sys.executable,
             "scripts/verify_public_release.py",
@@ -74,46 +103,45 @@ def main() -> int:
             "--zip",
         ],
         repo_root,
-        execute=args.execute,
-        mutating=True,
     )
+    if not release_zip.is_file():
+        raise SystemExit(f"missing release asset: {release_zip}")
 
-    if args.execute and not public_worktree.is_dir():
-        raise SystemExit(f"public worktree does not exist: {public_worktree}")
-
-    run(["git", "fetch", "origin", "main", "--tags"], public_worktree, execute=args.execute, mutating=True)
-    run(["git", "switch", "--detach", "origin/main"], public_worktree, execute=args.execute, mutating=True)
+    run(["git", "fetch", "origin", "main", "--tags"], public_worktree, execute=args.execute)
+    run(["git", "switch", "--detach", "origin/main"], public_worktree, execute=args.execute)
     sync_bundle(release_root, public_worktree, execute=args.execute)
 
-    run([sys.executable, "scripts/check_release_versions.py"], public_worktree, execute=args.execute, mutating=True)
-    run([sys.executable, "scripts/update_public_hashes.py", "--check"], public_worktree, execute=args.execute, mutating=True)
+    run([sys.executable, "scripts/check_release_versions.py"], public_worktree, execute=args.execute)
+    run([sys.executable, "scripts/update_public_hashes.py", "--check"], public_worktree, execute=args.execute)
     run(
         [
             sys.executable,
             "scripts/verify_public_release.py",
             "--out",
-            "/private/tmp/primeclock-public-release-check",
+            str(DEFAULT_CHECK_PARENT),
             "--zip",
         ],
         public_worktree,
         execute=args.execute,
-        mutating=True,
     )
-    run(["git", "diff", "--check"], public_worktree, execute=args.execute, mutating=True)
+    run(["git", "diff", "--check"], public_worktree, execute=args.execute)
 
     if allow_github_release:
         commit_message = f"Release PRC finite certificate bundle {tag}"
     else:
         commit_message = f"Sync PRC public bundle {tag}"
-    run(["git", "add", "-A"], public_worktree, execute=args.execute, mutating=True)
-    run(["git", "commit", "-m", commit_message], public_worktree, execute=args.execute, mutating=True)
-    run(["git", "push", "origin", "HEAD:main"], public_worktree, execute=args.execute, mutating=True)
+    run(["git", "add", "-A"], public_worktree, execute=args.execute)
+    run(["git", "commit", "-m", commit_message], public_worktree, execute=args.execute)
+    run(["git", "push", "origin", "HEAD:main"], public_worktree, execute=args.execute)
     if not allow_github_release:
-        print("skipping tag and GitHub Release because release_kind is maintenance_sync")
+        print(
+            "skipping tag and GitHub Release because release_kind is maintenance_sync",
+            flush=True,
+        )
         return 0
 
-    run(["git", "tag", "-a", tag, "-m", f"PRC finite theorem bundle {tag}"], public_worktree, execute=args.execute, mutating=True)
-    run(["git", "push", "origin", tag], public_worktree, execute=args.execute, mutating=True)
+    run(["git", "tag", "-a", tag, "-m", f"PRC finite theorem bundle {tag}"], public_worktree, execute=args.execute)
+    run(["git", "push", "origin", tag], public_worktree, execute=args.execute)
 
     release_title = f"PRC finite theorem bundle {tag}"
     notes_file = public_worktree / config["root_release_notes"]
@@ -132,12 +160,7 @@ def main() -> int:
         ],
         public_worktree,
         execute=args.execute,
-        mutating=True,
     )
-    if not release_zip.is_file() and args.execute:
-        raise SystemExit(f"missing release asset: {release_zip}")
-    if not shutil.which("gh"):
-        print("warning: gh CLI not found; --execute release creation will fail")
     return 0
 
 

@@ -1,39 +1,42 @@
 # Prime Reciprocal Covering Research Package
 
 This directory contains the reproducible research package for Prime Reciprocal
-Covering (PRC). The current external-release target is the narrow finite
-`C_k/C_4/B_5` certificate artifact.
+Covering (PRC). The current external-release target is the v2.3.0 finite
+critical-radius and gap-aperture birth-dynamics artifact.
 
 The PrimeClock visualization is origin/discovery context for the research. The
-v2.2.4 public release bundle contains the finite residue-covering research
+v2.3.0 public release bundle contains the finite residue-covering research
 package and exact certificate artifacts, not the React/Vite visualization app.
 
 The Python package keeps the historical name `prime-reciprocal-projection`.
-The finite theorem bundle is now framed as Prime Reciprocal Covering.
+The finite theorem bundle is framed as Prime Reciprocal Covering.
 
 ## Current Release Entry Point
 
 Read these files in order:
 
-1. `notes/prc_finite_certificate_note_v2_0.md`
-2. `notes/claims_finite_c4_b5.md`
-3. `VERIFY_FINITE_C4_B5.md`
-4. `RELEASE_NOTES_v2_2_4.md`
-5. `notes/known-results.md`
+1. `experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_note_draft_v0_1.md`
+2. `experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_v0_2.md`
+3. `RELEASE_NOTES_v2_3_0.md`
+4. `notes/prc_finite_certificate_note_v2_0.md`
+5. `notes/claims_finite_c4_b5.md`
 6. `../VERSION_MAP.md`
 
-The narrow finite package supports:
+The public package supports:
 
 - `C_4={2,208} mod 210`;
 - `C_5` has `36` covered residues;
-- `Lift_5(C_4)` has `22` inherited residues;
-- `B_5` has `14` births in `7` reflection pairs;
-- every `B_5` birth is a strict single-gap closure by the new `p=11` arc.
+- `C_k` is the `1/2` level set of the exact critical-radius spectrum for the
+  checked `k=4,5` layers;
+- `B_5`, `B_6`, and `B_7` are unique strict single-gap births in the checked
+  finite data;
+- near-miss rank is a diagnostic candidate generator, while birth is decided by
+  next-prime `q`-grid phase alignment through the gap-aperture window.
 
 These are finite certificate claims only. Broader asymptotic, distributional,
-and complete PRC questions are outside the v2.2.4 release scope.
+and complete PRC questions are outside the v2.3.0 release scope.
 
-## Verify The Finite Package
+## Verify The v2.3.0 Package
 
 Use a local editable install for the package verifier and tests:
 
@@ -42,57 +45,53 @@ python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e ".[dev]"
-python -m pytest tests/test_covering_prime_prefix_filtration.py -q
-python -m prime_reciprocal_projection.cli covering-prime-prefix-verify-certificates \
-  --out data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv
 ```
 
-The standalone checker uses only the Python standard library:
+Run the v2.3.0 checks:
 
 ```bash
-python certificates/check_prime_prefix_c4_b5.py \
-  --out data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv
+python experiments/critical_radius_birth_dynamics/check_candidate.py \
+  --out /tmp/prc-v2.3-helper-check.csv
+python experiments/critical_radius_birth_dynamics/check_candidate_standalone.py \
+  --out /tmp/prc-v2.3-standalone-check.csv
+python -m pytest tests/test_critical_radius_birth_dynamics_public.py -q
 ```
 
-Expected focused results:
+Expected v2.3.0 results:
 
 ```text
-focused pytest: 54 passed
-package verifier: checks=14, failed=0
-standalone checker: checks=9, failed=0
+check_v2_3_candidate: checks=13, failed=0
+check_v2_3_candidate_standalone: checks=10, failed=0
+public critical-radius/birth-dynamics pytest: 9 passed
 ```
 
-## Included Finite Certificate Data
+The original finite `C_4/B_5` verifier path is preserved in
+`VERIFY_FINITE_C4_B5.md`.
 
-The release-facing finite CSVs are:
+## Included v2.3.0 Data
 
-- `data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv`
-- `data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv`
-- `data/summaries/prc_prime_prefix_ck_full_v1_1.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_witness_v1_6.csv`
-- `data/summaries/prc_prime_prefix_c4_exclusion_summary_v1_5.csv`
-- `data/summaries/prc_prime_prefix_birth_witness_v1_5.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_classification_v1_5.csv`
-- `data/summaries/prc_prime_prefix_b5_birth_pair_summary_v1_5.csv`
-- `data/summaries/prc_prime_prefix_certificate_verification_v1_7.csv`
-- `data/summaries/prc_prime_prefix_certificate_standalone_verification_v1_8.csv`
+The release-facing v2.3.0 CSVs are under:
+
+```text
+experiments/critical_radius_birth_dynamics/data/
+```
+
+The key tables are the `k=4,5` critical-radius spectrum, the
+`B_5/B_6/B_7` birth-dynamics table, the threshold-crossing table, near-miss
+diagnostics, and the helper/standalone verification CSVs.
 
 ## Full Repository Context
 
 The full repository also contains earlier PRC diagnostics, certificate-depth
-experiments, `k=8` extensions, branch-fill experiments, branch-uniform null
-comparisons, and residual-fragmentation studies. Those remain useful context,
-but they are not part of the narrow `C_k/C_4/B_5` finite-theorem release
-package.
-
-The public bundle may include broader Python implementation modules because the
-CLI verifier and focused tests share package code. The release-facing claims,
-notes, and CSVs remain limited to the finite `C_k/C_4/B_5` artifact.
+experiments, `B_8` or larger exploratory directions, branch-fill experiments,
+branch-uniform null comparisons, and residual-fragmentation studies. Those
+remain useful context, but they are not part of the v2.3.0 public release
+bundle.
 
 Use `PUBLIC_RELEASE_MANIFEST.md` before preparing a public release bundle.
 
 ## Non-Claims
 
-This package is scoped to finite prime-prefix residue-covering certificates,
-specifically `C_4` and `B_5`. Broader asymptotic, distributional, and complete
-PRC questions are outside this release.
+This package is finite. It does not claim an asymptotic law, a
+prime-distribution theorem, a theorem that all future births are single-gap
+births, or a complete solution of PRC.

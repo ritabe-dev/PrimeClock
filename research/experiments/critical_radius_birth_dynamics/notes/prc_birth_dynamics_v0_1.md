@@ -1,8 +1,7 @@
 # PRC Birth Dynamics v0.1
 
-This note records the finite birth mechanism used by the critical-radius
-sandbox. It is an internal experiment, not part of the stable v2.2.4 public
-release.
+This note records the finite birth mechanism used by the v2.3.0
+critical-radius and gap-aperture public release.
 
 Let `q=p_{k+1}`. A lift from `Z/M_kZ` to `Z/M_{k+1}Z` fixes a parent residue
 `s mod M_k` and chooses a new residue `a mod q`. Let

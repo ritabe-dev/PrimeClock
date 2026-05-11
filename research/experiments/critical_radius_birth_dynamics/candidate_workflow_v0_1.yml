@@ -1,15 +1,15 @@
 candidate_id: prc_v2_3_critical_radius_birth_dynamics
-status: internal_candidate
-public_release: false
+status: public_promotion_candidate
+public_release: true
 base_public_release: v2.2.4
 goal: >
-  Keep the v2.3 critical-radius and gap-aperture birth-dynamics candidate
-  reproducible as an internal candidate for external inspection without promoting it to
-  GitHub Release or Zenodo.
+  Promote the v2.3 critical-radius and gap-aperture birth-dynamics candidate
+  into the conservative v2.3.0 public DOI release while keeping the candidate
+  workflow itself non-publishing.
 readiness:
-  current_completion_percent: "98"
+  current_completion_percent: "95"
   reusable_workflow_percent: "92-95"
-  estimated_slices_to_target: "1-2"
+  estimated_slices_to_target: "0.5"
 
 paths:
   experiment_dir: research/experiments/critical_radius_birth_dynamics
@@ -39,16 +39,16 @@ research_review:
     - bundle check
 
 promotion_policy:
-  public_release_allowed: false
-  zenodo_allowed: false
+  gate_p_question: Is this stable enough to cite?
+  gate_p_decision: promote to public v2.3.0
+  public_release_allowed: true
+  zenodo_allowed: true
   public_release_config: release/public/release_config.json
   required_base_public_release: v2.2.4
   blockers:
-    - v2.3 remains an internal candidate for external inspection until explicit promotion.
-    - Do not create a GitHub Release from this candidate workflow.
-    - Do not upload this candidate package to Zenodo.
+    - Candidate workflow remains non-publishing; public release must use release/public config and publish_public_release.py.
+    - GitHub Release and Zenodo publication are allowed only after v2.3.0 doi_release dry-run output is correct.
     - Keep v2.4 and no-multigap future-work notes excluded from the candidate package.
-    - Convert candidate metadata into release/public config only after promotion review.
 
 artifact_freshness:
   - name: standalone_verification_csv

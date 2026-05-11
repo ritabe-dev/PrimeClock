@@ -12,18 +12,21 @@ from release_config import load_release_config, require_matching_version
 
 ROOT_FILE_MAP = [
     ("release/public/README.template.md", "README.md"),
+    ("release/public/verify.yml", ".github/workflows/verify.yml"),
 ]
 
 BASE_ROOT_FILES = [
     "LICENSE",
     "CITATION.cff",
     "DATA_FILES.md",
+    "ERRATA.md",
     "SHA256SUMS",
     "VERSION_MAP.md",
     "VERIFY.md",
-    ".github/workflows/verify.yml",
     "release/public/PUBLISH_CHECKLIST.md",
+    "release/public/MAINTENANCE_POLICY.md",
     "release/public/README.template.md",
+    "release/public/verify.yml",
     "release/public/release_config.json",
     "scripts/build_public_release.py",
     "scripts/check_public_release.py",
@@ -43,9 +46,31 @@ BASE_RESEARCH_FILES = [
     "research/setup.py",
     "research/certificates/check_prime_prefix_c4_b5.py",
     "research/tests/test_covering_prime_prefix_filtration.py",
+    "research/tests/test_critical_radius_birth_dynamics_public.py",
     "research/notes/prc_finite_certificate_note_v2_0.md",
     "research/notes/claims_finite_c4_b5.md",
     "research/notes/known-results.md",
+    "research/experiments/critical_radius_birth_dynamics/check_candidate.py",
+    "research/experiments/critical_radius_birth_dynamics/check_candidate_standalone.py",
+    "research/experiments/critical_radius_birth_dynamics/tools.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_critical_radius_near_misses_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_near_miss_birth_parent_overlap_k4_k6_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_near_miss_gap_geometry_k4_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_threshold_crossing_k5_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_threshold_crossing_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_verification_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_sha256sums_v0_1.txt",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_3_candidate_standalone_verification_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_note_draft_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_v0_2.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_weighted_bisector_candidate_lemma_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_near_miss_birth_predictor_v0_2.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_critical_radius_spectrum_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_birth_dynamics_v0_1.md",
     "research/data/summaries/prc_prime_prefix_residue_covering_filtration_v0_1.csv",
     "research/data/summaries/prc_prime_prefix_residue_covering_birth_samples_v0_1.csv",
     "research/data/summaries/prc_prime_prefix_ck_full_v1_1.csv",
@@ -120,13 +145,55 @@ def copy_dir(repo_root: Path, release_root: Path, relative_path: str) -> None:
     shutil.copytree(source, target, ignore=ignore_release_noise)
 
 
+def _is_relative_to(path: Path, other: Path) -> bool:
+    try:
+        path.relative_to(other)
+    except ValueError:
+        return False
+    return True
+
+
+def validate_release_root_location(repo_root: Path, release_root: Path) -> None:
+    repo_root_resolved = repo_root.resolve()
+    release_root_resolved = release_root.resolve()
+    if release_root_resolved == repo_root_resolved:
+        raise ValueError("Refusing to build release over the source repository")
+    if _is_relative_to(repo_root_resolved, release_root_resolved):
+        raise ValueError("Refusing to build release into a parent of the source repository")
+    if _is_relative_to(release_root_resolved, repo_root_resolved):
+        raise ValueError("Refusing to build release inside the source repository")
+
+
+def is_generated_public_bundle(path: Path, config: dict[str, str]) -> bool:
+    if not path.is_dir() or (path / ".git").exists():
+        return False
+    try:
+        existing_config = load_release_config(path)
+    except (FileNotFoundError, ValueError):
+        return False
+    return (
+        existing_config["public_release"] == config["public_release"]
+        and existing_config["public_tag"] == config["public_tag"]
+        and existing_config["bundle_name"] == config["bundle_name"]
+    )
+
+
+def prepare_release_root(repo_root: Path, release_root: Path, config: dict[str, str]) -> None:
+    validate_release_root_location(repo_root, release_root)
+    if release_root.exists():
+        if not is_generated_public_bundle(release_root, config):
+            raise ValueError(
+                f"Refusing to replace existing non-release directory: {release_root}"
+            )
+        shutil.rmtree(release_root)
+    release_root.mkdir(parents=True)
+
+
 def build_release(repo_root: Path, output_dir: Path, version: str | None = None) -> Path:
     config = load_release_config(repo_root)
     require_matching_version(config, version)
     release_root = output_dir / config["bundle_name"]
-    if release_root.exists():
-        shutil.rmtree(release_root)
-    release_root.mkdir(parents=True)
+    prepare_release_root(repo_root, release_root, config)
 
     for source_path, release_path in ROOT_FILE_MAP:
         copy_file(repo_root, release_root, source_path, release_path)

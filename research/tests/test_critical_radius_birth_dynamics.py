@@ -342,23 +342,25 @@ def test_v2_3_internal_status_note_keeps_release_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_internal_candidate_status.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal-candidate." in text
-    assert "Release eligibility: included in v2.3 candidate bundle" in text
+    assert "Status: public-promotion-candidate." in text
+    assert "Release eligibility: included in the v2.3.0 public release bundle" in text
+    assert "Release and Zenodo publication remain gated" in text
     assert "promotion_manifest_v0_1.yml" in text
     assert "notes/prc_v2_3_theorem_note_draft_v0_1.md" in text
     assert "notes/prc_v2_3_theorem_candidate_outline_v0_1.md" in text
-    assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
     assert "notes/prc_v2_3_related_work_decision_v0_1.md" in text
     assert "notes/prc_v2_3_standalone_checker_contract_v0_1.md" in text
-    assert "v2.2.4 public release remains the stable finite certificate artifact" in text
+    assert "v2.2.4 public release remains the historical finite certificate artifact" in text
     assert "gap-aperture windows" in text
     assert "unique strict single-gap births" in text
     assert "q-grid phase in the dual containment window" in text
     assert "v2.4 future-work notes are tracked internally but excluded" in text
-    assert "Before promotion to a public v2.3 release bundle" in text
+    assert "Before executing the public v2.3.0 release" in text
+    assert "GitHub Release: yes" in text
+    assert "Zenodo target: yes" in text
     assert "check_candidate_standalone.py: checks=10, failed=0" in text
-    assert "the v2.2.4 public release has changed" in text
+    assert "v2.2.4 tags or DOI records should be rewritten" in text
 
 
 def test_v2_3_theorem_candidate_outline_keeps_scope_and_claims():
@@ -379,15 +381,13 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_theorem_note_draft_v0_1.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal-candidate." in text
-    assert "Release eligibility: included in v2.3 candidate bundle" in text
+    assert "Status: public v2.3.0 finite theorem note." in text
+    assert "Release eligibility: included in the v2.3.0 public release bundle." in text
     assert "C_k = { r : lambda_k(r) <= 1/2 }" in text
     assert "B_7: 714 unique strict single-gap births" in text
     assert "weighted covering-radius" in text
     assert "formula" in text
     assert "naive adjacent-center formula" in text
-    assert "Terminology boundary" in text
-    assert "notes/prc_weighted_covering_radius_terminology_v0_1.md" in text
     assert "notes/prc_weighted_bisector_candidate_lemma_v0_1.md" in text
     assert "Gap-Aperture Birth Formula" in text
     assert "dual containment window" in text
@@ -397,11 +397,10 @@ def test_v2_3_theorem_note_draft_keeps_public_candidate_boundary():
     assert "check_candidate.py: checks=13, failed=0" in text
     assert "check_candidate_standalone.py: checks=10, failed=0" in text
     assert "no B_8 or larger layers" in text
-    assert "candidate_bundle_manifest_v0_1.json" in text
     assert "standalone checker uses only the Python standard library" in text
     assert "Future Work" in text
     assert "v2.4 residual-gap transition graph" in text
-    assert "any change to the v2.2.4 public release" in text
+    assert "v2.2.4 tags or DOI records should be rewritten" in text
 
 
 @pytest.mark.slow
@@ -548,7 +547,8 @@ def test_v2_3_promotion_manifest_fixes_candidate_scope():
     manifest = EXPERIMENT_DIR / "promotion_manifest_v0_1.yml"
     text = manifest.read_text(encoding="utf-8")
 
-    assert "status: internal_promotion_manifest" in text
+    assert "status: public_promotion_candidate" in text
+    assert "decision: promote to public v2.3.0" in text
     assert "base_public_release: v2.2.4" in text
     assert "critical_radius_layers: [4, 5]" in text
     assert "birth_dynamics_layers: [5, 6, 7]" in text
@@ -624,7 +624,7 @@ def test_v2_3_related_work_note_keeps_claim_boundary():
     note = EXPERIMENT_DIR / "notes" / "prc_v2_3_related_work_v0_2.md"
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal related-work note" in text
+    assert "Status: public v2.3.0 related-work boundary note." in text
     assert "critical radius" in text
     assert "does not claim novelty" in text
     assert "weighted one-center" in text
@@ -643,7 +643,7 @@ def test_v2_3_weighted_bisector_candidate_lemma_keeps_scope():
     )
     text = note.read_text(encoding="utf-8")
 
-    assert "Status: internal certificate lemma note, not a public release." in text
+    assert "Status: public v2.3.0 finite certificate lemma note." in text
     assert "weighted bisector" in text
     assert "lower envelope" in text
     assert "naive adjacent-center formula" in text
