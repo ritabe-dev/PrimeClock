@@ -8,14 +8,16 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from pathlib import Path
 
 from release_config import CONFIG_PATH, load_release_config
 
 
-DEFAULT_PUBLIC_WORKTREE = Path("/private/tmp/primeclock-public-release")
-DEFAULT_BUILD_PARENT = Path("/private/tmp/primeclock-public-doi-build")
+DEFAULT_PUBLIC_WORKTREE = Path(tempfile.gettempdir()) / "primeclock-public-release"
+DEFAULT_BUILD_PARENT = Path(tempfile.gettempdir()) / "primeclock-public-doi-build"
+DEFAULT_CHECK_PARENT = Path(tempfile.gettempdir()) / "primeclock-public-release-check"
 DOI_PATTERN = re.compile(r"10\.5281/zenodo\.(\d+)")
 
 
@@ -123,7 +125,16 @@ def sync_public_metadata(repo_root: Path, public_worktree: Path, build_parent: P
     )
     run([sys.executable, "scripts/check_release_versions.py"], public_worktree)
     run([sys.executable, "scripts/update_public_hashes.py", "--check"], public_worktree)
-    run([sys.executable, "scripts/verify_public_release.py", "--out", "/private/tmp/primeclock-public-release-check", "--zip"], public_worktree)
+    run(
+        [
+            sys.executable,
+            "scripts/verify_public_release.py",
+            "--out",
+            str(DEFAULT_CHECK_PARENT),
+            "--zip",
+        ],
+        public_worktree,
+    )
     run(["git", "diff", "--check"], public_worktree)
     commit_if_changed(public_worktree, f"Add Zenodo DOI for PRC {config['public_tag']}")
     run(["git", "push", "origin", "HEAD:main"], public_worktree)

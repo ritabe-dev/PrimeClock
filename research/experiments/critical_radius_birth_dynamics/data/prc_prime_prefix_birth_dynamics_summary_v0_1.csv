@@ -1,0 +1,4 @@
+k,new_prime,primorial,birth_count,strict_single_gap_birth,endpoint_single_gap_birth,strict_multi_gap_birth,endpoint_multi_gap_birth,max_previous_open_gap_count,previous_uncovered_measure_fractions
+5,11,2310,14,14,0,0,0,1,1/20 1/21
+6,13,30030,42,42,0,0,0,1,1/28 1/44 1/55 1/77 4/77
+7,17,510510,714,714,0,0,0,1,1/28 1/39 1/44 1/55 1/77 1/91 2/143 2/55 2/65 2/77 7/143

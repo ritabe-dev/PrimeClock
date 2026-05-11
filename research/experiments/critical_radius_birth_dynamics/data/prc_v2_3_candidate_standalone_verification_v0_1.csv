@@ -1,0 +1,11 @@
+check_name,total,passed,failed,status
+candidate_csv_hashes_exact,60,60,0,pass
+critical_radius_zero_residue_cusp_exact,2,2,0,pass
+critical_radius_values_recomputed_from_definition,2520,2520,0,pass
+critical_radius_c4_level_set_from_csv,3,3,0,pass
+critical_radius_c5_level_set_from_csv,3,3,0,pass
+critical_radius_summary_matches_rows,2,2,0,pass
+birth_dynamics_summary_strict_single_gap,3,3,0,pass
+birth_dynamics_rows_strict_single_gap,774,774,0,pass
+birth_dynamics_b5_b6_b7_unique_strict_single_gap_remainders,3853,3853,0,pass
+birth_threshold_crossing_rows_match_births,775,775,0,pass

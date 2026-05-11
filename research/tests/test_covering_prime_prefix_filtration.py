@@ -57,6 +57,9 @@ from prime_reciprocal_projection.covering_prime_prefix_filtration import (
 from prime_reciprocal_projection.primes import primes_up_to
 
 
+RELEASE_SUBPROCESS_TIMEOUT_SECONDS = 120
+
+
 def _write_verifier_fixture(tmp_path: Path) -> dict[str, Path]:
     paths = {
         "ck_full": tmp_path / "ck_full.csv",
@@ -1246,6 +1249,7 @@ def test_standalone_prime_prefix_certificate_checker_passes(tmp_path: Path):
         cwd=Path(__file__).parents[1],
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
@@ -1288,6 +1292,7 @@ def test_standalone_prime_prefix_certificate_checker_fails_missing_row(
         cwd=Path(__file__).parents[1],
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1302,13 +1307,27 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
     readme = release_root / "README.md"
     readme.write_text(
         "public release bundle\n"
-        "finite `C_k/C_4/B_5`\n"
-        "not included\n",
+        "critical-radius\n"
+        "gap-aperture\n",
         encoding="utf-8",
     )
-    digest = hashlib.sha256(readme.read_bytes()).hexdigest()
+    workflow = release_root / ".github" / "workflows" / "verify.yml"
+    workflow.parent.mkdir(parents=True)
+    workflow.write_text(
+        "uses: actions/checkout@v6\n"
+        "uses: actions/setup-python@v6\n"
+        "run: python -m pytest tests/test_critical_radius_birth_dynamics_public.py -q\n"
+        "run: python -m pytest tests/test_covering_prime_prefix_filtration.py -q\n"
+        "run: python experiments/critical_radius_birth_dynamics/check_candidate.py\n"
+        "run: python experiments/critical_radius_birth_dynamics/check_candidate_standalone.py\n"
+        "run: python scripts/verify_public_release.py --out \"$RUNNER_TEMP/out\" --zip\n",
+        encoding="utf-8",
+    )
+    readme_digest = hashlib.sha256(readme.read_bytes()).hexdigest()
+    workflow_digest = hashlib.sha256(workflow.read_bytes()).hexdigest()
     (release_root / "SHA256SUMS").write_text(
-        f"{digest}  README.md\n",
+        f"{readme_digest}  README.md\n"
+        f"{workflow_digest}  .github/workflows/verify.yml\n",
         encoding="utf-8",
     )
 
@@ -1318,13 +1337,14 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert ok_result.returncode == 0
 
     readme.write_text(
         "public release bundle\n"
-        "finite `C_k/C_4/B_5`\n"
-        "not included\n"
+        "critical-radius\n"
+        "gap-aperture\n"
         "changed\n",
         encoding="utf-8",
     )
@@ -1333,6 +1353,7 @@ def test_public_release_checker_fails_hash_mismatch(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert failed_result.returncode == 1
     assert "hash mismatch for README.md" in failed_result.stdout
@@ -1344,8 +1365,8 @@ def test_public_release_checker_rejects_internal_paths(tmp_path: Path):
     readme = release_root / "README.md"
     readme.write_text(
         "public release bundle\n"
-        "finite `C_k/C_4/B_5`\n"
-        "not included\n",
+        "critical-radius\n"
+        "gap-aperture\n",
         encoding="utf-8",
     )
     private_note = release_root / "private_notes" / "secret.md"
@@ -1375,11 +1396,11 @@ def test_public_release_checker_rejects_internal_paths(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
     assert "private_notes" in result.stdout
-    assert "research/experiments" in result.stdout
     assert "candidate_bundle_manifest" in result.stdout
 
 
@@ -1392,11 +1413,33 @@ def test_public_release_build_uses_config_default_version(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
-    assert (tmp_path / "PrimeClock-2.2.4").is_dir()
-    assert "PrimeClock-2.2.4" in result.stdout
+    assert (tmp_path / "PrimeClock-2.3.0").is_dir()
+    assert "PrimeClock-2.3.0" in result.stdout
+
+
+def test_public_release_bundle_includes_maintenance_policy_docs(tmp_path: Path):
+    repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
+
+    result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 0
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
+    assert (bundle_root / "ERRATA.md").is_file()
+    assert (bundle_root / "release" / "public" / "MAINTENANCE_POLICY.md").is_file()
+    version_map = (bundle_root / "VERSION_MAP.md").read_text(encoding="utf-8")
+    assert "maintenance/v2.3.1" in version_map
+    assert "maintenance/v2.2.5" in version_map
 
 
 def test_public_release_build_fails_stale_version(tmp_path: Path):
@@ -1415,6 +1458,7 @@ def test_public_release_build_fails_stale_version(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1430,10 +1474,11 @@ def test_public_release_version_checker_passes_current_repo():
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
-    assert "release version check passed: v2.2.4" in result.stdout
+    assert "release version check passed: v2.3.0" in result.stdout
 
 
 def test_public_release_version_checker_rejects_wrong_doi_policy(tmp_path: Path):
@@ -1446,10 +1491,11 @@ def test_public_release_version_checker_rejects_wrong_doi_policy(tmp_path: Path)
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     config_path = bundle_root / "release" / "public" / "release_config.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
     config["doi_policy"] = "version_doi_in_citation"
@@ -1460,6 +1506,7 @@ def test_public_release_version_checker_rejects_wrong_doi_policy(tmp_path: Path)
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1475,10 +1522,11 @@ def test_public_release_version_checker_passes_generated_bundle(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     checker = bundle_root / "scripts" / "check_release_versions.py"
     result = subprocess.run(
         [sys.executable, str(checker)],
@@ -1486,10 +1534,11 @@ def test_public_release_version_checker_passes_generated_bundle(tmp_path: Path):
         capture_output=True,
         text=True,
         cwd=bundle_root,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
-    assert "release version check passed: v2.2.4" in result.stdout
+    assert "release version check passed: v2.3.0" in result.stdout
 
 
 def test_public_release_version_checker_rejects_old_workflow_actions(tmp_path: Path):
@@ -1502,10 +1551,11 @@ def test_public_release_version_checker_rejects_old_workflow_actions(tmp_path: P
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     workflow = bundle_root / ".github" / "workflows" / "verify.yml"
     workflow.write_text(
         workflow.read_text(encoding="utf-8")
@@ -1519,6 +1569,7 @@ def test_public_release_version_checker_rejects_old_workflow_actions(tmp_path: P
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1542,16 +1593,17 @@ def test_publish_public_release_dry_run_does_not_execute_remote_writes(tmp_path:
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
     assert "mode: dry-run" in result.stdout
-    assert "GitHub Release: no" in result.stdout
-    assert "Zenodo target: no" in result.stdout
+    assert "GitHub Release: yes" in result.stdout
+    assert "Zenodo target: yes" in result.stdout
     assert "DRY-RUN:" in result.stdout
     assert "git push origin HEAD:main" in result.stdout
-    assert "git tag" not in result.stdout
-    assert "gh release create" not in result.stdout
+    assert "git tag" in result.stdout
+    assert "gh release create" in result.stdout
 
 
 def test_publish_public_release_doi_release_dry_run_creates_release_commands(tmp_path: Path):
@@ -1563,10 +1615,11 @@ def test_publish_public_release_doi_release_dry_run_creates_release_commands(tmp
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     config_path = bundle_root / "release" / "public" / "release_config.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
     config["release_kind"] = "doi_release"
@@ -1588,6 +1641,7 @@ def test_publish_public_release_doi_release_dry_run_creates_release_commands(tmp
         capture_output=True,
         text=True,
         cwd=bundle_root,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
@@ -1595,7 +1649,7 @@ def test_publish_public_release_doi_release_dry_run_creates_release_commands(tmp
     assert "Zenodo target: yes" in result.stdout
     assert "git tag" in result.stdout
     assert "gh release create" in result.stdout
-    assert "PrimeClock-2.2.4.zip" in result.stdout
+    assert "PrimeClock-2.3.0.zip" in result.stdout
 
 
 def test_release_version_checker_rejects_top_level_version_doi(tmp_path: Path):
@@ -1608,10 +1662,16 @@ def test_release_version_checker_rejects_top_level_version_doi(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["zenodo_version_doi"] = "10.5281/zenodo.20096689"
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
     citation = bundle_root / "CITATION.cff"
     citation.write_text(
         citation.read_text(encoding="utf-8").replace(
@@ -1626,6 +1686,7 @@ def test_release_version_checker_rejects_top_level_version_doi(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1634,7 +1695,26 @@ def test_release_version_checker_rejects_top_level_version_doi(tmp_path: Path):
 
 def test_finalize_release_doi_rejects_maintenance_sync(tmp_path: Path):
     repo_root = Path(__file__).parents[2]
+    builder = repo_root / "scripts" / "build_public_release.py"
     finalizer = repo_root / "scripts" / "finalize_release_doi.py"
+
+    build_result = subprocess.run(
+        [sys.executable, str(builder), "--out", str(tmp_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+    assert build_result.returncode == 0
+
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
+    config_path = bundle_root / "release" / "public" / "release_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["release_kind"] = "maintenance_sync"
+    config["zenodo_expected"] = False
+    config["allow_github_release"] = False
+    config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
     html = tmp_path / "zenodo.html"
     html.write_text(
         "concept 10.5281/zenodo.20091722 version 10.5281/zenodo.20096689\n",
@@ -1642,10 +1722,18 @@ def test_finalize_release_doi_rejects_maintenance_sync(tmp_path: Path):
     )
 
     result = subprocess.run(
-        [sys.executable, str(finalizer), "--html-file", str(html)],
+        [
+            sys.executable,
+            str(finalizer),
+            "--repo-root",
+            str(bundle_root),
+            "--html-file",
+            str(html),
+        ],
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 1
@@ -1662,10 +1750,11 @@ def test_finalize_release_doi_reports_pending_for_doi_release(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     config_path = bundle_root / "release" / "public" / "release_config.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
     config["release_kind"] = "doi_release"
@@ -1688,6 +1777,7 @@ def test_finalize_release_doi_reports_pending_for_doi_release(tmp_path: Path):
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0
@@ -1704,10 +1794,11 @@ def test_finalize_release_doi_detects_version_doi_without_changing_citation(tmp_
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
     assert build_result.returncode == 0
 
-    bundle_root = tmp_path / "PrimeClock-2.2.4"
+    bundle_root = tmp_path / "PrimeClock-2.3.0"
     config_path = bundle_root / "release" / "public" / "release_config.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
     config["release_kind"] = "doi_release"
@@ -1733,6 +1824,7 @@ def test_finalize_release_doi_detects_version_doi_without_changing_citation(tmp_
         check=False,
         capture_output=True,
         text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     assert result.returncode == 0

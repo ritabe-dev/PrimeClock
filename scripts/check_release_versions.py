@@ -15,14 +15,16 @@ def term(*parts: str) -> str:
 
 
 PUBLIC_FACING_FILES = [
-    ".github/workflows/verify.yml",
     "README.md",
     "VERIFY.md",
     "VERSION_MAP.md",
     "CITATION.cff",
     "DATA_FILES.md",
+    "ERRATA.md",
+    "release/public/MAINTENANCE_POLICY.md",
     "release/public/PUBLISH_CHECKLIST.md",
     "release/public/README.template.md",
+    "release/public/verify.yml",
     "release/public/release_config.json",
     "research/README.md",
     "research/PUBLIC_RELEASE_MANIFEST.md",
@@ -69,11 +71,71 @@ def check_root_readme(failures: list[str], text: str, tag: str) -> None:
 
     bundle_needles = [
         "public release bundle",
-        "finite `C_k/C_4/B_5`",
-        "not included in this bundle",
+        "critical-radius",
+        "gap-aperture",
     ]
     for needle in bundle_needles:
         require_contains(failures, text, needle, "README.md")
+
+
+def check_readme_research_position(failures: list[str], text: str, relative_path: str) -> None:
+    normalized = " ".join(text.split())
+    for needle in [
+        "Research Position",
+        "project-defined finite prime-prefix circle-covering model",
+        "classical covering systems of congruences",
+        "does not claim a result about classical covering systems",
+        "citable archived snapshots",
+        "do not imply peer review",
+    ]:
+        require_contains(failures, normalized, needle, relative_path)
+
+
+def check_public_workflow(failures: list[str], text: str, relative_path: str) -> None:
+    require_contains(
+        failures,
+        text,
+        "python scripts/verify_public_release.py --out",
+        relative_path,
+    )
+    require_contains(failures, text, "scripts/verify_public_release.py", relative_path)
+    require_contains(failures, text, "--zip", relative_path)
+    require_contains(failures, text, "actions/checkout@v6", relative_path)
+    require_contains(failures, text, "actions/setup-python@v6", relative_path)
+    for forbidden in ["verify_candidate_workflow.py", "candidate_workflow_v0_1.yml"]:
+        if forbidden in text:
+            failures.append(
+                f"{relative_path} contains candidate workflow reference {forbidden!r}"
+            )
+
+
+def check_public_verification_expectations(
+    failures: list[str],
+    *,
+    readme: str,
+    verify: str,
+    research_readme: str,
+    public_readme_template: str,
+) -> None:
+    if "PrimeClock Development Repository" in readme:
+        require_contains(failures, readme, "focused pytest: 55 passed", "README.md")
+    require_contains(failures, verify, "focused pytest: 55 passed", "VERIFY.md")
+    require_contains(
+        failures,
+        verify,
+        "public critical-radius/birth-dynamics pytest: 9 passed",
+        "VERIFY.md",
+    )
+    for relative_path, text in [
+        ("research/README.md", research_readme),
+        ("release/public/README.template.md", public_readme_template),
+    ]:
+        require_contains(
+            failures,
+            text,
+            "public critical-radius/birth-dynamics pytest: 9 passed",
+            relative_path,
+        )
 
 
 def main() -> int:
@@ -98,25 +160,63 @@ def main() -> int:
     if version_doi and re.search(rf'^doi: "{re.escape(version_doi)}"$', citation, re.MULTILINE):
         failures.append("CITATION.cff uses version DOI as top-level doi")
 
-    workflow = read(repo_root, ".github/workflows/verify.yml")
-    require_contains(
-        failures,
-        workflow,
-        "python scripts/verify_public_release.py --out /tmp/primeclock-public-release --zip",
-        ".github/workflows/verify.yml",
-    )
-    require_contains(failures, workflow, "actions/checkout@v6", ".github/workflows/verify.yml")
-    require_contains(failures, workflow, "actions/setup-python@v6", ".github/workflows/verify.yml")
+    check_public_workflow(failures, read(repo_root, "release/public/verify.yml"), "release/public/verify.yml")
+    generated_workflow = repo_root / ".github" / "workflows" / "verify.yml"
+    if generated_workflow.is_file():
+        generated_workflow_text = generated_workflow.read_text(encoding="utf-8")
+        # Source checkouts keep candidate jobs in .github/workflows/verify.yml.
+        # Generated public bundles replace that file with the public workflow.
+        if "Verify PrimeClock public release" not in generated_workflow_text:
+            generated_workflow_text = ""
+    if generated_workflow.is_file() and generated_workflow_text:
+        check_public_workflow(
+            failures,
+            generated_workflow_text,
+            ".github/workflows/verify.yml",
+        )
 
     readme = read(repo_root, "README.md")
     check_root_readme(failures, readme, tag)
+    check_readme_research_position(failures, readme, "README.md")
+
+    public_readme_template = read(repo_root, "release/public/README.template.md")
+    check_readme_research_position(
+        failures,
+        public_readme_template,
+        "release/public/README.template.md",
+    )
 
     verify = read(repo_root, "VERIFY.md")
     require_contains(failures, verify, "scripts/verify_public_release.py", "VERIFY.md")
+    research_readme = read(repo_root, "research/README.md")
+    check_public_verification_expectations(
+        failures,
+        readme=readme,
+        verify=verify,
+        research_readme=research_readme,
+        public_readme_template=public_readme_template,
+    )
 
     version_map = read(repo_root, "VERSION_MAP.md")
     require_contains(failures, version_map, f"| Public release | `{tag}` |", "VERSION_MAP.md")
     require_contains(failures, version_map, f"`{bundle}`", "VERSION_MAP.md")
+    require_contains(failures, version_map, "release/public/MAINTENANCE_POLICY.md", "VERSION_MAP.md")
+    require_contains(failures, version_map, "ERRATA.md", "VERSION_MAP.md")
+
+    errata = read(repo_root, "ERRATA.md")
+    require_contains(failures, errata, "Affected release:", "ERRATA.md")
+    require_contains(failures, errata, "Type: errata | docs clarification | maintenance patch | superseded", "ERRATA.md")
+    require_contains(failures, errata, "Impact: none | docs only | reproducibility | claim", "ERRATA.md")
+    require_contains(failures, errata, "Affected release: v2.2.4", "ERRATA.md")
+    require_contains(failures, errata, "Type: docs clarification", "ERRATA.md")
+    require_contains(failures, errata, "Impact: docs only", "ERRATA.md")
+    require_contains(failures, errata, "does not require a", "ERRATA.md")
+    require_contains(failures, errata, "v2.2.5 patch release", "ERRATA.md")
+
+    maintenance_policy = read(repo_root, "release/public/MAINTENANCE_POLICY.md")
+    require_contains(failures, maintenance_policy, "Published GitHub tags and Zenodo archives", "release/public/MAINTENANCE_POLICY.md")
+    require_contains(failures, maintenance_policy, "maintenance/v2.3.1  starts from v2.3.0", "release/public/MAINTENANCE_POLICY.md")
+    require_contains(failures, maintenance_policy, "maintenance/v2.2.5  starts from v2.2.4", "release/public/MAINTENANCE_POLICY.md")
 
     manifest = read(repo_root, "research/PUBLIC_RELEASE_MANIFEST.md")
     require_contains(failures, manifest, config["root_release_notes"], "research/PUBLIC_RELEASE_MANIFEST.md")

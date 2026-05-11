@@ -1,0 +1,15 @@
+k,new_prime,primorial,residue,parent_residue_mod_previous,parent_lambda_fraction,parent_lambda_decimal,current_lambda_fraction,current_lambda_decimal,parent_status,current_status,birth_type
+5,11,2310,118,118,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,448,28,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,542,122,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,778,148,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,849,9,3/5,0.6,4/9,0.4444444444444444,uncovered,robust_covered,strict_single_gap_birth
+5,11,2310,872,32,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1108,58,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1202,152,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1438,178,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1461,201,3/5,0.6,4/9,0.4444444444444444,uncovered,robust_covered,strict_single_gap_birth
+5,11,2310,1532,62,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1768,88,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,1862,182,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
+5,11,2310,2192,92,4/7,0.5714285714285714,1/2,0.5,uncovered,endpoint_covered,strict_single_gap_birth
