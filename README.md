@@ -140,7 +140,6 @@ and governed by `release/public/MAINTENANCE_POLICY.md`.
 ## Citation and License
 
 Use `CITATION.cff` for citation metadata. Its top-level DOI is the Zenodo
-concept DOI for the release series: `10.5281/zenodo.20091722`. The v2.3.0
-version DOI is pending Zenodo publication for the GitHub `v2.3.0` release.
+concept DOI for the release series: `10.5281/zenodo.20091722`. The current version DOI is `10.5281/zenodo.20119473`.
 
 The project is released under the MIT License; see `LICENSE`.

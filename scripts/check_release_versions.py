@@ -138,6 +138,23 @@ def check_public_verification_expectations(
         )
 
 
+def check_zenodo_version_doi_finalized(
+    failures: list[str],
+    *,
+    version_doi: str | None,
+    docs: dict[str, str],
+) -> None:
+    if not version_doi:
+        return
+    for relative_path, text in docs.items():
+        if "pending Zenodo publication" in text:
+            failures.append(
+                f"{relative_path} still says pending Zenodo publication "
+                f"after zenodo_version_doi is set"
+            )
+        require_contains(failures, text, version_doi, relative_path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, help="Repository root to check")
@@ -189,6 +206,9 @@ def main() -> int:
     verify = read(repo_root, "VERIFY.md")
     require_contains(failures, verify, "scripts/verify_public_release.py", "VERIFY.md")
     research_readme = read(repo_root, "research/README.md")
+    version_map = read(repo_root, "VERSION_MAP.md")
+    root_release_notes = read(repo_root, config["root_release_notes"])
+    research_release_notes = read(repo_root, config["research_release_notes"])
     check_public_verification_expectations(
         failures,
         readme=readme,
@@ -196,8 +216,18 @@ def main() -> int:
         research_readme=research_readme,
         public_readme_template=public_readme_template,
     )
+    check_zenodo_version_doi_finalized(
+        failures,
+        version_doi=version_doi,
+        docs={
+            "README.md": readme,
+            "release/public/README.template.md": public_readme_template,
+            "VERSION_MAP.md": version_map,
+            config["root_release_notes"]: root_release_notes,
+            config["research_release_notes"]: research_release_notes,
+        },
+    )
 
-    version_map = read(repo_root, "VERSION_MAP.md")
     require_contains(failures, version_map, f"| Public release | `{tag}` |", "VERSION_MAP.md")
     require_contains(failures, version_map, f"`{bundle}`", "VERSION_MAP.md")
     require_contains(failures, version_map, "release/public/MAINTENANCE_POLICY.md", "VERSION_MAP.md")

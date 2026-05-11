@@ -43,7 +43,12 @@ def replace_pending_or_doi(text: str, version_doi: str) -> str:
     )
     text = re.sub(r"Version DOI: `10\.5281/zenodo\.\d+`", f"Version DOI: `{version_doi}`", text)
     text = re.sub(
-        r"the v[\d.]+ version DOI is pending(?:\n)?Zenodo publication",
+        r"The v[\d.]+\s+version DOI is pending\s+Zenodo publication for the GitHub `v[\d.]+` release\.",
+        f"The current version DOI is `{version_doi}`.",
+        text,
+    )
+    text = re.sub(
+        r"the v[\d.]+\s+version DOI is pending\s+Zenodo publication",
         f"the current version DOI is `{version_doi}`",
         text,
     )
