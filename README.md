@@ -88,8 +88,7 @@ asymptotic, distributional, or complete PRC claims.
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. The v2.3.0 version DOI is pending
-Zenodo publication for the GitHub `v2.3.0` release. The Zenodo concept DOI for
+Use `CITATION.cff` for citation metadata. The current version DOI is `10.5281/zenodo.20119473`. The Zenodo concept DOI for
 the release series is `10.5281/zenodo.20091722`.
 
 The project is released under the MIT License; see `LICENSE`.
