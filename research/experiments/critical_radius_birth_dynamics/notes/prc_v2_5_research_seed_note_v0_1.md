@@ -45,6 +45,9 @@ Which arithmetic strata add explanatory power after geometry is accounted for?
 
 ## Initial Work Items
 
+Use `prc_v2_5_deferred_review_resolution_v0_1.md` as the boundary for which
+v2.3 review leftovers are in scope.
+
 1. Define obstruction classes for capacity-satisfied non-close families.
 2. Build feature-ablation tables comparing width, capacity, phase margin,
    lineage history, arithmetic strata, and reflection orbit features.

@@ -107,6 +107,7 @@ source_only_research:
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_transition_graph_probes_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_seed_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_deferred_review_resolution_v0_1.md
     - research/tests/test_critical_radius_birth_dynamics_v2_4_research.py
   candidate_bundle_manifests:
     - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json
