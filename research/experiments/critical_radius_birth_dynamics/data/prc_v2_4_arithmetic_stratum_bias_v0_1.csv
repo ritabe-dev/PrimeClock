@@ -1,0 +1,427 @@
+diagnostic,scope,population,stratum_kind,stratum,family_count,lift_count,close_count,birth_count,close_rate,birth_rate,observed_share,note
+close_child_gcd_by_scope,B4_to_B5_full,close,child_gcd,gcd=2,10,10,10,10,1,1,5/7,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B4_to_B5_full,close,child_gcd,gcd=3,2,2,2,2,1,1,1/7,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B4_to_B5_full,close,child_gcd,gcd=14,2,2,2,2,1,1,1/7,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B5_to_B6_full,close,child_gcd,gcd=2,8,8,8,8,1,1,4/21,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B5_to_B6_full,close,child_gcd,gcd=3,28,28,28,28,1,1,2/3,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B5_to_B6_full,close,child_gcd,gcd=10,2,2,2,2,1,1,1/21,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B5_to_B6_full,close,child_gcd,gcd=21,2,2,2,2,1,1,1/21,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B5_to_B6_full,close,child_gcd,gcd=33,2,2,2,2,1,1,1/21,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=2,144,144,144,144,1,1,24/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=3,410,410,410,410,1,1,205/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=5,6,6,6,6,1,1,1/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=10,6,6,6,6,1,1,1/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=11,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=14,18,18,18,18,1,1,3/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=15,6,6,6,6,1,1,1/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=21,40,40,40,40,1,1,20/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=22,12,12,12,12,1,1,2/119,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=26,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=33,32,32,32,32,1,1,16/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=39,28,28,28,28,1,1,2/51,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=154,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=231,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=273,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_by_scope,B6_to_B7_full,close,child_gcd,gcd=429,2,2,2,2,1,1,1/357,final child gcd among close/birth lifts
+close_child_gcd_reflection_pair_crosstab,B4_to_B5_full,close,child_gcd_reflection_pair,gcd=2;pair=3/8,10,10,10,10,1,1,5/7,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B4_to_B5_full,close,child_gcd_reflection_pair,gcd=3;pair=2/9,2,2,2,2,1,1,1/7,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B4_to_B5_full,close,child_gcd_reflection_pair,gcd=14;pair=3/8,2,2,2,2,1,1,1/7,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=2;pair=4/9,2,2,2,2,1,1,1/21,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=2;pair=5/8,6,6,6,6,1,1,1/7,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=3;pair=3/10,28,28,28,28,1,1,2/3,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=10;pair=5/8,2,2,2,2,1,1,1/21,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=21;pair=3/10,2,2,2,2,1,1,1/21,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B5_to_B6_full,close,child_gcd_reflection_pair,gcd=33;pair=3/10,2,2,2,2,1,1,1/21,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=2;pair=5/12,116,116,116,116,1,1,58/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=2;pair=6/11,22,22,22,22,1,1,11/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=2;pair=7/10,6,6,6,6,1,1,1/119,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=3;pair=3/14,94,94,94,94,1,1,47/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=3;pair=4/13,316,316,316,316,1,1,158/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=5;pair=2/15,4,4,4,4,1,1,2/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=5;pair=4/13,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=10;pair=5/12,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=10;pair=6/11,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=10;pair=7/10,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=11;pair=1/16,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=14;pair=5/12,18,18,18,18,1,1,3/119,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=15;pair=3/14,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=15;pair=4/13,4,4,4,4,1,1,2/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=21;pair=3/14,18,18,18,18,1,1,3/119,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=21;pair=4/13,22,22,22,22,1,1,11/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=22;pair=5/12,10,10,10,10,1,1,5/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=22;pair=6/11,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=26;pair=5/12,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=33;pair=3/14,10,10,10,10,1,1,5/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=33;pair=4/13,22,22,22,22,1,1,11/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=39;pair=4/13,28,28,28,28,1,1,2/51,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=154;pair=5/12,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=231;pair=3/14,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=273;pair=4/13,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_child_gcd_reflection_pair_crosstab,B6_to_B7_full,close,child_gcd_reflection_pair,gcd=429;pair=4/13,2,2,2,2,1,1,1/357,close/birth arithmetic stratum and final remainder pair
+close_reflection_pair_by_scope,B4_to_B5_full,close,reflection_pair,2/9,2,2,2,2,1,1,1/7,pair_imbalance=0
+close_reflection_pair_by_scope,B4_to_B5_full,close,reflection_pair,3/8,12,12,12,12,1,1,6/7,pair_imbalance=0
+close_reflection_pair_by_scope,B5_to_B6_full,close,reflection_pair,3/10,32,32,32,32,1,1,16/21,pair_imbalance=0
+close_reflection_pair_by_scope,B5_to_B6_full,close,reflection_pair,4/9,2,2,2,2,1,1,1/21,pair_imbalance=0
+close_reflection_pair_by_scope,B5_to_B6_full,close,reflection_pair,5/8,8,8,8,8,1,1,4/21,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,1/16,2,2,2,2,1,1,1/357,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,2/15,4,4,4,4,1,1,2/357,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,3/14,126,126,126,126,1,1,3/17,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,4/13,398,398,398,398,1,1,199/357,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,5/12,150,150,150,150,1,1,25/119,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,6/11,26,26,26,26,1,1,13/357,pair_imbalance=0
+close_reflection_pair_by_scope,B6_to_B7_full,close,reflection_pair,7/10,8,8,8,8,1,1,4/357,pair_imbalance=0
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=0,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=1,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=2,7,77,6,6,6/7,6/7,1/4,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=3,14,154,2,2,1/7,1/7,1/2,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=4,7,77,6,6,6/7,6/7,1/4,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B4_to_B5_full,capacity,k2_residue_mod_6,r=5,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=0,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=1,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=2,81,1053,5,5,5/81,5/81,81/224,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=3,62,806,32,32,16/31,16/31,31/112,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=4,81,1053,5,5,5/81,5/81,81/224,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B5_to_B6_full,capacity,k2_residue_mod_6,r=5,0,0,0,0,0,0,0,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=0,2,34,0,0,0,0,1/1474,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=1,12,204,4,4,1/3,1/3,3/737,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=2,1024,17408,92,92,23/256,23/256,256/737,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=3,874,14858,522,522,261/437,261/437,437/1474,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=4,1024,17408,92,92,23/256,23/256,256/737,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,B6_to_B7_full,capacity,k2_residue_mod_6,r=5,12,204,4,4,1/3,1/3,3/737,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=0,2,34,0,0,0,0,1/1600,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=1,12,204,4,4,1/3,1/3,3/800,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=2,1112,18538,103,103,103/1112,103/1112,139/400,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=3,950,15818,556,556,278/475,278/475,19/64,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=4,1112,18538,103,103,103/1112,103/1112,139/400,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_capacity_conditioned_survival,all,capacity,k2_residue_mod_6,r=5,12,204,4,4,1/3,1/3,3/800,capacity-conditioned k=2 residue lineage; not a raw gcd claim
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=0,0,770,0,0,0,0,1925/26,width=1/2;inverse_width_expected=1925/26;close_rate stores observed_over_inverse_width_expected
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=1,4,770,4,4,52/1155,2/385,1155/13,width=5/12;inverse_width_expected=1155/13;close_rate stores observed_over_inverse_width_expected
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=2,103,770,103,103,1339/1925,103/770,1925/13,width=1/4;inverse_width_expected=1925/13;close_rate stores observed_over_inverse_width_expected
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=3,556,770,556,556,14456/5775,278/385,5775/26,width=1/6;inverse_width_expected=5775/26;close_rate stores observed_over_inverse_width_expected
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=4,103,770,103,103,1339/1925,103/770,1925/13,width=1/4;inverse_width_expected=1925/13;close_rate stores observed_over_inverse_width_expected
+k2_width_normalized_lineage_survival,all,birth_lineage,k2_residue_mod_6,r=5,4,770,4,4,52/1155,2/385,1155/13,width=5/12;inverse_width_expected=1155/13;close_rate stores observed_over_inverse_width_expected
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=1,48,528,0,0,0,0,3/13,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=2,46,506,10,10,5/23,5/23,23/104,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=3,24,264,2,2,1/12,1/12,3/26,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=5,12,132,0,0,0,0,3/52,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=6,24,264,0,0,0,0,3/26,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=7,8,88,0,0,0,0,1/26,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=10,12,132,0,0,0,0,3/52,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=14,8,88,2,2,1/4,1/4,1/26,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=15,6,66,0,0,0,0,3/104,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=21,4,44,0,0,0,0,1/52,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=30,6,66,0,0,0,0,3/104,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=35,2,22,0,0,0,0,1/104,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=42,4,44,0,0,0,0,1/52,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=70,2,22,0,0,0,0,1/104,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=105,1,11,0,0,0,0,1/208,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,all,parent_gcd,gcd=210,1,11,0,0,0,0,1/208,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity,parent_gcd,gcd=2,12,132,10,10,5/6,5/6,3/7,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity,parent_gcd,gcd=3,12,132,2,2,1/6,1/6,3/7,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity,parent_gcd,gcd=14,2,22,2,2,1,1,1/14,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity,parent_gcd,gcd=21,2,22,0,0,0,0,1/14,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity_nonclose,parent_gcd,gcd=2,2,22,0,0,0,0,1/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity_nonclose,parent_gcd,gcd=3,10,110,0,0,0,0,5/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,capacity_nonclose,parent_gcd,gcd=21,2,22,0,0,0,0,1/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,close,parent_gcd,gcd=2,10,110,10,10,1,1,5/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,close,parent_gcd,gcd=3,2,22,2,2,1,1,1/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B4_to_B5_full,close,parent_gcd,gcd=14,2,22,2,2,1,1,1/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=1,480,6240,0,0,0,0,80/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=2,450,5850,8,8,4/225,4/225,75/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=3,238,3094,28,28,2/17,2/17,119/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=5,120,1560,0,0,0,0,20/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=6,240,3120,0,0,0,0,40/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=7,80,1040,0,0,0,0,40/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=10,120,1560,2,2,1/60,1/60,20/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=11,48,624,0,0,0,0,8/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=14,78,1014,0,0,0,0,13/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=15,60,780,0,0,0,0,10/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=21,40,520,2,2,1/20,1/20,20/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=22,46,598,0,0,0,0,23/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=30,60,780,0,0,0,0,10/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=33,24,312,2,2,1/12,1/12,4/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=35,20,260,0,0,0,0,10/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=42,40,520,0,0,0,0,20/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=55,12,156,0,0,0,0,2/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=66,24,312,0,0,0,0,4/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=70,20,260,0,0,0,0,10/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=77,8,104,0,0,0,0,4/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=105,10,130,0,0,0,0,5/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=110,12,156,0,0,0,0,2/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=154,8,104,0,0,0,0,4/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=165,6,78,0,0,0,0,1/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=210,10,130,0,0,0,0,5/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=231,4,52,0,0,0,0,2/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=330,6,78,0,0,0,0,1/379,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=385,2,26,0,0,0,0,1/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=462,4,52,0,0,0,0,2/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=770,2,26,0,0,0,0,1/1137,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=1155,1,13,0,0,0,0,1/2274,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,all,parent_gcd,gcd=2310,1,13,0,0,0,0,1/2274,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=2,124,1612,8,8,2/31,2/31,31/56,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=3,54,702,28,28,14/27,14/27,27/112,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=10,6,78,2,2,1/3,1/3,3/112,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=14,18,234,0,0,0,0,9/112,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=21,4,52,2,2,1/2,1/2,1/56,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=22,12,156,0,0,0,0,3/56,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=33,4,52,2,2,1/2,1/2,1/56,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity,parent_gcd,gcd=154,2,26,0,0,0,0,1/112,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=2,116,1508,0,0,0,0,58/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=3,26,338,0,0,0,0,1/7,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=10,4,52,0,0,0,0,2/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=14,18,234,0,0,0,0,9/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=21,2,26,0,0,0,0,1/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=22,12,156,0,0,0,0,6/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=33,2,26,0,0,0,0,1/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,capacity_nonclose,parent_gcd,gcd=154,2,26,0,0,0,0,1/91,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,close,parent_gcd,gcd=2,8,104,8,8,1,1,4/21,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,close,parent_gcd,gcd=3,28,364,28,28,1,1,2/3,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,close,parent_gcd,gcd=10,2,26,2,2,1,1,1/21,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,close,parent_gcd,gcd=21,2,26,2,2,1,1,1/21,parent gcd stratum
+parent_gcd_capacity_conditioned,B5_to_B6_full,close,parent_gcd,gcd=33,2,26,2,2,1,1,1/21,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=1,5760,97920,0,0,0,0,8/41,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=2,5392,91664,144,144,9/337,9/337,337/1845,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=3,2828,48076,410,410,205/1414,205/1414,707/7380,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=5,1440,24480,6,6,1/240,1/240,2/41,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=6,2880,48960,0,0,0,0,4/41,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=7,960,16320,0,0,0,0,4/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=10,1438,24446,6,6,3/719,3/719,719/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=11,576,9792,2,2,1/288,1/288,4/205,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=13,480,8160,0,0,0,0,2/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=14,936,15912,18,18,1/52,1/52,13/410,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=15,720,12240,6,6,1/120,1/120,1/41,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=21,478,8126,40,40,20/239,20/239,239/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=22,552,9384,12,12,1/46,1/46,23/1230,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=26,450,7650,2,2,1/225,1/225,5/328,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=30,720,12240,0,0,0,0,1/41,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=33,286,4862,32,32,16/143,16/143,143/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=35,240,4080,0,0,0,0,1/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=39,238,4046,28,28,2/17,2/17,119/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=42,480,8160,0,0,0,0,2/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=55,144,2448,0,0,0,0,1/205,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=65,120,2040,0,0,0,0,1/246,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=66,288,4896,0,0,0,0,2/205,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=70,240,4080,0,0,0,0,1/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=77,96,1632,0,0,0,0,2/615,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=78,240,4080,0,0,0,0,1/123,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=91,80,1360,0,0,0,0,1/369,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=105,120,2040,0,0,0,0,1/246,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=110,144,2448,0,0,0,0,1/205,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=130,120,2040,0,0,0,0,1/246,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=143,48,816,0,0,0,0,1/615,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=154,96,1632,2,2,1/48,1/48,2/615,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=165,72,1224,0,0,0,0,1/410,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=182,78,1326,0,0,0,0,13/4920,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=195,60,1020,0,0,0,0,1/492,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=210,120,2040,0,0,0,0,1/246,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=231,48,816,2,2,1/24,1/24,1/615,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=273,40,680,2,2,1/20,1/20,1/738,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=286,46,782,0,0,0,0,23/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=330,72,1224,0,0,0,0,1/410,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=385,24,408,0,0,0,0,1/1230,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=390,60,1020,0,0,0,0,1/492,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=429,24,408,2,2,1/12,1/12,1/1230,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=455,20,340,0,0,0,0,1/1476,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=462,48,816,0,0,0,0,1/615,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=546,40,680,0,0,0,0,1/738,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=715,12,204,0,0,0,0,1/2460,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=770,24,408,0,0,0,0,1/1230,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=858,24,408,0,0,0,0,1/1230,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=910,20,340,0,0,0,0,1/1476,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=1001,8,136,0,0,0,0,1/3690,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=1155,12,204,0,0,0,0,1/2460,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=1365,10,170,0,0,0,0,1/2952,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=1430,12,204,0,0,0,0,1/2460,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=2002,8,136,0,0,0,0,1/3690,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=2145,6,102,0,0,0,0,1/4920,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=2310,12,204,0,0,0,0,1/2460,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=2730,10,170,0,0,0,0,1/2952,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=3003,4,68,0,0,0,0,1/7380,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=4290,6,102,0,0,0,0,1/4920,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=5005,2,34,0,0,0,0,1/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=6006,4,68,0,0,0,0,1/7380,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=10010,2,34,0,0,0,0,1/14760,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=15015,1,17,0,0,0,0,1/29520,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,all,parent_gcd,gcd=30030,1,17,0,0,0,0,1/29520,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=2,1454,24718,144,144,72/727,72/727,727/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=3,688,11696,410,410,205/344,205/344,172/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=5,12,204,6,6,1/2,1/2,3/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=6,2,34,0,0,0,0,1/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=7,8,136,0,0,0,0,2/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=10,52,884,6,6,3/26,3/26,13/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=11,4,68,2,2,1/2,1/2,1/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=14,218,3706,18,18,9/109,9/109,109/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=15,10,170,6,6,3/5,3/5,5/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=21,58,986,40,40,20/29,20/29,29/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=22,144,2448,12,12,1/12,1/12,36/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=26,120,2040,2,2,1/60,1/60,30/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=33,62,1054,32,32,16/31,16/31,31/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=39,46,782,28,28,14/23,14/23,23/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=130,4,68,0,0,0,0,1/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=154,24,408,2,2,1/12,1/12,6/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=182,18,306,0,0,0,0,9/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=231,4,68,2,2,1/2,1/2,1/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=273,2,34,2,2,1,1,1/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=286,12,204,0,0,0,0,3/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=429,4,68,2,2,1/2,1/2,1/737,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity,parent_gcd,gcd=2002,2,34,0,0,0,0,1/1474,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=2,1310,22270,0,0,0,0,655/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=3,278,4726,0,0,0,0,139/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=5,6,102,0,0,0,0,3/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=6,2,34,0,0,0,0,1/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=7,8,136,0,0,0,0,4/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=10,46,782,0,0,0,0,23/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=11,2,34,0,0,0,0,1/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=14,200,3400,0,0,0,0,100/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=15,4,68,0,0,0,0,2/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=21,18,306,0,0,0,0,9/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=22,132,2244,0,0,0,0,66/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=26,118,2006,0,0,0,0,59/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=33,30,510,0,0,0,0,15/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=39,18,306,0,0,0,0,9/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=130,4,68,0,0,0,0,2/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=154,22,374,0,0,0,0,11/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=182,18,306,0,0,0,0,9/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=231,2,34,0,0,0,0,1/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=286,12,204,0,0,0,0,6/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=429,2,34,0,0,0,0,1/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,capacity_nonclose,parent_gcd,gcd=2002,2,34,0,0,0,0,1/1117,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=2,144,2448,144,144,1,1,24/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=3,410,6970,410,410,1,1,205/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=5,6,102,6,6,1,1,1/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=10,6,102,6,6,1,1,1/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=11,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=14,18,306,18,18,1,1,3/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=15,6,102,6,6,1,1,1/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=21,40,680,40,40,1,1,20/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=22,12,204,12,12,1,1,2/119,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=26,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=33,32,544,32,32,1,1,16/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=39,28,476,28,28,1,1,2/51,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=154,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=231,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=273,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,B6_to_B7_full,close,parent_gcd,gcd=429,2,34,2,2,1,1,1/357,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=1,6288,104688,0,0,0,0,3144/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=2,5888,98020,162,162,81/2944,81/2944,2944/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=3,3090,51434,440,440,44/309,44/309,1545/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=5,1572,26172,6,6,1/262,1/262,786/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=6,3144,52344,0,0,0,0,1572/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=7,1048,17448,0,0,0,0,524/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=10,1570,26138,8,8,4/785,4/785,785/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=11,624,10416,2,2,1/312,1/312,312/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=13,480,8160,0,0,0,0,240/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=14,1022,17014,20,20,10/511,10/511,511/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=15,786,13086,6,6,1/131,1/131,393/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=21,522,8690,42,42,7/87,7/87,261/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=22,598,9982,12,12,6/299,6/299,299/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=26,450,7650,2,2,1/225,1/225,225/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=30,786,13086,0,0,0,0,393/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=33,310,5174,34,34,17/155,17/155,155/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=35,262,4362,0,0,0,0,131/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=39,238,4046,28,28,2/17,2/17,119/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=42,524,8724,0,0,0,0,262/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=55,156,2604,0,0,0,0,78/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=65,120,2040,0,0,0,0,60/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=66,312,5208,0,0,0,0,156/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=70,262,4362,0,0,0,0,131/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=77,104,1736,0,0,0,0,52/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=78,240,4080,0,0,0,0,120/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=91,80,1360,0,0,0,0,40/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=105,131,2181,0,0,0,0,131/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=110,156,2604,0,0,0,0,78/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=130,120,2040,0,0,0,0,60/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=143,48,816,0,0,0,0,24/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=154,104,1736,2,2,1/52,1/52,52/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=165,78,1302,0,0,0,0,39/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=182,78,1326,0,0,0,0,39/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=195,60,1020,0,0,0,0,30/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=210,131,2181,0,0,0,0,131/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=231,52,868,2,2,1/26,1/26,26/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=273,40,680,2,2,1/20,1/20,20/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=286,46,782,0,0,0,0,23/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=330,78,1302,0,0,0,0,39/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=385,26,434,0,0,0,0,13/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=390,60,1020,0,0,0,0,30/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=429,24,408,2,2,1/12,1/12,12/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=455,20,340,0,0,0,0,10/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=462,52,868,0,0,0,0,26/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=546,40,680,0,0,0,0,20/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=715,12,204,0,0,0,0,6/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=770,26,434,0,0,0,0,13/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=858,24,408,0,0,0,0,12/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=910,20,340,0,0,0,0,10/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=1001,8,136,0,0,0,0,4/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=1155,13,217,0,0,0,0,13/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=1365,10,170,0,0,0,0,5/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=1430,12,204,0,0,0,0,6/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=2002,8,136,0,0,0,0,4/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=2145,6,102,0,0,0,0,3/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=2310,13,217,0,0,0,0,13/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=2730,10,170,0,0,0,0,5/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=3003,4,68,0,0,0,0,2/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=4290,6,102,0,0,0,0,3/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=5005,2,34,0,0,0,0,1/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=6006,4,68,0,0,0,0,2/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=10010,2,34,0,0,0,0,1/16001,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=15015,1,17,0,0,0,0,1/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,all,parent_gcd,gcd=30030,1,17,0,0,0,0,1/32002,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=2,1590,26462,162,162,27/265,27/265,159/320,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=3,754,12530,440,440,220/377,220/377,377/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=5,12,204,6,6,1/2,1/2,3/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=6,2,34,0,0,0,0,1/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=7,8,136,0,0,0,0,1/400,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=10,58,962,8,8,4/29,4/29,29/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=11,4,68,2,2,1/2,1/2,1/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=14,238,3962,20,20,10/119,10/119,119/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=15,10,170,6,6,3/5,3/5,1/320,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=21,64,1060,42,42,21/32,21/32,1/50,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=22,156,2604,12,12,1/13,1/13,39/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=26,120,2040,2,2,1/60,1/60,3/80,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=33,66,1106,34,34,17/33,17/33,33/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=39,46,782,28,28,14/23,14/23,23/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=130,4,68,0,0,0,0,1/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=154,26,434,2,2,1/13,1/13,13/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=182,18,306,0,0,0,0,9/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=231,4,68,2,2,1/2,1/2,1/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=273,2,34,2,2,1,1,1/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=286,12,204,0,0,0,0,3/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=429,4,68,2,2,1/2,1/2,1/800,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity,parent_gcd,gcd=2002,2,34,0,0,0,0,1/1600,capacity-conditioned parent gcd stratum; gcd>1 is not a standalone claim
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=2,1428,23800,0,0,0,0,238/405,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=3,314,5174,0,0,0,0,157/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=5,6,102,0,0,0,0,1/405,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=6,2,34,0,0,0,0,1/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=7,8,136,0,0,0,0,4/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=10,50,834,0,0,0,0,5/243,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=11,2,34,0,0,0,0,1/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=14,218,3634,0,0,0,0,109/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=15,4,68,0,0,0,0,2/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=21,22,354,0,0,0,0,11/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=22,144,2400,0,0,0,0,8/135,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=26,118,2006,0,0,0,0,59/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=33,32,536,0,0,0,0,16/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=39,18,306,0,0,0,0,1/135,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=130,4,68,0,0,0,0,2/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=154,24,400,0,0,0,0,4/405,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=182,18,306,0,0,0,0,1/135,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=231,2,34,0,0,0,0,1/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=286,12,204,0,0,0,0,2/405,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=429,2,34,0,0,0,0,1/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,capacity_nonclose,parent_gcd,gcd=2002,2,34,0,0,0,0,1/1215,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=2,162,2662,162,162,1,1,81/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=3,440,7356,440,440,1,1,4/7,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=5,6,102,6,6,1,1,3/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=10,8,128,8,8,1,1,4/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=11,2,34,2,2,1,1,1/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=14,20,328,20,20,1,1,2/77,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=15,6,102,6,6,1,1,3/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=21,42,706,42,42,1,1,3/55,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=22,12,204,12,12,1,1,6/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=26,2,34,2,2,1,1,1/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=33,34,570,34,34,1,1,17/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=39,28,476,28,28,1,1,2/55,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=154,2,34,2,2,1,1,1/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=231,2,34,2,2,1,1,1/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=273,2,34,2,2,1,1,1/385,parent gcd stratum
+parent_gcd_capacity_conditioned,all,close,parent_gcd,gcd=429,2,34,2,2,1,1,1/385,parent gcd stratum

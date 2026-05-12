@@ -1,0 +1,13 @@
+diagnostic_group,control_key,observed_key,control_value,observed_value,interpretation
+equal_occurrence_k2,all residues occur with baseline probability 1/6,r=3 mod 6,1/6,1/6,occurrence alone cannot explain concentration
+same_width_neighbors,"r=2 and r=4, width 1/4","r=3, width 1/6",103+103,556,narrower residual state is much more enriched
+wide_zero_side_controls,r=1 and r=5 contain 0-side residual,r=3 side gaps do not contain 0,4+4,556,0-side presence is not sufficient for later birth lineage concentration
+model_failure,inverse_width expected for r=3,observed r=3 count,5775/26,556,width is useful but still underpredicts r=3
+reflection_control,reflected incremental rows,maximum count imbalance,expected 0 under reflection symmetry,0,reflection symmetry survives conditioning and should be a guard
+path_diversity_control,single genealogy template,distinct transition sequences,1,23,birth lineages are not one repeated path
+prime_zero_control,final new-prime remainder zero,checked final birth rows,would support prime-zero all-birth story,0/770,prime-zero remains local diagnostic only
+sibling_lift_control,non-birth close inside sibling families,geometric close families outside checked births,would reveal close/birth mismatch,0/32002,final phase is selective inside current sibling-lift family scopes
+itinerary_nonbirth_control,birth-only itinerary sample,non-birth sibling itinerary rows,would miss sibling phase controls,12068,non-birth siblings share history but fail at final phase
+independent_phase_gate_control,capacity-satisfied non-close families,phase_pass without close,2430,0,signed phase margin separates phase gate from the close label
+gate_r_selection_control,capacity + phase as headline,signed phase-margin theorem candidate,weak,keep,selection table promotes the separator and demotes arithmetic diagnostics to refinements
+non_claim_boundary,width-only explanation,accepted story,rejected,early narrow residual potential + lineage survival + incremental q-grid phase alignment,other mechanisms remain active hypotheses

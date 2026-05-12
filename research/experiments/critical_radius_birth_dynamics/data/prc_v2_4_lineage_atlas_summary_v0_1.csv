@@ -1,0 +1,15 @@
+metric,scope,value,note
+atlas_rows,all,369824,all exact residual lineage rows across k=1..7 scopes
+final_lifts,all,53336,one final lift per represented lineage
+birth_sibling_final_lifts,all,770,checked B5/B6/B7 birth siblings
+nonbirth_sibling_final_lifts,all,12068,same-family non-birth sibling controls
+capacity_nonclose_final_lifts,all,40498,capacity-satisfied lifts that still do not close
+nonbirth_close_final_lifts,all,0,would indicate close/birth mismatch
+capacity_gate_close_families,all,770,all checked close families satisfy single-component capacity
+capacity_gate_nonclose_families,all,2430,capacity gate is not sufficient by itself
+final_lifts_by_scope,B5_birth_parent_siblings,308,represented final lineages by scope
+final_lifts_by_scope,B6_birth_parent_siblings,2912,represented final lineages by scope
+final_lifts_by_scope,B7_birth_parent_siblings,50116,represented final lineages by scope
+capacity_nonclose_final_lifts_by_scope,B5_birth_parent_siblings,154,capacity-satisfied non-close final lineages by scope
+capacity_nonclose_final_lifts_by_scope,B6_birth_parent_siblings,2366,capacity-satisfied non-close final lineages by scope
+capacity_nonclose_final_lifts_by_scope,B7_birth_parent_siblings,37978,capacity-satisfied non-close final lineages by scope

@@ -1,0 +1,65 @@
+{
+  "birth_residual_genealogy": {
+    "rows": 5320,
+    "transition_counts": {
+      "close": 770,
+      "miss": 1294,
+      "partial_close": 566,
+      "split": 566,
+      "start": 770,
+      "trim": 1354
+    }
+  },
+  "datasets": {
+    "B5 pilot": {
+      "rows": 2288,
+      "taxonomy_counts": {
+        "close": 14,
+        "miss": 1520,
+        "partial_close": 22,
+        "split": 258,
+        "trim": 474
+      }
+    },
+    "B5->B6 full": {
+      "rows": 29562,
+      "taxonomy_counts": {
+        "close": 42,
+        "miss": 20442,
+        "partial_close": 378,
+        "split": 3090,
+        "trim": 5610
+      }
+    },
+    "B6->B7 full": {
+      "rows": 501840,
+      "taxonomy_counts": {
+        "close": 714,
+        "miss": 363600,
+        "partial_close": 4726,
+        "split": 54490,
+        "trim": 78310
+      }
+    }
+  },
+  "files": [
+    "prc_v2_4_transition_taxonomy_counts_v0_1.png",
+    "prc_v2_4_transition_component_delta_v0_1.png",
+    "prc_v2_4_b5_to_b6_genealogy_flow_v0_1.png",
+    "prc_v2_4_remainder_taxonomy_heatmaps_v0_1.png",
+    "prc_v2_4_birth_residual_genealogy_layers_v0_1.png",
+    "prc_v2_4_birth_origin_zero_diagnostics_v0_1.png",
+    "prc_v2_4_k2_gap_width_bias_v0_1.png",
+    "prc_v2_4_lineage_measure_bias_v0_1.png",
+    "prc_v2_4_incremental_grid_phase_histograms_v0_1.png",
+    "prc_v2_4_birth_potential_score_v0_1.png"
+  ],
+  "status": "source-only v2.4 Gate R diagnostic",
+  "taxonomy": [
+    "miss",
+    "trim",
+    "split",
+    "partial_close",
+    "close"
+  ]
+}

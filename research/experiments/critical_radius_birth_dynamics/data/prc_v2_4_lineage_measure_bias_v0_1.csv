@@ -1,0 +1,9 @@
+layer_k,population,row_count,average_residual_measure,zero_point_blank_count,zero_point_blank_fraction,target_sector_residual_measure_average,target_sector_share_of_residual
+1,all_residues,2,1/2,1,1/2,1/12,1/6
+1,birth_lineage,770,1/2,564,282/385,47/385,94/385
+2,all_residues,6,1/3,2,1/3,1/18,1/6
+2,birth_lineage,770,59/308,8,4/385,4/33,112/177
+3,all_residues,30,4/15,8,4/15,2/45,1/6
+3,birth_lineage,770,542/5775,2,1/385,29/462,725/1084
+4,all_residues,210,8/35,48,8/35,4/105,1/6
+4,birth_lineage,770,2441/40425,2,1/385,346/8085,1730/2441

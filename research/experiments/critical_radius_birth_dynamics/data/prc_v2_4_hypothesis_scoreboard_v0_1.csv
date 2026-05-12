@@ -1,0 +1,27 @@
+cycle,role,hypothesis,metric,value,status,classification,failure_mode
+1,Data Auditor,all final checked birth rows close after a recorded residual history,final_close_count,770,supported,candidate claim candidate,finite B5/B6/B7 only
+1,Data Auditor,reflection-orbit symmetry survives the broad v2.4 diagnostics,max_incremental_reflection_imbalance,0,supported,candidate constraint,"symmetry is a consistency check, not a causal mechanism"
+1,Hypothesis Miner,final checked birth rows live on nonunit residue strata,final_gcd_greater_than_one,770/770,supported,diagnostic only,nonunit gcd may be necessary-looking but is not sufficient
+1,Skeptical Reviewer,future birth filtering breaks rotation but not reflection symmetry,incremental_grid_phase_rows,169,supported,diagnostic only,does not identify which reflected pair will close
+2,Data Auditor,B7 genealogy has mixed transition entropy,B7_transition_entropy_bits,2.490887,partial,future work,entropy summarizes diversity but does not explain it
+2,Experiment Designer,dominant B7 lineage grammar is informative but not universal,top_sequence_count,216/770,partial,diagnostic only,start>split>partial_close>trim>miss>miss>close
+2,Hypothesis Miner,genealogy paths form multiple grammars rather than one template,distinct_transition_sequences,23,supported,diagnostic only,too many paths can weaken a compact candidate story
+3,Data Auditor,B5 pilot already contains all five primary transition labels,B5_taxonomy_counts,miss=1520;trim=474;split=258;partial_close=22;close=14,supported,diagnostic only,taxonomy richness is not by itself a theorem
+3,Experiment Designer,incremental p=3 remainder 0 split is an early ancestor signal,B7 k2 split row_count,522,supported,diagnostic only,incremental phase needs lineage survival to become explanatory
+3,Experiment Designer,local transition dynamics remain rich away from final birth rows,B5_to_B6_full_counts,miss=20442;trim=5610;split=3090;partial_close=378;close=42,supported,diagnostic only,B5->B6 full graph cannot be extrapolated to full B6->B7
+3,Skeptical Reviewer,B6->B7 full transition graph is source-only and must not be overread,B6_to_B7_full_counts,miss=363600;trim=78310;split=54490;partial_close=4726;close=714,supported,non-claim boundary,"B6->B7 full graph is source-only, not a public claim"
+4,Data Auditor,containment margins stay positive in checked final closes,B7_min_containment_margin,1/221,supported,candidate claim candidate,finite margins are not asymptotic stability
+4,Data Auditor,signed phase-margin separation selects the closing sibling,phase_pass_close_family_alignment,770/770;capacity_nonclose=2430,supported,candidate claim candidate,"phase margin is finite B5/B6/B7 geometry, not an asymptotic law"
+4,Experiment Designer,final q-grid phase concentrates in reflected remainder pairs,B7_top_reflection_pair_share,398/714,partial,diagnostic only,phase concentration needs controls against parent selection
+4,Experiment Designer,transition itinerary controls compare birth siblings against non-birth siblings,birth_nonbirth_itinerary_rows,birth=770;nonbirth=12068;nonbirth_sequences=23,supported,diagnostic only,itinerary controls are scoped to checked birth-parent families
+4,Hypothesis Miner,final aperture margins are positive but layer-dependent,B7_min_aperture_margin,24/2431,supported,candidate claim candidate,"margin positivity explains close feasibility, not lineage selection"
+4,Skeptical Reviewer,sibling-lift controls show close is phase-selective in scoped probes,nonbirth_close_families,0/32002,supported,diagnostic only,family controls do not by themselves explain phase selection
+4,Synthesis Writer,exact residual lineage atlas supports capacity gate plus sibling phase gate,lineage_atlas_counts,birth=770;nonbirth=12068;capacity_nonclose=40498;capacity_nonclose_families=2430,supported,candidate claim candidate,capacity gate is necessary-looking but not sufficient
+5,Hypothesis Miner,k=2 covered_width potential predicts birth-lineage counts,pearson_correlation,0.785851,partial,diagnostic only,"width-family scores are controls, not sole causes"
+5,Hypothesis Miner,k=2 inverse_width potential predicts birth-lineage counts,pearson_correlation,0.928735,supported,diagnostic only,"width-family scores are controls, not sole causes"
+5,Hypothesis Miner,k=2 residual_width potential predicts birth-lineage counts,pearson_correlation,-0.785851,weak,diagnostic only,"width-family scores are controls, not sole causes"
+5,Hypothesis Miner,k=2 uniform potential predicts birth-lineage counts,pearson_correlation,0.000000,weak,diagnostic only,"width-family scores are controls, not sole causes"
+5,Skeptical Reviewer,inverse_width is useful but not sufficient,inverse_width_r3_observed_over_expected,14456/5775,partial,non-claim boundary,do not claim width alone explains birth
+5,Skeptical Reviewer,prime-zero side-gap creation is not all-birth explanation,final_new_prime_remainder_zero,0/770,supported,non-claim boundary,prime-zero remains local diagnostic only
+5,Synthesis Writer,Gate R decision table promotes signed phase-margin separation and demotes obvious mechanisms,decision_counts,keep=1;support=3;weak=1,supported,Gate R selection,decision table is still source-only and does not change Gate R automatically
+5,Synthesis Writer,Gate R story should remain continue research,decision,continue research,partial,future work,"broad exploration found diagnostics, not one locked candidate claim"

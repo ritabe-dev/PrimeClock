@@ -1,0 +1,114 @@
+candidate_id: prc_v2_4_residual_gap_transition_graph
+status: research_review
+public_release: false
+base_public_release: v2.3.0
+goal: >
+  Preserve v2.4 as a source-only bridge from the v2.3.0 public release to the
+  next candidate line, without promoting v2.4 to a public candidate package.
+readiness:
+  current_completion_percent: "source-only bridge complete; public candidate deferred"
+  reusable_workflow_percent: "92-95"
+  estimated_slices_to_target: "0 for v2.4 bridge closure; 1-2 for v2.5 Gate R"
+
+research_review:
+  note: research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_research_review_note_v0_1.md
+  required_sections:
+    - Core idea
+    - Claim shape
+    - Why now
+    - Stop line
+    - Risks
+    - Decision
+  allowed_decisions:
+    - package as candidate
+    - continue research
+    - defer
+  candidate_packaging_decision: package as candidate
+  forbidden_artifact_basis_terms:
+    - ZIP
+    - SHA256SUMS
+    - BUNDLE_FILE_MANIFEST
+    - manifest consistency
+    - bundle check
+
+source_only_research:
+  version_line: v2.4
+  accepted_name_markers:
+    - v2_4
+    - prc_v2_4
+    - v2_5
+    - prc_v2_5
+  files:
+    - research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_4_v0_1.yml
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_b5_transition_pilot.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_b6_sanity_probe.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_b6_to_b7_full_transition_graph.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_sibling_lift_controls.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_transition_itinerary_controls.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_residual_lineage_atlas.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_angle_aperture_diagnostics.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_birth_residual_genealogy.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_five_cycle_research_synthesis.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_transition_graph_probes.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_phase_gate_diagnostics.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_gate_r_decision.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_4_theorem_candidate_selection.py
+    - research/experiments/critical_radius_birth_dynamics/generate_v2_4_transition_figures.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_angle_aperture_diagnostics.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_five_cycle_synthesis.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_nonbirth_controls.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_phase_gate_diagnostics.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_gate_r_decision.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_residual_lineage_atlas.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_residual_genealogy.py
+    - research/experiments/critical_radius_birth_dynamics/v2_4_transition_pilot.py
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_final_aperture_margins_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_incremental_grid_phase_histogram_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_birth_potential_score_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_birth_potential_score_correlation_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_k2_gap_width_bias_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_lineage_measure_bias_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_hypothesis_scoreboard_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_matched_control_diagnostics_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_birth_residual_genealogy_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_b5_gap_close_transition_pilot_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_b5_to_b6_full_transition_graph_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_b7_birth_parent_transition_probe_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_b6_to_b7_full_transition_graph_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_sibling_lift_phase_controls_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_transition_itinerary_controls_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_exact_residual_lineage_atlas_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_lineage_atlas_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_lift_diagnostics_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_family_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_gate_r_decision_table_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_arithmetic_stratum_bias_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_transition_taxonomy_counts_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_transition_component_delta_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_b5_to_b6_genealogy_flow_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_remainder_taxonomy_heatmaps_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_birth_residual_genealogy_layers_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_birth_origin_zero_diagnostics_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_k2_gap_width_bias_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_lineage_measure_bias_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_incremental_grid_phase_histograms_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_birth_potential_score_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_hypothesis_scoreboard_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_lineage_atlas_birth_vs_nonbirth_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_lineage_atlas_capacity_controls_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_phase_gate_margin_rank_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_4/prc_v2_4_transition_figures_manifest_v0_1.json
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_research_review_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_birth_residual_genealogy_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_b5_transition_pilot_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_five_cycle_research_synthesis_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_theorem_candidate_selection_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_r3_residual_factor_forensics_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_residual_gap_transition_graph_idea_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_4_transition_graph_probes_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_seed_note_v0_1.md
+    - research/tests/test_critical_radius_birth_dynamics_v2_4_research.py
+  candidate_bundle_manifests:
+    - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json
+  public_release_config: release/public/release_config.json
+  public_release_builder: scripts/build_public_release.py

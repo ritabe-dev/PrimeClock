@@ -1,0 +1,5 @@
+layer_k,model,pearson_correlation,spearman_correlation,mean_absolute_error,note
+2,covered_width,0.785851,1.000000,131.861111,hypothesis diagnostic; does not exclude other mechanisms
+2,inverse_width,0.928735,1.000000,111.294872,hypothesis diagnostic; does not exclude other mechanisms
+2,residual_width,-0.785851,-1.000000,168.444444,hypothesis diagnostic; does not exclude other mechanisms
+2,uniform,0.000000,0.000000,142.555556,hypothesis diagnostic; does not exclude other mechanisms
