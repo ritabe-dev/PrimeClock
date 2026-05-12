@@ -255,7 +255,7 @@ def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
         if path.name == ".DS_Store":
             failures.append(f"forbidden local metadata file: {relative_text}")
             continue
-        for marker in FORBIDDEN_PATH_MARKERS:
+        for marker in sorted(FORBIDDEN_PATH_MARKERS, key=lambda value: (-len(value), value)):
             if marker in relative_text:
                 failures.append(f"forbidden candidate path marker {marker}: {relative_text}")
                 break
