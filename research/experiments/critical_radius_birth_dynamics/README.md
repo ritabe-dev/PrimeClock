@@ -39,6 +39,8 @@ notes/prc_v2_3_related_work_v0_2.md
 notes/prc_v2_3_standalone_checker_contract_v0_1.md
 notes/prc_near_miss_birth_predictor_v0_2.md
 notes/prc_critical_radius_birth_dynamics_v0_1.md
+notes/prc_v2_4_research_review_note_v0_1.md
+notes/prc_v2_5_research_seed_note_v0_1.md
 ```
 
 The status note summarizes the current internal milestone. The research review
@@ -60,6 +62,13 @@ release boundary. The related-work note records the minimal formal references
 for public-candidate review. The standalone checker contract records the
 standard-library audit added for the v2.3 candidate CSVs. The v0.2 note
 explains how near-miss ranking connects to birth-parent gap geometry.
+
+The v2.4 research review note records the source-only bridge after v2.3.0:
+signed phase-margin diagnostics, transition graphs, and non-birth controls are
+kept as internal Gate R evidence, not as a public candidate line. The v2.5 seed
+note starts the next candidate direction around residual dynamics, obstruction
+classification, and prediction; any v2.4 diagnostic used there must be
+recomputed and restated as v2.5 evidence before packaging.
 
 ## Generate
 
@@ -195,6 +204,47 @@ checks PR/report status metadata, schedule timezone labels, and candidate-facing
 wording without adding work report metadata to the candidate README. Future
 candidates should add a new workflow config and research review note instead of
 hard-coding their scope into the engine.
+
+## Version-Line Workflow
+
+This experiment keeps one shared repo and versions only the research-line
+materials. Do not copy the repo for v2.4 or later.
+
+| Line | Status | Gate |
+| --- | --- | --- |
+| `v2.3.0` | published public DOI release | closed unless errata or patch policy applies |
+| `v2.4.x` | source-only residual-gap transition research | Gate R; not a candidate package |
+| `maintenance/v2.x.y` | patch release line | branch from the published tag only when needed |
+
+Use this naming pattern for new research lines:
+
+```text
+candidate_workflow_v2_4_v0_1.yml
+notes/prc_v2_4_*_v0_1.md
+data/prc_v2_4_*_v0_1.csv
+check_v2_4_*.py
+v2_4_*.py
+tests/test_critical_radius_birth_dynamics_v2_4_research.py
+```
+
+For v2.5 and later, keep the same structure and update only the version marker.
+The shared workflow engine provides `source-only-hygiene` so a research-line
+config can list files that must remain out of v2.3 candidate/public bundles.
+For the current v2.4 source-only line:
+
+```bash
+research/.venv/bin/python scripts/verify_candidate_workflow.py \
+  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_4_v0_1.yml \
+  source-only-hygiene
+```
+
+The gate questions are fixed:
+
+```text
+Gate R: Is this research story worth packaging?
+Gate C: Is this package reproducible and clean?
+Gate P: Is this stable enough to cite?
+```
 
 ## Dependency Note
 

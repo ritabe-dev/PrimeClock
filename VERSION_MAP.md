@@ -28,7 +28,8 @@ separate. The current public release target is:
 | --- | --- | --- |
 | `v2.2.4` | historical stable finite certificate | Do not retag; use `ERRATA.md` for clarifications or `maintenance/v2.2.5` for citable patch releases. |
 | `v2.3.0` | current public DOI release candidate for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or `maintenance/v2.3.1` if corrections are needed. |
-| `v2.4.x` | next research line | Keep new claims in the active research line; release notes should state whether relevant `v2.3.0` claims are retained, corrected, or superseded. |
+| `v2.4.x` | source-only bridge from v2.3.0 to the next research line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal Gate R evidence only. |
+| `v2.5.x` | next candidate line if obstruction/prediction evidence stabilizes | Recompute and restate any inherited v2.4 diagnostics as v2.5 artifacts before packaging. |
 
 Historical release corrections are governed by
 `release/public/MAINTENANCE_POLICY.md`. The short rule is: published tags and
@@ -52,8 +53,9 @@ python3 scripts/update_public_hashes.py --check
 The public release bundle is scoped to finite checked PRC claims: the original
 `C_k/C_4/B_5` certificate artifact, the `k=4,5` critical-radius spectra, and the
 `B_5/B_6/B_7` gap-aperture birth-dynamics classification. `B_8` or larger
-layers, residual-gap transition graphs, null models, and asymptotic or
-prime-distribution claims are future work.
+layers, residual-gap transition graphs, obstruction classification, prediction
+models, null models, and asymptotic or prime-distribution claims are future
+work.
 
 The Python package retains the historical name `prime-reciprocal-projection`.
 The release-facing finite theorem bundle is framed as Prime Reciprocal

@@ -81,6 +81,41 @@ If `v2.2` or `v2.3` corrections appear during `v2.4` work, classify them with
 to `ERRATA.md` or docs clarification, while reproducibility or finite-claim
 corrections use an isolated patch branch such as `maintenance/v2.3.1`.
 
+## Version-Line Workflow
+
+Do not duplicate the repository for new research lines. Keep shared source,
+release tooling, and workflow engines in one repo, and version only the
+research-line materials:
+
+| Line | Status | Management |
+| --- | --- | --- |
+| `v2.3.0` | immutable public DOI release | tag / GitHub Release / Zenodo snapshot; do not retag |
+| `v2.4.x` | source-only bridge | no public release or DOI; preserves diagnostics that connect v2.3.0 to the next candidate line |
+| `v2.5.x` | next candidate line | starts from obstruction classification, prediction, and residual dynamics if Gate R evidence stabilizes |
+| `maintenance/v2.x.y` | rare patch line | branch from the published tag only for reproducibility, metadata, or finite-claim-impacting fixes |
+
+Version-specific files should follow the line naming pattern:
+`candidate_workflow_v2_4_v0_1.yml`, `notes/prc_v2_4_*_v0_1.md`,
+`data/prc_v2_4_*_v0_1.csv`, `check_v2_4_*.py`, `v2_4_*.py`, and
+`tests/test_*_v2_4_research.py`. The v2.4 line is a source-only bridge, not a
+public release line. For v2.5 and later, change only the version marker and
+keep the same structure.
+
+The gates stay separate:
+
+```text
+Gate R: research story; source-only notes, pilot data, and research checkers
+Gate C: candidate integrity; reproducible package and manifest hygiene
+Gate P: public promotion; stable enough to cite and publish through GitHub/Zenodo
+```
+
+Source-only research files must not enter public or candidate bundles until a
+Gate R decision changes to package them as a candidate.
+
+The v2.5 line should not cite v2.4 as a public result. Instead, it should
+recompute and restate the useful v2.4 diagnostics under v2.5 artifacts when
+they become part of a candidate package.
+
 ## Verify
 
 From `research/`:

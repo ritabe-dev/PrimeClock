@@ -138,6 +138,25 @@ def check_public_verification_expectations(
         )
 
 
+def check_source_readme_version_line_workflow(
+    failures: list[str],
+    text: str,
+) -> None:
+    if "PrimeClock Development Repository" not in text:
+        return
+    for needle in [
+        "Version-Line Workflow",
+        "`v2.3.0` | immutable public DOI release",
+        "`v2.4.x` | source-only bridge",
+        "`v2.5.x` | next candidate line",
+        "`maintenance/v2.x.y` | rare patch line",
+        "Gate R: research story",
+        "Gate C: candidate integrity",
+        "Gate P: public promotion",
+    ]:
+        require_contains(failures, text, needle, "README.md")
+
+
 def check_zenodo_version_doi_finalized(
     failures: list[str],
     *,
@@ -195,6 +214,7 @@ def main() -> int:
     readme = read(repo_root, "README.md")
     check_root_readme(failures, readme, tag)
     check_readme_research_position(failures, readme, "README.md")
+    check_source_readme_version_line_workflow(failures, readme)
 
     public_readme_template = read(repo_root, "release/public/README.template.md")
     check_readme_research_position(

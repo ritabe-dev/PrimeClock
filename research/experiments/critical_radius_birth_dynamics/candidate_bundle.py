@@ -51,9 +51,16 @@ CHECK_TEXT_IGNORED_FILE_PATTERNS = (
 
 FORBIDDEN_PATH_MARKERS = {
     "AGENTS",
+    "candidate_workflow_v2_4",
+    "candidate_workflow_v2_5",
+    "check_v2_4",
+    "check_v2_5",
     "no_multigap",
     "prc_no_multigap",
     "prc_v2_4",
+    "prc_v2_5",
+    "v2_4",
+    "v2_5",
     "private_notes",
     "review_packages",
     "scratch",

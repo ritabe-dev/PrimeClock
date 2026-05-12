@@ -34,6 +34,7 @@ MODES = {
     "bundle",
     "slow",
     "research-review",
+    "source-only-hygiene",
     "artifact-freshness",
     "manifest-consistency",
     "process-hygiene",
@@ -179,6 +180,91 @@ def bundle_experiment_sources(bundle_manifest: dict[str, Any], experiment_dir: s
         if relative:
             sources.add(relative)
     return sources
+
+
+def bundle_manifest_files_and_dirs(bundle_manifest: dict[str, Any]) -> tuple[set[str], set[str]]:
+    files: set[str] = set()
+    dirs: set[str] = set()
+    for entry in bundle_manifest.get("root_file_map", []):
+        files.add(entry["source"])
+    for key in ["root_files", "research_files"]:
+        files.update(bundle_manifest.get(key, []))
+    dirs.update(bundle_manifest.get("research_dirs", []))
+    return files, dirs
+
+
+def load_public_release_files_and_dirs(
+    repo_root: Path,
+    *,
+    release_config_path: str,
+    release_builder_path: str,
+) -> tuple[set[str], set[str]]:
+    scripts_dir = repo_root / "scripts"
+    if str(scripts_dir) not in sys.path:
+        sys.path.insert(0, str(scripts_dir))
+    builder_path = resolve_path(repo_root, release_builder_path)
+    spec = importlib.util.spec_from_file_location("public_release_builder_for_hygiene", builder_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"could not load public release builder: {builder_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    release_config = load_json(resolve_path(repo_root, release_config_path))
+    files = set(module.root_files(release_config))
+    files.update(module.research_files(release_config))
+    for source, _target in module.ROOT_FILE_MAP:
+        files.add(source)
+    dirs = set(module.RESEARCH_DIRS)
+    return files, dirs
+
+
+def source_path_is_in_sources(path: str, files: set[str], dirs: set[str]) -> bool:
+    if path in files:
+        return True
+    normalized_dirs = {directory.rstrip("/") for directory in dirs}
+    return any(path.startswith(f"{directory}/") for directory in normalized_dirs)
+
+
+def check_source_only_hygiene(config: dict[str, Any], *, repo_root: Path) -> None:
+    source_only = config.get("source_only_research")
+    if not isinstance(source_only, dict):
+        raise SystemExit("source-only hygiene failure: missing source_only_research config")
+
+    files = source_only.get("files", [])
+    accepted_markers = source_only.get("accepted_name_markers", [])
+    failures: list[str] = []
+    for relative_path in files:
+        path = resolve_path(repo_root, relative_path)
+        if not path.is_file():
+            failures.append(f"missing source-only research file: {relative_path}")
+        if accepted_markers and not any(marker in Path(relative_path).name for marker in accepted_markers):
+            failures.append(f"source-only research file does not follow version naming: {relative_path}")
+
+    candidate_files: set[str] = set()
+    candidate_dirs: set[str] = set()
+    for manifest_path in source_only.get("candidate_bundle_manifests", []):
+        manifest = load_json(resolve_path(repo_root, manifest_path))
+        manifest_files, manifest_dirs = bundle_manifest_files_and_dirs(manifest)
+        candidate_files.update(manifest_files)
+        candidate_dirs.update(manifest_dirs)
+
+    public_files, public_dirs = load_public_release_files_and_dirs(
+        repo_root,
+        release_config_path=source_only["public_release_config"],
+        release_builder_path=source_only["public_release_builder"],
+    )
+
+    for relative_path in files:
+        if source_path_is_in_sources(relative_path, candidate_files, candidate_dirs):
+            failures.append(f"source-only research file is in candidate bundle sources: {relative_path}")
+        if source_path_is_in_sources(relative_path, public_files, public_dirs):
+            failures.append(f"source-only research file is in public release sources: {relative_path}")
+
+    if failures:
+        for failure in failures:
+            print(f"FAIL: source-only hygiene failure: {failure}")
+        raise SystemExit(1)
+    print("source-only research hygiene check passed")
 
 
 def load_standalone_expected_hash_paths(path: Path) -> set[str]:
@@ -582,6 +668,8 @@ def main() -> int:
         }
         if args.mode in {"research-review", "all"}:
             check_research_review(config, repo_root=repo_root)
+        if args.mode in {"source-only-hygiene", "all"}:
+            check_source_only_hygiene(config, repo_root=repo_root)
         if args.mode in {"artifact-freshness", "all"}:
             check_artifact_freshness(config, repo_root=repo_root, variables=variables)
         if args.mode in {"manifest-consistency", "all"}:

@@ -18,6 +18,21 @@ Target handling:
 
 ## Current Entries
 
+### v2.3.0 Zenodo Archive DOI Wording Snapshot
+
+Affected release: v2.3.0
+Type: docs clarification
+Impact: docs only
+Decision: v2.3.0 tag and Zenodo archive remain immutable. Some README-style
+files inside the Zenodo archive preserve the tag-time wording that the version
+DOI was pending, but the GitHub Release asset, `main`, release notes, and
+Zenodo metadata have been updated to the issued version DOI
+`10.5281/zenodo.20119473`. This does not change any finite certificate claim
+and does not require a v2.3.1 patch release.
+Target handling: treat the Zenodo archive contents as the historical snapshot
+attached to the tag. For the finalized v2.3.0 version DOI, use the GitHub
+Release page, the current release notes, and Zenodo metadata.
+
 ### v2.2.4 README Research-Position Clarification
 
 Affected release: v2.2.4

@@ -37,11 +37,18 @@ FORBIDDEN_FILENAME_PARTS = {
     "candidate_bundle",
     "candidate_bundle_manifest",
     "candidate_workflow",
+    "candidate_workflow_v2_4",
+    "candidate_workflow_v2_5",
     "candidate_README",
     "candidate_research_README",
+    "check_v2_4",
+    "check_v2_5",
     "promotion_manifest",
     "prc_no_multigap",
     "prc_v2_4",
+    "prc_v2_5",
+    "v2_4",
+    "v2_5",
 }
 
 FORBIDDEN_TEXT_PATTERNS = [
