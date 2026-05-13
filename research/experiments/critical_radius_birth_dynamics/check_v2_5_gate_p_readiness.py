@@ -309,8 +309,7 @@ def check_publication_plan_note() -> dict[str, str]:
 def check_public_theorem_readme_v1() -> dict[str, str]:
     text = normalized_text(PUBLIC_THEOREM_README_V1)
     required = [
-        "prepared public theorem README text",
-        "pending explicit release execution",
+        "public theorem README text for v2.5.0-prc-public-theorem",
         "finite exact aperture-orbit separator theorem",
         "B4->B5",
         "B5->B6",
@@ -337,8 +336,7 @@ def check_public_theorem_readme_v1() -> dict[str, str]:
 def check_public_theorem_release_notes_v1() -> dict[str, str]:
     text = normalized_text(PUBLIC_THEOREM_RELEASE_NOTES_V1)
     required = [
-        "prepared release notes text",
-        "pending explicit release execution",
+        "release notes text for v2.5.0-prc-public-theorem",
         "PRC v2.5: finite aperture-orbit separator theorem",
         "v2.5.0-prc-public-theorem",
         "Close(row) iff m(row) > 0",

@@ -23,6 +23,9 @@ V2_5_CANDIDATE_MANIFEST_REL = (
 V2_5_PUBLIC_THEOREM_MANIFEST_REL = (
     f"{EXPERIMENT_REL}/public_theorem_manifest_v2_5_v0_1.json"
 )
+V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_5_v1_0.json"
+)
 PROFILE_DEFAULTS = {
     "v2_5_candidate": {
         "manifest": V2_5_CANDIDATE_MANIFEST_REL,
@@ -31,6 +34,10 @@ PROFILE_DEFAULTS = {
     "v2_5_public_theorem": {
         "manifest": V2_5_PUBLIC_THEOREM_MANIFEST_REL,
         "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-public-theorem-review",
+    },
+    "v2_5_public_theorem_release": {
+        "manifest": V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-public-theorem-release",
     },
 }
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
@@ -120,7 +127,8 @@ def missing_manifest_hint(manifest_path: str | Path) -> str:
     return (
         f"missing candidate manifest: {manifest_path}. "
         "For v2.5, pass --profile v2_5_candidate, "
-        "--profile v2_5_public_theorem, or an explicit --manifest path."
+        "--profile v2_5_public_theorem, --profile v2_5_public_theorem_release, "
+        "or an explicit --manifest path."
     )
 
 

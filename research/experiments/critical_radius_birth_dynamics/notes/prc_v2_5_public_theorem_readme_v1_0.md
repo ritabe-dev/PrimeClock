@@ -1,8 +1,7 @@
 # PRC v2.5: Finite Aperture-Orbit Separator Theorem
 
-Status: prepared public theorem README text, pending explicit release execution.
-This file does not create a tag, GitHub Release, Zenodo upload, DOI, or public
-B8 claim.
+Status: public theorem README text for `v2.5.0-prc-public-theorem`.
+This theorem does not create a Zenodo DOI and does not make any public B8 claim.
 
 ## What Is Proved
 
@@ -77,5 +76,4 @@ independently regenerate the full PRC transition universe from first principles.
 ## Citation
 
 Do not cite a Zenodo DOI for this v2.5 theorem until a Zenodo archive exists.
-Use the repository tag and GitHub Release metadata once a release is explicitly
-created.
+Use the repository tag and GitHub Release metadata for this release.

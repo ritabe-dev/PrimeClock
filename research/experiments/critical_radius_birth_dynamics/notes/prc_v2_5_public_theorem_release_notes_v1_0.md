@@ -1,8 +1,7 @@
 # PRC v2.5 Public Theorem Release Notes
 
-Status: prepared release notes text, pending explicit release execution.  This
-file does not create a tag, GitHub Release, Zenodo upload, DOI, or public B8
-claim.
+Status: release notes text for `v2.5.0-prc-public-theorem`.  This release does
+not create a Zenodo DOI and does not make any public B8 claim.
 
 ## Release Title
 

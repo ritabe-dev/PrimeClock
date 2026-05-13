@@ -11,12 +11,18 @@ from fractions import Fraction
 from pathlib import Path
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-PUBLIC_MANIFEST = EXPERIMENT_DIR / "public_theorem_manifest_v2_5_v0_1.json"
+PUBLIC_REVIEW_MANIFEST = EXPERIMENT_DIR / "public_theorem_manifest_v2_5_v0_1.json"
+PUBLIC_RELEASE_MANIFEST = (
+    EXPERIMENT_DIR / "public_theorem_release_manifest_v2_5_v1_0.json"
+)
 PUBLIC_THEOREM_DRAFT = (
     EXPERIMENT_DIR / "notes" / "prc_v2_5_public_theorem_draft_v0_1.md"
 )
-PUBLIC_README_DRAFT = (
+PUBLIC_REVIEW_README = (
     EXPERIMENT_DIR / "notes" / "prc_v2_5_public_readme_draft_v0_1.md"
+)
+PUBLIC_RELEASE_README = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_public_theorem_readme_v1_0.md"
 )
 PUBLIC_SUMMARY_CSV = (
     EXPERIMENT_DIR / "data" / "prc_v2_5_public_theorem_summary_v0_1.csv"
@@ -95,7 +101,22 @@ def check_public_theorem_wording() -> dict[str, str]:
 
 
 def check_public_readme_wording() -> dict[str, str]:
-    text = normalized_text(PUBLIC_README_DRAFT)
+    text = normalized_text(active_public_readme_path())
+    if active_public_readme_path() == PUBLIC_RELEASE_README:
+        required = [
+            "public theorem README text for v2.5.0-prc-public-theorem",
+            "What Is Proved",
+            "What Is Not Proved",
+            "Exact Counts",
+            "How To Verify",
+            "finite exact aperture-orbit separator theorem",
+            "committed finite certificate artifacts",
+            "does not independently regenerate the full PRC transition universe from first principles",
+            "python3 research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
+            term("no B", "8 theorem"),
+            term("no general ", "pre", "dictor"),
+        ]
+        return phrase_check("v2_5_public_readme_wording", text, required, [])
     required = [
         "draft for scoped public theorem review",
         "not a release",
@@ -115,16 +136,32 @@ def check_public_readme_wording() -> dict[str, str]:
 
 
 def check_public_manifest_boundary() -> dict[str, str]:
-    manifest = json.loads(PUBLIC_MANIFEST.read_text(encoding="utf-8"))
+    manifest_path = active_public_manifest_path()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     sources = manifest_sources(manifest)
-    required = {
-        "research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
-        "research/experiments/critical_radius_birth_dynamics/public_theorem_manifest_v2_5_v0_1.json",
-        "research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml",
-        "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
-        "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
-        "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_readme_draft_v0_1.md",
-    }
+    if manifest_path == PUBLIC_RELEASE_MANIFEST:
+        required = {
+            "research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
+            "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_5_v1_0.json",
+            "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml",
+            "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md",
+        }
+        expected_id = "prc_v2_5_public_theorem_release_bundle_v1_0"
+        expected_public_release = True
+    else:
+        required = {
+            "research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
+            "research/experiments/critical_radius_birth_dynamics/public_theorem_manifest_v2_5_v0_1.json",
+            "research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml",
+            "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_readme_draft_v0_1.md",
+        }
+        expected_id = "prc_v2_5_public_theorem_review_bundle_v0_1"
+        expected_public_release = False
     forbidden_terms = [
         term("b", "8"),
         term("pre", "dictor"),
@@ -136,8 +173,8 @@ def check_public_manifest_boundary() -> dict[str, str]:
     for source in sources:
         source_lower = source.lower()
         failures += int(any(term in source_lower for term in forbidden_terms))
-    failures += int(manifest.get("public_release") is not False)
-    failures += int(manifest.get("id") != "prc_v2_5_public_theorem_review_bundle_v0_1")
+    failures += int(manifest.get("public_release") is not expected_public_release)
+    failures += int(manifest.get("id") != expected_id)
     return check_bool(
         "v2_5_public_manifest_boundary",
         failures == 0,
@@ -390,6 +427,14 @@ def manifest_sources(manifest: dict) -> set[str]:
     sources.update(manifest.get("root_files", []))
     sources.update(manifest.get("research_files", []))
     return sources
+
+
+def active_public_manifest_path() -> Path:
+    return PUBLIC_RELEASE_MANIFEST if PUBLIC_RELEASE_MANIFEST.is_file() else PUBLIC_REVIEW_MANIFEST
+
+
+def active_public_readme_path() -> Path:
+    return PUBLIC_RELEASE_README if PUBLIC_RELEASE_README.is_file() else PUBLIC_REVIEW_README
 
 
 def normalized_text(path: Path) -> str:
