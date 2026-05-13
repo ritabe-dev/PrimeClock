@@ -42,6 +42,9 @@ MODES = {
     "manifest-consistency",
     "process-hygiene",
     "promotion-readiness",
+    "public-theorem-bundle",
+    "public-theorem-integrity",
+    "public-theorem-review",
     "all",
 }
 
@@ -727,6 +730,13 @@ def main() -> int:
             run_gate(config, "gate-c", repo_root=repo_root, variables=variables)
         if args.mode in {"gate-p-readiness", "all"}:
             run_gate(config, "gate-p-readiness", repo_root=repo_root, variables=variables)
+        if args.mode in {"public-theorem-integrity", "all"}:
+            run_gate(config, "public-theorem-integrity", repo_root=repo_root, variables=variables)
+        if args.mode in {"public-theorem-bundle", "all"}:
+            run_gate(config, "public-theorem-bundle", repo_root=repo_root, variables=variables)
+        if args.mode == "public-theorem-review":
+            run_gate(config, "public-theorem-integrity", repo_root=repo_root, variables=variables)
+            run_gate(config, "public-theorem-bundle", repo_root=repo_root, variables=variables)
         if args.mode in {"slow", "all"}:
             run_gate(config, "slow", repo_root=repo_root, variables=variables)
         if args.mode in {"promotion-readiness", "all"}:

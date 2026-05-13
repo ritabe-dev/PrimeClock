@@ -1,7 +1,6 @@
 # PRC v2.5 Public README Draft
 
-Status: Gate P public-facing README draft. This document is a draft for scoped
-public theorem review only. It does not authorize a public release.
+Status: Gate P public-facing README draft. This document is a draft for scoped public theorem review; not a release.
 
 ## What Is Proved
 
@@ -40,11 +39,9 @@ stress-control material and are not part of the theorem.
 | `B4->B5` exact-hull obstructed multi-component families | 65 |
 | `B5->B6` exact-hull obstructed multi-component families | 913 |
 | `B6->B7` exact-hull obstructed multi-component families | 13,785 |
-| B8 selected close rows | 32 |
-| B8 sibling non-birth controls | 576 |
-| B8 matched non-birth controls | 64 |
 
-The B8 counts are stress-control diagnostics only.
+B8 stress-control counts are intentionally not included in this public theorem
+review bundle.
 
 ## How To Reproduce
 
@@ -60,16 +57,8 @@ Run the reviewer-facing checks:
 
 ```bash
 python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  candidate-integrity
-
-python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  gate-c
-
-python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  gate-p-readiness
+  --config research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml \
+  public-theorem-review
 ```
 
 ## Limitations

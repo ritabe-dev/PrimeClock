@@ -1,0 +1,54 @@
+{
+  "id": "prc_v2_5_public_theorem_review_bundle_v0_1",
+  "status": "public_theorem_review_manifest",
+  "public_release": false,
+  "base_public_release": "v2.3.0",
+  "default_name": "PrimeClock-v2.5-public-theorem-review-v0.1",
+  "candidate_name_prefix": "PrimeClock-v2.5-public-theorem-review-",
+  "links_title": "PRC v2.5 Public Theorem Review Links",
+  "hash_manifest": "SHA256SUMS",
+  "allowed_path_markers": [
+    "check_v2_5",
+    "prc_v2_4",
+    "prc_v2_5",
+    "public_theorem_workflow_v2_5",
+    "v2_4",
+    "v2_5"
+  ],
+  "root_file_map": [
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_readme_draft_v0_1.md",
+      "target": "README.md"
+    }
+  ],
+  "root_files": [
+    "LICENSE",
+    "scripts/verify_candidate_workflow.py"
+  ],
+  "research_files": [
+    "research/experiments/critical_radius_birth_dynamics/candidate_bundle.py",
+    "research/experiments/critical_radius_birth_dynamics/public_theorem_manifest_v2_5_v0_1.json",
+    "research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_family_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_lift_diagnostics_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_family_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_readme_draft_v0_1.md"
+  ],
+  "research_dirs": [],
+  "required_readme_phrases": [
+    "draft for scoped public theorem review",
+    "finite exact aperture-orbit separator theorem",
+    "recorded complete transition scopes",
+    "no B8 theorem",
+    "no general predictor"
+  ],
+  "promotion_boundary": [
+    "do not upload this public theorem review bundle to Zenodo",
+    "do not treat this bundle as a public release",
+    "do not add B8 stress-control artifacts to this public theorem review bundle",
+    "do not claim an asymptotic law or general prediction theorem"
+  ]
+}

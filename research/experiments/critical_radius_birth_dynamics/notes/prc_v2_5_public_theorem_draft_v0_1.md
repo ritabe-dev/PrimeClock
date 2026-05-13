@@ -1,7 +1,8 @@
 # PRC v2.5 Public Theorem Draft
 
-Status: Gate P theorem-preparation draft. This draft does not authorize a
-public release, GitHub Release, Zenodo upload, DOI, or public B8 claim.
+Status: Gate P theorem-preparation draft for scoped public theorem review.
+This draft is not a release and does not authorize a GitHub Release, Zenodo
+upload, DOI, or public B8 claim.
 
 ## Definitions
 
@@ -10,16 +11,19 @@ public release, GitHub Release, Zenodo upload, DOI, or public B8 claim.
   prime-prefix transition scopes.
 - `Residual set R_k(r)`: the uncovered circular subset associated with a
   residue family after the recorded prefix through layer k.
-- `Lift`: a child residue row obtained from a recorded parent family by the
-  next-prime grid action in the checked transition scope.
-- `Close lift`: a checked lift whose child residual set is empty after the
-  next-prime arc is applied.
-- `Capacity-admissible non-close control`: a checked non-close family or lift
-  whose residual width passes the capacity screen but does not close.
-- `Signed aperture-orbit margin`: the exact signed containment margin between
-  the parent residual aperture and the next-prime orbit arc in the checked row.
-  Positive margin is used here as a terminal containment certificate, not a
-  general predictor from prefix history alone.
+- `U_{4->5}`, `U_{5->6}`, `U_{6->7}`: the finite row universes recorded for
+  the complete checked transition scopes `B4->B5`, `B5->B6`, and `B6->B7`.
+  Their union is the only universe used by the theorem draft.
+- `row`: one recorded lift row in one of the finite universes.
+- `Close(row)`: the row has empty child residual set after the next-prime arc.
+- `Capacity(row)`: the row belongs to a capacity-admissible parent family in
+  the recorded family audit.
+- `NonClose(row)`: the row is checked and not close.
+- `m(row)`: the exact signed aperture-orbit margin, computed as the signed
+  rational containment margin between the parent residual aperture and the
+  next-prime orbit arc in the checked row. Positive margin is used here as a
+  terminal containment certificate, not a general predictor from prefix history
+  alone.
 - `Exact-hull obstruction`: the checked condition that a multi-component parent
   residual set has a circular hull too wide for a single next-prime arc to close
   all components at once.
@@ -32,10 +36,10 @@ The theorem draft is limited to the recorded complete transition scopes:
 - `B5->B6`
 - `B6->B7`
 
-The finite universe is the committed v2.5 candidate audit universe for those
-recorded complete transition scopes. It includes the checked close lifts,
-birth rows, capacity-admissible non-close controls, and exact-hull support rows
-listed in the candidate manifest and verified by the v2.5 checkers.
+The finite universe is `U = U_{4->5} union U_{5->6} union U_{6->7}`. It is
+materialized by the public theorem review bundle as the recorded phase-gate
+family audit, lift diagnostic audit, exact-hull family audit, and compact
+public theorem summary table.
 
 No `B8` full graph, unbounded layer family, asymptotic regime, or prime
 distribution law is part of this theorem draft.
@@ -50,6 +54,11 @@ has positive signed aperture-orbit margin, and every checked
 capacity-admissible non-close control has non-positive signed aperture-orbit
 margin.
 
+In predicate form, for every `row in U`:
+
+- `Close(row) => m(row) > 0`
+- `Capacity(row) and NonClose(row) => m(row) <= 0`
+
 Equivalently, within these checked finite scopes, capacity alone is not a
 separator, while the signed aperture-orbit margin is a finite exact terminal
 containment certificate. This is not a general predictor.
@@ -58,8 +67,9 @@ containment certificate. This is not a general predictor.
 
 The theorem is finite and audit-based. The enumeration certificate consists of:
 
-- the committed transition and phase diagnostic CSV files for the recorded
-  complete transition scopes;
+- the committed phase-gate family and lift diagnostic CSV files for the
+  recorded complete transition scopes;
+- the exact-hull family audit and compact public theorem summary table;
 - exact rational arithmetic in the helper and checker scripts;
 - manifest-bound files in the v2.5 candidate bundle;
 - checker assertions that recompute or re-audit the headline counts against the
@@ -113,16 +123,8 @@ Reviewer-facing Gate C and Gate P dry-run commands:
 
 ```bash
 python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  candidate-integrity
-
-python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  gate-c
-
-python scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml \
-  gate-p-readiness
+  --config research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml \
+  public-theorem-review
 ```
 
 The public theorem claim should not be reduced to "the scripts pass." The claim

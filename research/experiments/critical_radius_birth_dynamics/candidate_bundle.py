@@ -17,6 +17,22 @@ from pathlib import Path, PurePosixPath
 EXPERIMENT_REL = "research/experiments/critical_radius_birth_dynamics"
 MANIFEST_REL = f"{EXPERIMENT_REL}/candidate_bundle_manifest_v0_1.json"
 DEFAULT_OUTPUT_PARENT = Path(tempfile.gettempdir()) / "prc-v2.3-candidate-latest"
+V2_5_CANDIDATE_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/candidate_bundle_manifest_v2_5_v0_1.json"
+)
+V2_5_PUBLIC_THEOREM_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/public_theorem_manifest_v2_5_v0_1.json"
+)
+PROFILE_DEFAULTS = {
+    "v2_5_candidate": {
+        "manifest": V2_5_CANDIDATE_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-candidate-latest",
+    },
+    "v2_5_public_theorem": {
+        "manifest": V2_5_PUBLIC_THEOREM_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-public-theorem-review",
+    },
+}
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
 LATEST_LINKS_FILE = "LATEST_CANDIDATE_LINKS.md"
 HASH_MANIFEST_FILE = "SHA256SUMS"
@@ -103,9 +119,8 @@ def load_manifest(source_root: Path, manifest_path: str | Path = MANIFEST_REL) -
 def missing_manifest_hint(manifest_path: str | Path) -> str:
     return (
         f"missing candidate manifest: {manifest_path}. "
-        "For v2.5, pass --manifest "
-        "research/experiments/critical_radius_birth_dynamics/"
-        "candidate_bundle_manifest_v2_5_v0_1.json"
+        "For v2.5, pass --profile v2_5_candidate, "
+        "--profile v2_5_public_theorem, or an explicit --manifest path."
     )
 
 
@@ -523,24 +538,39 @@ def main() -> int:
     source_root = repo_root()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--profile",
+        choices=sorted(PROFILE_DEFAULTS),
+        help=(
+            "named bundle profile. Existing v2.3 defaults are used when this "
+            "is omitted and --manifest is not supplied."
+        ),
+    )
+    parser.add_argument(
         "--manifest",
-        default=MANIFEST_REL,
-        help=f"candidate manifest path, relative to repo root (default: {MANIFEST_REL})",
+        help=(
+            "candidate manifest path, relative to repo root. Overrides "
+            "--profile when supplied."
+        ),
     )
     parser.add_argument(
         "--out",
         type=Path,
-        default=DEFAULT_OUTPUT_PARENT,
-        help=f"output parent directory (default: {DEFAULT_OUTPUT_PARENT})",
+        help=(
+            "output parent directory. Defaults to the selected profile output, "
+            f"or {DEFAULT_OUTPUT_PARENT} for legacy v2.3."
+        ),
     )
     parser.add_argument("--name")
     parser.add_argument("--zip", action="store_true", help="also write a ZIP next to the bundle")
     parser.add_argument("--check", type=Path, help="check an existing candidate bundle")
     args = parser.parse_args()
+    profile = PROFILE_DEFAULTS.get(args.profile or "", {})
+    manifest_path = args.manifest or profile.get("manifest", MANIFEST_REL)
+    output_parent = (args.out or profile.get("output_parent", DEFAULT_OUTPUT_PARENT)).resolve()
     try:
-        manifest = load_manifest(source_root, args.manifest)
+        manifest = load_manifest(source_root, manifest_path)
     except FileNotFoundError:
-        print(f"FAIL: {missing_manifest_hint(args.manifest)}")
+        print(f"FAIL: {missing_manifest_hint(manifest_path)}")
         return 1
     name = args.name or manifest["default_name"]
 
@@ -553,7 +583,6 @@ def main() -> int:
         print(f"OK: {args.check.resolve()}")
         return 0
 
-    output_parent = args.out.resolve()
     try:
         bundle_root = build_bundle(source_root, output_parent, name, manifest)
     except (FileExistsError, ValueError) as error:

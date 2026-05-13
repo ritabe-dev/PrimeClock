@@ -1,0 +1,52 @@
+candidate_id: prc_v2_5_public_theorem_review
+status: public_theorem_review_packaging
+public_release: false
+base_public_release: v2.3.0
+goal: >
+  Separate the v2.5 internal candidate bundle from a narrow B5/B6/B7 finite
+  exact aperture-orbit separator theorem review bundle.
+readiness:
+  current_completion_percent: "97-98"
+  reusable_workflow_percent: "97-98"
+  estimated_slices_to_target: "0.5 for final public release / DOI decision"
+
+gates:
+  public-theorem-integrity:
+    description: v2.5 public theorem wording, manifest, and finite certificate checks
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py
+        expected_stdout: "check_v2_5_public_theorem_integrity: checks=6, failed=0"
+  public-theorem-bundle:
+    description: v2.5 scoped public theorem review bundle build and self-check
+    commands:
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --profile
+          - v2_5_public_theorem
+          - --out
+          - "{tmp}/prc-v2.5-public-theorem"
+          - --zip
+        expected_stdout: "candidate package directory:"
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --profile
+          - v2_5_public_theorem
+          - --check
+          - "{tmp}/prc-v2.5-public-theorem/PrimeClock-v2.5-public-theorem-review-v0.1"
+        expected_stdout: "OK:"
+      - cwd: "{tmp}/prc-v2.5-public-theorem"
+        command:
+          - unzip
+          - -t
+          - PrimeClock-v2.5-public-theorem-review-v0.1.zip
+        expected_stdout: "No errors detected"
+  public-theorem-review:
+    description: Combined public theorem review gate; implemented by workflow mode.
+    commands: []
