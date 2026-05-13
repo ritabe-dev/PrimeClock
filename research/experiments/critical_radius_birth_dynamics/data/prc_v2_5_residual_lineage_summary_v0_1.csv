@@ -1,0 +1,29 @@
+metric,scope,lineage_role,value,note
+state_transition_rows,all,all,369824,canonical v2.5 residual state rows across represented lineages
+final_lineages,all,all,53336,one final row per represented lineage
+final_close_lineages,all,close,770,checked close/birth lineages in B5/B6/B7 scopes
+capacity_nonclose_lineages,all,capacity_nonclose,40498,capacity-satisfied non-close controls
+nonbirth_close_lineages,all,all,0,must remain zero for checked scopes
+positive_phase_close_lineages,all,close,770,close rows selected by positive signed phase margin
+near_miss_lineages,all,near_miss,770,best non-close sibling controls inside close-capable families
+final_lineages_by_scope,B5_birth_parent_siblings,all,308,represented final lineages by scope
+final_lineages_by_role,B5_birth_parent_siblings,capacity_nonclose,154,final lineages by residual-dynamics role
+final_lineages_by_role,B5_birth_parent_siblings,close,14,final lineages by residual-dynamics role
+final_lineages_by_role,B5_birth_parent_siblings,near_miss,14,final lineages by residual-dynamics role
+final_lineages_by_role,B5_birth_parent_siblings,nonclose,126,final lineages by residual-dynamics role
+final_lineages_by_scope,B6_birth_parent_siblings,all,2912,represented final lineages by scope
+final_lineages_by_role,B6_birth_parent_siblings,capacity_nonclose,2366,final lineages by residual-dynamics role
+final_lineages_by_role,B6_birth_parent_siblings,close,42,final lineages by residual-dynamics role
+final_lineages_by_role,B6_birth_parent_siblings,near_miss,42,final lineages by residual-dynamics role
+final_lineages_by_role,B6_birth_parent_siblings,nonclose,462,final lineages by residual-dynamics role
+final_lineages_by_scope,B7_birth_parent_siblings,all,50116,represented final lineages by scope
+final_lineages_by_role,B7_birth_parent_siblings,capacity_nonclose,37978,final lineages by residual-dynamics role
+final_lineages_by_role,B7_birth_parent_siblings,close,714,final lineages by residual-dynamics role
+final_lineages_by_role,B7_birth_parent_siblings,near_miss,714,final lineages by residual-dynamics role
+final_lineages_by_role,B7_birth_parent_siblings,nonclose,10710,final lineages by residual-dynamics role
+transition_label_count,all,close,770,all layer-to-layer transition labels
+transition_label_count,all,miss,169080,all layer-to-layer transition labels
+transition_label_count,all,partial_close,16294,all layer-to-layer transition labels
+transition_label_count,all,split,16294,all layer-to-layer transition labels
+transition_label_count,all,start,53336,all layer-to-layer transition labels
+transition_label_count,all,trim,114050,all layer-to-layer transition labels

@@ -1,0 +1,37 @@
+feature_set,scope,candidate_count,close_count,top_k_hit_rate,false_positive_rate,near_miss_recovery,diagnostic
+width only,all,53336,770,0/770,770/770,0/770,ranking diagnostic; not a statistical model
+width only,B5_birth_parent_siblings,308,14,0/14,14/14,0/14,ranking diagnostic; not a statistical model
+width only,B6_birth_parent_siblings,2912,42,0/42,42/42,0/42,ranking diagnostic; not a statistical model
+width only,B7_birth_parent_siblings,50116,714,0/714,714/714,0/714,ranking diagnostic; not a statistical model
+capacity only,all,53336,770,50/770,720/770,49/770,ranking diagnostic; not a statistical model
+capacity only,B5_birth_parent_siblings,308,14,1/14,13/14,1/14,ranking diagnostic; not a statistical model
+capacity only,B6_birth_parent_siblings,2912,42,3/42,39/42,3/42,ranking diagnostic; not a statistical model
+capacity only,B7_birth_parent_siblings,50116,714,42/714,672/714,42/714,ranking diagnostic; not a statistical model
+phase margin only,all,53336,770,770/770,0/770,0/770,ranking diagnostic; not a statistical model
+phase margin only,B5_birth_parent_siblings,308,14,14/14,0/14,0/14,ranking diagnostic; not a statistical model
+phase margin only,B6_birth_parent_siblings,2912,42,42/42,0/42,0/42,ranking diagnostic; not a statistical model
+phase margin only,B7_birth_parent_siblings,50116,714,714/714,0/714,0/714,ranking diagnostic; not a statistical model
+state features,all,53336,770,0/770,770/770,0/770,ranking diagnostic; not a statistical model
+state features,B5_birth_parent_siblings,308,14,0/14,14/14,0/14,ranking diagnostic; not a statistical model
+state features,B6_birth_parent_siblings,2912,42,0/42,42/42,0/42,ranking diagnostic; not a statistical model
+state features,B7_birth_parent_siblings,50116,714,0/714,714/714,0/714,ranking diagnostic; not a statistical model
+transition grammar,all,53336,770,50/770,720/770,50/770,ranking diagnostic; not a statistical model
+transition grammar,B5_birth_parent_siblings,308,14,1/14,13/14,1/14,ranking diagnostic; not a statistical model
+transition grammar,B6_birth_parent_siblings,2912,42,4/42,38/42,3/42,ranking diagnostic; not a statistical model
+transition grammar,B7_birth_parent_siblings,50116,714,42/714,672/714,42/714,ranking diagnostic; not a statistical model
+arithmetic strata,all,53336,770,50/770,720/770,49/770,ranking diagnostic; not a statistical model
+arithmetic strata,B5_birth_parent_siblings,308,14,1/14,13/14,1/14,ranking diagnostic; not a statistical model
+arithmetic strata,B6_birth_parent_siblings,2912,42,3/42,39/42,3/42,ranking diagnostic; not a statistical model
+arithmetic strata,B7_birth_parent_siblings,50116,714,42/714,672/714,42/714,ranking diagnostic; not a statistical model
+state + grammar,all,53336,770,22/770,748/770,22/770,ranking diagnostic; not a statistical model
+state + grammar,B5_birth_parent_siblings,308,14,1/14,13/14,1/14,ranking diagnostic; not a statistical model
+state + grammar,B6_birth_parent_siblings,2912,42,3/42,39/42,3/42,ranking diagnostic; not a statistical model
+state + grammar,B7_birth_parent_siblings,50116,714,2/714,712/714,2/714,ranking diagnostic; not a statistical model
+state + grammar + phase margin,all,53336,770,770/770,0/770,0/770,ranking diagnostic; not a statistical model
+state + grammar + phase margin,B5_birth_parent_siblings,308,14,14/14,0/14,0/14,ranking diagnostic; not a statistical model
+state + grammar + phase margin,B6_birth_parent_siblings,2912,42,42/42,0/42,0/42,ranking diagnostic; not a statistical model
+state + grammar + phase margin,B7_birth_parent_siblings,50116,714,714/714,0/714,0/714,ranking diagnostic; not a statistical model
+state + grammar + phase margin + arithmetic,all,53336,770,770/770,0/770,0/770,ranking diagnostic; not a statistical model
+state + grammar + phase margin + arithmetic,B5_birth_parent_siblings,308,14,14/14,0/14,0/14,ranking diagnostic; not a statistical model
+state + grammar + phase margin + arithmetic,B6_birth_parent_siblings,2912,42,42/42,0/42,0/42,ranking diagnostic; not a statistical model
+state + grammar + phase margin + arithmetic,B7_birth_parent_siblings,50116,714,714/714,0/714,0/714,ranking diagnostic; not a statistical model

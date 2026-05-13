@@ -1,5 +1,11 @@
 # Critical Radius and Birth Dynamics Sandbox
 
+> PRC v2.5 candidate reviewer note: this file is a legacy experiment index and
+> contains historical v2.3/v2.4 experiment context.  For v2.5 candidate review,
+> start from the bundle root `README.md`, `research/README.md`, or
+> `candidate_README_v2_5_v0_1.md`.  The v2.5 candidate bundle is not a public
+> release.
+
 Status: internal-candidate.
 Release eligibility: excluded from public release until promoted.
 

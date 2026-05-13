@@ -1,0 +1,4 @@
+scope,family_count,multi_component_family_count,hull_obstructed_multi_count,multi_component_close_count,single_component_close_count,close_lift_count,b8_checked_close_single_gap_count,status
+B4_to_B5_full,208,65,65,0,14,14,32,checked_hull_obstruction
+B5_to_B6_full,2274,913,913,0,42,42,32,checked_hull_obstruction
+B6_to_B7_full,29520,13785,13785,0,714,714,32,checked_hull_obstruction

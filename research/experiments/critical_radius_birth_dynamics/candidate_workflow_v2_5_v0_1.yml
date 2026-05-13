@@ -1,0 +1,237 @@
+candidate_id: prc_v2_5_residual_dynamics
+status: candidate_packaging
+public_release: false
+base_public_release: v2.3.0
+goal: >
+  Close Gate R for v2.5 and keep the aperture-orbit residual-dynamics result
+  as an internal candidate package line until Gate P decides public readiness.
+readiness:
+  current_completion_percent: "99"
+  reusable_workflow_percent: "95-97"
+  estimated_slices_to_target: "0.5-1 for Gate P review after candidate packaging"
+
+gates:
+  quick:
+    description: v2.5 source-only research diagnostics
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_residual_dynamics.py
+        expected_stdout: "check_v2_5_residual_dynamics: checks=8, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_margin_genesis.py
+        expected_stdout: "check_v2_5_margin_genesis: checks=6, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_prefix_grammar.py
+        expected_stdout: "check_v2_5_prefix_grammar: checks=4, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_obstruction_refinement.py
+        expected_stdout: "check_v2_5_obstruction_refinement: checks=5, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_b8_targeted_probe.py
+        expected_stdout: "check_v2_5_b8_targeted_probe: checks=4, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_b8_aperture_orbit_probe.py
+        expected_stdout: "check_v2_5_b8_aperture_orbit_probe: checks=10, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_b8_control_calibration.py
+        expected_stdout: "check_v2_5_b8_control_calibration: checks=8, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_aperture_orbit_backtest.py
+        expected_stdout: "check_v2_5_aperture_orbit_backtest: checks=6, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_exact_hull_obstruction.py
+        expected_stdout: "check_v2_5_exact_hull_obstruction: checks=6, failed=0"
+      - cwd: research
+        command:
+          - "{python}"
+          - -m
+          - pytest
+          - tests/test_critical_radius_birth_dynamics_v2_5_research.py
+          - -q
+  candidate-integrity:
+    description: v2.5 candidate theorem and manifest integrity
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_candidate_integrity.py
+        expected_stdout: "check_v2_5_candidate_integrity: checks=15, failed=0"
+  bundle:
+    description: v2.5 internal candidate package build and self-check
+    commands:
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --manifest
+          - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v2_5_v0_1.json
+          - --out
+          - "{tmp}/prc-v2.5-candidate"
+          - --name
+          - PrimeClock-v2.5-candidate-ci
+          - --zip
+        expected_stdout: "candidate package directory:"
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --manifest
+          - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v2_5_v0_1.json
+          - --check
+          - "{tmp}/prc-v2.5-candidate/PrimeClock-v2.5-candidate-ci"
+        expected_stdout: "OK:"
+      - cwd: "{tmp}/prc-v2.5-candidate"
+        command:
+          - unzip
+          - -t
+          - PrimeClock-v2.5-candidate-ci.zip
+        expected_stdout: "No errors detected"
+  gate-c:
+    description: v2.5 lightweight Gate C focused pytest
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - -m
+          - pytest
+          - tests/test_critical_radius_birth_dynamics_v2_5_research.py
+          - -q
+  gate-p-readiness:
+    description: v2.5 Gate P dry-run wording and reviewer-aid checks
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_5_gate_p_readiness.py
+        expected_stdout: "check_v2_5_gate_p_readiness: checks=7, failed=0"
+
+research_review:
+  note: research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_review_note_v0_1.md
+  required_sections:
+    - Core idea
+    - Claim shape
+    - Why now
+    - Stop line
+    - Risks
+    - Decision
+  allowed_decisions:
+    - package as candidate
+    - continue research
+    - defer
+  candidate_packaging_decision: package as candidate
+  forbidden_artifact_basis_terms:
+    - ZIP
+    - SHA256SUMS
+    - BUNDLE_FILE_MANIFEST
+    - manifest consistency
+    - bundle check
+
+source_only_research:
+  version_line: v2.5
+  accepted_name_markers:
+    - v2_5
+    - prc_v2_5
+  files:
+    - research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_5_v0_1.yml
+    - research/experiments/critical_radius_birth_dynamics/v2_5_residual_dynamics.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_lineage_grammar.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_obstruction_classification.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_feature_ablation.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_margin_genesis.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_prefix_grammar.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_obstruction_refinement.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_b8_targeted_probe.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_b8_aperture_orbit_probe.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_b8_control_calibration.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_aperture_orbit_backtest.py
+    - research/experiments/critical_radius_birth_dynamics/v2_5_exact_hull_obstruction.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_candidate_integrity.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_residual_dynamics.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_lineage_grammar.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_obstruction_classification.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_feature_ablation.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_margin_genesis.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_prefix_grammar.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_obstruction_refinement.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_b8_targeted_probe.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_b8_aperture_orbit_probe.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_b8_control_calibration.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_aperture_orbit_backtest.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_exact_hull_obstruction.py
+    - research/experiments/critical_radius_birth_dynamics/check_v2_5_gate_p_readiness.py
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_residual_state_transitions_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_residual_lineage_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_lineage_grammar_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_obstruction_classes_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_feature_ablation_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_prefix_margin_genesis_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_close_nearmiss_counterfactual_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_prefix_lineage_grammar_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_prefix_grammar_enrichment_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_refined_obstruction_classes_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_obstruction_bucket_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_high_potential_probe_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_failure_forensics_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_parent_selection_audit_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_aperture_orbit_probe_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_aperture_orbit_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_birth_overlap_audit_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_control_overlap_audit_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_sibling_nonbirth_controls_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_matched_nonbirth_controls_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_b8_control_calibration_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_aperture_orbit_backtest_family_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_aperture_orbit_backtest_scope_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_aperture_orbit_backtest_b8_comparison_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_family_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_summary_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_gate_p_summary_tables_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/candidate_README_v2_5_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/candidate_research_README_v2_5_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v2_5_v0_1.json
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_feature_ablation_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_margin_genesis_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_b8_aperture_orbit_heatmap_v0_1.png
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_review_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_residual_dynamics_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_lineage_grammar_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_obstruction_classification_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_breakthrough_diagnostics_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_b8_aperture_orbit_predictor_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_b8_control_calibration_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_aperture_orbit_backtest_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_exact_hull_obstruction_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_candidate_fixed_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_theorem_candidate_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_gate_p_checklist_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_reviewer_glossary_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_seed_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_deferred_review_resolution_v0_1.md
+    - research/tests/test_critical_radius_birth_dynamics_v2_5_research.py
+  # This is intentionally the v2.3 candidate manifest and is only for the full
+  # repo leak guard. The v2.5 candidate bundle uses
+  # candidate_bundle_manifest_v2_5_v0_1.json in the bundle gate.
+  # source-only-hygiene is not a ZIP reviewer command; it checks that v2.5 files
+  # do not leak into older v2.3 candidate/public release sources.
+  candidate_bundle_manifests:
+    - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v0_1.json
+  public_release_config: release/public/release_config.json
+  public_release_builder: scripts/build_public_release.py

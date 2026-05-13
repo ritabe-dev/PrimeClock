@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""Verify PRC v2.5 Gate P dry-run wording and reviewer aids."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import tempfile
+from pathlib import Path
+
+EXPERIMENT_DIR = Path(__file__).resolve().parent
+
+CANDIDATE_README = EXPERIMENT_DIR / "candidate_README_v2_5_v0_1.md"
+CANDIDATE_RESEARCH_README = EXPERIMENT_DIR / "candidate_research_README_v2_5_v0_1.md"
+THEOREM_NOTE = EXPERIMENT_DIR / "notes" / "prc_v2_5_theorem_candidate_note_v0_1.md"
+GATE_P_CHECKLIST = EXPERIMENT_DIR / "notes" / "prc_v2_5_gate_p_checklist_v0_1.md"
+GLOSSARY_NOTE = EXPERIMENT_DIR / "notes" / "prc_v2_5_reviewer_glossary_v0_1.md"
+SUMMARY_CSV = EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_summary_tables_v0_1.csv"
+DEFAULT_OUT = (
+    Path(tempfile.gettempdir())
+    / "prc_v2_5_gate_p_readiness_verification_v0_1.csv"
+)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", default=DEFAULT_OUT, type=Path)
+    args = parser.parse_args()
+
+    checks = verification_rows()
+    write_checks(checks, args.out)
+    failed = sum(int(row["failed"]) for row in checks)
+    print(
+        "check_v2_5_gate_p_readiness: "
+        f"checks={len(checks)}, failed={failed}, out={args.out}"
+    )
+    return 0 if failed == 0 else 1
+
+
+def verification_rows() -> list[dict[str, str]]:
+    return [
+        check_certificate_wording(),
+        check_b8_boundary(),
+        check_obstruction_boundary(),
+        check_reviewer_glossary(),
+        check_summary_counts(),
+        check_zip_reviewer_path(),
+        check_gate_p_default(),
+    ]
+
+
+def check_certificate_wording() -> dict[str, str]:
+    text = combined_text(CANDIDATE_README, CANDIDATE_RESEARCH_README, THEOREM_NOTE)
+    required = [
+        "finite exact signed containment certificate",
+        "terminal containment certificate",
+        "not an independent general predictor",
+        "capacity alone leaves many false positives",
+    ]
+    forbidden = ["A general predictor for prime-prefix births"]
+    return phrase_check("v2_5_gate_p_certificate_wording", text, required, forbidden)
+
+
+def check_b8_boundary() -> dict[str, str]:
+    text = combined_text(CANDIDATE_README, CANDIDATE_RESEARCH_README, THEOREM_NOTE, GATE_P_CHECKLIST)
+    required = [
+        "selected stress-control sample",
+        "not coverage, recall, or holdout validation",
+        "k8 sample overlap",
+        "B8 evidence is not a proof that the separator generalizes",
+        "no B8 full graph",
+        "no B8 public theorem",
+    ]
+    forbidden: list[str] = []
+    return phrase_check("v2_5_gate_p_b8_boundary", text, required, forbidden)
+
+
+def check_obstruction_boundary() -> dict[str, str]:
+    text = combined_text(GATE_P_CHECKLIST, GLOSSARY_NOTE, THEOREM_NOTE)
+    required = [
+        "sibling_dominated",
+        "split_history",
+        "underreach",
+        "wrong_side",
+        "finite diagnostics",
+        "not a layer-general causal taxonomy",
+    ]
+    return phrase_check("v2_5_gate_p_obstruction_boundary", text, required, [])
+
+
+def check_reviewer_glossary() -> dict[str, str]:
+    text = normalized_text(GLOSSARY_NOTE)
+    required = [
+        "capacity",
+        "phase margin",
+        "aperture tension",
+        "close",
+        "birth",
+        "near-miss",
+        "source-only",
+        "candidate-included",
+        "stress control",
+    ]
+    return phrase_check("v2_5_gate_p_reviewer_glossary", text, required, [])
+
+
+def check_summary_counts() -> dict[str, str]:
+    rows = read_csv_dicts(SUMMARY_CSV)
+    values = {
+        (row["section"], row["scope"], row["metric"]): row["value"]
+        for row in rows
+    }
+    expected = {
+        ("historical_totals", "all", "close_or_birth_rows"): "770",
+        ("historical_totals", "all", "capacity_nonclose_families"): "2430",
+        ("historical_totals", "all", "nonclose_positive_margin_rows"): "0",
+        ("exact_hull", "B4_to_B5_full", "hull_obstructed_multi_component_families"): "65",
+        ("exact_hull", "B5_to_B6_full", "hull_obstructed_multi_component_families"): "913",
+        ("exact_hull", "B6_to_B7_full", "hull_obstructed_multi_component_families"): "13785",
+        ("B8_stress_control", "selected_panel", "selected_close_rows"): "32",
+        ("B8_stress_control", "selected_panel", "sibling_nonbirth_controls"): "576",
+        ("B8_stress_control", "selected_panel", "matched_nonbirth_controls"): "64",
+        ("B8_stress_control", "selected_panel", "k8_sample_overlap"): "1",
+    }
+    failures = sum(values.get(key) != value for key, value in expected.items())
+    return check_bool(
+        "v2_5_gate_p_summary_counts",
+        failures == 0,
+        total=len(expected),
+        failed=failures,
+    )
+
+
+def check_zip_reviewer_path() -> dict[str, str]:
+    text = combined_text(CANDIDATE_README, CANDIDATE_RESEARCH_README)
+    required = [
+        "unzip -t -> candidate-integrity -> gate-c",
+        "ZIP reviewer-facing workflow modes are candidate-integrity, gate-c, and bundle",
+        "quick mode is full diagnostics",
+        "source-only-hygiene mode is a full repo only",
+    ]
+    forbidden = [
+        "unzip -t -> candidate-integrity -> gate-c -> quick optional",
+        "source-only-hygiene` mode is a v2.5 -> v2.3/public non-leak guard",
+    ]
+    return phrase_check("v2_5_gate_p_zip_reviewer_path", text, required, forbidden)
+
+
+def check_gate_p_default() -> dict[str, str]:
+    text = combined_text(GATE_P_CHECKLIST)
+    required = [
+        "does not authorize a public release",
+        "default Gate P decision remains not ready",
+        "release metadata ready",
+        "Zenodo DOI plan ready",
+    ]
+    return phrase_check("v2_5_gate_p_default_not_ready", text, required, [])
+
+
+def combined_text(*paths: Path) -> str:
+    return "\n".join(normalized_text(path) for path in paths)
+
+
+def normalized_text(path: Path) -> str:
+    return " ".join(path.read_text(encoding="utf-8").replace("`", "").split())
+
+
+def read_csv_dicts(path: Path) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def phrase_check(
+    name: str,
+    text: str,
+    required: list[str],
+    forbidden: list[str],
+) -> dict[str, str]:
+    normalized = text.lower()
+    missing = [phrase for phrase in required if phrase.lower() not in normalized]
+    forbidden_found = [
+        phrase for phrase in forbidden if phrase.lower() in normalized
+    ]
+    failed = len(missing) + len(forbidden_found)
+    return check_bool(
+        name,
+        failed == 0,
+        total=len(required) + len(forbidden),
+        failed=failed,
+    )
+
+
+def check_bool(name: str, passed: bool, *, total: int, failed: int) -> dict[str, str]:
+    return {
+        "check": name,
+        "total": str(total),
+        "passed": str(max(total - failed, 0)),
+        "failed": str(failed),
+        "status": "pass" if passed else "fail",
+    }
+
+
+def write_checks(rows: list[dict[str, str]], output_path: Path) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["check", "total", "passed", "failed", "status"],
+            lineterminator="\n",
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

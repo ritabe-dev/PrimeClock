@@ -1,0 +1,31 @@
+metric,selection_group,value,note
+probe_parent_count,aperture_frontier_top_400,400,deduped parents carrying this group label
+probe_row_count,aperture_frontier_top_400,7600,19 lifts per selected parent
+close_count,aperture_frontier_top_400,32,source-only B8 geometry close rows
+positive_margin_count,aperture_frontier_top_400,32,positive signed containment margins
+distinct_parent_measure_count,aperture_frontier_top_400,25,diversity check for parent gap widths
+probe_parent_count,capacity_top_200,200,deduped parents carrying this group label
+probe_row_count,capacity_top_200,3800,19 lifts per selected parent
+close_count,capacity_top_200,0,source-only B8 geometry close rows
+positive_margin_count,capacity_top_200,0,positive signed containment margins
+distinct_parent_measure_count,capacity_top_200,1,diversity check for parent gap widths
+probe_parent_count,hash_control_200,200,deduped parents carrying this group label
+probe_row_count,hash_control_200,3800,19 lifts per selected parent
+close_count,hash_control_200,1,source-only B8 geometry close rows
+positive_margin_count,hash_control_200,1,positive signed containment margins
+distinct_parent_measure_count,hash_control_200,128,diversity check for parent gap widths
+probe_parent_count,near_zero_margin_200,200,deduped parents carrying this group label
+probe_row_count,near_zero_margin_200,3800,19 lifts per selected parent
+close_count,near_zero_margin_200,0,source-only B8 geometry close rows
+positive_margin_count,near_zero_margin_200,0,positive signed containment margins
+distinct_parent_measure_count,near_zero_margin_200,12,diversity check for parent gap widths
+probe_parent_count,orbit_diversity_400,400,deduped parents carrying this group label
+probe_row_count,orbit_diversity_400,7600,19 lifts per selected parent
+close_count,orbit_diversity_400,32,source-only B8 geometry close rows
+positive_margin_count,orbit_diversity_400,32,positive signed containment margins
+distinct_parent_measure_count,orbit_diversity_400,38,diversity check for parent gap widths
+selected_parent_count,all,767,deduped selected parents
+probe_row_count,all,14573,deduped selected parents times 19 lifts
+failure_forensics_rows,capacity_top_200,3800,negative baseline rows from existing B8 targeted probe
+b8_birth_overlap_audit_rows,all,32,independent coverage checks for close rows
+b8_exact_birth_rows,all,32,close rows independently verified as B8 births

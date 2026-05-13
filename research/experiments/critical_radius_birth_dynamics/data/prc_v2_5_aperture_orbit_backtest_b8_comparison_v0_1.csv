@@ -1,0 +1,11 @@
+cohort,metric,value,note
+B8_sibling_control,birth_close_count,32,same-parent B8 close lifts
+B8_sibling_control,sibling_nonbirth_count,576,same-parent sibling non-birth lifts
+B8_sibling_control,birth_close_positive_margin_count,32,strict positive margin among B8 birth siblings
+B8_sibling_control,sibling_nonbirth_positive_margin_count,0,must remain zero for same-parent non-birth controls
+B8_matched_nonbirth_control,matched_nonbirth_count,64,capacity-comparable matched non-birth rows
+B8_matched_nonbirth_control,matched_positive_margin_count,0,must remain zero for matched non-birth controls
+B8_matched_nonbirth_control,matched_measure_bucket_count,10,matched controls should not collapse to one width
+B8_matched_nonbirth_control,matched_reflection_orbit_count,10,matched controls should not collapse to one orbit
+B8_sample_calibration,k8_sample_rows,200,"sample calibration only, not recall"
+B8_sample_calibration,k8_sample_overlap_with_32,1,"overlap count only, not recall"

@@ -1,0 +1,10 @@
+metric,value,note
+sibling_parent_count,32,32 audited B8 birth parent families
+sibling_row_count,608,19 lifts for each audited birth parent
+sibling_birth_close_count,32,one audited close lift per birth parent
+sibling_nonbirth_count,576,remaining sibling lifts
+matched_nonbirth_count,64,two deterministic matched non-birth controls per audited birth
+matched_measure_bucket_count,10,matched controls should not collapse to one width
+matched_reflection_orbit_count,10,matched controls should not collapse to one orbit
+k8_sample_rows,200,existing k8 birth sample rows used only for calibration
+k8_sample_overlap_with_32,1,overlap count only; not recall

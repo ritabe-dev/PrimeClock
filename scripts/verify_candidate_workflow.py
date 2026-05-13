@@ -32,6 +32,9 @@ except ImportError as exc:  # pragma: no cover - exercised only in missing deps 
 MODES = {
     "quick",
     "bundle",
+    "candidate-integrity",
+    "gate-c",
+    "gate-p-readiness",
     "slow",
     "research-review",
     "source-only-hygiene",
@@ -230,6 +233,15 @@ def check_source_only_hygiene(config: dict[str, Any], *, repo_root: Path) -> Non
     if not isinstance(source_only, dict):
         raise SystemExit("source-only hygiene failure: missing source_only_research config")
 
+    def require_full_repo_input(relative_path: str, *, role: str) -> Path:
+        path = resolve_path(repo_root, relative_path)
+        if not path.exists():
+            raise SystemExit(
+                "source-only hygiene is not applicable outside full repo: "
+                f"missing {role} input {relative_path}"
+            )
+        return path
+
     files = source_only.get("files", [])
     accepted_markers = source_only.get("accepted_name_markers", [])
     failures: list[str] = []
@@ -243,11 +255,15 @@ def check_source_only_hygiene(config: dict[str, Any], *, repo_root: Path) -> Non
     candidate_files: set[str] = set()
     candidate_dirs: set[str] = set()
     for manifest_path in source_only.get("candidate_bundle_manifests", []):
-        manifest = load_json(resolve_path(repo_root, manifest_path))
+        manifest = load_json(
+            require_full_repo_input(manifest_path, role="candidate manifest")
+        )
         manifest_files, manifest_dirs = bundle_manifest_files_and_dirs(manifest)
         candidate_files.update(manifest_files)
         candidate_dirs.update(manifest_dirs)
 
+    require_full_repo_input(source_only["public_release_config"], role="public release config")
+    require_full_repo_input(source_only["public_release_builder"], role="public release builder")
     public_files, public_dirs = load_public_release_files_and_dirs(
         repo_root,
         release_config_path=source_only["public_release_config"],
@@ -647,6 +663,21 @@ def resolve_optional_path(path: Path | None) -> Path | None:
     return path.resolve() if path else None
 
 
+def require_config_sections(
+    config: dict[str, Any],
+    *,
+    mode: str,
+    sections: list[str],
+) -> None:
+    missing = [section for section in sections if section not in config]
+    if missing:
+        raise SystemExit(
+            "candidate workflow config does not define mode "
+            f"{mode!r} for this config; missing config section(s): "
+            + ", ".join(missing)
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=sorted(MODES))
@@ -671,16 +702,39 @@ def main() -> int:
         if args.mode in {"source-only-hygiene", "all"}:
             check_source_only_hygiene(config, repo_root=repo_root)
         if args.mode in {"artifact-freshness", "all"}:
+            require_config_sections(
+                config,
+                mode="artifact-freshness",
+                sections=["artifact_freshness"],
+            )
             check_artifact_freshness(config, repo_root=repo_root, variables=variables)
         if args.mode in {"manifest-consistency", "all"}:
+            require_config_sections(
+                config,
+                mode="manifest-consistency",
+                sections=["paths", "manifest_consistency"],
+            )
             check_manifest_consistency(config, repo_root=repo_root)
         if args.mode in {"quick", "all"}:
             run_gate(config, "quick", repo_root=repo_root, variables=variables)
+        if args.mode in {"candidate-integrity", "all"}:
+            run_gate(config, "candidate-integrity", repo_root=repo_root, variables=variables)
         if args.mode in {"bundle", "all"}:
             run_gate(config, "bundle", repo_root=repo_root, variables=variables)
+        if args.mode == "gate-c":
+            run_gate(config, "candidate-integrity", repo_root=repo_root, variables=variables)
+            run_gate(config, "bundle", repo_root=repo_root, variables=variables)
+            run_gate(config, "gate-c", repo_root=repo_root, variables=variables)
+        if args.mode in {"gate-p-readiness", "all"}:
+            run_gate(config, "gate-p-readiness", repo_root=repo_root, variables=variables)
         if args.mode in {"slow", "all"}:
             run_gate(config, "slow", repo_root=repo_root, variables=variables)
         if args.mode in {"promotion-readiness", "all"}:
+            require_config_sections(
+                config,
+                mode="promotion-readiness",
+                sections=["promotion_policy"],
+            )
             text = write_promotion_readiness_report(config, report_path=args.report)
             check_process_hygiene(
                 config,
@@ -689,6 +743,11 @@ def main() -> int:
                 pr_body_path=pr_body_path,
             )
         elif args.mode == "process-hygiene":
+            require_config_sections(
+                config,
+                mode="process-hygiene",
+                sections=["promotion_policy"],
+            )
             check_process_hygiene(config, repo_root=repo_root, pr_body_path=pr_body_path)
     return 0
 

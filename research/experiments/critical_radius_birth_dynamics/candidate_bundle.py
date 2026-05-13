@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build or check the internal PRC v2.3 candidate bundle."""
+"""Build or check an internal PRC candidate bundle."""
 
 from __future__ import annotations
 
@@ -93,10 +93,20 @@ def repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def load_manifest(source_root: Path) -> dict[str, Any]:
-    path = source_root / MANIFEST_REL
+def load_manifest(source_root: Path, manifest_path: str | Path = MANIFEST_REL) -> dict[str, Any]:
+    raw_path = Path(manifest_path)
+    path = raw_path if raw_path.is_absolute() else source_root / raw_path
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def missing_manifest_hint(manifest_path: str | Path) -> str:
+    return (
+        f"missing candidate manifest: {manifest_path}. "
+        "For v2.5, pass --manifest "
+        "research/experiments/critical_radius_birth_dynamics/"
+        "candidate_bundle_manifest_v2_5_v0_1.json"
+    )
 
 
 def copy_file(
@@ -140,7 +150,11 @@ def path_is_relative_to(path: Path, root: Path) -> bool:
     return True
 
 
-def validate_bundle_name(name: str) -> str:
+def candidate_name_prefix(manifest: dict[str, Any]) -> str:
+    return str(manifest.get("candidate_name_prefix", CANDIDATE_NAME_PREFIX))
+
+
+def validate_bundle_name(name: str, *, prefix: str = CANDIDATE_NAME_PREFIX) -> str:
     if not name:
         raise ValueError("bundle name must not be empty")
     candidate = Path(name)
@@ -150,10 +164,8 @@ def validate_bundle_name(name: str) -> str:
         raise ValueError(f"unsafe bundle name: {name!r}")
     if not CANDIDATE_NAME_PATTERN.fullmatch(name):
         raise ValueError(f"unsafe bundle name: {name!r}")
-    if not name.startswith(CANDIDATE_NAME_PREFIX):
-        raise ValueError(
-            f"bundle name must start with {CANDIDATE_NAME_PREFIX!r}: {name!r}"
-        )
+    if not name.startswith(prefix):
+        raise ValueError(f"bundle name must start with {prefix!r}: {name!r}")
     return name
 
 
@@ -175,7 +187,7 @@ def build_bundle(
     name: str,
     manifest: dict[str, Any],
 ) -> Path:
-    safe_name = validate_bundle_name(name)
+    safe_name = validate_bundle_name(name, prefix=candidate_name_prefix(manifest))
     output_parent = output_parent.resolve()
     output_parent.mkdir(parents=True, exist_ok=True)
     bundle_root = (output_parent / safe_name).resolve()
@@ -245,8 +257,16 @@ def write_bundle_file_manifest(bundle_root: Path) -> None:
     )
 
 
-def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
+def effective_forbidden_path_markers(manifest: dict[str, Any]) -> set[str]:
+    markers = set(FORBIDDEN_PATH_MARKERS)
+    markers.difference_update(manifest.get("allowed_path_markers", []))
+    markers.update(manifest.get("forbidden_path_markers", []))
+    return markers
+
+
+def forbidden_bundle_paths(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
     failures: list[str] = []
+    forbidden_markers = effective_forbidden_path_markers(manifest)
     for path in bundle_root.rglob("*"):
         relative = path.relative_to(bundle_root)
         if should_ignore_check_path(relative):
@@ -255,7 +275,7 @@ def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
         if path.name == ".DS_Store":
             failures.append(f"forbidden local metadata file: {relative_text}")
             continue
-        for marker in sorted(FORBIDDEN_PATH_MARKERS, key=lambda value: (-len(value), value)):
+        for marker in sorted(forbidden_markers, key=lambda value: (-len(value), value)):
             if marker in relative_text:
                 failures.append(f"forbidden candidate path marker {marker}: {relative_text}")
                 break
@@ -270,8 +290,16 @@ def forbidden_bundle_paths(bundle_root: Path) -> list[str]:
     return failures
 
 
-def forbidden_bundle_text(bundle_root: Path) -> list[str]:
+def effective_forbidden_text_markers(manifest: dict[str, Any]) -> set[str]:
+    markers = set(FORBIDDEN_TEXT_MARKERS)
+    markers.difference_update(manifest.get("allowed_text_markers", []))
+    markers.update(manifest.get("forbidden_text_markers", []))
+    return markers
+
+
+def forbidden_bundle_text(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
     failures: list[str] = []
+    forbidden_markers = effective_forbidden_text_markers(manifest)
     for path in bundle_root.rglob("*"):
         relative_path = path.relative_to(bundle_root)
         if should_ignore_check_path(relative_path):
@@ -289,7 +317,7 @@ def forbidden_bundle_text(bundle_root: Path) -> list[str]:
             continue
         relative = relative_path.as_posix()
         text = path.read_text(encoding="utf-8")
-        for marker in FORBIDDEN_TEXT_MARKERS:
+        for marker in forbidden_markers:
             if marker in text:
                 failures.append(f"forbidden candidate text marker {marker}: {relative}")
         for pattern in FORBIDDEN_TEXT_PATTERNS:
@@ -359,6 +387,8 @@ def write_latest_paths(
     output_parent: Path,
     bundle_root: Path,
     zip_path: Path | None,
+    *,
+    title: str = "PRC Candidate Links",
 ) -> tuple[Path, Path]:
     latest_path = output_parent / LATEST_PATHS_FILE
     lines = [
@@ -368,7 +398,7 @@ def write_latest_paths(
     latest_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     links_path = output_parent / LATEST_LINKS_FILE
     link_lines = [
-        "# PRC v2.3 Candidate Links",
+        f"# {title}",
         "",
         f"- [Candidate package directory]({bundle_root})",
         (
@@ -383,7 +413,8 @@ def write_latest_paths(
 
 
 def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
-    failures: list[str] = forbidden_bundle_paths(bundle_root) + forbidden_bundle_text(bundle_root)
+    failures: list[str] = forbidden_bundle_paths(bundle_root, manifest)
+    failures.extend(forbidden_bundle_text(bundle_root, manifest))
     readme = bundle_root / "README.md"
     if not readme.is_file():
         failures.append("missing README.md")
@@ -490,18 +521,28 @@ def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
 
 def main() -> int:
     source_root = repo_root()
-    manifest = load_manifest(source_root)
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--manifest",
+        default=MANIFEST_REL,
+        help=f"candidate manifest path, relative to repo root (default: {MANIFEST_REL})",
+    )
     parser.add_argument(
         "--out",
         type=Path,
         default=DEFAULT_OUTPUT_PARENT,
         help=f"output parent directory (default: {DEFAULT_OUTPUT_PARENT})",
     )
-    parser.add_argument("--name", default=manifest["default_name"])
+    parser.add_argument("--name")
     parser.add_argument("--zip", action="store_true", help="also write a ZIP next to the bundle")
     parser.add_argument("--check", type=Path, help="check an existing candidate bundle")
     args = parser.parse_args()
+    try:
+        manifest = load_manifest(source_root, args.manifest)
+    except FileNotFoundError:
+        print(f"FAIL: {missing_manifest_hint(args.manifest)}")
+        return 1
+    name = args.name or manifest["default_name"]
 
     if args.check:
         failures = check_bundle(args.check.resolve(), manifest)
@@ -514,14 +555,19 @@ def main() -> int:
 
     output_parent = args.out.resolve()
     try:
-        bundle_root = build_bundle(source_root, output_parent, args.name, manifest)
+        bundle_root = build_bundle(source_root, output_parent, name, manifest)
     except (FileExistsError, ValueError) as error:
         print(f"FAIL: {error}")
         return 1
     zip_path = None
     if args.zip:
         zip_path = write_zip(bundle_root)
-    latest_path, links_path = write_latest_paths(output_parent, bundle_root, zip_path)
+    latest_path, links_path = write_latest_paths(
+        output_parent,
+        bundle_root,
+        zip_path,
+        title=manifest.get("links_title", "PRC Candidate Links"),
+    )
     print(f"candidate package directory: {bundle_root}")
     print(f"candidate ZIP: {zip_path if zip_path else 'not generated'}")
     print(f"latest path note: {latest_path}")

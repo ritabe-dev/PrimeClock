@@ -1,0 +1,4 @@
+scope,family_count,lift_count,close_count,birth_count,capacity_close_families,capacity_nonclose_families,false_positive_pressure,close_phase_rank_1_count,close_positive_margin_count,nonclose_positive_margin_count,nonbirth_close_count,separator_status
+B4_to_B5_full,208,2288,14,14,14,14,14/14,14,14,0,0,stable_separator
+B5_to_B6_full,2274,29562,42,42,42,182,182/42,42,42,0,0,stable_separator
+B6_to_B7_full,29520,501840,714,714,714,2234,2234/714,714,714,0,0,stable_separator
