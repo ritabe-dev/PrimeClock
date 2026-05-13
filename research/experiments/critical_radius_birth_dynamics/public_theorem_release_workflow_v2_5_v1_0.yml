@@ -2,6 +2,10 @@ candidate_id: prc_v2_5_public_theorem_release
 status: public_theorem_release_packaging
 public_release: true
 base_public_release: v2.3.0
+github_release_tag: v2.5.0-prc-public-theorem
+github_release_url: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem
+zenodo_version_doi: 10.5281/zenodo.20154561
+release_asset_name: PrimeClock-v2.5-public-theorem-v1.0.zip
 goal: >
   Package the v2.5 B4->B5, B5->B6, and B6->B7 finite exact
   aperture-orbit separator theorem as a public release archive.
@@ -19,6 +23,16 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py
         expected_stdout: "check_v2_5_public_theorem_integrity: checks=9, failed=0"
+  public-theorem-doi-integrity:
+    description: multi-version DOI, release, citation, and asset metadata checks
+    commands:
+      - cwd: .
+        command:
+          - "{python}"
+          - scripts/check_release_doi_integrity.py
+          - --release-id
+          - v2.5.0-prc-public-theorem
+        expected_stdout: "check_release_doi_integrity: checked=1, failed=0"
   public-theorem-bundle:
     description: v2.5 public theorem release bundle build and self-check
     commands:

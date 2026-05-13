@@ -71,11 +71,36 @@ and creates the GitHub Release with the generated zip asset only for
 
 ## Stage B: Zenodo DOI Metadata
 
-After Zenodo publishes the GitHub release archive, finalize the version DOI:
+Public releases are tracked in `release/public/release_registry.json`.  Add or
+update the registry entry before finalizing a DOI.  The registry is the
+multi-version source of truth for tag, GitHub Release URL, version DOI, citation
+policy, and release asset metadata.  This prevents a later release such as
+v2.5 or v2.6 from accidentally rewriting v2.3-only metadata.
+
+Check all registered release metadata before and after DOI work:
+
+```bash
+python3 scripts/check_release_doi_integrity.py --all
+```
+
+For the legacy v2.3 public line, after Zenodo publishes the GitHub release
+archive, finalize the version DOI:
 
 ```bash
 python3 scripts/finalize_release_doi.py
 python3 scripts/finalize_release_doi.py --execute
+```
+
+For registry-managed releases, use the release-id based finalizer instead:
+
+```bash
+python3 scripts/finalize_version_doi.py \
+  --release-id <registered-release-id> \
+  --version-doi 10.5281/zenodo.<version-record>
+python3 scripts/finalize_version_doi.py \
+  --release-id <registered-release-id> \
+  --version-doi 10.5281/zenodo.<version-record> \
+  --execute
 ```
 
 Then update source metadata, rebuild the public bundle, push the public
@@ -87,3 +112,6 @@ python3 scripts/finalize_release_doi.py --execute
 
 Do not force-update public tags. The tag archive may contain the concept DOI;
 the main branch, release body, and release asset carry the final version DOI.
+For new release lines, do not run DOI finalization until the release has a
+registry entry.  Zenodo record metadata itself is still checked separately in
+Zenodo UI/API after the repo-side metadata is consistent.

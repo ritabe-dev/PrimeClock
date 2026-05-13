@@ -59,6 +59,17 @@ jobs:
       - name: Build and inspect release bundle
         run: python scripts/verify_public_release.py --out "$RUNNER_TEMP/primeclock-public-release" --zip
 
+  release_doi_integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Check registered release DOI metadata
+        run: python scripts/check_release_doi_integrity.py --all
+
   v2_3_candidate_quick:
     runs-on: ubuntu-latest
     timeout-minutes: 10
