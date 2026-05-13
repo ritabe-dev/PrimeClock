@@ -48,10 +48,9 @@ distribution law is part of this theorem draft.
 
 PRC v2.5 finite exact aperture-orbit separator theorem.
 
-For the recorded complete transition scopes `B4->B5`, `B5->B6`, and `B6->B7`
-under the PRC prime-prefix residual-covering model, positive signed
-aperture-orbit margin exactly separates checked close rows from checked
-non-close rows.
+For every committed checked row in the materialized finite universe `U`, under
+the PRC prime-prefix residual-covering model, positive signed aperture-orbit
+margin exactly separates checked close rows from checked non-close rows.
 
 In predicate form, for every `row in U`:
 
@@ -87,7 +86,7 @@ certificate artifacts for the recorded scopes.
 The separator audit fixes the following headline counts:
 
 | Scope | Families | Lift rows | Close rows | Capacity non-close families | Capacity non-close lift rows | Non-close positive margin rows |
-| --- | ---: | ---: | ---: | ---: |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `B4->B5` | 208 | 2,288 | 14 | 14 | 294 | 0 |
 | `B5->B6` | 2,274 | 29,562 | 42 | 182 | 2,870 | 0 |
 | `B6->B7` | 29,520 | 501,840 | 714 | 2,234 | 49,402 | 0 |

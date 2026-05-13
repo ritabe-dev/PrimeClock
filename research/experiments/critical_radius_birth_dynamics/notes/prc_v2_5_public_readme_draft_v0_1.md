@@ -65,7 +65,8 @@ the research package:
 python3 research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py
 ```
 
-The workflow wrapper is optional and requires `PyYAML`:
+`PyYAML` is not needed for the ZIP-standalone audit above. It is needed only for
+the optional workflow wrapper:
 
 ```bash
 python3 -m pip install PyYAML
