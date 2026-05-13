@@ -1,9 +1,16 @@
-# PrimeClock Public Releases
+# PrimeClock / Prime Reciprocal Covering (PRC)
 
 This repository publishes finite Prime Reciprocal Covering (PRC) artifacts and
 their verification tooling. The current citable result is the scoped v2.5 public
 theorem release; the older v2.3.0 DOI release remains an immutable foundational
 artifact.
+
+## Development App
+
+This repository can also contain the React/Vite PrimeClock visualization app
+under `src/`. The app is development and exploration tooling, and is not part
+of the v2.3 or v2.5 public theorem release bundles. Public release archives are
+built from explicit allowlists and may intentionally exclude the app.
 
 ## Current Public Theorem Release
 
