@@ -580,7 +580,7 @@ def main() -> int:
     except FileNotFoundError:
         print(f"FAIL: {missing_manifest_hint(manifest_path)}")
         return 1
-    name = args.name or manifest["default_name"]
+    name = args.name if args.name is not None else manifest["default_name"]
 
     if args.check:
         failures = check_bundle(args.check.resolve(), manifest)
