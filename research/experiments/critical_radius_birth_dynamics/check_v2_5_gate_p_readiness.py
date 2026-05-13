@@ -30,6 +30,12 @@ PUBLIC_README_DRAFT = (
 PUBLICATION_PLAN_NOTE = (
     EXPERIMENT_DIR / "notes" / "prc_v2_5_publication_plan_v0_1.md"
 )
+PUBLIC_THEOREM_README_V1 = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_public_theorem_readme_v1_0.md"
+)
+PUBLIC_THEOREM_RELEASE_NOTES_V1 = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_public_theorem_release_notes_v1_0.md"
+)
 SUMMARY_CSV = EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_summary_tables_v0_1.csv"
 DECISION_TABLE_CSV = (
     EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_decision_table_v0_1.csv"
@@ -70,6 +76,8 @@ def verification_rows() -> list[dict[str, str]]:
         check_public_theorem_draft(),
         check_public_readme_draft(),
         check_publication_plan_note(),
+        check_public_theorem_readme_v1(),
+        check_public_theorem_release_notes_v1(),
     ]
 
 
@@ -296,6 +304,66 @@ def check_publication_plan_note() -> dict[str, str]:
         "create the GitHub Release now",
     ]
     return phrase_check("v2_5_publication_plan", text, required, forbidden)
+
+
+def check_public_theorem_readme_v1() -> dict[str, str]:
+    text = normalized_text(PUBLIC_THEOREM_README_V1)
+    required = [
+        "prepared public theorem README text",
+        "pending explicit release execution",
+        "finite exact aperture-orbit separator theorem",
+        "B4->B5",
+        "B5->B6",
+        "B6->B7",
+        "Close(row) iff m(row) > 0",
+        "not a general predictor",
+        "Checked lift rows",
+        "533,690",
+        "Non-close positive-margin rows",
+        "0",
+        "check_v2_5_public_theorem_integrity: checks=9, failed=0",
+        "does not independently regenerate the full PRC transition universe from first principles",
+        "no B8 theorem",
+        "no asymptotic law",
+        "Do not cite a Zenodo DOI for this v2.5 theorem until a Zenodo archive exists",
+    ]
+    forbidden = [
+        "B8 full graph is included",
+        "general predictor theorem",
+    ]
+    return phrase_check("v2_5_public_theorem_readme_v1", text, required, forbidden)
+
+
+def check_public_theorem_release_notes_v1() -> dict[str, str]:
+    text = normalized_text(PUBLIC_THEOREM_RELEASE_NOTES_V1)
+    required = [
+        "prepared release notes text",
+        "pending explicit release execution",
+        "PRC v2.5: finite aperture-orbit separator theorem",
+        "v2.5.0-prc-public-theorem",
+        "Close(row) iff m(row) > 0",
+        "finite exact terminal containment certificate",
+        "not a general predictor",
+        "check_v2_5_public_theorem_integrity: checks=9, failed=0",
+        "checked lift rows 533690",
+        "non-close positive-margin rows 0",
+        "B8 theorem",
+        "B8 full graph",
+        "general predictor",
+        "asymptotic law",
+        "Do not add a DOI to this release text until Zenodo has minted the DOI",
+    ]
+    forbidden = [
+        "B8 theorem is proved",
+        "general predictor is proved",
+        "DOI:",
+    ]
+    return phrase_check(
+        "v2_5_public_theorem_release_notes_v1",
+        text,
+        required,
+        forbidden,
+    )
 
 
 def combined_text(*paths: Path) -> str:
