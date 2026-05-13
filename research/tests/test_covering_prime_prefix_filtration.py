@@ -1834,3 +1834,243 @@ def test_finalize_release_doi_detects_version_doi_without_changing_citation(tmp_
     assert 'doi: "10.5281/zenodo.20091722"' in (bundle_root / "CITATION.cff").read_text(
         encoding="utf-8"
     )
+
+
+def _write_registry_fixture(tmp_path: Path, *, doi_state: str = "assigned") -> Path:
+    for relative_path in [
+        "release/public",
+        "docs",
+        "notes",
+        "scripts",
+    ]:
+        (tmp_path / relative_path).mkdir(parents=True, exist_ok=True)
+    version_doi = "10.5281/zenodo.29999999" if doi_state == "assigned" else ""
+    readme_doi = version_doi or "pending Zenodo publication"
+    (tmp_path / "docs" / "README.md").write_text(
+        "Status for v9.9.9-test.\n"
+        f"Version DOI: `{readme_doi}`\n"
+        "no B8 theorem\n"
+        "no general predictor\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "notes" / "RELEASE.md").write_text(
+        "Release notes for v9.9.9-test.\n"
+        f"Version DOI: `{readme_doi}`\n"
+        "no B8 theorem\n"
+        "no general predictor\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "docs" / "CITATION.cff").write_text(
+        "cff-version: 1.2.0\n"
+        'version: "v9.9.9-test"\n'
+        f'doi: "{version_doi or "10.5281/zenodo.20000000"}"\n'
+        'url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v9.9.9-test"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "docs" / "manifest.json").write_text(
+        json.dumps(
+            {
+                "tag": "v9.9.9-test",
+                "zenodo_version_doi": version_doi,
+                "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v9.9.9-test",
+                "default_name": "PrimeClock-v9.9.9-test",
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "docs" / "workflow.yml").write_text(
+        "tag: v9.9.9-test\nasset: PrimeClock-v9.9.9-test.zip\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "CITATION.cff").write_text(
+        'doi: "10.5281/zenodo.20091722"\n',
+        encoding="utf-8",
+    )
+    freshness_text = (
+        "v9.9.9-test\n"
+        "Test release\n"
+        "10.5281/zenodo.29999999\n"
+        "PrimeClock-v9.9.9-test.zip\n"
+    )
+    (tmp_path / "README.md").write_text(freshness_text, encoding="utf-8")
+    (tmp_path / "VERSION_MAP.md").write_text(freshness_text, encoding="utf-8")
+    registry = {
+        "schema_version": 1,
+        "releases": [
+            {
+                "release_id": "v9.9.9-test",
+                "version": "v9.9.9-test",
+                "tag": "v9.9.9-test",
+                "title": "Test release",
+                "release_kind": "doi_release",
+                "doi_state": doi_state,
+                "zenodo_concept_doi": "",
+                "zenodo_version_doi": version_doi,
+                "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v9.9.9-test",
+                "asset_name": "PrimeClock-v9.9.9-test.zip",
+                "manifest_path": "docs/manifest.json",
+                "workflow_path": "docs/workflow.yml",
+                "readme_paths": ["docs/README.md"],
+                "release_notes_paths": ["notes/RELEASE.md"],
+                "citation_paths": ["docs/CITATION.cff"],
+                "citation_doi_policy": "version_doi",
+                "asset_check_paths": ["docs/manifest.json", "docs/workflow.yml"],
+                "non_claim_phrases": ["no B8 theorem", "no general predictor"],
+                "forbidden_phrases": [
+                    "do not cite a Zenodo DOI until a Zenodo archive exists",
+                    "pending Zenodo publication",
+                ],
+            }
+        ],
+    }
+    registry_path = tmp_path / "release" / "public" / "release_registry.json"
+    registry_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+    return registry_path
+
+
+def test_release_doi_integrity_checks_registered_source_releases():
+    repo_root = Path(__file__).parents[2]
+    checker = repo_root / "scripts" / "check_release_doi_integrity.py"
+
+    result = subprocess.run(
+        [sys.executable, str(checker), "--all"],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 0
+    assert "checked=2" in result.stdout
+    assert "v2.3.0" in result.stdout
+    assert "v2.5.0-prc-public-theorem" in result.stdout
+
+
+def test_release_doi_integrity_rejects_stale_pending_text_for_assigned_release(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="assigned")
+    readme = tmp_path / "docs" / "README.md"
+    readme.write_text(
+        readme.read_text(encoding="utf-8")
+        + "\ndo not cite a Zenodo DOI until a Zenodo archive exists\n",
+        encoding="utf-8",
+    )
+    repo_root = Path(__file__).parents[2]
+    checker = repo_root / "scripts" / "check_release_doi_integrity.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(checker),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--all",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 1
+    assert "stale DOI phrase" in result.stdout
+
+
+def test_release_doi_integrity_rejects_v25_style_doi_in_top_level_citation(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="assigned")
+    (tmp_path / "CITATION.cff").write_text(
+        'doi: "10.5281/zenodo.29999999"\n',
+        encoding="utf-8",
+    )
+    repo_root = Path(__file__).parents[2]
+    checker = repo_root / "scripts" / "check_release_doi_integrity.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(checker),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--all",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 1
+    assert "top-level CITATION.cff contains non-v2.3 DOI" in result.stdout
+
+
+def test_finalize_version_doi_rejects_unregistered_release(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="not_assigned")
+    repo_root = Path(__file__).parents[2]
+    finalizer = repo_root / "scripts" / "finalize_version_doi.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(finalizer),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--release-id",
+            "missing-release",
+            "--version-doi",
+            "10.5281/zenodo.29999999",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 1
+    assert "Unknown release_id" in result.stderr or "Unknown release_id" in result.stdout
+
+
+def test_finalize_version_doi_updates_only_registered_paths(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="not_assigned")
+    unrelated = tmp_path / "docs" / "unrelated.md"
+    unrelated.write_text("Version DOI: `10.5281/zenodo.20000000`\n", encoding="utf-8")
+    repo_root = Path(__file__).parents[2]
+    finalizer = repo_root / "scripts" / "finalize_version_doi.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(finalizer),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--release-id",
+            "v9.9.9-test",
+            "--version-doi",
+            "10.5281/zenodo.29999999",
+            "--execute",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 0
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    assert registry["releases"][0]["doi_state"] == "assigned"
+    assert registry["releases"][0]["zenodo_version_doi"] == "10.5281/zenodo.29999999"
+    assert "10.5281/zenodo.29999999" in (tmp_path / "docs" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "10.5281/zenodo.29999999" in (tmp_path / "docs" / "CITATION.cff").read_text(
+        encoding="utf-8"
+    )
+    assert unrelated.read_text(encoding="utf-8") == "Version DOI: `10.5281/zenodo.20000000`\n"
