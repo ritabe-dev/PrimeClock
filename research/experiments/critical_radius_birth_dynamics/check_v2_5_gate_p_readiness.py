@@ -15,7 +15,16 @@ CANDIDATE_RESEARCH_README = EXPERIMENT_DIR / "candidate_research_README_v2_5_v0_
 THEOREM_NOTE = EXPERIMENT_DIR / "notes" / "prc_v2_5_theorem_candidate_note_v0_1.md"
 GATE_P_CHECKLIST = EXPERIMENT_DIR / "notes" / "prc_v2_5_gate_p_checklist_v0_1.md"
 GLOSSARY_NOTE = EXPERIMENT_DIR / "notes" / "prc_v2_5_reviewer_glossary_v0_1.md"
+MATH_FRAMING_NOTE = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_gate_p_mathematical_framing_v0_1.md"
+)
+EXTERNAL_SUMMARY_NOTE = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_external_reviewer_summary_v0_1.md"
+)
 SUMMARY_CSV = EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_summary_tables_v0_1.csv"
+DECISION_TABLE_CSV = (
+    EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_decision_table_v0_1.csv"
+)
 DEFAULT_OUT = (
     Path(tempfile.gettempdir())
     / "prc_v2_5_gate_p_readiness_verification_v0_1.csv"
@@ -46,6 +55,9 @@ def verification_rows() -> list[dict[str, str]]:
         check_summary_counts(),
         check_zip_reviewer_path(),
         check_gate_p_default(),
+        check_mathematical_framing_note(),
+        check_external_reviewer_summary(),
+        check_gate_p_decision_table(),
     ]
 
 
@@ -155,6 +167,59 @@ def check_gate_p_default() -> dict[str, str]:
         "Zenodo DOI plan ready",
     ]
     return phrase_check("v2_5_gate_p_default_not_ready", text, required, [])
+
+
+def check_mathematical_framing_note() -> dict[str, str]:
+    text = normalized_text(MATH_FRAMING_NOTE)
+    required = [
+        "finite exact signed containment certificate",
+        "not a public theorem",
+        "not a general predictor",
+        "checked finite scopes",
+        "B8 is a selected stress-control sample only",
+        "not coverage, recall, holdout validation",
+        "exact-hull obstruction is supporting structure",
+        "public theorem decision remains not ready",
+    ]
+    return phrase_check("v2_5_gate_p_mathematical_framing", text, required, [])
+
+
+def check_external_reviewer_summary() -> dict[str, str]:
+    text = normalized_text(EXTERNAL_SUMMARY_NOTE)
+    required = [
+        "Definitions",
+        "What Is Checked",
+        "What Is Not Claimed",
+        "Exact Counts",
+        "Reproduction Commands",
+        "Limitations",
+        "not a public theorem",
+        "not a general predictor",
+        "B8 remains a selected stress-control sample only",
+        "Historical close or birth rows: 770",
+        "Capacity non-close families: 2430",
+        "Non-close positive-margin rows: 0",
+    ]
+    return phrase_check("v2_5_gate_p_external_summary", text, required, [])
+
+
+def check_gate_p_decision_table() -> dict[str, str]:
+    rows = read_csv_dicts(DECISION_TABLE_CSV)
+    values = {row["candidate"]: row["decision"] for row in rows}
+    expected = {
+        "finite certificate": "ready",
+        "public theorem": "defer",
+        "B8 generalization": "defer",
+        "general predictor": "reject for v2.5",
+        "asymptotic law": "reject for v2.5",
+    }
+    failures = sum(values.get(key) != value for key, value in expected.items())
+    return check_bool(
+        "v2_5_gate_p_decision_table",
+        failures == 0,
+        total=len(expected),
+        failed=failures,
+    )
 
 
 def combined_text(*paths: Path) -> str:

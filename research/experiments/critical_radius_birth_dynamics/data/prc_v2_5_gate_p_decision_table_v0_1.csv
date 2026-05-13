@@ -1,0 +1,6 @@
+candidate,decision,reason
+finite certificate,ready,ready for public framing review as a checked finite exact signed containment certificate
+public theorem,defer,not a public theorem until public claim wording and proof status are decided
+B8 generalization,defer,B8 remains a selected stress-control sample only
+general predictor,reject for v2.5,phase margin is a terminal certificate and not an independent general predictor
+asymptotic law,reject for v2.5,no asymptotic law is claimed or supported by the checked finite scopes

@@ -121,7 +121,7 @@ gates:
         command:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_5_gate_p_readiness.py
-        expected_stdout: "check_v2_5_gate_p_readiness: checks=7, failed=0"
+        expected_stdout: "check_v2_5_gate_p_readiness: checks=10, failed=0"
 
 research_review:
   note: research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_research_review_note_v0_1.md
@@ -204,6 +204,7 @@ source_only_research:
     - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_family_v0_1.csv
     - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_summary_v0_1.csv
     - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_gate_p_summary_tables_v0_1.csv
+    - research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_gate_p_decision_table_v0_1.csv
     - research/experiments/critical_radius_birth_dynamics/candidate_README_v2_5_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/candidate_research_README_v2_5_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v2_5_v0_1.json
@@ -220,6 +221,8 @@ source_only_research:
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_aperture_orbit_backtest_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_exact_hull_obstruction_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_candidate_fixed_note_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_gate_p_mathematical_framing_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_external_reviewer_summary_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_theorem_candidate_note_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_gate_p_checklist_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_reviewer_glossary_v0_1.md
