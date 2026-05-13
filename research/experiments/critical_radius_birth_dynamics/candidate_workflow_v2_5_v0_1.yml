@@ -212,6 +212,8 @@ source_only_research:
     - research/experiments/critical_radius_birth_dynamics/candidate_research_README_v2_5_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/candidate_bundle_manifest_v2_5_v0_1.json
     - research/experiments/critical_radius_birth_dynamics/public_theorem_manifest_v2_5_v0_1.json
+    - research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_5_v1_0.json
+    - research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml
     - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_feature_ablation_v0_1.png
     - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_margin_genesis_v0_1.png
     - research/experiments/critical_radius_birth_dynamics/figures/v2_5/prc_v2_5_b8_aperture_orbit_heatmap_v0_1.png
@@ -230,6 +232,7 @@ source_only_research:
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_readme_draft_v0_1.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_publication_plan_v0_1.md
+    - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md
     - research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_theorem_candidate_note_v0_1.md

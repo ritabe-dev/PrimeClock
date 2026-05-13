@@ -19,6 +19,10 @@
     {
       "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
       "target": "README.md"
+    },
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff",
+      "target": "CITATION.cff"
     }
   ],
   "root_files": [
@@ -35,6 +39,7 @@
     "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_family_v0_1.csv",
     "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
     "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md"
   ],

@@ -1,7 +1,8 @@
 # PRC v2.5 Public Theorem Release Notes
 
-Status: release notes text for `v2.5.0-prc-public-theorem`.  This release does
-not create a Zenodo DOI and does not make any public B8 claim.
+Status: release notes text for `v2.5.0-prc-public-theorem`.
+Version DOI: `10.5281/zenodo.20154561`.
+This release does not make any public B8 claim.
 
 ## Release Title
 
@@ -45,6 +46,12 @@ Expected result:
 check_v2_5_public_theorem_integrity: checks=9, failed=0
 ```
 
+## DOI
+
+```text
+Version DOI: 10.5281/zenodo.20154561
+```
+
 ## Counts
 
 ```text
@@ -77,4 +84,4 @@ for this scoped theorem and must not include B8 stress-control artifacts,
 internal candidate files, predictor notes, breakthrough diagnostics, or other
 candidate-only diagnostics.
 
-Do not add a DOI to this release text until Zenodo has minted the DOI.
+The release archive includes a release-specific `CITATION.cff`.

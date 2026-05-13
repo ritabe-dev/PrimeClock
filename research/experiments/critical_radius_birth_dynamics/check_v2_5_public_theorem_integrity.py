@@ -146,6 +146,7 @@ def check_public_manifest_boundary() -> dict[str, str]:
             "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml",
             "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
             "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+            "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff",
             "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
             "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md",
         }

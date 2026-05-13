@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this finite PRC v2.5 aperture-orbit separator theorem artifact, please cite it as below."
+title: "PRC v2.5: finite aperture-orbit separator theorem"
+authors:
+  - family-names: "Itabe"
+    given-names: "Rio"
+version: "v2.5.0-prc-public-theorem"
+date-released: "2026-05-13"
+doi: "10.5281/zenodo.20154561"
+abstract: "A finite exact-rational Prime Reciprocal Covering theorem artifact for the recorded complete transition scopes B4->B5, B5->B6, and B6->B7, verifying Close(row) iff m(row) > 0 over the committed checked finite universe."
+license: "MIT"
+repository-code: "https://github.com/ritabe-dev/PrimeClock"
+url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem"

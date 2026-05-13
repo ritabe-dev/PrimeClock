@@ -324,7 +324,8 @@ def check_public_theorem_readme_v1() -> dict[str, str]:
         "does not independently regenerate the full PRC transition universe from first principles",
         "no B8 theorem",
         "no asymptotic law",
-        "Do not cite a Zenodo DOI for this v2.5 theorem until a Zenodo archive exists",
+        "10.5281/zenodo.20154561",
+        "release-specific CITATION.cff",
     ]
     forbidden = [
         "B8 full graph is included",
@@ -349,12 +350,12 @@ def check_public_theorem_release_notes_v1() -> dict[str, str]:
         "B8 full graph",
         "general predictor",
         "asymptotic law",
-        "Do not add a DOI to this release text until Zenodo has minted the DOI",
+        "Version DOI: 10.5281/zenodo.20154561",
+        "release-specific CITATION.cff",
     ]
     forbidden = [
         "B8 theorem is proved",
         "general predictor is proved",
-        "DOI:",
     ]
     return phrase_check(
         "v2_5_public_theorem_release_notes_v1",
