@@ -27,6 +27,9 @@ PUBLIC_THEOREM_DRAFT = (
 PUBLIC_README_DRAFT = (
     EXPERIMENT_DIR / "notes" / "prc_v2_5_public_readme_draft_v0_1.md"
 )
+PUBLICATION_PLAN_NOTE = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_publication_plan_v0_1.md"
+)
 SUMMARY_CSV = EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_summary_tables_v0_1.csv"
 DECISION_TABLE_CSV = (
     EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_decision_table_v0_1.csv"
@@ -66,6 +69,7 @@ def verification_rows() -> list[dict[str, str]]:
         check_gate_p_decision_table(),
         check_public_theorem_draft(),
         check_public_readme_draft(),
+        check_publication_plan_note(),
     ]
 
 
@@ -269,6 +273,29 @@ def check_public_readme_draft() -> dict[str, str]:
     ]
     forbidden = ["A general predictor for prime-prefix births"]
     return phrase_check("v2_5_public_readme_draft", text, required, forbidden)
+
+
+def check_publication_plan_note() -> dict[str, str]:
+    text = normalized_text(PUBLICATION_PLAN_NOTE)
+    required = [
+        "repo tag + release notes + public theorem README + verifier command",
+        "v2.5.0-prc-public-theorem",
+        "PRC v2.5: finite aperture-orbit separator theorem",
+        "PrimeClock-v2.5-public-theorem-review-v0.1.zip",
+        "PrimeClock-v2.5-public-theorem-v1.0.zip",
+        "B4->B5, B5->B6, and B6->B7 recorded complete transition scopes",
+        "Close(row) iff m(row) > 0",
+        "not a general predictor",
+        "not a B8 theorem",
+        "not an asymptotic law",
+        "Do not write a DOI into README or release notes until the DOI exists",
+        "release/public/release_config.json remains the v2.3.0 release config",
+    ]
+    forbidden = [
+        "upload this plan to Zenodo now",
+        "create the GitHub Release now",
+    ]
+    return phrase_check("v2_5_publication_plan", text, required, forbidden)
 
 
 def combined_text(*paths: Path) -> str:
