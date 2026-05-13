@@ -38,6 +38,7 @@ SCOPES = ("B4_to_B5_full", "B5_to_B6_full", "B6_to_B7_full")
 
 
 def term(*parts: str) -> str:
+    # Split forbidden markers so this checker does not match its own source text.
     return "".join(parts)
 
 
@@ -62,7 +63,10 @@ def verification_rows() -> list[dict[str, str]]:
         check_public_readme_wording(),
         check_public_manifest_boundary(),
         check_public_summary_counts(),
-        check_phase_gate_certificate_counts(),
+        check_phase_gate_family_counts(),
+        check_row_level_separator_counts(),
+        check_capacity_false_positive_row_counts(),
+        check_margin_gap_counts(),
         check_exact_hull_certificate_counts(),
     ]
 
@@ -78,10 +82,12 @@ def check_public_theorem_wording() -> dict[str, str]:
         "Capacity(row)",
         "NonClose(row)",
         "m(row)",
-        "Close(row) => m(row) > 0",
+        "Close(row) iff m(row) > 0",
         "Capacity(row) and NonClose(row) => m(row) <= 0",
         "recorded complete transition scopes",
         "terminal containment certificate",
+        "committed finite certificate artifacts",
+        "does not independently regenerate the full PRC transition universe from first principles",
         term("not a general ", "pre", "dictor"),
         term("B", "8 selected stress-control only"),
     ]
@@ -98,6 +104,10 @@ def check_public_readme_wording() -> dict[str, str]:
         "Exact Counts",
         "How To Reproduce",
         "finite exact aperture-orbit separator theorem",
+        "This bundle is not the full research Python package",
+        "committed finite certificate artifacts",
+        "does not independently regenerate the full PRC transition universe from first principles",
+        "python3 research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
         term("no B", "8 theorem"),
         term("no general ", "pre", "dictor"),
     ]
@@ -143,9 +153,37 @@ def check_public_summary_counts() -> dict[str, str]:
         for row in rows
     }
     expected = {
-        ("historical_totals", "all", "close_or_birth_rows"): "770",
+        ("historical_totals", "all", "checked_lift_rows"): "533690",
+        ("historical_totals", "all", "close_rows"): "770",
+        ("historical_totals", "all", "birth_rows"): "770",
+        ("historical_totals", "all", "positive_margin_rows"): "770",
+        ("historical_totals", "all", "nonclose_rows"): "532920",
         ("historical_totals", "all", "capacity_nonclose_families"): "2430",
+        ("historical_totals", "all", "capacity_nonclose_lift_rows"): "52566",
+        (
+            "historical_totals",
+            "all",
+            "capacity_nonclose_positive_margin_lift_rows",
+        ): "0",
         ("historical_totals", "all", "nonclose_positive_margin_rows"): "0",
+        ("historical_totals", "all", "endpoint_touch_rows"): "0",
+        ("historical_totals", "all", "min_close_positive_margin"): "1/221",
+        ("historical_totals", "all", "max_nonclose_margin"): "-1/221",
+        (
+            "historical_separator",
+            "B4_to_B5_full",
+            "capacity_nonclose_lift_rows",
+        ): "294",
+        (
+            "historical_separator",
+            "B5_to_B6_full",
+            "capacity_nonclose_lift_rows",
+        ): "2870",
+        (
+            "historical_separator",
+            "B6_to_B7_full",
+            "capacity_nonclose_lift_rows",
+        ): "49402",
         ("exact_hull", "B4_to_B5_full", "hull_obstructed_multi_component_families"): "65",
         ("exact_hull", "B5_to_B6_full", "hull_obstructed_multi_component_families"): "913",
         ("exact_hull", "B6_to_B7_full", "hull_obstructed_multi_component_families"): "13785",
@@ -159,11 +197,9 @@ def check_public_summary_counts() -> dict[str, str]:
     )
 
 
-def check_phase_gate_certificate_counts() -> dict[str, str]:
+def check_phase_gate_family_counts() -> dict[str, str]:
     family_rows = read_csv_dicts(PHASE_FAMILY_CSV)
-    lift_rows = read_csv_dicts(PHASE_LIFT_CSV)
     families = [row for row in family_rows if row["scope"] in SCOPES]
-    lifts = [row for row in lift_rows if row["scope"] in SCOPES]
 
     family_counts = {scope: 0 for scope in SCOPES}
     close_counts = {scope: 0 for scope in SCOPES}
@@ -175,20 +211,6 @@ def check_phase_gate_certificate_counts() -> dict[str, str]:
         close_counts[scope] += close_lifts
         if row["capacity_pass"] == "True" and close_lifts == 0:
             capacity_nonclose[scope] += 1
-
-    close_positive = 0
-    nonclose_positive = 0
-    nonbirth_close = 0
-    for row in lifts:
-        margin_positive = Fraction(row["phase_margin"]) > 0
-        is_close = row["is_close"] == "True"
-        is_birth = row["is_birth"] == "True"
-        if is_close and margin_positive:
-            close_positive += 1
-        if not is_close and margin_positive:
-            nonclose_positive += 1
-        if is_close and not is_birth:
-            nonbirth_close += 1
 
     expected_family_counts = {
         "B4_to_B5_full": 208,
@@ -212,13 +234,119 @@ def check_phase_gate_certificate_counts() -> dict[str, str]:
         capacity_nonclose[scope] != value
         for scope, value in expected_capacity_nonclose.items()
     )
-    failures += int(close_positive != 770)
-    failures += int(nonclose_positive != 0)
-    failures += int(nonbirth_close != 0)
     return check_bool(
-        "v2_5_phase_gate_certificate_counts",
+        "v2_5_phase_gate_family_counts",
         failures == 0,
-        total=12,
+        total=9,
+        failed=failures,
+    )
+
+
+def check_row_level_separator_counts() -> dict[str, str]:
+    rows = checked_lift_rows()
+    total_rows = len(rows)
+    close_rows = 0
+    birth_rows = 0
+    positive_margin_rows = 0
+    nonclose_rows = 0
+    nonclose_positive = 0
+    close_without_positive = 0
+    positive_without_close = 0
+    phase_pass_mismatch = 0
+    endpoint_touch = 0
+    nonbirth_close = 0
+
+    for row in rows:
+        margin_positive = Fraction(row["phase_margin"]) > 0
+        phase_pass = row["phase_pass"] == "True"
+        is_close = row["is_close"] == "True"
+        is_birth = row["is_birth"] == "True"
+
+        close_rows += int(is_close)
+        birth_rows += int(is_birth)
+        positive_margin_rows += int(margin_positive)
+        nonclose_rows += int(not is_close)
+        nonclose_positive += int((not is_close) and margin_positive)
+        close_without_positive += int(is_close and not margin_positive)
+        positive_without_close += int(margin_positive and not is_close)
+        phase_pass_mismatch += int(phase_pass != margin_positive)
+        endpoint_touch += int(row["endpoint_touch"] == "True")
+        nonbirth_close += int(is_close and not is_birth)
+
+    expected = {
+        "total_rows": (total_rows, 533690),
+        "close_rows": (close_rows, 770),
+        "birth_rows": (birth_rows, 770),
+        "positive_margin_rows": (positive_margin_rows, 770),
+        "nonclose_rows": (nonclose_rows, 532920),
+        "nonclose_positive": (nonclose_positive, 0),
+        "close_without_positive": (close_without_positive, 0),
+        "positive_without_close": (positive_without_close, 0),
+        "phase_pass_mismatch": (phase_pass_mismatch, 0),
+        "endpoint_touch": (endpoint_touch, 0),
+        "nonbirth_close": (nonbirth_close, 0),
+    }
+    failures = sum(actual != expected for actual, expected in expected.values())
+    return check_bool(
+        "v2_5_row_level_separator_counts",
+        failures == 0,
+        total=len(expected),
+        failed=failures,
+    )
+
+
+def check_capacity_false_positive_row_counts() -> dict[str, str]:
+    rows = checked_lift_rows()
+    capacity_nonclose_by_scope = {scope: 0 for scope in SCOPES}
+    capacity_nonclose_positive = 0
+
+    for row in rows:
+        is_capacity = row["capacity_pass"] == "True"
+        is_close = row["is_close"] == "True"
+        margin_positive = Fraction(row["phase_margin"]) > 0
+        if is_capacity and not is_close:
+            capacity_nonclose_by_scope[row["scope"]] += 1
+            capacity_nonclose_positive += int(margin_positive)
+
+    expected_by_scope = {
+        "B4_to_B5_full": 294,
+        "B5_to_B6_full": 2870,
+        "B6_to_B7_full": 49402,
+    }
+    failures = sum(
+        capacity_nonclose_by_scope[scope] != value
+        for scope, value in expected_by_scope.items()
+    )
+    failures += int(sum(capacity_nonclose_by_scope.values()) != 52566)
+    failures += int(capacity_nonclose_positive != 0)
+    return check_bool(
+        "v2_5_capacity_false_positive_row_counts",
+        failures == 0,
+        total=5,
+        failed=failures,
+    )
+
+
+def check_margin_gap_counts() -> dict[str, str]:
+    close_margins: list[Fraction] = []
+    nonclose_margins: list[Fraction] = []
+    for row in checked_lift_rows():
+        margin = Fraction(row["phase_margin"])
+        if row["is_close"] == "True":
+            close_margins.append(margin)
+        else:
+            nonclose_margins.append(margin)
+
+    min_close = min(close_margins)
+    max_nonclose = max(nonclose_margins)
+    failures = 0
+    failures += int(min_close != Fraction(1, 221))
+    failures += int(max_nonclose != Fraction(-1, 221))
+    failures += int((min_close - max_nonclose) != Fraction(2, 221))
+    return check_bool(
+        "v2_5_margin_gap_counts",
+        failures == 0,
+        total=3,
         failed=failures,
     )
 
@@ -251,6 +379,10 @@ def check_exact_hull_certificate_counts() -> dict[str, str]:
         total=7,
         failed=failures,
     )
+
+
+def checked_lift_rows() -> list[dict[str, str]]:
+    return [row for row in read_csv_dicts(PHASE_LIFT_CSV) if row["scope"] in SCOPES]
 
 
 def manifest_sources(manifest: dict) -> set[str]:

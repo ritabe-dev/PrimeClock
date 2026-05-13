@@ -18,7 +18,7 @@ gates:
         command:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py
-        expected_stdout: "check_v2_5_public_theorem_integrity: checks=6, failed=0"
+        expected_stdout: "check_v2_5_public_theorem_integrity: checks=9, failed=0"
   public-theorem-bundle:
     description: v2.5 scoped public theorem review bundle build and self-check
     commands:

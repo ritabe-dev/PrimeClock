@@ -49,19 +49,19 @@ distribution law is part of this theorem draft.
 PRC v2.5 finite exact aperture-orbit separator theorem.
 
 For the recorded complete transition scopes `B4->B5`, `B5->B6`, and `B6->B7`
-under the PRC prime-prefix residual-covering model, every checked close lift
-has positive signed aperture-orbit margin, and every checked
-capacity-admissible non-close control has non-positive signed aperture-orbit
-margin.
+under the PRC prime-prefix residual-covering model, positive signed
+aperture-orbit margin exactly separates checked close rows from checked
+non-close rows.
 
 In predicate form, for every `row in U`:
 
-- `Close(row) => m(row) > 0`
-- `Capacity(row) and NonClose(row) => m(row) <= 0`
+- Primary separator: `Close(row) iff m(row) > 0`.
+- Capacity comparison corollary: `Capacity(row) and NonClose(row) => m(row) <= 0`.
 
-Equivalently, within these checked finite scopes, capacity alone is not a
-separator, while the signed aperture-orbit margin is a finite exact terminal
-containment certificate. This is not a general predictor.
+Equivalently, within these checked finite scopes, the signed aperture-orbit
+margin is a finite exact terminal containment certificate. Capacity alone is not
+a separator; it is retained as a false-positive comparison. This is not a
+general predictor.
 
 ## Exhaustive Enumeration Certificate
 
@@ -72,25 +72,30 @@ The theorem is finite and audit-based. The enumeration certificate consists of:
 - the exact-hull family audit and compact public theorem summary table;
 - exact rational arithmetic in the helper and checker scripts;
 - manifest-bound files in the v2.5 candidate bundle;
-- checker assertions that recompute or re-audit the headline counts against the
-  committed artifacts.
+- checker assertions that audit row-level separator counts against the committed
+  finite certificate artifacts.
 
 The public claim, if later authorized, should state this as an exact finite
 enumeration certificate rather than as a proof over all future layers.
+
+The public theorem review checker does not independently regenerate the full PRC
+transition universe from first principles. It audits the committed finite
+certificate artifacts for the recorded scopes.
 
 ## Separator Audit
 
 The separator audit fixes the following headline counts:
 
-| Scope | Families | Close or birth rows | Capacity non-close families | Non-close positive margin rows |
+| Scope | Families | Lift rows | Close rows | Capacity non-close families | Capacity non-close lift rows | Non-close positive margin rows |
 | --- | ---: | ---: | ---: | ---: |
-| `B4->B5` | 208 | 14 | 14 | 0 |
-| `B5->B6` | 2,274 | 42 | 182 | 0 |
-| `B6->B7` | 29,520 | 714 | 2,234 | 0 |
-| Total | 32,002 | 770 | 2,430 | 0 |
+| `B4->B5` | 208 | 2,288 | 14 | 14 | 294 | 0 |
+| `B5->B6` | 2,274 | 29,562 | 42 | 182 | 2,870 | 0 |
+| `B6->B7` | 29,520 | 501,840 | 714 | 2,234 | 49,402 | 0 |
+| Total | 32,002 | 533,690 | 770 | 2,430 | 52,566 | 0 |
 
-The finite theorem draft depends on the zero count in the final column and on
-the exact positive-margin audit for all 770 checked close or birth rows.
+All 770 close rows are birth rows in these scopes. The finite theorem draft
+depends on the row-level audit `Close(row) iff m(row) > 0`, the zero count in
+the final column, and the capacity false-positive comparison.
 
 ## Support Lemma
 
@@ -122,7 +127,7 @@ full transition universe.
 Reviewer-facing Gate C and Gate P dry-run commands:
 
 ```bash
-python scripts/verify_candidate_workflow.py \
+python3 scripts/verify_candidate_workflow.py \
   --config research/experiments/critical_radius_birth_dynamics/public_theorem_workflow_v2_5_v0_1.yml \
   public-theorem-review
 ```
