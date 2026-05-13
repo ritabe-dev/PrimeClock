@@ -41,10 +41,51 @@ The config must say:
 For external review snapshots, send a commit or tree URL, not a
 GitHub Release URL.
 
-## DOI Release Loop
+## Registry-First DOI Release Loop
 
 Use this only for important fixed versions that should be archived by Zenodo.
-The config must say:
+Public releases are tracked in `release/public/release_registry.json`. Add or
+update the registry entry before creating a GitHub Release or finalizing a DOI.
+The registry is the multi-version source of truth for tag, GitHub Release URL,
+version DOI, citation policy, and release asset metadata. This prevents a later
+release such as v2.5 or v2.6 from accidentally rewriting v2.3-only metadata.
+
+For a new public release line:
+
+1. Add a registry entry.
+2. Register release README, release notes, citation, manifest, workflow, and
+   asset name in the registry.
+3. Run `python3 scripts/check_release_doi_integrity.py --all`.
+4. Build and verify the release archive from the registered manifest/workflow.
+5. Create the GitHub Release and attach the registered release asset.
+6. Wait for Zenodo to mint the version DOI.
+7. Run `scripts/finalize_version_doi.py --release-id ... --version-doi ...`.
+8. Rebuild the archive and refresh the GitHub Release body/asset.
+9. Check Zenodo UI/API metadata for title, version, DOI, description, and files.
+
+Check all registered release metadata before and after DOI work:
+
+```bash
+python3 scripts/check_release_doi_integrity.py --all
+```
+
+Use the release-id based finalizer for registry-managed releases:
+
+```bash
+python3 scripts/finalize_version_doi.py \
+  --release-id <registered-release-id> \
+  --version-doi 10.5281/zenodo.<version-record>
+python3 scripts/finalize_version_doi.py \
+  --release-id <registered-release-id> \
+  --version-doi 10.5281/zenodo.<version-record> \
+  --execute
+```
+
+The legacy v2.3 public bundle path still supports `release/public/release_config.json`
+and `scripts/finalize_release_doi.py`, but future release lines should use the
+registry and `scripts/finalize_version_doi.py`.
+
+For the legacy v2.3 public line only, the config must say:
 
 ```json
 "release_kind": "doi_release",
@@ -64,26 +105,8 @@ Publish only after the dry-run output is correct:
 python3 scripts/publish_public_release.py --execute
 ```
 
-This script fetches the public repository, reapplies the generated bundle on top
-of `origin/main`, verifies the public worktree, pushes `main`, creates the tag,
-and creates the GitHub Release with the generated zip asset only for
-`doi_release`.
-
-## Stage B: Zenodo DOI Metadata
-
-After Zenodo publishes the GitHub release archive, finalize the version DOI:
-
-```bash
-python3 scripts/finalize_release_doi.py
-python3 scripts/finalize_release_doi.py --execute
-```
-
-Then update source metadata, rebuild the public bundle, push the public
-worktree metadata commit, and refresh the GitHub release body/asset:
-
-```bash
-python3 scripts/finalize_release_doi.py --execute
-```
-
 Do not force-update public tags. The tag archive may contain the concept DOI;
 the main branch, release body, and release asset carry the final version DOI.
+For new release lines, do not run DOI finalization until the release has a
+registry entry.  Zenodo record metadata itself is still checked separately in
+Zenodo UI/API after the repo-side metadata is consistent.

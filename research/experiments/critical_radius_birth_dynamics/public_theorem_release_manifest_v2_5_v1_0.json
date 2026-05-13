@@ -1,0 +1,63 @@
+{
+  "id": "prc_v2_5_public_theorem_release_bundle_v1_0",
+  "status": "public_theorem_release_manifest",
+  "public_release": true,
+  "base_public_release": "v2.3.0",
+  "github_release_tag": "v2.5.0-prc-public-theorem",
+  "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem",
+  "doi_state": "assigned",
+  "zenodo_version_doi": "10.5281/zenodo.20154561",
+  "default_name": "PrimeClock-v2.5-public-theorem-v1.0",
+  "candidate_name_prefix": "PrimeClock-v2.5-public-theorem-",
+  "links_title": "PRC v2.5 Public Theorem Release Links",
+  "hash_manifest": "SHA256SUMS",
+  "allowed_path_markers": [
+    "check_v2_5",
+    "prc_v2_4",
+    "prc_v2_5",
+    "public_theorem_release_workflow_v2_5",
+    "v2_4",
+    "v2_5"
+  ],
+  "root_file_map": [
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
+      "target": "README.md"
+    },
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff",
+      "target": "CITATION.cff"
+    }
+  ],
+  "root_files": [
+    "LICENSE",
+    "scripts/verify_candidate_workflow.py"
+  ],
+  "research_files": [
+    "research/experiments/critical_radius_birth_dynamics/candidate_bundle.py",
+    "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_5_v1_0.json",
+    "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_family_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_4_phase_gate_lift_diagnostics_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_exact_hull_obstruction_family_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_v2_5_public_theorem_summary_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md"
+  ],
+  "research_dirs": [],
+  "required_readme_phrases": [
+    "finite exact aperture-orbit separator theorem",
+    "complete transition scopes",
+    "Close(row) iff m(row) > 0",
+    "no B8 theorem",
+    "no general predictor"
+  ],
+  "promotion_boundary": [
+    "do not add B8 stress-control artifacts to this public theorem release bundle",
+    "do not claim an asymptotic law or general prediction theorem",
+    "use the registered Zenodo version DOI only for this v2.5 scoped theorem release"
+  ]
+}
