@@ -21,6 +21,12 @@ MATH_FRAMING_NOTE = (
 EXTERNAL_SUMMARY_NOTE = (
     EXPERIMENT_DIR / "notes" / "prc_v2_5_external_reviewer_summary_v0_1.md"
 )
+PUBLIC_THEOREM_DRAFT = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_public_theorem_draft_v0_1.md"
+)
+PUBLIC_README_DRAFT = (
+    EXPERIMENT_DIR / "notes" / "prc_v2_5_public_readme_draft_v0_1.md"
+)
 SUMMARY_CSV = EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_summary_tables_v0_1.csv"
 DECISION_TABLE_CSV = (
     EXPERIMENT_DIR / "data" / "prc_v2_5_gate_p_decision_table_v0_1.csv"
@@ -58,6 +64,8 @@ def verification_rows() -> list[dict[str, str]]:
         check_mathematical_framing_note(),
         check_external_reviewer_summary(),
         check_gate_p_decision_table(),
+        check_public_theorem_draft(),
+        check_public_readme_draft(),
     ]
 
 
@@ -208,7 +216,7 @@ def check_gate_p_decision_table() -> dict[str, str]:
     values = {row["candidate"]: row["decision"] for row in rows}
     expected = {
         "finite certificate": "ready",
-        "public theorem": "defer",
+        "public theorem": "ready for scoped finite theorem review",
         "B8 generalization": "defer",
         "general predictor": "reject for v2.5",
         "asymptotic law": "reject for v2.5",
@@ -220,6 +228,47 @@ def check_gate_p_decision_table() -> dict[str, str]:
         total=len(expected),
         failed=failures,
     )
+
+
+def check_public_theorem_draft() -> dict[str, str]:
+    text = normalized_text(PUBLIC_THEOREM_DRAFT)
+    required = [
+        "Definitions",
+        "Finite Universe",
+        "Theorem",
+        "Exhaustive Enumeration Certificate",
+        "Separator Audit",
+        "Support Lemma",
+        "B8 Non-Claim",
+        "Reproduction",
+        "Limitations",
+        "finite exact aperture-orbit separator theorem",
+        "recorded complete transition scopes",
+        "terminal containment certificate",
+        "B8 selected stress-control only",
+        "not a general predictor",
+    ]
+    forbidden = ["The separator generalizes to B8"]
+    return phrase_check("v2_5_public_theorem_draft", text, required, forbidden)
+
+
+def check_public_readme_draft() -> dict[str, str]:
+    text = normalized_text(PUBLIC_README_DRAFT)
+    required = [
+        "What Is Proved",
+        "What Is Not Proved",
+        "Exact Counts",
+        "How To Reproduce",
+        "Limitations",
+        "finite exact aperture-orbit separator theorem",
+        "terminal containment certificate",
+        "not a general predictor",
+        "no B8 theorem",
+        "no asymptotic law",
+        "B8 selected stress-control only",
+    ]
+    forbidden = ["A general predictor for prime-prefix births"]
+    return phrase_check("v2_5_public_readme_draft", text, required, forbidden)
 
 
 def combined_text(*paths: Path) -> str:
