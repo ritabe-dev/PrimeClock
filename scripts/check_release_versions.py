@@ -146,9 +146,10 @@ def check_source_readme_version_line_workflow(
         return
     for needle in [
         "Version-Line Workflow",
-        "`v2.3.0` | immutable public DOI release",
+        "`v2.3.0` | immutable foundational public DOI release",
         "`v2.4.x` | source-only bridge",
-        "`v2.5.x` | next candidate line",
+        "`v2.5.0-prc-public-theorem` | current scoped public theorem DOI release",
+        "`v2.6.x` | next research line",
         "`maintenance/v2.x.y` | rare patch line",
         "Gate R: research story",
         "Gate C: candidate integrity",

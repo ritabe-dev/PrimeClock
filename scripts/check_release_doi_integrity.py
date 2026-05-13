@@ -167,6 +167,44 @@ def check_manifest_fields(repo_root: Path, entry: dict[str, Any], failures: list
             failures.append(f"{entry['release_id']}: {manifest_path} missing registry value {needle!r}")
 
 
+def latest_assigned_release(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    assigned = [
+        entry
+        for entry in entries
+        if entry["release_kind"] == "doi_release" and entry["doi_state"] == "assigned"
+    ]
+    if not assigned:
+        raise ValueError("release_registry has no assigned DOI release")
+    return assigned[-1]
+
+
+def check_repository_freshness(repo_root: Path, entries: list[dict[str, Any]]) -> list[str]:
+    latest = latest_assigned_release(entries)
+    failures: list[str] = []
+    root_readme = read_text(repo_root, "README.md")
+    version_map = read_text(repo_root, "VERSION_MAP.md")
+    for relative_path, text in {
+        "README.md": root_readme,
+        "VERSION_MAP.md": version_map,
+    }.items():
+        for needle in [
+            latest["release_id"],
+            latest["tag"],
+            latest["title"],
+            latest["zenodo_version_doi"],
+            latest["asset_name"],
+        ]:
+            if needle and needle not in text:
+                failures.append(f"{relative_path} missing latest release metadata {needle!r}")
+    if "The current public release target is:" in version_map:
+        failures.append("VERSION_MAP.md still uses singular stale current public release wording")
+    if "## Current Release Target" in root_readme:
+        failures.append("README.md still uses stale Current Release Target heading")
+    if "For current public citation, use the `v2.3.0` release" in root_readme:
+        failures.append("README.md still points current public citation at v2.3.0")
+    return failures
+
+
 def check_entry(repo_root: Path, entry: dict[str, Any]) -> list[str]:
     failures: list[str] = []
     check_assigned_doi(entry, failures)
@@ -200,6 +238,8 @@ def main() -> int:
     all_failures: list[str] = []
     for entry in entries:
         all_failures.extend(check_entry(repo_root, entry))
+    if args.all:
+        all_failures.extend(check_repository_freshness(repo_root, release_entries(registry)))
 
     if all_failures:
         print("check_release_doi_integrity: failed")

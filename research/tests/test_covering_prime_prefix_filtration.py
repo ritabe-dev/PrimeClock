@@ -1888,6 +1888,14 @@ def _write_registry_fixture(tmp_path: Path, *, doi_state: str = "assigned") -> P
         'doi: "10.5281/zenodo.20091722"\n',
         encoding="utf-8",
     )
+    freshness_text = (
+        "v9.9.9-test\n"
+        "Test release\n"
+        "10.5281/zenodo.29999999\n"
+        "PrimeClock-v9.9.9-test.zip\n"
+    )
+    (tmp_path / "README.md").write_text(freshness_text, encoding="utf-8")
+    (tmp_path / "VERSION_MAP.md").write_text(freshness_text, encoding="utf-8")
     registry = {
         "schema_version": 1,
         "releases": [

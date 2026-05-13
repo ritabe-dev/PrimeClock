@@ -1,53 +1,72 @@
 # PrimeClock Development Repository
 
 This development repository is the working tree for PrimeClock and Prime
-Reciprocal Covering (PRC). It can contain broader source history and local
-research work, including:
+Reciprocal Covering (PRC). It can contain broader source history, local research
+work, release tooling, and the small React/Vite visualization app in `src/`.
 
-- a small React/Vite PrimeClock visualization app in `src/`;
-- the PRC research package under `research/`;
-- release scripts used to build a narrow public certificate bundle.
+## Current Public Theorem Release
 
-Public release bundles are generated from an allowlist and have their own root
-README template at `release/public/README.template.md`. The v2.3.0 public bundle
-contains the finite `C_k/C_4/B_5` certificate artifact plus the v2.3
-critical-radius and gap-aperture birth-dynamics finite artifact; the React/Vite
-visualization app is not included in that bundle. The release version is centralized in
-`release/public/release_config.json`.
+The current citable public theorem release is:
 
-The Python package keeps the historical name `prime-reciprocal-projection`.
-The finite theorem bundle is now framed as Prime Reciprocal Covering.
+```text
+v2.5.0-prc-public-theorem
+PRC v2.5: finite aperture-orbit separator theorem
+Version DOI: 10.5281/zenodo.20154561
+GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem
+Release asset: PrimeClock-v2.5-public-theorem-v1.0.zip
+```
 
-## Current Release Target
+The v2.5 theorem is scoped to the recorded complete transition scopes
+`B4->B5`, `B5->B6`, and `B6->B7`. Let `U` be the materialized finite universe of
+committed checked rows in those scopes. The checked theorem is:
 
-Read these files first:
+```text
+Close(row) iff m(row) > 0
+```
 
-1. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_theorem_note_draft_v0_1.md`
-2. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_v0_2.md`
-3. `research/RELEASE_NOTES_v2_3_0.md`
-4. `research/notes/prc_finite_certificate_note_v2_0.md`
-5. `research/notes/claims_finite_c4_b5.md`
+Here `m(row)` is the exact signed aperture-orbit containment margin. It is a
+finite exact terminal containment certificate, not a general predictor.
+
+Read these v2.5 files first:
+
+1. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md`
+2. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md`
+3. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md`
+4. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff`
+5. `release/public/release_registry.json`
 6. `VERSION_MAP.md`
 
-The finite claims are:
+The v2.5 release does not claim a B8 theorem, B8 full graph, general predictor,
+asymptotic law, coverage/recall/holdout validation for B8, or automatic
+extension beyond the recorded complete transition scopes.
+
+## Foundational Public Release
+
+The older `v2.3.0` release remains an immutable foundational DOI release for the
+finite `C_k/C_4/B_5` certificate artifact plus the v2.3 critical-radius and
+gap-aperture birth-dynamics finite artifact.
+
+```text
+v2.3.0
+Version DOI: 10.5281/zenodo.20119473
+Concept DOI: 10.5281/zenodo.20091722
+GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.3.0
+```
+
+The v2.3 finite claims are:
 
 - `C_4={2,208} mod 210`;
 - `C_5` has `36` covered residues;
 - `Lift_5(C_4)` has `22` inherited residues;
 - `B_5` has `14` births in `7` reflection pairs;
-- every `B_5` birth is a strict single-gap closure by the new `p=11` arc.
-
-The v2.3.0 release also promotes these finite claims:
-
+- every `B_5` birth is a strict single-gap closure by the new `p=11` arc;
 - `C_k` is the `1/2` level set of the exact critical-radius spectrum for the
   checked `k=4,5` layers;
 - `B_5`, `B_6`, and `B_7` are unique strict single-gap births in the checked
-  finite data;
-- near-miss rank is a diagnostic candidate generator, while birth is decided by
-  next-prime `q`-grid phase alignment through the gap-aperture window.
+  finite data.
 
-These are finite certificate claims supported by exact rational CSVs, package
-verification, standard-library standalone audits, and focused pytest coverage.
+The v2.3 public bundle README template remains at
+`release/public/README.template.md`; it is intentionally v2.3-specific.
 
 ## Research Position
 
@@ -57,29 +76,13 @@ places a rational closed arc on `R/Z` centered at `(r mod p)/p`; the public
 claims are about exactly checked finite residue layers.
 
 The vocabulary is adjacent to classical covering systems of congruences because
-it uses residues, moduli, and covering language, but this release does not claim
-a result about classical covering systems. The v2.3.0 research value is that it
-makes the early PRC layers auditable as finite certificates and adds a
-critical-radius spectrum plus a gap-aperture / `q`-grid phase mechanism for the
-checked birth layers. The related-work boundary note
+it uses residues, moduli, and covering language, but this repository does not
+claim a result about classical covering systems. The related-work boundary note
 `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_3_related_work_v0_2.md`
 records nearby terminology and literature context.
 
 Zenodo DOIs identify citable archived snapshots of this finite artifact. They
 do not imply peer review.
-
-## Review Workflow
-
-For current public citation, use the `v2.3.0` release and `CITATION.cff`.
-The v2.2.4 release remains historical and is not retagged.
-
-Normal cleanup and review-driven edits are pushed to GitHub `main` through
-`maintenance_sync`. GitHub Release and Zenodo are used only when
-`release/public/release_config.json` is explicitly switched to `doi_release`.
-If `v2.2` or `v2.3` corrections appear during `v2.4` work, classify them with
-`release/public/MAINTENANCE_POLICY.md` before editing: lightweight findings go
-to `ERRATA.md` or docs clarification, while reproducibility or finite-claim
-corrections use an isolated patch branch such as `maintenance/v2.3.1`.
 
 ## Version-Line Workflow
 
@@ -89,17 +92,11 @@ research-line materials:
 
 | Line | Status | Management |
 | --- | --- | --- |
-| `v2.3.0` | immutable public DOI release | tag / GitHub Release / Zenodo snapshot; do not retag |
-| `v2.4.x` | source-only bridge | no public release or DOI; preserves diagnostics that connect v2.3.0 to the next candidate line |
-| `v2.5.x` | next candidate line | starts from obstruction classification, prediction, and residual dynamics if Gate R evidence stabilizes |
+| `v2.3.0` | immutable foundational public DOI release | tag / GitHub Release / Zenodo snapshot; do not retag |
+| `v2.4.x` | source-only bridge | no public release or DOI; preserves diagnostics that connect v2.3.0 to the next release line |
+| `v2.5.0-prc-public-theorem` | current scoped public theorem DOI release | finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes |
+| `v2.6.x` | next research line | must be registered in `release/public/release_registry.json` before DOI or GitHub Release work starts |
 | `maintenance/v2.x.y` | rare patch line | branch from the published tag only for reproducibility, metadata, or finite-claim-impacting fixes |
-
-Version-specific files should follow the line naming pattern:
-`candidate_workflow_v2_4_v0_1.yml`, `notes/prc_v2_4_*_v0_1.md`,
-`data/prc_v2_4_*_v0_1.csv`, `check_v2_4_*.py`, `v2_4_*.py`, and
-`tests/test_*_v2_4_research.py`. The v2.4 line is a source-only bridge, not a
-public release line. For v2.5 and later, change only the version marker and
-keep the same structure.
 
 The gates stay separate:
 
@@ -109,16 +106,27 @@ Gate C: candidate integrity; reproducible package and manifest hygiene
 Gate P: public promotion; stable enough to cite and publish through GitHub/Zenodo
 ```
 
-Source-only research files must not enter public or candidate bundles until a
-Gate R decision changes to package them as a candidate.
-
-The v2.5 line should not cite v2.4 as a public result. Instead, it should
-recompute and restate the useful v2.4 diagnostics under v2.5 artifacts when
-they become part of a candidate package.
+New public release lines must be added to `release/public/release_registry.json`
+before DOI finalization. The registry is the source of truth for DOI, GitHub
+Release URL, asset name, citation policy, and release metadata.
 
 ## Verify
 
-From `research/`:
+From the repository root, verify the current v2.5 public theorem:
+
+```bash
+python3 research/experiments/critical_radius_birth_dynamics/check_v2_5_public_theorem_integrity.py
+python3 scripts/check_release_doi_integrity.py --all
+```
+
+Expected v2.5 results:
+
+```text
+check_v2_5_public_theorem_integrity: checks=9, failed=0
+check_release_doi_integrity: checked=2, failed=0
+```
+
+For the v2.3 foundational verifier path, use `research/`:
 
 ```bash
 python3 -m venv .venv
@@ -140,41 +148,40 @@ package verifier: checks=14, failed=0
 standalone checker: checks=9, failed=0
 ```
 
-## Non-Claims
+## Public Release Bundles
 
-This release is scoped to finite prime-prefix residue-covering certificates and
-the checked v2.3 critical-radius / gap-aperture birth-dynamics artifact. Broader
-asymptotic, distributional, and complete PRC questions are outside this release.
+Public releases are built from explicit allowlists. The source repository can
+contain broader research history, but each public release bundle contains only
+the files listed by its release manifest or registry entry.
 
-Historical PRC diagnostics, certificate-depth work, `B_8` or larger experiments,
-residual-gap transition graph ideas, and null-model work remain in the full
-repository as context. They are not part of the v2.3.0 public release bundle.
+The v2.5 public theorem release bundle contains the scoped separator theorem
+artifact and verifier. The v2.3 public release bundle contains the finite
+`C_k/C_4/B_5` certificate artifact, the v2.3.0 critical-radius and gap-aperture
+birth-dynamics artifact, and their verification paths.
 
-## Public Release Bundle
-
-Public releases are built from an explicit allowlist. The source repository can
-contain broader research history, but the release bundle contains only the
-finite `C_k/C_4/B_5` certificate artifact, the v2.3.0 critical-radius and
-gap-aperture birth-dynamics artifact, and their verification paths.
-The bundled Python package source includes broader implementation modules needed
-by the verifier and tests; the public claims, notes, and CSVs remain limited to
-the finite certificate artifact.
-
-Build and inspect a local release bundle with:
+Build and inspect the v2.3 public bundle with:
 
 ```bash
 python3 scripts/check_release_versions.py
 python3 scripts/verify_public_release.py --out "${TMPDIR:-/tmp}/primeclock-public-release" --zip
 ```
 
-The release manifest is `research/PUBLIC_RELEASE_MANIFEST.md`; file hashes are
-recorded in `SHA256SUMS`, and version correspondence is recorded in
-`VERSION_MAP.md`. Historical-release corrections are tracked in `ERRATA.md`
-and governed by `release/public/MAINTENANCE_POLICY.md`.
+Build and inspect the v2.5 public theorem bundle with:
+
+```bash
+research/.venv/bin/python scripts/verify_candidate_workflow.py \
+  --config research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml \
+  public-theorem-review
+```
 
 ## Citation and License
 
-Use `CITATION.cff` for citation metadata. Its top-level DOI is the Zenodo
-concept DOI for the release series: `10.5281/zenodo.20091722`. The current version DOI is `10.5281/zenodo.20119473`.
+Use the v2.5 release-specific `CITATION.cff` for the current scoped public
+theorem. Its Zenodo version DOI is `10.5281/zenodo.20154561`.
+
+The top-level `CITATION.cff` remains the v2.3.0 citation metadata. Its
+top-level DOI is the Zenodo concept DOI for the v2.3 release series:
+`10.5281/zenodo.20091722`; the v2.3.0 version DOI is
+`10.5281/zenodo.20119473`.
 
 The project is released under the MIT License; see `LICENSE`.
