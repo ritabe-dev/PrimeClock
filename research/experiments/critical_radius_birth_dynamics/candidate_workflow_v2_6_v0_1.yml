@@ -86,6 +86,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_candidate.py
         expected_stdout: "check_v2_6_special_point_theorem_note_candidate: checks=8, failed=0, source_theorem_note=promote_candidate"
+  v2-6-mod6-ancestry-diagnostic:
+    description: v2.6 mod 6 ancestry diagnostic audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
+        expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -129,3 +137,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_candidate.py
         expected_stdout: "check_v2_6_special_point_theorem_note_candidate: checks=8, failed=0, source_theorem_note=promote_candidate"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
+        expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
