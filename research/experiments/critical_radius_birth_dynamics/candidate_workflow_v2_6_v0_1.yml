@@ -118,6 +118,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
         expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
+  v2-6-general-lemma-readiness:
+    description: v2.6 general lemma readiness boundary audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
+        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -181,3 +189,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
         expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
+        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
