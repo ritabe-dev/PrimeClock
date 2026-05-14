@@ -13,6 +13,7 @@ from check_v2_6_special_point_obstruction import repo_root_from_script
 EXPERIMENT_REL = Path("research/experiments/critical_radius_birth_dynamics")
 NOTES_REL = EXPERIMENT_REL / "notes"
 NOTE_REL = NOTES_REL / "prc_v2_6_special_point_theorem_note_candidate_v0_1.md"
+BRIDGE_NOTE_REL = NOTES_REL / "prc_v2_6_residual_component_boundary_bridge_v0_1.md"
 ENDPOINT_DISTANCE_CHECK_REL = (
     EXPERIMENT_REL / "check_v2_6_endpoint_distance_proof_obligation.py"
 )
@@ -37,6 +38,8 @@ REQUIRED_PHRASES = (
     "1/(2p_k)",
     "1/p_k",
     "residual component adjacent to that side extends until the nearest old endpoint",
+    "covered-special-side case is handled separately",
+    "no old residual component based at that covered special point to close",
     "topological boundary statement",
     "a=0",
     "a=(q-1)/2",
@@ -51,6 +54,26 @@ REQUIRED_PHRASES = (
     "no DOI claim",
     "no GitHub Release claim",
     "no B8 theorem",
+    "no general predictor claim",
+    "no asymptotic law claim",
+)
+BRIDGE_REQUIRED_SECTIONS = (
+    "## Goal",
+    "## Setup",
+    "## Covered Special Side",
+    "## Uncovered Special Side",
+    "## Gate R Decision",
+    "## Non-claims",
+)
+BRIDGE_REQUIRED_PHRASES = (
+    "residual_component_boundary_bridge=proof_candidate",
+    "covered_special_side=proof_candidate",
+    "uncovered_special_side=proof_candidate",
+    "public_theorem=defer",
+    "no public theorem claim",
+    "no DOI claim",
+    "no GitHub Release claim",
+    "no B8 theorem claim",
     "no general predictor claim",
     "no asymptotic law claim",
 )
@@ -72,6 +95,22 @@ def require_note(repo_root: Path, failures: list[str]) -> None:
             failures.append(f"theorem-note candidate missing phrase {phrase!r}")
 
 
+def require_bridge_note(repo_root: Path, failures: list[str]) -> None:
+    path = repo_root / BRIDGE_NOTE_REL
+    if not path.is_file():
+        failures.append(f"missing residual component boundary bridge note: {BRIDGE_NOTE_REL}")
+        return
+    text = path.read_text(encoding="utf-8")
+    normalized = " ".join(text.replace("`", "").split())
+    for section in BRIDGE_REQUIRED_SECTIONS:
+        if section not in text:
+            failures.append(f"residual component bridge note missing section {section}")
+    for phrase in BRIDGE_REQUIRED_PHRASES:
+        normalized_phrase = " ".join(phrase.replace("`", "").split())
+        if normalized_phrase not in normalized:
+            failures.append(f"residual component bridge note missing phrase {phrase!r}")
+
+
 def require_checker_passes(repo_root: Path, relative_path: Path, failures: list[str]) -> None:
     result = subprocess.run(
         [sys.executable, str(repo_root / relative_path)],
@@ -90,6 +129,7 @@ def main() -> int:
     failures: list[str] = []
 
     require_note(repo_root, failures)
+    require_bridge_note(repo_root, failures)
     require_checker_passes(repo_root, ENDPOINT_DISTANCE_CHECK_REL, failures)
     require_checker_passes(repo_root, THEOREM_NOTE_DECISION_CHECK_REL, failures)
     require_checker_passes(repo_root, LOCAL_FIRST_CHECK_REL, failures)

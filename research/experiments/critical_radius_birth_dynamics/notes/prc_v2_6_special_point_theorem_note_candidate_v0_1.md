@@ -24,6 +24,8 @@ Lemma candidate: if a special point side at `0` or `1/2` is not covered by the o
 
 This is a topological boundary statement about a union of closed circular arcs. Inside a connected interval containing no old endpoint and no old cloud interior boundary, the old-covered/uncovered state is constant. Therefore an uncovered special side remains in the same residual component until the next old endpoint.
 
+The covered-special-side case is handled separately in `prc_v2_6_residual_component_boundary_bridge_v0_1.md`: if the relevant special side is old-covered, there is no old residual component based at that covered special point to close.
+
 This closes the residual-gap containment bridge at theorem-note candidate level: the old residual component adjacent to the uncovered special side has length at least the special endpoint spacing lower bound.
 
 ## Forbidden Special Remainder Lemma
@@ -49,7 +51,7 @@ By the residual component boundary lemma and the special endpoint spacing lemma,
 
 ## Remaining Risks
 
-This is a source-only theorem-note candidate, not a public theorem. The remaining Gate R risk is to tighten the residual component boundary lemma wording enough that it cannot be read as relying on finite audit tables.
+This is a source-only theorem-note candidate, not a public theorem. The remaining Gate R risk is to review the standalone residual component boundary bridge and decide whether its covered-side and uncovered-side cases are tight enough for theorem-note promotion.
 
 The `3 mod 6 ancestry` route remains diagnostic only. It may help explain productive interior single-gap ancestry, but it is not used as a theorem claim.
 
@@ -66,4 +68,3 @@ The `3 mod 6 ancestry` route remains diagnostic only. It may help explain produc
 `pr_policy=local_first_until_checkpoint`
 
 This v2.6 Gate R note makes no public release claim, no DOI claim, no GitHub Release claim, no B8 theorem, no B8 full graph claim, no general predictor claim, and no asymptotic law claim.
-

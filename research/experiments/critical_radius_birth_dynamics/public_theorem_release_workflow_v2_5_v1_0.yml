@@ -10,9 +10,9 @@ goal: >
   Package the v2.5 B4->B5, B5->B6, and B6->B7 finite exact
   aperture-orbit separator theorem as a public release archive.
 readiness:
-  current_completion_percent: "99"
+  current_completion_percent: "100"
   reusable_workflow_percent: "99"
-  estimated_slices_to_target: "0.5 for Zenodo DOI decision after GitHub Release"
+  estimated_slices_to_target: "0; GitHub Release and Zenodo version DOI are assigned"
 
 gates:
   public-theorem-integrity:

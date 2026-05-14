@@ -19,6 +19,7 @@
     "v2_4",
     "v2_5"
   ],
+  "support_input_boundary": "The prc_v2_4 support CSVs are absorbed inputs in this v2.5 theorem archive; they are not a v2.4 public release, DOI, or standalone publication line.",
   "root_file_map": [
     {
       "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md",

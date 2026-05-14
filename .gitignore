@@ -1,0 +1,28 @@
+.DS_Store
+
+# Python local environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.uv-cache/
+.mypy_cache/
+.matplotlib-cache/
+*.egg-info/
+
+# Node / Vite local artifacts
+node_modules/
+dist/
+
+# Local review, scratch, and release outputs
+review_packages/
+scratch/
+private_notes/
+local_notes/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+

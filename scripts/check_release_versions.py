@@ -201,9 +201,13 @@ def main() -> int:
     generated_workflow = repo_root / ".github" / "workflows" / "verify.yml"
     if generated_workflow.is_file():
         generated_workflow_text = generated_workflow.read_text(encoding="utf-8")
-        # Source checkouts keep candidate jobs in .github/workflows/verify.yml.
-        # Generated public bundles replace that file with the public workflow.
-        if "Verify PrimeClock public release" not in generated_workflow_text:
+        # Source checkouts can keep additional candidate/public-theorem jobs in
+        # .github/workflows/verify.yml. Generated public bundles replace that
+        # file with the narrow public workflow.
+        if (
+            "Verify PrimeClock public release" not in generated_workflow_text
+            or "verify_candidate_workflow.py" in generated_workflow_text
+        ):
             generated_workflow_text = ""
     if generated_workflow.is_file() and generated_workflow_text:
         check_public_workflow(

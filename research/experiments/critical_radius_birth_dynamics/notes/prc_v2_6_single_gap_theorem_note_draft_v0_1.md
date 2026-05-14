@@ -48,7 +48,7 @@ The open interval for `a` has width `1 - q(R-L)`. Thus capacity is the positivit
 The checked finite scopes B4->B5, B5->B6, and B6->B7 support the route:
 
 ```text
-single-gap required
+in checked scopes, Close(row) => parent residual set is single-gap
 capacity necessary
 q-grid containment matches close rows in checked scopes
 capacity false positives are grid misses in checked scopes
@@ -88,7 +88,7 @@ The remaining proof obligations are:
 
 - make the circular representative or `0/1` splitting convention explicit in every containment statement;
 - keep endpoint-touch equality out of strict containment;
-- state the residual component boundary lemma without relying on finite CSV counts;
+- state the residual component boundary lemma without relying on finite CSV counts, using `prc_v2_6_residual_component_boundary_bridge_v0_1.md` as the bridge note;
 - distinguish `there exists an integer a in the open interval` from `the actual lift remainder a is aligned`;
 - keep capacity as a necessary size filter rather than a separator;
 - keep mod 6 ancestry and k=2 multi-gap dilution diagnostic-only.

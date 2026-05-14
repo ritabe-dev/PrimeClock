@@ -46,6 +46,7 @@ REQUIRED_PHRASES = (
     "width 1 - q(R-L)",
     "capacity is the positivity of that width",
     "actual integer remainder a",
+    "in checked scopes, Close(row) => parent residual set is single-gap",
     "Close(row) iff strict q-grid containment beyond checked scopes",
     "all births are single-gap beyond checked scopes",
     "capacity false positives are all grid misses beyond checked scopes",
@@ -70,6 +71,16 @@ REQUIRED_PHRASES = (
     "no asymptotic law claim",
     "Gate R source-only research",
 )
+FORBIDDEN_PHRASES = (
+    "public_theorem=promote",
+    "doi_state=assigned",
+    "github_release_url",
+    "zenodo_version_doi",
+    "b8_theorem=promote",
+    "b8 full graph theorem",
+    "general predictor theorem",
+    "asymptotic law theorem",
+)
 
 
 def require_note(repo_root: Path, failures: list[str]) -> None:
@@ -86,6 +97,21 @@ def require_note(repo_root: Path, failures: list[str]) -> None:
         normalized_phrase = " ".join(phrase.replace("`", "").split())
         if normalized_phrase not in normalized:
             failures.append(f"single-gap theorem-note draft missing phrase {phrase!r}")
+    for phrase in FORBIDDEN_PHRASES:
+        normalized_phrase = " ".join(phrase.replace("`", "").split())
+        if normalized_phrase in normalized:
+            failures.append(f"single-gap theorem-note draft contains forbidden phrase {phrase!r}")
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        normalized_line = " ".join(line.replace("`", "").split())
+        if (
+            "Close(row) iff strict q-grid containment" in normalized_line
+            and "defer" not in normalized_line
+            and "beyond checked scopes" not in normalized_line
+        ):
+            failures.append(
+                "single-gap theorem-note draft contains undeferred global iff "
+                f"language on line {line_number}"
+            )
 
 
 def require_dependency_checks(repo_root: Path, failures: list[str]) -> None:

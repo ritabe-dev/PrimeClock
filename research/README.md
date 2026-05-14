@@ -1,7 +1,12 @@
 # Prime Reciprocal Covering Research Package
 
 This directory contains the reproducible research package for Prime Reciprocal
-Covering (PRC). The current external-release target is the v2.3.0 finite
+Covering (PRC). The current citable public theorem release for the repository is
+`v2.5.0-prc-public-theorem`; see
+`experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md`
+and `../VERSION_MAP.md`.
+
+The foundational package entry point in this directory remains the v2.3.0 finite
 critical-radius and gap-aperture birth-dynamics artifact.
 
 The PrimeClock visualization is origin/discovery context for the research. The
@@ -11,7 +16,7 @@ package and exact certificate artifacts, not the React/Vite visualization app.
 The Python package keeps the historical name `prime-reciprocal-projection`.
 The finite theorem bundle is framed as Prime Reciprocal Covering.
 
-## Current Release Entry Point
+## Foundational v2.3 Package Entry Point
 
 Read these files in order:
 

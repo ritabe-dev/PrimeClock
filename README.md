@@ -7,10 +7,11 @@ artifact.
 
 ## Development App
 
-This repository can also contain the React/Vite PrimeClock visualization app
-under `src/`. The app is development and exploration tooling, and is not part
-of the v2.3 or v2.5 public theorem release bundles. Public release archives are
-built from explicit allowlists and may intentionally exclude the app.
+Historical checkouts of this repository may contain the React/Vite PrimeClock
+visualization app under `src/`. That app is optional development and exploration
+tooling, and is not part of the v2.3 or v2.5 public theorem release bundles.
+Public release archives are built from explicit allowlists and may intentionally
+exclude the app.
 
 ## Current Public Theorem Release
 

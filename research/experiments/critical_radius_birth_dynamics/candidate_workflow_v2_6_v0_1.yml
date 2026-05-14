@@ -8,9 +8,10 @@ goal: >
   forbidden special remainders, central endpoint obstruction, and mod 6 ancestry
   diagnostics. B8 feasibility remains a separate deferred route.
 readiness:
-  current_completion_percent: "35"
+  starter_baseline_completion_percent: "35"
+  current_theorem_note_draft_readiness_percent: "98-99"
   reusable_workflow_percent: "90"
-  estimated_slices_to_target: "1"
+  estimated_slices_to_gate_r_checkpoint: "0.2-0.3"
 
 gates:
   v2-6-feasibility:
@@ -20,7 +21,7 @@ gates:
         command:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
-        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0"
+        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0, mode=read_only"
   v2-6-boundary:
     description: v2.6 boundary audit for non-claims and v2.5 public release separation
     commands:
@@ -29,7 +30,7 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
           - --boundary-only
-        expected_stdout: "check_v2_6_b8_feasibility: checks=6, failed=0"
+        expected_stdout: "check_v2_6_b8_feasibility: checks=6, failed=0, mode=read_only"
   v2-6-special-point-obstruction:
     description: v2.6 special point obstruction Gate R audit
     commands:
@@ -141,7 +142,7 @@ gates:
         command:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
-        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0"
+        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0, mode=read_only"
       - cwd: research
         command:
           - "{python}"

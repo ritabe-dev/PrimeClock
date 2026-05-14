@@ -126,8 +126,8 @@ def read_summary_rows(repo_root: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def write_summary(repo_root: Path, rows: list[dict[str, str]], out_path: Path | None) -> Path:
-    path = out_path or (repo_root / SUMMARY_REL)
+def write_summary(repo_root: Path, rows: list[dict[str, str]], out_path: Path) -> Path:
+    path = out_path if out_path.is_absolute() else repo_root / out_path
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=["key", "value", "status", "notes"])
@@ -258,6 +258,11 @@ def build_summary_rows(repo_root: Path) -> tuple[list[dict[str, str]], list[str]
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, help="Optional output CSV path")
+    parser.add_argument(
+        "--update",
+        action="store_true",
+        help="Regenerate the committed summary CSV, or --out if provided",
+    )
     parser.add_argument("--boundary-only", action="store_true", help="Run only boundary checks")
     args = parser.parse_args()
 
@@ -270,11 +275,15 @@ def main() -> int:
     rows, row_failures = build_summary_rows(repo_root)
     failures.extend(row_failures)
     require_summary_estimate_rows(rows, failures)
-    if not args.boundary_only:
+    if not args.boundary_only and not args.update:
         committed_rows = read_summary_rows(repo_root)
-        if committed_rows and committed_rows != rows:
+        if not committed_rows:
+            failures.append(f"missing committed summary for read-only audit: {SUMMARY_REL}")
+        elif committed_rows != rows:
             failures.append(f"committed summary differs from regenerated summary: {SUMMARY_REL}")
-    output_path = write_summary(repo_root, rows, args.out)
+    output_path = repo_root / SUMMARY_REL
+    if args.update or args.out:
+        output_path = write_summary(repo_root, rows, args.out or SUMMARY_REL)
 
     if failures:
         for failure in failures:
@@ -282,7 +291,11 @@ def main() -> int:
         return 1
 
     check_count = 6 if args.boundary_only else 8
-    print(f"check_v2_6_b8_feasibility: checks={check_count}, failed=0, out={output_path}")
+    mode = "updated" if args.update or args.out else "read_only"
+    print(
+        f"check_v2_6_b8_feasibility: checks={check_count}, failed=0, "
+        f"mode={mode}, artifact={output_path}"
+    )
     return 0
 
 
