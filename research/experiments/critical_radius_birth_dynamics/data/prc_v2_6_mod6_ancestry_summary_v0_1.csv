@@ -1,0 +1,4 @@
+scope,total_parent_families,base_mod6_3_count,base_mod6_3_rate,base_mod6_3_rate_decimal,close_rows,close_mod6_3_count,close_mod6_3_rate,close_mod6_3_rate_decimal,close_mod6_counts,decision
+B4_to_B5_full,208,35,35/208,0.168269,14,2,2/14,0.142857,2:6 3:2 4:6,weak_or_non_supportive_mod6_3_signal
+B5_to_B6_full,2274,383,383/2274,0.168426,42,32,32/42,0.761905,2:5 3:32 4:5,mod6_3_enriched_birth_ancestry_signal
+B6_to_B7_full,29520,4947,4947/29520,0.167581,714,522,522/714,0.731092,1:4 2:92 3:522 4:92 5:4,mod6_3_enriched_birth_ancestry_signal
