@@ -1,56 +1,17 @@
 # Prime Reciprocal Covering Research Package
 
 This directory contains the reproducible research package for Prime Reciprocal
-Covering (PRC). The current citable public theorem release is the scoped v2.5
-finite aperture-orbit separator theorem. The v2.3.0 DOI release remains an
-immutable foundational critical-radius and gap-aperture birth-dynamics artifact.
-The active next research line is v2.6 source-only Gate R work on special point
-obstruction.
+Covering (PRC). The current external-release target is the v2.3.0 finite
+critical-radius and gap-aperture birth-dynamics artifact.
 
-The PrimeClock visualization is origin/discovery context for the research.
-Public release bundles contain finite residue-covering research artifacts and
-exact certificate verifiers, not the React/Vite visualization app.
+The PrimeClock visualization is origin/discovery context for the research. The
+v2.3.0 public release bundle contains the finite residue-covering research
+package and exact certificate artifacts, not the React/Vite visualization app.
 
 The Python package keeps the historical name `prime-reciprocal-projection`.
 The finite theorem bundle is framed as Prime Reciprocal Covering.
 
 ## Current Release Entry Point
-
-For the current v2.5 public theorem release, read these files first:
-
-1. `experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md`
-2. `experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md`
-3. `experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md`
-4. `experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff`
-5. `../release/public/release_registry.json`
-6. `../VERSION_MAP.md`
-
-The v2.5 theorem is limited to the recorded complete `B4->B5`, `B5->B6`, and
-`B6->B7` transition scopes. It proves a finite exact terminal containment
-certificate on committed checked rows, not a general predictor.
-
-## Active Source-Only Research Line
-
-v2.6 is not a public release, DOI artifact, B8 theorem, general predictor, or
-asymptotic law. Its current Gate R direction is special point obstruction:
-forbidden special remainders, central endpoint obstruction, and mod 6 ancestry
-diagnostics.
-
-Start here:
-
-1. `experiments/critical_radius_birth_dynamics/notes/prc_v2_6_research_seed_note_v0_1.md`
-2. `experiments/critical_radius_birth_dynamics/notes/prc_v2_6_special_point_obstruction_gate_r_v0_1.md`
-3. `experiments/critical_radius_birth_dynamics/candidate_workflow_v2_6_v0_1.yml`
-
-Run the source-only v2.6 Gate R checks from the repository root:
-
-```bash
-python3 scripts/verify_candidate_workflow.py \
-  --config research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_6_v0_1.yml \
-  quick
-```
-
-## Foundational v2.3 Entry Point
 
 Read these files in order:
 
