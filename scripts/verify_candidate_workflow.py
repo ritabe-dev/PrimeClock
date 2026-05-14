@@ -54,6 +54,7 @@ MODES = {
     "v2-6-special-point-theorem-note-decision",
     "v2-6-special-point-theorem-note-candidate",
     "v2-6-mod6-ancestry-diagnostic",
+    "v2-6-k2-multigap-dilution-diagnostic",
     "all",
 }
 
@@ -822,6 +823,16 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-mod6-ancestry-diagnostic",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-k2-multigap-dilution-diagnostic" or (
+            args.mode == "all"
+            and "v2-6-k2-multigap-dilution-diagnostic" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-k2-multigap-dilution-diagnostic",
                 repo_root=repo_root,
                 variables=variables,
             )

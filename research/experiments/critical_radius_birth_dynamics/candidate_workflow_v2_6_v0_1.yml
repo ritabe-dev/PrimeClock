@@ -94,6 +94,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
         expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
+  v2-6-k2-multigap-dilution-diagnostic:
+    description: v2.6 k=2 multi-gap dilution diagnostic audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
+        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -142,3 +150,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
         expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
+        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
