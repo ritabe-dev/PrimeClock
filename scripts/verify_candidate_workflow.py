@@ -49,6 +49,11 @@ MODES = {
     "v2-6-special-point-obstruction",
     "v2-6-special-point-lemma-formalization",
     "v2-6-special-point-gate-r-review",
+    "v2-6-endpoint-distance-proof-obligation",
+    "v2-6-gate-r-local-first-process",
+    "v2-6-special-point-theorem-note-decision",
+    "v2-6-special-point-theorem-note-candidate",
+    "v2-6-mod6-ancestry-diagnostic",
     "all",
 }
 
@@ -767,6 +772,56 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-special-point-gate-r-review",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-endpoint-distance-proof-obligation" or (
+            args.mode == "all"
+            and "v2-6-endpoint-distance-proof-obligation" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-endpoint-distance-proof-obligation",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-gate-r-local-first-process" or (
+            args.mode == "all"
+            and "v2-6-gate-r-local-first-process" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-gate-r-local-first-process",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-special-point-theorem-note-decision" or (
+            args.mode == "all"
+            and "v2-6-special-point-theorem-note-decision" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-special-point-theorem-note-decision",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-special-point-theorem-note-candidate" or (
+            args.mode == "all"
+            and "v2-6-special-point-theorem-note-candidate" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-special-point-theorem-note-candidate",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-mod6-ancestry-diagnostic" or (
+            args.mode == "all"
+            and "v2-6-mod6-ancestry-diagnostic" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-mod6-ancestry-diagnostic",
                 repo_root=repo_root,
                 variables=variables,
             )
