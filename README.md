@@ -34,8 +34,6 @@ Read these v2.5 files first:
 2. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md`
 3. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_draft_v0_1.md`
 4. `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff`
-5. `release/public/release_registry.json`
-6. `VERSION_MAP.md`
 
 The v2.5 release does not claim a B8 theorem, B8 full graph, general predictor,
 asymptotic law, coverage/recall/holdout validation for B8, or automatic

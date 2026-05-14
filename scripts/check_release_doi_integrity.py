@@ -20,6 +20,18 @@ PENDING_PATTERNS = [
     "do not cite a Zenodo DOI until a Zenodo archive exists",
     "DOI is pending",
 ]
+ROOT_README_FORBIDDEN_PHRASES = [
+    "## Development App",
+    "## Version-Line Workflow",
+    "Gate R:",
+    "Gate C:",
+    "Gate P:",
+    "source-only bridge",
+    "next research line",
+    "release-registry operating procedure",
+    "`v2.6",
+    "`maintenance/v2",
+]
 
 
 def read_text(repo_root: Path, relative_path: str) -> str:
@@ -183,6 +195,9 @@ def check_repository_freshness(repo_root: Path, entries: list[dict[str, Any]]) -
     failures: list[str] = []
     root_readme = read_text(repo_root, "README.md")
     version_map = read_text(repo_root, "VERSION_MAP.md")
+    for phrase in ROOT_README_FORBIDDEN_PHRASES:
+        if phrase in root_readme:
+            failures.append(f"README.md contains internal-only public-surface phrase {phrase!r}")
     for relative_path, text in {
         "README.md": root_readme,
         "VERSION_MAP.md": version_map,
