@@ -46,7 +46,6 @@ MODES = {
     "public-theorem-doi-integrity",
     "public-theorem-integrity",
     "public-theorem-review",
-    "v2-6-special-point-obstruction",
     "all",
 }
 
@@ -738,16 +737,6 @@ def main() -> int:
             run_gate(config, "public-theorem-doi-integrity", repo_root=repo_root, variables=variables)
         if args.mode in {"public-theorem-bundle", "all"}:
             run_gate(config, "public-theorem-bundle", repo_root=repo_root, variables=variables)
-        if args.mode == "v2-6-special-point-obstruction" or (
-            args.mode == "all"
-            and "v2-6-special-point-obstruction" in config.get("gates", {})
-        ):
-            run_gate(
-                config,
-                "v2-6-special-point-obstruction",
-                repo_root=repo_root,
-                variables=variables,
-            )
         if args.mode == "public-theorem-review":
             run_gate(config, "public-theorem-integrity", repo_root=repo_root, variables=variables)
             run_gate(config, "public-theorem-doi-integrity", repo_root=repo_root, variables=variables)

@@ -1,4 +1,0 @@
-scope,checked_lift_rows,phase_endpoint_touch_rows,phase_endpoint_touch_close_rows,phase_endpoint_touch_birth_rows,close_rows,birth_rows,birth_dynamics_rows,strict_single_gap_birth_rows,endpoint_single_gap_birth_rows,strict_multi_gap_birth_rows,endpoint_multi_gap_birth_rows,uses_endpoint_touching_rows,single_gap_birth_rows,decision
-B4_to_B5_full,2288,0,0,0,14,14,14,14,0,0,0,0,14,finite_supports_central_endpoint_obstruction_candidate
-B5_to_B6_full,29562,0,0,0,42,42,42,42,0,0,0,0,42,finite_supports_central_endpoint_obstruction_candidate
-B6_to_B7_full,501840,0,0,0,714,714,714,714,0,0,0,0,714,finite_supports_central_endpoint_obstruction_candidate
