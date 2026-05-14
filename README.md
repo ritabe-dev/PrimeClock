@@ -1,16 +1,9 @@
-# PrimeClock / Prime Reciprocal Covering (PRC)
+# PrimeClock Public Releases
 
 This repository publishes finite Prime Reciprocal Covering (PRC) artifacts and
 their verification tooling. The current citable result is the scoped v2.5 public
 theorem release; the older v2.3.0 DOI release remains an immutable foundational
 artifact.
-
-## Development App
-
-This repository can also contain the React/Vite PrimeClock visualization app
-under `src/`. The app is development and exploration tooling, and is not part
-of the v2.3 or v2.5 public theorem release bundles. Public release archives are
-built from explicit allowlists and may intentionally exclude the app.
 
 ## Current Public Theorem Release
 
@@ -91,32 +84,6 @@ records nearby terminology and literature context.
 
 Zenodo DOIs identify citable archived snapshots of this finite artifact. They
 do not imply peer review.
-
-## Version-Line Workflow
-
-Do not duplicate the repository for new research lines. Keep shared source,
-release tooling, and workflow engines in one repo, and version only the
-research-line materials:
-
-| Line | Status | Management |
-| --- | --- | --- |
-| `v2.3.0` | immutable foundational public DOI release | tag / GitHub Release / Zenodo snapshot; do not retag |
-| `v2.4.x` | source-only bridge | no public release or DOI; preserves diagnostics that connect v2.3.0 to the next release line |
-| `v2.5.0-prc-public-theorem` | current scoped public theorem DOI release | finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes |
-| `v2.6.x` | next research line | must be registered in `release/public/release_registry.json` before DOI or GitHub Release work starts |
-| `maintenance/v2.x.y` | rare patch line | branch from the published tag only for reproducibility, metadata, or finite-claim-impacting fixes |
-
-The gates stay separate:
-
-```text
-Gate R: research story; source-only notes, pilot data, and research checkers
-Gate C: candidate integrity; reproducible package and manifest hygiene
-Gate P: public promotion; stable enough to cite and publish through GitHub/Zenodo
-```
-
-New public release lines must be added to `release/public/release_registry.json`
-before DOI finalization. The registry is the source of truth for DOI, GitHub
-Release URL, asset name, citation policy, and release metadata.
 
 ## Verify
 
