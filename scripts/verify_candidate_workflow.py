@@ -49,6 +49,7 @@ MODES = {
     "v2-6-special-point-obstruction",
     "v2-6-special-point-lemma-formalization",
     "v2-6-special-point-gate-r-review",
+    "v2-6-endpoint-distance-proof-obligation",
     "all",
 }
 
@@ -767,6 +768,16 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-special-point-gate-r-review",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-endpoint-distance-proof-obligation" or (
+            args.mode == "all"
+            and "v2-6-endpoint-distance-proof-obligation" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-endpoint-distance-proof-obligation",
                 repo_root=repo_root,
                 variables=variables,
             )

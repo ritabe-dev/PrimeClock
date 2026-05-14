@@ -54,6 +54,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
         expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
+  v2-6-endpoint-distance-proof-obligation:
+    description: v2.6 endpoint-distance proof-obligation readiness audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_endpoint_distance_proof_obligation.py
+        expected_stdout: "check_v2_6_endpoint_distance_proof_obligation: checks=8, failed=0, proof_status=candidate, public_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -77,3 +85,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
         expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_endpoint_distance_proof_obligation.py
+        expected_stdout: "check_v2_6_endpoint_distance_proof_obligation: checks=8, failed=0, proof_status=candidate, public_theorem=defer"
