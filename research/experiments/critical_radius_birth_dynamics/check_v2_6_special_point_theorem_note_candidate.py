@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit v2.6 special-point theorem-note decision readiness."""
+"""Audit v2.6 special-point theorem-note candidate readiness."""
 
 from __future__ import annotations
 
@@ -12,58 +12,64 @@ from check_v2_6_special_point_obstruction import repo_root_from_script
 
 EXPERIMENT_REL = Path("research/experiments/critical_radius_birth_dynamics")
 NOTES_REL = EXPERIMENT_REL / "notes"
-NOTE_REL = NOTES_REL / "prc_v2_6_special_point_theorem_note_decision_v0_1.md"
+NOTE_REL = NOTES_REL / "prc_v2_6_special_point_theorem_note_candidate_v0_1.md"
 ENDPOINT_DISTANCE_CHECK_REL = (
     EXPERIMENT_REL / "check_v2_6_endpoint_distance_proof_obligation.py"
+)
+THEOREM_NOTE_DECISION_CHECK_REL = (
+    EXPERIMENT_REL / "check_v2_6_special_point_theorem_note_decision.py"
 )
 LOCAL_FIRST_CHECK_REL = EXPERIMENT_REL / "check_v2_6_gate_r_local_first_process.py"
 
 REQUIRED_SECTIONS = (
-    "## Goal",
-    "## Candidate Lemmas",
-    "## Endpoint-Distance Bridge",
-    "## Promote-Defer Decision",
-    "## Proof Gaps",
+    "## Definitions",
+    "## Special Endpoint Spacing Lemma",
+    "## Residual Component Boundary Lemma",
+    "## Forbidden Special Remainder Lemma",
+    "## Central Endpoint Obstruction Lemma",
+    "## Remaining Risks",
     "## Non-claims",
 )
 REQUIRED_PHRASES = (
-    "Central Endpoint Obstruction Lemma",
-    "promote to source-only theorem-note candidate",
-    "Forbidden Special Remainder Lemma",
-    "promote to source-only theorem-note candidate",
-    "3 mod 6 ancestry",
-    "diagnostic only",
-    "Decision: promote source-only theorem-note candidate",
+    "source-only theorem-note candidate",
+    "old endpoints are the union",
+    "Composite placement does not generate new endpoints",
+    "1/(2p_k)",
+    "1/p_k",
+    "residual component adjacent to that side extends until the nearest old endpoint",
+    "topological boundary statement",
+    "a=0",
+    "a=(q-1)/2",
+    "a=(q+1)/2",
+    "endpoint-touch birth cannot occur",
     "source_theorem_note=promote_candidate",
-    "next=formalize_theorem_note_candidate",
     "public_theorem=defer",
     "b8_theorem=reject_for_v2_6_gate_r",
     "mod6_theorem=defer",
     "pr_policy=local_first_until_checkpoint",
-    "no public theorem claim",
+    "no public release claim",
     "no DOI claim",
     "no GitHub Release claim",
     "no B8 theorem",
     "no general predictor claim",
     "no asymptotic law claim",
-    "PR #6 remains a draft checkpoint candidate",
 )
 
 
 def require_note(repo_root: Path, failures: list[str]) -> None:
     path = repo_root / NOTE_REL
     if not path.is_file():
-        failures.append(f"missing theorem-note decision note: {NOTE_REL}")
+        failures.append(f"missing theorem-note candidate note: {NOTE_REL}")
         return
     text = path.read_text(encoding="utf-8")
     normalized = " ".join(text.replace("`", "").split())
     for section in REQUIRED_SECTIONS:
         if section not in text:
-            failures.append(f"theorem-note decision missing section {section}")
+            failures.append(f"theorem-note candidate missing section {section}")
     for phrase in REQUIRED_PHRASES:
         normalized_phrase = " ".join(phrase.replace("`", "").split())
         if normalized_phrase not in normalized:
-            failures.append(f"theorem-note decision missing phrase {phrase!r}")
+            failures.append(f"theorem-note candidate missing phrase {phrase!r}")
 
 
 def require_checker_passes(repo_root: Path, relative_path: Path, failures: list[str]) -> None:
@@ -85,6 +91,7 @@ def main() -> int:
 
     require_note(repo_root, failures)
     require_checker_passes(repo_root, ENDPOINT_DISTANCE_CHECK_REL, failures)
+    require_checker_passes(repo_root, THEOREM_NOTE_DECISION_CHECK_REL, failures)
     require_checker_passes(repo_root, LOCAL_FIRST_CHECK_REL, failures)
 
     if failures:
@@ -93,10 +100,10 @@ def main() -> int:
         return 1
 
     print(
-        "check_v2_6_special_point_theorem_note_decision: "
-        "checks=7, failed=0, "
+        "check_v2_6_special_point_theorem_note_candidate: "
+        "checks=8, failed=0, "
         "source_theorem_note=promote_candidate, "
-        "next=formalize_theorem_note_candidate"
+        "public_theorem=defer"
     )
     return 0
 

@@ -2,15 +2,15 @@
 
 ## Goal
 
-Purpose: decide whether the v2.6 special-point obstruction line is ready to promote into a source-only theorem note, or whether it should remain in Gate R until the residual-gap containment bridge is closed.
+Purpose: decide whether the v2.6 special-point obstruction line is ready to promote into a source-only theorem note candidate, while keeping any public theorem claim deferred.
 
-Current status: v2.5 public theorem release protection remains 100%; v2.6 endpoint-distance proof-obligation readiness is about 90-95%; after this local decision artifact, the remaining work is about 0.5 slice focused on the residual-gap containment bridge.
+Current status: v2.5 public theorem release protection remains 100%; v2.6 source-only theorem-note candidate readiness is about 95-98%; after this local decision artifact, the remaining work is about 0.3-0.5 slice focused on tightening the residual component boundary wording.
 
 ## Candidate Lemmas
 
-`Central Endpoint Obstruction Lemma`: promote only as a theorem-note candidate if endpoint centralization and length obstruction are written without finite-scope dependence.
+`Central Endpoint Obstruction Lemma`: promote to source-only theorem-note candidate. Endpoint centralization and length obstruction can be written from endpoint lattice spacing plus the residual component boundary lemma.
 
-`Forbidden Special Remainder Lemma`: defer unless the residual-gap containment bridge is clean. The endpoint lattice bounds are promising, but the proof still needs to show that the adjacent old residual gap is governed by those nearest old endpoint bounds without relying on committed finite audit tables.
+`Forbidden Special Remainder Lemma`: promote to source-only theorem-note candidate. The residual-gap containment bridge is handled at candidate level by the residual component boundary lemma: if the special side is uncovered, the residual component extends to the next old endpoint; if it is covered, there is no old residual component on that special side to close.
 
 `3 mod 6 ancestry`: diagnostic only. It may explain where productive interior single-gap ancestry concentrates, but it is not a theorem claim.
 
@@ -22,15 +22,15 @@ The endpoint-distance proof obligation supports these candidate facts:
 - near `1/2`, the closest old odd-prime endpoint other than `1/2` is at distance `1/p_k`;
 - since `q>p_k`, the special `q` arcs are shorter than those adjacent old endpoint distances.
 
-The unresolved bridge is not the endpoint lattice calculation. The unresolved bridge is proving, without finite-scope dependence, that the relevant old residual gap adjacent to `0` or `1/2` extends to the next old endpoint in the way the obstruction argument needs.
+The bridge is now a theorem-note candidate rather than a blocker. The endpoint lattice calculation gives the special spacing, and the residual component boundary lemma gives the topological step from nearest endpoint spacing to old residual component length.
 
 ## Promote-Defer Decision
 
-Decision: defer full theorem-note promotion.
+Decision: promote source-only theorem-note candidate while deferring any public theorem.
 
-`decision=defer_full_theorem_note`
+`source_theorem_note=promote_candidate`
 
-`next=close_residual_gap_bridge`
+`next=formalize_theorem_note_candidate`
 
 `public_theorem=defer`
 
@@ -40,20 +40,19 @@ Decision: defer full theorem-note promotion.
 
 `pr_policy=local_first_until_checkpoint`
 
-The safe next step is a smaller residual-gap bridge note/checker, not a public theorem note and not another PR.
+The safe next step is a source-only theorem-note candidate, not a public theorem note and not another PR.
 
 ## Proof Gaps
 
 Remaining proof gaps:
 
-- prove the residual-gap containment bridge near `0` and `1/2` without using checked finite scopes as the argument;
+- tighten the residual component boundary lemma wording so it cannot be read as relying on checked finite scopes;
 - keep `0/1` circular cut behavior explicit;
 - keep `p=2` half-circle boundary behavior separate from odd-prime endpoint lattice facts;
-- decide whether the central endpoint lemma can be promoted independently while the forbidden special remainder lemma remains deferred.
+- keep source-only theorem-note promotion separate from public theorem promotion.
 
 ## Non-claims
 
 This source-only Gate R decision makes no public theorem claim, no DOI claim, no GitHub Release claim, no B8 theorem, no B8 full graph claim, no general predictor claim, and no asymptotic law claim.
 
 PR #6 remains a draft checkpoint candidate. It should not be merged or updated until this local branch becomes a coherent Gate R checkpoint.
-

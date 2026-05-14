@@ -52,6 +52,7 @@ MODES = {
     "v2-6-endpoint-distance-proof-obligation",
     "v2-6-gate-r-local-first-process",
     "v2-6-special-point-theorem-note-decision",
+    "v2-6-special-point-theorem-note-candidate",
     "all",
 }
 
@@ -800,6 +801,16 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-special-point-theorem-note-decision",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-special-point-theorem-note-candidate" or (
+            args.mode == "all"
+            and "v2-6-special-point-theorem-note-candidate" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-special-point-theorem-note-candidate",
                 repo_root=repo_root,
                 variables=variables,
             )
