@@ -126,6 +126,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
         expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
+  v2-6-single-gap-theorem-note-draft:
+    description: v2.6 single-gap source-only theorem-note draft audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_theorem_note_draft.py
+        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=8, failed=0, theorem_note_draft=continue, public_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -194,3 +202,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
         expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_theorem_note_draft.py
+        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=8, failed=0, theorem_note_draft=continue, public_theorem=defer"

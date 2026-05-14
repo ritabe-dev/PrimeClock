@@ -58,6 +58,7 @@ MODES = {
     "v2-6-single-gap-grid-containment-diagnostic",
     "v2-6-capacity-false-positive-decomposition",
     "v2-6-general-lemma-readiness",
+    "v2-6-single-gap-theorem-note-draft",
     "all",
 }
 
@@ -866,6 +867,16 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-general-lemma-readiness",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-single-gap-theorem-note-draft" or (
+            args.mode == "all"
+            and "v2-6-single-gap-theorem-note-draft" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-single-gap-theorem-note-draft",
                 repo_root=repo_root,
                 variables=variables,
             )
