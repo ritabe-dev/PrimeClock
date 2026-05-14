@@ -2,77 +2,60 @@
 
 ## Goal
 
-Purpose: resume the v2.6 Gate R line from the local archive and review whether
-the special-point and single-gap route is ready to become a source-only
-theorem-note checkpoint.
+Purpose: review the restored local v2.6 proof candidate and keep the next step
+focused on a clean source-only theorem note.
 
-Current readiness is about 80-85% for a local Gate R checkpoint. The remaining
-work is about 0.5-1 slice focused on tightening the residual component boundary
-bridge and the promote/defer boundary.
+Current readiness is about 85-90%. The remaining work is about 0.5 slice:
+tighten the residual component boundary bridge and then decide whether this is
+a local Gate R checkpoint.
 
-## Review Inputs
+## Keep
 
-This review uses the restored local v2.6 notes and audits:
+The proof line is worth keeping because it has a short structure:
 
-- `prc_v2_6_residual_component_boundary_bridge_v0_1.md`;
-- `prc_v2_6_single_gap_theorem_note_draft_v0_1.md`;
-- special point obstruction, endpoint-distance, q-grid containment, capacity
-  false-positive, mod 6 ancestry, and k=2 dilution diagnostics.
+1. special endpoint spacing near `0` and `1/2`;
+2. residual components extend to the next old endpoint;
+3. special q-clouds are shorter than those adjacent residual components;
+4. fixed single-gap q-grid containment is a geometric equivalence.
 
-The work remains Gate R local-only. It is not a public release line and is not
-registered for DOI or GitHub Release work.
-
-## Promote Candidates
-
-The following are still suitable source-only theorem-note candidates:
-
-| item | decision |
-| --- | --- |
-| Special Endpoint Spacing Lemma | promote_candidate |
-| Residual Component Boundary Lemma | promote_candidate_after_tightening |
-| Forbidden Special Remainder Lemma | promote_candidate_if_boundary_bridge_holds |
-| Central Endpoint Obstruction Lemma | promote_candidate |
-| Single-Gap Grid Containment Lemma | promote_candidate_as_fixed_gap_geometry |
-
-The single-gap grid statement is only the fixed-gap geometric equivalence:
+These support the source-only candidates:
 
 ```text
-G subset I_q(a)
-qR - 1/2 < a < qL + 1/2
+Special Endpoint Spacing Lemma
+Residual Component Boundary Lemma
+Forbidden Special Remainder Lemma
+Central Endpoint Obstruction Lemma
+Single-Gap Grid Containment Lemma
 ```
 
-It is not promoted as a global PRC birth theorem.
+## Trim
 
-## Defer Boundary
+Do not promote diagnostic explanations into the proof body. Keep these as
+checked support only:
+
+```text
+mod 6 ancestry
+k=2 multi-gap dilution
+capacity false-positive decomposition
+B8 feasibility
+```
+
+The proof should not repeat full diagnostic tables. It only needs the checked
+support summary and the promote/defer boundary.
+
+## Defer
 
 The following remain deferred beyond checked scopes:
 
-| item | decision |
-| --- | --- |
-| Close(row) iff strict q-grid containment | defer |
-| all births are single-gap | defer |
-| capacity false positives are all grid misses | defer |
-| mod 6 ancestry theorem | defer |
-| k=2 multi-gap dilution theorem | defer |
-| capacity as a general separator | reject |
+```text
+Close(row) iff strict q-grid containment
+all births are single-gap
+capacity false positives are all grid misses
+mod 6 ancestry theorem
+k=2 multi-gap dilution theorem
+```
 
-This keeps the checked B4->B5, B5->B6, and B6->B7 diagnostics from being
-overstated as a general theorem.
-
-## Residual Boundary Focus
-
-The next technical focus is the Residual Component Boundary Lemma. The review
-must tighten the covered-special-side and uncovered-special-side cases without
-using finite CSV counts as proof.
-
-The intended bridge remains:
-
-- if the relevant special side is old-covered, no old residual component is
-  based at that covered special side;
-- if the relevant special side is old-uncovered, the adjacent residual component
-  extends until the nearest old endpoint on that side;
-- combined with special endpoint spacing, the special q-arc is too short to
-  contain that adjacent residual component.
+Capacity as a general separator is rejected.
 
 ## Gate R Decision
 
@@ -96,15 +79,11 @@ The intended bridge remains:
 
 `root_readme_unchanged=true`
 
-Decision: continue local-only v2.6 Gate R work. The next checkpoint is a
-tightened source theorem-note candidate, not Gate C, Gate P, DOI, GitHub
-Release, B8 theorem work, general predictor work, or asymptotic law work.
+Decision: continue local-only v2.6 Gate R work. The next checkpoint is a cleaner
+source theorem-note candidate, not more diagnostic tables.
 
 ## Non-claims
 
 This review makes no public theorem claim, no DOI claim, no GitHub Release
 claim, no B8 theorem claim, no B8 full graph claim, no general predictor claim,
 and no asymptotic law claim.
-
-It does not modify the root README, VERSION_MAP, release registry, v2.5 release
-files, or v2.3 hash-protected public release files.
