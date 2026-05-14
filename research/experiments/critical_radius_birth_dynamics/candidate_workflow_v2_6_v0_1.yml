@@ -46,6 +46,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_lemma_formalization.py
         expected_stdout: "check_v2_6_special_point_lemma_formalization: checks=8, failed=0, route=formalize_special_point_lemmas, proof_status=candidate"
+  v2-6-special-point-gate-r-review:
+    description: v2.6 special point Gate R review readiness audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
+        expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -64,3 +72,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_lemma_formalization.py
         expected_stdout: "check_v2_6_special_point_lemma_formalization: checks=8, failed=0, route=formalize_special_point_lemmas, proof_status=candidate"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
+        expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
