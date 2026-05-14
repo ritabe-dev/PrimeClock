@@ -102,6 +102,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
         expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
+  v2-6-single-gap-grid-containment-diagnostic:
+    description: v2.6 single-gap q-grid containment diagnostic audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
+        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -155,3 +163,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
         expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
+        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"

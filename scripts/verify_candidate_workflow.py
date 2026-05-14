@@ -55,6 +55,7 @@ MODES = {
     "v2-6-special-point-theorem-note-candidate",
     "v2-6-mod6-ancestry-diagnostic",
     "v2-6-k2-multigap-dilution-diagnostic",
+    "v2-6-single-gap-grid-containment-diagnostic",
     "all",
 }
 
@@ -833,6 +834,16 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-k2-multigap-dilution-diagnostic",
+                repo_root=repo_root,
+                variables=variables,
+            )
+        if args.mode == "v2-6-single-gap-grid-containment-diagnostic" or (
+            args.mode == "all"
+            and "v2-6-single-gap-grid-containment-diagnostic" in config.get("gates", {})
+        ):
+            run_gate(
+                config,
+                "v2-6-single-gap-grid-containment-diagnostic",
                 repo_root=repo_root,
                 variables=variables,
             )

@@ -1,0 +1,4 @@
+scope,checked_lift_rows,single_gap_lift_rows,multi_gap_lift_rows,capacity_pass_rows,grid_strict_containment_rows,grid_endpoint_touch_rows,close_rows,nonclose_capacity_false_positive_rows,grid_close_mismatch_rows,decision
+B4_to_B5_full,2288,1573,715,308,14,0,14,294,0,single_gap_grid_containment_matches_close
+B5_to_B6_full,29562,17693,11869,2912,42,0,42,2870,0,single_gap_grid_containment_matches_close
+B6_to_B7_full,501840,267495,234345,50116,714,0,714,49402,0,single_gap_grid_containment_matches_close
