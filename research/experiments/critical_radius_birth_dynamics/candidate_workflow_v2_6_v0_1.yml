@@ -70,6 +70,14 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_local_first_process.py
         expected_stdout: "check_v2_6_gate_r_local_first_process: checks=5, failed=0, gate_r=local_first"
+  v2-6-special-point-theorem-note-decision:
+    description: v2.6 special point theorem-note promote/defer decision audit
+    commands:
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_decision.py
+        expected_stdout: "check_v2_6_special_point_theorem_note_decision: checks=7, failed=0, decision=defer_full_theorem_note"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -103,3 +111,8 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_local_first_process.py
         expected_stdout: "check_v2_6_gate_r_local_first_process: checks=5, failed=0, gate_r=local_first"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_decision.py
+        expected_stdout: "check_v2_6_special_point_theorem_note_decision: checks=7, failed=0, decision=defer_full_theorem_note"
