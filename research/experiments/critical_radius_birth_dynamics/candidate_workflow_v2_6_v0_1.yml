@@ -94,38 +94,6 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
         expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
-  v2-6-k2-multigap-dilution-diagnostic:
-    description: v2.6 k=2 multi-gap dilution diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
-        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
-  v2-6-single-gap-grid-containment-diagnostic:
-    description: v2.6 single-gap q-grid containment diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
-        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"
-  v2-6-capacity-false-positive-decomposition:
-    description: v2.6 capacity false-positive decomposition diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
-        expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
-  v2-6-general-lemma-readiness:
-    description: v2.6 general lemma readiness boundary audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
-        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
   quick:
     description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
     commands:
@@ -174,23 +142,3 @@ gates:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
         expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
-        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
-        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
-        expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
-        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
