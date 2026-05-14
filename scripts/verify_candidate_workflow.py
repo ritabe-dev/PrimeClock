@@ -47,7 +47,6 @@ MODES = {
     "public-theorem-integrity",
     "public-theorem-review",
     "v2-6-special-point-obstruction",
-    "v2-6-special-point-lemma-formalization",
     "all",
 }
 
@@ -746,16 +745,6 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-6-special-point-obstruction",
-                repo_root=repo_root,
-                variables=variables,
-            )
-        if args.mode == "v2-6-special-point-lemma-formalization" or (
-            args.mode == "all"
-            and "v2-6-special-point-lemma-formalization" in config.get("gates", {})
-        ):
-            run_gate(
-                config,
-                "v2-6-special-point-lemma-formalization",
                 repo_root=repo_root,
                 variables=variables,
             )

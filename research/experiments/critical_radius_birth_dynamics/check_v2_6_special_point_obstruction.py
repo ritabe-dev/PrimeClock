@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import argparse
 import csv
 from collections import Counter, defaultdict
 from fractions import Fraction
@@ -80,8 +79,6 @@ def compare_or_seed_csv(
     relative_path: Path,
     rows: list[dict[str, str]],
     failures: list[str],
-    *,
-    update: bool,
 ) -> Path:
     path = repo_root / relative_path
     if path.is_file():
@@ -89,11 +86,7 @@ def compare_or_seed_csv(
             committed = list(csv.DictReader(handle))
         if committed != rows:
             failures.append(f"committed summary differs from regenerated summary: {relative_path}")
-    elif not update:
-        failures.append(f"missing committed summary artifact: {relative_path}")
-    if update:
-        return write_csv(repo_root, relative_path, rows)
-    return path
+    return write_csv(repo_root, relative_path, rows)
 
 
 def special_remainders(q: int) -> dict[str, int]:
@@ -346,24 +339,7 @@ def require_mod6_summary(rows: list[dict[str, str]], failures: list[str]) -> Non
             failures.append(f"{scope} must remain recorded as mod6=3 enriched")
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Audit v2.6 special-point obstruction Gate R evidence. "
-            "By default this is a read-only committed artifact audit; pass "
-            "--update to regenerate the committed summary CSVs."
-        )
-    )
-    parser.add_argument(
-        "--update",
-        action="store_true",
-        help="regenerate committed v2.6 special-point summary CSV artifacts",
-    )
-    return parser.parse_args()
-
-
 def main() -> int:
-    args = parse_args()
     repo_root = repo_root_from_script()
     failures: list[str] = []
     phase_rows = read_csv(repo_root, PHASE_REL)
@@ -379,27 +355,9 @@ def main() -> int:
     require_mod6_summary(mod6_rows, failures)
 
     out_paths = [
-        compare_or_seed_csv(
-            repo_root,
-            SPECIAL_SUMMARY_REL,
-            special_rows,
-            failures,
-            update=args.update,
-        ),
-        compare_or_seed_csv(
-            repo_root,
-            ENDPOINT_SUMMARY_REL,
-            endpoint_rows,
-            failures,
-            update=args.update,
-        ),
-        compare_or_seed_csv(
-            repo_root,
-            MOD6_SUMMARY_REL,
-            mod6_rows,
-            failures,
-            update=args.update,
-        ),
+        compare_or_seed_csv(repo_root, SPECIAL_SUMMARY_REL, special_rows, failures),
+        compare_or_seed_csv(repo_root, ENDPOINT_SUMMARY_REL, endpoint_rows, failures),
+        compare_or_seed_csv(repo_root, MOD6_SUMMARY_REL, mod6_rows, failures),
     ]
 
     if failures:
