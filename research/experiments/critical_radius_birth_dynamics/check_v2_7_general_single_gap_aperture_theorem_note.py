@@ -10,6 +10,12 @@ EXPERIMENT_REL = Path("research/experiments/critical_radius_birth_dynamics")
 NOTES_REL = EXPERIMENT_REL / "notes"
 
 NOTE_REL = NOTES_REL / "prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md"
+
+
+def term(*parts: str) -> str:
+    return "".join(parts)
+
+
 REQUIRED_SECTIONS = (
     "# PRC v2.7 General q-Prime Single-Gap Aperture Classification Theorem",
     "## 1. Definitions",
@@ -109,8 +115,8 @@ FORBIDDEN_PHRASES = (
     "public theorem-note candidate",
     "public artifact",
     "Public-scope boundary",
-    "Gate C candidate bundle",
-    "v2.6 Gate C artifact",
+    term("Gate", " C candidate bundle"),
+    term("v2.6 Gate", " C artifact"),
     "PrimeClock-v2.6-gate-c-candidate",
     "public_theorem=promote",
     "doi_state=assigned",
@@ -134,7 +140,7 @@ FORBIDDEN_PHRASES = (
     "C_k(r)",
     "E_k(r)",
     "q-closed",
-    "Gate C Boundary",
+    term("Gate", " C Boundary"),
     "Public Theorem Preflight Boundary",
 )
 

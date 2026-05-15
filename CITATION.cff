@@ -1,13 +1,11 @@
 cff-version: 1.2.0
-message: "If you use this finite PRC critical-radius and birth-dynamics artifact, please cite it as below."
-title: "Critical-radius spectra and gap-aperture births for a finite Prime Reciprocal Covering problem"
+message: "If you use the PRC v2.7 general q-prime theorem release, cite the release-specific archived version."
+title: "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem"
 authors:
   - family-names: "Itabe"
     given-names: "Rio"
-version: "2.3.0"
-date-released: "2026-05-11"
-doi: "10.5281/zenodo.20091722"
-abstract: "A finite exact-rational Prime Reciprocal Covering artifact for k=4,5 critical-radius spectra and B5/B6/B7 gap-aperture birth dynamics."
+version: "v2.7.1-prc-general-q-prime-theorem"
+abstract: "A structural Prime Reciprocal Covering circular-arc theorem: in the direct q-lift model for any later odd prime q>p_k, nonempty q-birth lifts are exactly single-gap q-grid aperture-alignment events."
 license: "MIT"
 repository-code: "https://github.com/ritabe-dev/PrimeClock"
-url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.3.0"
+url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem"
