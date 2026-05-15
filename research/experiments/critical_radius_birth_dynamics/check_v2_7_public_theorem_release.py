@@ -34,7 +34,6 @@ DOI_RE = re.compile(r"10\.5281/zenodo\.\d+")
 REQUIRED_PUBLIC_TEXT = (
     "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
     "public theorem release text",
-    "pending Zenodo publication",
     "direct one-prime q-lift",
     "recorded birth rows consistency audit",
     "committed recorded birth rows in the finite next-prime support CSV",
@@ -131,6 +130,7 @@ def run_bundle_self_check(repo_root: Path, failures: list[str]) -> None:
 
 
 def check_public_docs(repo_root: Path, failures: list[str]) -> None:
+    doi_state, version_doi = release_doi_state(repo_root, failures)
     docs = {
         str(RELEASE_README_REL): require_file(repo_root, RELEASE_README_REL, failures),
         str(RELEASE_NOTES_REL): require_file(repo_root, RELEASE_NOTES_REL, failures),
@@ -141,11 +141,38 @@ def check_public_docs(repo_root: Path, failures: list[str]) -> None:
     for phrase in REQUIRED_PUBLIC_TEXT:
         if normalized_text(phrase) not in normalized:
             failures.append(f"v2.7.1 public release docs missing phrase {phrase!r}")
+    if doi_state == "assigned":
+        if version_doi not in combined:
+            failures.append(f"v2.7.1 public release docs missing DOI {version_doi!r}")
+        if "pending Zenodo publication" in combined:
+            failures.append("v2.7.1 public release docs contain stale DOI pending phrase")
+    else:
+        if "pending Zenodo publication" not in combined:
+            failures.append("v2.7.1 public release docs missing pending DOI phrase")
+        if DOI_RE.search(combined):
+            failures.append(
+                "v2.7.1 public release docs must not contain a Zenodo DOI before finalization"
+            )
     for phrase in FORBIDDEN_PUBLIC_TEXT:
         if phrase in combined:
             failures.append(f"v2.7.1 public release docs contain forbidden phrase {phrase!r}")
-    if DOI_RE.search(combined):
-        failures.append("v2.7.1 public release docs must not contain a Zenodo DOI before finalization")
+
+
+def release_doi_state(repo_root: Path, failures: list[str]) -> tuple[str, str]:
+    text = require_file(repo_root, RELEASE_MANIFEST_REL, failures)
+    if not text:
+        return "not_assigned", ""
+    data = json.loads(text)
+    doi_state = data.get("doi_state")
+    version_doi = data.get("zenodo_version_doi", "")
+    if doi_state not in {"not_assigned", "assigned"}:
+        failures.append("v2.7.1 public release manifest doi_state must be assigned or not_assigned")
+        return "not_assigned", ""
+    if doi_state == "assigned" and not DOI_RE.fullmatch(version_doi):
+        failures.append("v2.7.1 public release manifest assigned DOI state needs Zenodo DOI")
+    if doi_state == "not_assigned" and version_doi:
+        failures.append("v2.7.1 public release manifest has DOI while doi_state is not_assigned")
+    return doi_state, version_doi
 
 
 def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
@@ -160,8 +187,6 @@ def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
         "base_public_release": "v2.5.0-prc-public-theorem",
         "github_release_tag": RELEASE_ID,
         "github_release_url": RELEASE_URL,
-        "doi_state": "not_assigned",
-        "zenodo_version_doi": "",
         "default_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0",
         "theorem_scope": "general_q_prime_direct_lift_prc_circular_arc_model",
         "exact_audit_scope": "recorded_birth_rows_consistency_audit_not_full_finite_universe_completeness",
@@ -172,13 +197,20 @@ def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
     for phrase in REQUIRED_NON_CLAIMS:
         if phrase not in "\n".join(data.get("promotion_boundary", [])):
             failures.append(f"v2.7.1 public release manifest missing boundary {phrase!r}")
-    if DOI_RE.search(text):
+    doi_state, version_doi = release_doi_state(repo_root, failures)
+    if doi_state == "assigned":
+        if version_doi not in text:
+            failures.append(f"v2.7.1 public release manifest missing DOI {version_doi!r}")
+        if "pending Zenodo publication" in text:
+            failures.append("v2.7.1 public release manifest contains stale DOI pending phrase")
+    elif DOI_RE.search(text):
         failures.append("v2.7.1 public release manifest must not contain a Zenodo DOI before finalization")
 
 
 def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
     if is_public_release_bundle_root(repo_root):
         return
+    doi_state, version_doi = release_doi_state(repo_root, failures)
     text = require_file(repo_root, REGISTRY_REL, failures)
     if not text:
         return
@@ -195,9 +227,7 @@ def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
         "tag": RELEASE_ID,
         "title": "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
         "release_kind": "doi_release",
-        "doi_state": "not_assigned",
         "zenodo_concept_doi": "",
-        "zenodo_version_doi": "",
         "github_release_url": RELEASE_URL,
         "asset_name": ASSET_NAME,
         "manifest_path": str(RELEASE_MANIFEST_REL),
@@ -207,6 +237,10 @@ def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
     for key, value in expected.items():
         if entry.get(key) != value:
             failures.append(f"release registry {RELEASE_ID} {key} must be {value!r}")
+    if entry.get("doi_state") != doi_state:
+        failures.append(f"release registry {RELEASE_ID} doi_state must match manifest")
+    if entry.get("zenodo_version_doi", "") != version_doi:
+        failures.append(f"release registry {RELEASE_ID} zenodo_version_doi must match manifest")
     for phrase in REQUIRED_NON_CLAIMS:
         if phrase not in entry.get("non_claim_phrases", []):
             failures.append(f"release registry {RELEASE_ID} missing non-claim {phrase!r}")
@@ -254,7 +288,8 @@ def check_release_workflow(repo_root: Path, failures: list[str]) -> None:
                 failures.append(
                     f"bundle-local v2.7 release workflow contains repo-only phrase {forbidden!r}"
                 )
-    if DOI_RE.search(text):
+    doi_state, _ = release_doi_state(repo_root, failures)
+    if doi_state != "assigned" and DOI_RE.search(text):
         failures.append("v2.7.1 public release workflow must not contain a Zenodo DOI before finalization")
 
 
@@ -285,10 +320,11 @@ def main() -> int:
             print(f"FAIL: {failure}")
         return 1
 
+    doi_state, _ = release_doi_state(repo_root, failures)
     print(
         "check_v2_7_public_theorem_release: "
         "checks=8, failed=0, public_release=review_ready, "
-        "doi_state=not_assigned, exact_audit=recorded_birth_rows_consistency"
+        f"doi_state={doi_state}, exact_audit=recorded_birth_rows_consistency"
     )
     return 0
 

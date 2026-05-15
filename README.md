@@ -3,8 +3,8 @@
 <!-- BEGIN GENERATED PUBLIC SURFACE -->
 This repository publishes finite Prime Reciprocal Covering (PRC) artifacts and
 their verification tooling. The current public theorem release is
-`v2.7.1-prc-general-q-prime-theorem`. Its Zenodo DOI state is `pending Zenodo publication`.
-The latest DOI-backed public theorem release is `v2.5.0-prc-public-theorem`.
+`v2.7.1-prc-general-q-prime-theorem`. Its Zenodo DOI state is `10.5281/zenodo.20209528`.
+The latest DOI-backed public theorem release is `v2.7.1-prc-general-q-prime-theorem`.
 <!-- END GENERATED PUBLIC SURFACE -->
 
 ## Current Public Theorem Release
@@ -12,7 +12,7 @@ The latest DOI-backed public theorem release is `v2.5.0-prc-public-theorem`.
 ```text
 v2.7.1-prc-general-q-prime-theorem
 PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem
-Version DOI: pending Zenodo publication
+Version DOI: 10.5281/zenodo.20209528
 GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem
 Release asset: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 ```
@@ -42,11 +42,11 @@ the PRC model, or a full finite-universe completeness audit.
 ## Latest DOI-Backed Public Theorem Release
 
 ```text
-v2.5.0-prc-public-theorem
-PRC v2.5: finite aperture-orbit separator theorem
-Version DOI: 10.5281/zenodo.20154561
-GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem
-Release asset: PrimeClock-v2.5-public-theorem-v1.0.zip
+v2.7.1-prc-general-q-prime-theorem
+PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem
+Version DOI: 10.5281/zenodo.20209528
+GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem
+Release asset: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 ```
 
 This remains the theorem citation to use when a Zenodo version DOI is required

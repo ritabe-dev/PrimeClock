@@ -9,3 +9,5 @@ abstract: "A structural Prime Reciprocal Covering circular-arc theorem: in the d
 license: "MIT"
 repository-code: "https://github.com/ritabe-dev/PrimeClock"
 url: "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem"
+
+doi: "10.5281/zenodo.20209528"

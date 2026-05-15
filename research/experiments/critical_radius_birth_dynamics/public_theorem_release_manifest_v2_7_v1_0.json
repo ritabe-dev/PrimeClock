@@ -5,8 +5,8 @@
   "base_public_release": "v2.5.0-prc-public-theorem",
   "github_release_tag": "v2.7.1-prc-general-q-prime-theorem",
   "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
-  "doi_state": "not_assigned",
-  "zenodo_version_doi": "",
+  "doi_state": "assigned",
+  "zenodo_version_doi": "10.5281/zenodo.20209528",
   "default_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0",
   "candidate_name_prefix": "PrimeClock-v2.7.1-general-q-prime-theorem-",
   "links_title": "PRC v2.7.1 Public Theorem Release Links",
@@ -49,7 +49,7 @@
   "required_readme_phrases": [
     "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
     "public theorem release text",
-    "pending Zenodo publication",
+    "10.5281/zenodo.20209528",
     "direct one-prime q-lift",
     "recorded birth rows consistency audit",
     "not a full finite-universe completeness audit",
@@ -78,6 +78,6 @@
     "no asymptotic law",
     "no prime-gap theorem outside PRC model",
     "not a full finite-universe completeness audit",
-    "do not add DOI metadata before Zenodo mints the version record"
+    "Zenodo version DOI assigned"
   ]
 }

@@ -844,9 +844,14 @@ def check_v2_7_public_theorem_release_bundle(
         return failures
     if public_manifest.get("public_release") is not True:
         failures.append("v2.7 public theorem release manifest public_release must be true")
-    if public_manifest.get("doi_state") != "not_assigned":
-        failures.append("v2.7 public theorem release manifest doi_state must be not_assigned before DOI finalization")
-    if public_manifest.get("zenodo_version_doi"):
+    doi_state = public_manifest.get("doi_state")
+    version_doi = public_manifest.get("zenodo_version_doi", "")
+    if doi_state not in {"not_assigned", "assigned"}:
+        failures.append("v2.7 public theorem release manifest doi_state must be assigned or not_assigned")
+    elif doi_state == "assigned":
+        if not re.fullmatch(r"10\.5281/zenodo\.\d+", version_doi):
+            failures.append("v2.7 public theorem release manifest assigned DOI state needs Zenodo DOI")
+    elif version_doi:
         failures.append("v2.7 public theorem release manifest must not set Zenodo version DOI before finalization")
     if (bundle_root / "DRAFT_CITATION.cff").exists():
         failures.append("v2.7 public theorem release bundle must not include DRAFT_CITATION.cff")

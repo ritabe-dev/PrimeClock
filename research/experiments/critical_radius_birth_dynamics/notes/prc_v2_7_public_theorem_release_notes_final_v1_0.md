@@ -1,7 +1,6 @@
 # PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem
 
-Version DOI: pending Zenodo publication for the GitHub
-`v2.7.1-prc-general-q-prime-theorem` release.
+Version DOI: `10.5281/zenodo.20209528`
 GitHub Release:
 https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem
 Release asset: `PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip`.

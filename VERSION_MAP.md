@@ -12,16 +12,16 @@ versions separate. Multi-version release metadata is tracked in
 | Current public theorem release | `v2.7.1-prc-general-q-prime-theorem` |
 | Current theorem release title | `PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem` |
 | Current theorem release asset | `PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip` |
-| Current theorem DOI state | `pending Zenodo publication` |
+| Current theorem DOI state | `10.5281/zenodo.20209528` |
 | Current theorem GitHub Release | `https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem` |
 | Current theorem README | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_readme_v1_0.md` |
 | Current theorem release notes | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md` |
 | Current theorem citation | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_citation_v1_0.cff` |
-| Latest DOI-backed theorem release | `v2.5.0-prc-public-theorem` |
-| Latest DOI-backed theorem title | `PRC v2.5: finite aperture-orbit separator theorem` |
-| Latest DOI-backed theorem asset | `PrimeClock-v2.5-public-theorem-v1.0.zip` |
-| Latest DOI-backed theorem Version DOI | `10.5281/zenodo.20154561` |
-| Latest DOI-backed theorem GitHub Release | `https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem` |
+| Latest DOI-backed theorem release | `v2.7.1-prc-general-q-prime-theorem` |
+| Latest DOI-backed theorem title | `PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem` |
+| Latest DOI-backed theorem asset | `PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip` |
+| Latest DOI-backed theorem Version DOI | `10.5281/zenodo.20209528` |
+| Latest DOI-backed theorem GitHub Release | `https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem` |
 | Release registry | `release/public/release_registry.json` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
 <!-- END GENERATED PUBLIC SURFACE -->
@@ -56,7 +56,7 @@ versions separate. Multi-version release metadata is tracked in
 | `v2.3.0` | immutable foundational public DOI release for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or a maintenance patch release if corrections are needed. |
 | `maintenance/v2.3.1` | reserved maintenance patch line | Use only for errata or docs clarification rooted at `v2.3.0`. |
 | `v2.4.x` | source-only bridge from v2.3.0 to the v2.5 theorem line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal evidence only. |
-| `v2.5.0-prc-public-theorem` | latest DOI-backed scoped public theorem release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
+| `v2.7.1-prc-general-q-prime-theorem` | latest DOI-backed scoped public theorem release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
 | `v2.7.1-prc-general-q-prime-theorem` | current public theorem release, DOI pending | General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |
 
 Historical release corrections are governed by
@@ -114,4 +114,4 @@ The top-level `CITATION.cff` uses the v2.3 Zenodo concept DOI as its top-level
 DOI. The current theorem release uses release-specific citation metadata and is
 waiting for a Zenodo version DOI. Until that DOI exists, the latest DOI-backed
 theorem release uses release-specific citation metadata and version DOI
-`10.5281/zenodo.20154561`.
+`10.5281/zenodo.20209528`.
