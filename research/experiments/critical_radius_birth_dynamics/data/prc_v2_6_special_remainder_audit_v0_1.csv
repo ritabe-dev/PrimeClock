@@ -1,0 +1,10 @@
+scope,new_prime,remainder_class,remainder,lift_rows,capacity_pass_rows,phase_pass_rows,positive_margin_rows,close_rows,birth_rows,endpoint_touch_rows,decision
+B4_to_B5_full,11,zero,0,208,28,0,0,0,0,0,finite_supports_general_lemma_candidate
+B4_to_B5_full,11,central_left,5,208,28,0,0,0,0,0,finite_supports_general_lemma_candidate
+B4_to_B5_full,11,central_right,6,208,28,0,0,0,0,0,finite_supports_general_lemma_candidate
+B5_to_B6_full,13,zero,0,2274,224,0,0,0,0,0,finite_supports_general_lemma_candidate
+B5_to_B6_full,13,central_left,6,2274,224,0,0,0,0,0,finite_supports_general_lemma_candidate
+B5_to_B6_full,13,central_right,7,2274,224,0,0,0,0,0,finite_supports_general_lemma_candidate
+B6_to_B7_full,17,zero,0,29520,2948,0,0,0,0,0,finite_supports_general_lemma_candidate
+B6_to_B7_full,17,central_left,8,29520,2948,0,0,0,0,0,finite_supports_general_lemma_candidate
+B6_to_B7_full,17,central_right,9,29520,2948,0,0,0,0,0,finite_supports_general_lemma_candidate

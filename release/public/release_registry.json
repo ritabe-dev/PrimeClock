@@ -75,6 +75,47 @@
         "do not cite a Zenodo DOI until a Zenodo archive exists",
         "pending Zenodo publication"
       ]
+    },
+    {
+      "release_id": "v2.7.1-prc-general-q-prime-theorem",
+      "version": "v2.7.1-prc-general-q-prime-theorem",
+      "tag": "v2.7.1-prc-general-q-prime-theorem",
+      "title": "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
+      "release_kind": "doi_release",
+      "doi_state": "not_assigned",
+      "zenodo_concept_doi": "",
+      "zenodo_version_doi": "",
+      "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
+      "asset_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip",
+      "manifest_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_7_v1_0.json",
+      "workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_7_v1_0.yml",
+      "readme_paths": [
+        "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_readme_v1_0.md"
+      ],
+      "release_notes_paths": [
+        "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md"
+      ],
+      "citation_paths": [
+        "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_citation_v1_0.cff"
+      ],
+      "citation_doi_policy": "version_doi",
+      "asset_check_paths": [
+        "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_7_v1_0.json",
+        "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_7_v1_0.yml"
+      ],
+      "non_claim_phrases": [
+        "no B8 theorem",
+        "no full transition-graph theorem",
+        "no general predictor",
+        "no asymptotic law",
+        "no prime-gap theorem outside PRC model",
+        "not a full finite-universe completeness audit"
+      ],
+      "forbidden_phrases": [
+        "B8 theorem proven",
+        "general predictor theorem",
+        "asymptotic law theorem"
+      ]
     }
   ]
 }

@@ -1,0 +1,5 @@
+route,status,decision_rule,next_action
+B8 finite extension,defer,continue only after full_or_near_full_universe_cost_is_known,estimate B8 family count lift rows runtime and disk before graph generation
+prefix-only predictor,defer,continue only after terminal_margin_free_signal_appears,audit prefix state grammar width and hull history without signed containment margin
+obstruction theorem,continue_if_strong,continue if exact_hull_and_single_gap_structure_remains_strong,try to sharpen exact-hull obstruction into a clearer finite lemma candidate
+negative diagnostic,choose_if_weak,choose if all routes are weak or too costly,close v2.6 Gate R as negative diagnostic without public claim

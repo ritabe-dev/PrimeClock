@@ -17,6 +17,22 @@ jobs:
       - name: Check registered release DOI metadata
         run: python scripts/check_release_doi_integrity.py --all
 
+  release_execution_preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install research package
+        working-directory: research
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e ".[dev]"
+      - name: Run version-agnostic release execution guardrails
+        run: python scripts/verify_public_release_execution_preflight.py --all
+
   public_release:
     runs-on: ubuntu-latest
     timeout-minutes: 45
