@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the v2.7 public theorem release candidate boundary."""
+"""Check the v2.7.1 public theorem release candidate boundary."""
 
 from __future__ import annotations
 
@@ -26,13 +26,13 @@ RELEASE_BUNDLE_WORKFLOW_REL = (
     EXPERIMENT_REL / "public_theorem_release_bundle_workflow_v2_7_v1_0.yml"
 )
 REGISTRY_REL = Path("release/public/release_registry.json")
-RELEASE_ID = "v2.7.0-prc-general-q-prime-theorem"
-ASSET_NAME = "PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip"
-RELEASE_URL = "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem"
+RELEASE_ID = "v2.7.1-prc-general-q-prime-theorem"
+ASSET_NAME = "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip"
+RELEASE_URL = "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem"
 DOI_RE = re.compile(r"10\.5281/zenodo\.\d+")
 
 REQUIRED_PUBLIC_TEXT = (
-    "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem",
+    "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
     "public theorem release text",
     "pending Zenodo publication",
     "direct one-prime q-lift",
@@ -86,7 +86,7 @@ def normalized_text(text: str) -> str:
 def require_file(repo_root: Path, relative_path: Path, failures: list[str]) -> str:
     path = repo_root / relative_path
     if not path.is_file():
-        failures.append(f"missing v2.7 public release file: {relative_path}")
+        failures.append(f"missing v2.7.1 public release file: {relative_path}")
         return ""
     return path.read_text(encoding="utf-8")
 
@@ -123,7 +123,7 @@ def run_bundle_self_check(repo_root: Path, failures: list[str]) -> None:
         capture_output=True,
     )
     if result.returncode != 0:
-        failures.append("v2.7 public theorem release bundle self-check failed")
+        failures.append("v2.7.1 public theorem release bundle self-check failed")
         if result.stdout:
             failures.append(result.stdout.strip())
         if result.stderr:
@@ -140,12 +140,12 @@ def check_public_docs(repo_root: Path, failures: list[str]) -> None:
     normalized = normalized_text(combined)
     for phrase in REQUIRED_PUBLIC_TEXT:
         if normalized_text(phrase) not in normalized:
-            failures.append(f"v2.7 public release docs missing phrase {phrase!r}")
+            failures.append(f"v2.7.1 public release docs missing phrase {phrase!r}")
     for phrase in FORBIDDEN_PUBLIC_TEXT:
         if phrase in combined:
-            failures.append(f"v2.7 public release docs contain forbidden phrase {phrase!r}")
+            failures.append(f"v2.7.1 public release docs contain forbidden phrase {phrase!r}")
     if DOI_RE.search(combined):
-        failures.append("v2.7 public release docs must not contain a Zenodo DOI before finalization")
+        failures.append("v2.7.1 public release docs must not contain a Zenodo DOI before finalization")
 
 
 def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
@@ -162,18 +162,18 @@ def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
         "github_release_url": RELEASE_URL,
         "doi_state": "not_assigned",
         "zenodo_version_doi": "",
-        "default_name": "PrimeClock-v2.7-general-q-prime-theorem-v1.0",
+        "default_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0",
         "theorem_scope": "general_q_prime_direct_lift_prc_circular_arc_model",
         "exact_audit_scope": "recorded_birth_rows_consistency_audit_not_full_finite_universe_completeness",
     }
     for key, value in expected.items():
         if data.get(key) != value:
-            failures.append(f"v2.7 public release manifest {key} must be {value!r}")
+            failures.append(f"v2.7.1 public release manifest {key} must be {value!r}")
     for phrase in REQUIRED_NON_CLAIMS:
         if phrase not in "\n".join(data.get("promotion_boundary", [])):
-            failures.append(f"v2.7 public release manifest missing boundary {phrase!r}")
+            failures.append(f"v2.7.1 public release manifest missing boundary {phrase!r}")
     if DOI_RE.search(text):
-        failures.append("v2.7 public release manifest must not contain a Zenodo DOI before finalization")
+        failures.append("v2.7.1 public release manifest must not contain a Zenodo DOI before finalization")
 
 
 def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
@@ -193,7 +193,7 @@ def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
     expected = {
         "version": RELEASE_ID,
         "tag": RELEASE_ID,
-        "title": "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem",
+        "title": "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
         "release_kind": "doi_release",
         "doi_state": "not_assigned",
         "zenodo_concept_doi": "",
@@ -243,7 +243,7 @@ def check_release_workflow(repo_root: Path, failures: list[str]) -> None:
         )
     for phrase in required_phrases:
         if phrase not in text:
-            failures.append(f"v2.7 public release workflow missing {phrase!r}")
+            failures.append(f"v2.7.1 public release workflow missing {phrase!r}")
     if bundle_root:
         for forbidden in (
             "public-theorem-doi-integrity",
@@ -255,7 +255,7 @@ def check_release_workflow(repo_root: Path, failures: list[str]) -> None:
                     f"bundle-local v2.7 release workflow contains repo-only phrase {forbidden!r}"
                 )
     if DOI_RE.search(text):
-        failures.append("v2.7 public release workflow must not contain a Zenodo DOI before finalization")
+        failures.append("v2.7.1 public release workflow must not contain a Zenodo DOI before finalization")
 
 
 def main() -> int:

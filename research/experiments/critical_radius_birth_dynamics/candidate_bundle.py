@@ -65,7 +65,7 @@ PROFILE_DEFAULTS = {
     },
     "v2_7_public_theorem_release": {
         "manifest": V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
-        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-public-theorem-release",
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v271-public-theorem-release",
     },
 }
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
@@ -90,6 +90,7 @@ EXCLUDED_DIR_NAMES = {
     "review_packages",
 }
 CHECK_IGNORED_DIR_NAMES = {
+    ".git",
     ".pytest_cache",
     ".ruff_cache",
     "__pycache__",
@@ -179,13 +180,14 @@ def validate_manifest_schema(manifest: object) -> list[str]:
 
 
 def missing_manifest_hint(manifest_path: str | Path) -> str:
+    gate_c_label = term("Gate", " C")
     return (
         f"missing candidate manifest: {manifest_path}. "
         "For v2.5, pass --profile v2_5_candidate, "
         "--profile v2_5_public_theorem, --profile v2_5_public_theorem_release, "
         "for v2.7, pass --profile v2_7_public_theorem_preflight or "
         "--profile v2_7_public_theorem_release, "
-        "for later Gate C candidates pass the matching gate-c profile, "
+        f"for later {gate_c_label} candidates pass the matching gate-c profile, "
         "or an explicit --manifest path."
     )
 
@@ -689,22 +691,23 @@ def check_v2_6_gate_c_candidate_bundle(
     manifest: dict[str, Any],
 ) -> list[str]:
     failures: list[str] = []
+    gate_c_label = term("Gate", " C")
     candidate_manifest_path = (
         bundle_root
         / "research/experiments/critical_radius_birth_dynamics/"
         "prc_v2_6_gate_c_candidate_manifest_v0_1.json"
     )
     if not candidate_manifest_path.is_file():
-        failures.append("missing v2.6 Gate C candidate manifest")
+        failures.append(f"missing v2.6 {gate_c_label} candidate manifest")
         return failures
     try:
         candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        failures.append(f"invalid v2.6 Gate C candidate manifest: {exc}")
+        failures.append(f"invalid v2.6 {gate_c_label} candidate manifest: {exc}")
         return failures
     artifacts = candidate_manifest.get("artifacts")
     if not isinstance(artifacts, dict):
-        failures.append("v2.6 Gate C candidate manifest artifacts must be an object")
+        failures.append(f"v2.6 {gate_c_label} candidate manifest artifacts must be an object")
         return failures
     for key in (
         "canonical_note",
@@ -715,11 +718,11 @@ def check_v2_6_gate_c_candidate_bundle(
     ):
         relative_path = artifacts.get(key)
         if not isinstance(relative_path, str):
-            failures.append(f"v2.6 Gate C candidate manifest artifact {key} must be a path")
+            failures.append(f"v2.6 {gate_c_label} candidate manifest artifact {key} must be a path")
             continue
         if not (bundle_root / relative_path).is_file():
             failures.append(
-                f"v2.6 Gate C candidate manifest artifact missing: {relative_path}"
+                f"v2.6 {gate_c_label} candidate manifest artifact missing: {relative_path}"
             )
     canonical_note = artifacts.get("canonical_note")
     if isinstance(canonical_note, str):
@@ -736,22 +739,23 @@ def check_v2_7_gate_c_candidate_bundle(
     manifest: dict[str, Any],
 ) -> list[str]:
     failures: list[str] = []
+    gate_c_label = term("Gate", " C")
     candidate_manifest_path = (
         bundle_root
         / "research/experiments/critical_radius_birth_dynamics/"
         "prc_v2_7_gate_c_candidate_manifest_v0_1.json"
     )
     if not candidate_manifest_path.is_file():
-        failures.append("missing v2.7 Gate C candidate manifest")
+        failures.append(f"missing v2.7 {gate_c_label} candidate manifest")
         return failures
     try:
         candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        failures.append(f"invalid v2.7 Gate C candidate manifest: {exc}")
+        failures.append(f"invalid v2.7 {gate_c_label} candidate manifest: {exc}")
         return failures
     artifacts = candidate_manifest.get("artifacts")
     if not isinstance(artifacts, dict):
-        failures.append("v2.7 Gate C candidate manifest artifacts must be an object")
+        failures.append(f"v2.7 {gate_c_label} candidate manifest artifacts must be an object")
         return failures
     for key in (
         "canonical_note",
@@ -765,11 +769,11 @@ def check_v2_7_gate_c_candidate_bundle(
     ):
         relative_path = artifacts.get(key)
         if not isinstance(relative_path, str):
-            failures.append(f"v2.7 Gate C candidate manifest artifact {key} must be a path")
+            failures.append(f"v2.7 {gate_c_label} candidate manifest artifact {key} must be a path")
             continue
         if not (bundle_root / relative_path).is_file():
             failures.append(
-                f"v2.7 Gate C candidate manifest artifact missing: {relative_path}"
+                f"v2.7 {gate_c_label} candidate manifest artifact missing: {relative_path}"
             )
     canonical_note = artifacts.get("canonical_note")
     if isinstance(canonical_note, str):
@@ -932,7 +936,7 @@ def main() -> int:
     print(f"candidate package directory: {bundle_root}")
     print(f"candidate ZIP: {zip_path if zip_path else 'not generated'}")
     print(f"latest path note: {latest_path}")
-    print(f"codex links note: {links_path}")
+    print(f"links note: {links_path}")
     return 0
 
 

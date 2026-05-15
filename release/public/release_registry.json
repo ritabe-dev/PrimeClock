@@ -77,16 +77,16 @@
       ]
     },
     {
-      "release_id": "v2.7.0-prc-general-q-prime-theorem",
-      "version": "v2.7.0-prc-general-q-prime-theorem",
-      "tag": "v2.7.0-prc-general-q-prime-theorem",
-      "title": "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem",
+      "release_id": "v2.7.1-prc-general-q-prime-theorem",
+      "version": "v2.7.1-prc-general-q-prime-theorem",
+      "tag": "v2.7.1-prc-general-q-prime-theorem",
+      "title": "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
       "release_kind": "doi_release",
       "doi_state": "not_assigned",
       "zenodo_concept_doi": "",
       "zenodo_version_doi": "",
-      "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem",
-      "asset_name": "PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip",
+      "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
+      "asset_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip",
       "manifest_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_7_v1_0.json",
       "workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_7_v1_0.yml",
       "readme_paths": [

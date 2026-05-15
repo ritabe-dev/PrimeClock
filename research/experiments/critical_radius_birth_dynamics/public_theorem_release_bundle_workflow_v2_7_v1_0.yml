@@ -2,12 +2,12 @@ candidate_id: prc_v2_7_public_theorem_release_bundle
 status: public_theorem_release_bundle
 public_release: true
 base_public_release: v2.5.0-prc-public-theorem
-github_release_tag: v2.7.0-prc-general-q-prime-theorem
-github_release_url: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem
+github_release_tag: v2.7.1-prc-general-q-prime-theorem
+github_release_url: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem
 zenodo_version_doi: ""
-release_asset_name: PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip
+release_asset_name: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 goal: >
-  Verify the extracted v2.7 public theorem release bundle without requiring
+  Verify the extracted v2.7.1 public theorem release bundle without requiring
   repository-only DOI registry files or release-finalization metadata.
 readiness:
   current_completion_percent: "98"
@@ -18,7 +18,7 @@ public_theorem_review:
 
 gates:
   public-theorem-integrity:
-    description: bundle-local v2.7 public theorem release boundary checks
+    description: bundle-local v2.7.1 public theorem release boundary checks
     commands:
       - cwd: .
         command:
@@ -26,7 +26,7 @@ gates:
           - research/experiments/critical_radius_birth_dynamics/check_v2_7_public_theorem_release.py
         expected_stdout: "check_v2_7_public_theorem_release: checks=8, failed=0"
   public-theorem-bundle:
-    description: bundle-local v2.7 public theorem release integrity checks
+    description: bundle-local v2.7.1 public theorem release integrity checks
     commands:
       - cwd: .
         command:
@@ -46,5 +46,5 @@ gates:
           - SHA256SUMS
         expected_stdout: "THEOREM_NOTE.md: OK"
   public-theorem-review:
-    description: Combined bundle-local v2.7 public theorem release gate.
+    description: Combined bundle-local v2.7.1 public theorem release gate.
     commands: []

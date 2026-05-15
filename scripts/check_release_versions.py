@@ -237,13 +237,14 @@ def main() -> int:
         research_readme=research_readme,
         public_readme_template=public_readme_template,
     )
+    # release/public/release_config.json is the legacy v2.3 bundle source of
+    # truth. Root README.md and VERSION_MAP.md now describe the repo-wide public
+    # surface, where newer theorem releases may legitimately be DOI pending.
     check_zenodo_version_doi_finalized(
         failures,
         version_doi=version_doi,
         docs={
-            "README.md": readme,
             "release/public/README.template.md": public_readme_template,
-            "VERSION_MAP.md": version_map,
             config["root_release_notes"]: root_release_notes,
             config["research_release_notes"]: research_release_notes,
         },

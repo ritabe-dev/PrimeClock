@@ -4,19 +4,27 @@ This repository keeps release, package, note, table, verifier, and DOI metadata
 versions separate. Multi-version release metadata is tracked in
 `release/public/release_registry.json`.
 
+<!-- BEGIN GENERATED PUBLIC SURFACE -->
 ## Current Public Releases
 
 | Item | Version / file |
 | --- | --- |
-| Current scoped public theorem release | `v2.5.0-prc-public-theorem` |
-| Current theorem release title | `PRC v2.5: finite aperture-orbit separator theorem` |
-| Current theorem release asset | `PrimeClock-v2.5-public-theorem-v1.0.zip` |
-| Current theorem Version DOI | `10.5281/zenodo.20154561` |
-| Current theorem README | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_readme_v1_0.md` |
-| Current theorem release notes | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md` |
-| Current theorem citation | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_citation_v1_0.cff` |
+| Current public theorem release | `v2.7.1-prc-general-q-prime-theorem` |
+| Current theorem release title | `PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem` |
+| Current theorem release asset | `PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip` |
+| Current theorem DOI state | `pending Zenodo publication` |
+| Current theorem GitHub Release | `https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem` |
+| Current theorem README | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_readme_v1_0.md` |
+| Current theorem release notes | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md` |
+| Current theorem citation | `research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_citation_v1_0.cff` |
+| Latest DOI-backed theorem release | `v2.5.0-prc-public-theorem` |
+| Latest DOI-backed theorem title | `PRC v2.5: finite aperture-orbit separator theorem` |
+| Latest DOI-backed theorem asset | `PrimeClock-v2.5-public-theorem-v1.0.zip` |
+| Latest DOI-backed theorem Version DOI | `10.5281/zenodo.20154561` |
+| Latest DOI-backed theorem GitHub Release | `https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem` |
 | Release registry | `release/public/release_registry.json` |
 | Python package | `prime-reciprocal-projection` `0.1.0` |
+<!-- END GENERATED PUBLIC SURFACE -->
 
 ## Foundational v2.3 Release
 
@@ -43,11 +51,13 @@ versions separate. Multi-version release metadata is tracked in
 
 | Line | Status | Maintenance handling |
 | --- | --- | --- |
-| `v2.2.4` | historical stable finite certificate | Do not retag; use `ERRATA.md` for clarifications or `maintenance/v2.2.5` for citable patch releases. |
-| `v2.3.0` | immutable foundational public DOI release for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or `maintenance/v2.3.1` if corrections are needed. |
-| `v2.4.x` | source-only bridge from v2.3.0 to the v2.5 theorem line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal Gate R evidence only. |
-| `v2.5.0-prc-public-theorem` | current scoped public theorem DOI release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
-| `v2.6.x` | next research line | Must be registered in `release/public/release_registry.json` before DOI or GitHub Release work starts. |
+| `v2.2.4` | historical stable finite certificate | Do not retag; use `ERRATA.md` for clarifications or a maintenance patch release. |
+| `maintenance/v2.2.5` | reserved historical maintenance patch line | Use only for errata or docs clarification rooted at `v2.2.4`. |
+| `v2.3.0` | immutable foundational public DOI release for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or a maintenance patch release if corrections are needed. |
+| `maintenance/v2.3.1` | reserved maintenance patch line | Use only for errata or docs clarification rooted at `v2.3.0`. |
+| `v2.4.x` | source-only bridge from v2.3.0 to the v2.5 theorem line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal evidence only. |
+| `v2.5.0-prc-public-theorem` | latest DOI-backed scoped public theorem release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
+| `v2.7.1-prc-general-q-prime-theorem` | current public theorem release, DOI pending | General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |
 
 Historical release corrections are governed by
 `release/public/MAINTENANCE_POLICY.md`. The short rule is: published tags and
@@ -64,7 +74,9 @@ policy.
 Check registry consistency with:
 
 ```bash
+python3 scripts/render_public_surface.py --check
 python3 scripts/check_release_doi_integrity.py --all
+python3 scripts/verify_public_release_execution_preflight.py --all
 ```
 
 New public release lines must be added to the registry before DOI finalization.
@@ -79,8 +91,8 @@ python3 scripts/finalize_version_doi.py \
 The legacy `scripts/finalize_release_doi.py` path is retained for the v2.3 public
 bundle line.
 
-`SHA256SUMS` records the file hashes for the v2.3 public release allowlist.
-Update it with:
+`SHA256SUMS` records the file hashes for the public release allowlist. Update it
+with:
 
 ```bash
 python3 scripts/update_public_hashes.py
@@ -89,7 +101,8 @@ python3 scripts/update_public_hashes.py
 Check it with:
 
 ```bash
-python3 scripts/check_release_versions.py
+python3 scripts/render_public_surface.py --check
+python3 scripts/check_release_doi_integrity.py --all
 python3 scripts/update_public_hashes.py --check
 ```
 
@@ -98,5 +111,7 @@ The package version `0.1.0` is internal tooling metadata for the Python verifier
 package; it is intentionally separate from the PrimeClock public release lines.
 
 The top-level `CITATION.cff` uses the v2.3 Zenodo concept DOI as its top-level
-DOI. The v2.5 theorem release uses a release-specific `CITATION.cff` and version
-DOI `10.5281/zenodo.20154561`.
+DOI. The current theorem release uses release-specific citation metadata and is
+waiting for a Zenodo version DOI. Until that DOI exists, the latest DOI-backed
+theorem release uses release-specific citation metadata and version DOI
+`10.5281/zenodo.20154561`.

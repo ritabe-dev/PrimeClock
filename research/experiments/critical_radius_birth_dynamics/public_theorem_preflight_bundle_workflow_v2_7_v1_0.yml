@@ -2,10 +2,10 @@ candidate_id: prc_v2_7_public_theorem_preflight_bundle
 status: gate_p_preflight_bundle
 public_release: false
 base_public_release: v2.5.0-prc-public-theorem
-github_release_tag: v2.7.0-prc-general-q-prime-theorem
+github_release_tag: v2.7.1-prc-general-q-prime-theorem
 github_release_url: ""
 zenodo_version_doi: ""
-release_asset_name: PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip
+release_asset_name: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 goal: >
   Verify the extracted v2.7 public theorem preflight bundle without requiring
   repository-only DOI registry files or release-finalization metadata.
