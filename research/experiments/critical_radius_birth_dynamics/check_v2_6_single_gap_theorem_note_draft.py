@@ -1,84 +1,80 @@
 #!/usr/bin/env python3
-"""Audit the v2.6 single-gap theorem-note draft boundary."""
+"""Audit the v2.6 necessary-only proof note."""
 
 from __future__ import annotations
 
-import subprocess
-import sys
 from pathlib import Path
-
-from check_v2_6_special_point_obstruction import repo_root_from_script
 
 
 EXPERIMENT_REL = Path("research/experiments/critical_radius_birth_dynamics")
 NOTES_REL = EXPERIMENT_REL / "notes"
 
 NOTE_REL = NOTES_REL / "prc_v2_6_single_gap_theorem_note_draft_v0_1.md"
-DEPENDENCY_CHECKS = (
-    EXPERIMENT_REL / "check_v2_6_general_lemma_readiness.py",
-    EXPERIMENT_REL / "check_v2_6_special_point_theorem_note_candidate.py",
-    EXPERIMENT_REL / "check_v2_6_single_gap_grid_containment_diagnostic.py",
-    EXPERIMENT_REL / "check_v2_6_capacity_false_positive_decomposition.py",
-)
-
 REQUIRED_SECTIONS = (
-    "## Goal",
-    "## Setup",
-    "## Lemma 1: Special Endpoint Spacing",
-    "## Lemma 2: Residual Component Boundary",
-    "## Lemma 3: Forbidden Special Remainders",
-    "## Lemma 4: Central Endpoint Obstruction",
-    "## Lemma 5: Single-Gap Grid Containment",
-    "## Checked Support",
-    "## Gate R Boundary",
-    "## Non-claims",
+    "## Definitions",
+    "## Special Endpoint Spacing Lemma",
+    "## Residual Boundary Lemma",
+    "## Forbidden Special Remainder Lemma",
+    "## Central Endpoint Obstruction",
+    "## Single-Gap Grid Containment Criterion",
+    "## Boundary",
 )
 REQUIRED_PHRASES = (
-    "Current readiness is about 85-90%",
-    "remaining work is about 0.5 slice",
+    "old prime prefix is {p_1=2, p_2=3, ..., p_k}",
+    "p_k >= 5",
+    "closure(G) subset int(I_q(a))",
     "dist(0, nearest old endpoint) >= 1/(2p_k)",
     "dist(1/2, nearest old endpoint other than 1/2) >= 1/p_k",
-    "composite placement does not create new endpoints",
-    "covered/uncovered state cannot change",
+    "combining old clouds does not create new endpoints",
+    "The prime 2 endpoints are handled separately",
+    "do not weaken the displayed bound",
+    "finite union of closed arcs",
+    "boundary is contained in the set of old cloud endpoints",
+    "one-sided open interval adjacent to 0 or 1/2",
+    "covered/uncovered state is constant",
+    "contains no old residual component",
+    "same old residual component continues",
     "0, (q-1)/2, (q+1)/2",
-    "1/(2q) < 1/(2p_k)",
-    "1/q < 1/p_k",
+    "local representative (-1/2, 1/2)",
+    "the q-cloud cannot reach that endpoint",
+    "covered case contains no residual component",
+    "uncovered case leaves part of the adjacent residual component outside",
+    "the point is 1/2",
+    "The p=2 endpoints are 1/4 and 3/4",
+    "equality with 1/4 or 3/4 would require n=q/2 or n=3q/2",
+    "impossible for odd q",
     "endpoint-touch birth is obstructed",
-    "G subset I_q(a)",
+    "choose a local linear representative of R/Z",
+    "both G and the relevant q-cloud are represented without crossing the chosen cut",
     "qR - 1/2 < a < qL + 1/2",
-    "width 1 - q(R-L)",
-    "capacity is only the size condition",
-    "actual integer remainder a",
-    "in checked scopes, Close(row) => parent residual set is single-gap",
-    "strict q-grid containment matches close rows",
-    "capacity false positives are q-grid misses",
-    "endpoint-touch rows are zero",
-    "source_theorem_note=promote_candidate",
-    "single_gap_grid_containment_lemma=promote_candidate",
-    "close_iff_grid_containment_general_theorem=defer",
-    "all_births_single_gap_general_theorem=defer",
-    "capacity_general_separator=reject",
-    "mod6_theorem=defer",
-    "public_theorem=defer",
-    "no public theorem claim",
-    "no DOI claim",
-    "no GitHub Release claim",
-    "no B8 theorem claim",
-    "no B8 full graph claim",
-    "no general predictor claim",
-    "no asymptotic law claim",
-    "Gate R source-only research",
+    "fixed-gap geometric criterion",
+    "private source-only proof note",
+    "no public theorem",
+    "Close(row) equivalence remains checked-scope support only",
 )
 FORBIDDEN_PHRASES = (
+    "Current readiness",
+    "readiness",
+    "remaining work",
+    "slice",
+    "old prefix contains",
+    "PR #",
+    "mod 6",
+    "k=2",
+    "capacity false-positive",
+    "B8 feasibility",
     "public_theorem=promote",
     "doi_state=assigned",
-    "github_release_url",
     "zenodo_version_doi",
     "b8_theorem=promote",
-    "b8 full graph theorem",
     "general predictor theorem",
     "asymptotic law theorem",
+    "G subset I_q(a)\niff",
 )
+
+
+def repo_root_from_script() -> Path:
+    return Path(__file__).resolve().parents[3]
 
 
 def require_note(repo_root: Path, failures: list[str]) -> None:
@@ -111,28 +107,11 @@ def require_note(repo_root: Path, failures: list[str]) -> None:
             )
 
 
-def require_dependency_checks(repo_root: Path, failures: list[str]) -> None:
-    for relative_path in DEPENDENCY_CHECKS:
-        result = subprocess.run(
-            [sys.executable, str(repo_root / relative_path)],
-            cwd=repo_root / "research",
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode != 0:
-            failures.append(
-                f"dependency check failed: {relative_path}\n"
-                f"stdout={result.stdout}\nstderr={result.stderr}"
-            )
-
-
 def main() -> int:
     repo_root = repo_root_from_script()
     failures: list[str] = []
 
     require_note(repo_root, failures)
-    require_dependency_checks(repo_root, failures)
 
     if failures:
         for failure in failures:
@@ -141,8 +120,13 @@ def main() -> int:
 
     print(
         "check_v2_6_single_gap_theorem_note_draft: "
-        "checks=8, failed=0, "
-        "theorem_note_draft=continue, public_theorem=defer"
+        "checks=5, failed=0, "
+        f"sections={len(REQUIRED_SECTIONS)}, "
+        f"required_phrases={len(REQUIRED_PHRASES)}, "
+        f"forbidden_phrases={len(FORBIDDEN_PHRASES)}, "
+        "global_iff_guard=passed, "
+        "theorem_note=necessary_only, public_theorem=defer, "
+        "proof_note_hygiene=passed, mathematical_verification=not_claimed"
     )
     return 0
 

@@ -1,0 +1,50 @@
+candidate_id: prc_v2_7_public_theorem_preflight_bundle
+status: gate_p_preflight_bundle
+public_release: false
+base_public_release: v2.5.0-prc-public-theorem
+github_release_tag: v2.7.0-prc-general-q-prime-theorem
+github_release_url: ""
+zenodo_version_doi: ""
+release_asset_name: PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip
+goal: >
+  Verify the extracted v2.7 public theorem preflight bundle without requiring
+  repository-only DOI registry files or release-finalization metadata.
+readiness:
+  current_completion_percent: "98"
+  reusable_workflow_percent: "98"
+  estimated_slices_to_target: "0.1"
+public_theorem_review:
+  include_doi_integrity: false
+
+gates:
+  public-theorem-integrity:
+    description: bundle-local v2.7 public theorem preflight boundary checks
+    commands:
+      - cwd: .
+        command:
+          - "{python}"
+          - research/experiments/critical_radius_birth_dynamics/check_v2_7_public_theorem_preflight.py
+        expected_stdout: "check_v2_7_public_theorem_preflight: checks=7, failed=0"
+  public-theorem-bundle:
+    description: bundle-local v2.7 public theorem preflight integrity checks
+    commands:
+      - cwd: .
+        command:
+          - "{python}"
+          - research/experiments/critical_radius_birth_dynamics/candidate_bundle.py
+          - --profile
+          - v2_7_public_theorem_preflight
+          - --check
+          - .
+        expected_stdout: "OK:"
+      - cwd: .
+        command:
+          - shasum
+          - -a
+          - "256"
+          - -c
+          - SHA256SUMS
+        expected_stdout: "THEOREM_NOTE.md: OK"
+  public-theorem-review:
+    description: Combined bundle-local v2.7 public theorem preflight gate.
+    commands: []

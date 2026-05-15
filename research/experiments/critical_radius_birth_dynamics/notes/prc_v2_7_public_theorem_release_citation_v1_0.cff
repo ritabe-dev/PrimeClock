@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use the PRC v2.7 general q-prime theorem release, cite the release-specific archived version."
+title: "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem"
+authors:
+  - family-names: "Itabe"
+    given-names: "Rio"
+version: "v2.7.0-prc-general-q-prime-theorem"
+abstract: "A structural Prime Reciprocal Covering circular-arc theorem: in the direct q-lift model for any later odd prime q>p_k, nonempty q-birth lifts are exactly single-gap q-grid aperture-alignment events."
+license: "MIT"
+repository-code: "https://github.com/ritabe-dev/PrimeClock"

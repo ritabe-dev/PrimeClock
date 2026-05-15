@@ -26,6 +26,18 @@ V2_5_PUBLIC_THEOREM_MANIFEST_REL = (
 V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
     f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_5_v1_0.json"
 )
+V2_6_GATE_C_CANDIDATE_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/gate_c_candidate_bundle_manifest_v2_6_v0_1.json"
+)
+V2_7_GATE_C_CANDIDATE_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/gate_c_candidate_bundle_manifest_v2_7_v0_1.json"
+)
+V2_7_PUBLIC_THEOREM_PREFLIGHT_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/public_theorem_preflight_bundle_manifest_v2_7_v1_0.json"
+)
+V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_7_v1_0.json"
+)
 PROFILE_DEFAULTS = {
     "v2_5_candidate": {
         "manifest": V2_5_CANDIDATE_MANIFEST_REL,
@@ -39,11 +51,29 @@ PROFILE_DEFAULTS = {
         "manifest": V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
         "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-public-theorem-release",
     },
+    "v2_6_gate_c_candidate": {
+        "manifest": V2_6_GATE_C_CANDIDATE_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v26-gate-c-candidate",
+    },
+    "v2_7_gate_c_candidate": {
+        "manifest": V2_7_GATE_C_CANDIDATE_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-gate-c-candidate",
+    },
+    "v2_7_public_theorem_preflight": {
+        "manifest": V2_7_PUBLIC_THEOREM_PREFLIGHT_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-public-theorem-preflight",
+    },
+    "v2_7_public_theorem_release": {
+        "manifest": V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-public-theorem-release",
+    },
 }
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
 LATEST_LINKS_FILE = "LATEST_CANDIDATE_LINKS.md"
 HASH_MANIFEST_FILE = "SHA256SUMS"
 BUNDLE_FILE_MANIFEST = "BUNDLE_FILE_MANIFEST.txt"
+DETERMINISTIC_ZIP_DATETIME = (1980, 1, 1, 0, 0, 0)
+DETERMINISTIC_FILE_MODE = 0o644 << 16
 CANDIDATE_NAME_PREFIX = "PrimeClock-v2.3-candidate-"
 CANDIDATE_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
@@ -120,7 +150,32 @@ def load_manifest(source_root: Path, manifest_path: str | Path = MANIFEST_REL) -
     raw_path = Path(manifest_path)
     path = raw_path if raw_path.is_absolute() else source_root / raw_path
     with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+        manifest = json.load(handle)
+    failures = validate_manifest_schema(manifest)
+    if failures:
+        raise ValueError("; ".join(failures))
+    return manifest
+
+
+def validate_manifest_schema(manifest: object) -> list[str]:
+    if not isinstance(manifest, dict):
+        return ["bundle manifest must be a JSON object"]
+    failures: list[str] = []
+    required = {
+        "id": str,
+        "default_name": str,
+        "root_file_map": list,
+        "root_files": list,
+        "research_files": list,
+        "research_dirs": list,
+        "required_readme_phrases": list,
+    }
+    for key, expected_type in required.items():
+        if key not in manifest:
+            failures.append(f"bundle manifest missing required key: {key}")
+        elif not isinstance(manifest[key], expected_type):
+            failures.append(f"bundle manifest key {key} must be {expected_type.__name__}")
+    return failures
 
 
 def missing_manifest_hint(manifest_path: str | Path) -> str:
@@ -128,8 +183,40 @@ def missing_manifest_hint(manifest_path: str | Path) -> str:
         f"missing candidate manifest: {manifest_path}. "
         "For v2.5, pass --profile v2_5_candidate, "
         "--profile v2_5_public_theorem, --profile v2_5_public_theorem_release, "
+        "for v2.7, pass --profile v2_7_public_theorem_preflight or "
+        "--profile v2_7_public_theorem_release, "
+        "for later Gate C candidates pass the matching gate-c profile, "
         "or an explicit --manifest path."
     )
+
+
+def resolve_bundle_relative_path(
+    relative_path: str,
+    *,
+    field_name: str,
+) -> Path:
+    if "\\" in relative_path:
+        raise ValueError(f"unsafe {field_name} path: {relative_path!r}")
+    pure_path = PurePosixPath(relative_path)
+    if pure_path.is_absolute() or any(part in {"", ".", ".."} for part in pure_path.parts):
+        raise ValueError(f"unsafe {field_name} path: {relative_path!r}")
+    return Path(*pure_path.parts)
+
+
+def resolve_source_path(source_root: Path, relative_path: str, *, field_name: str) -> Path:
+    relative = resolve_bundle_relative_path(relative_path, field_name=field_name)
+    source = (source_root / relative).resolve()
+    if not path_is_relative_to(source, source_root.resolve()):
+        raise ValueError(f"unsafe {field_name} path outside source root: {relative_path!r}")
+    return source
+
+
+def resolve_target_path(bundle_root: Path, relative_path: str, *, field_name: str) -> Path:
+    relative = resolve_bundle_relative_path(relative_path, field_name=field_name)
+    target = (bundle_root / relative).resolve()
+    if not path_is_relative_to(target, bundle_root.resolve()):
+        raise ValueError(f"unsafe {field_name} path outside bundle root: {relative_path!r}")
+    return target
 
 
 def copy_file(
@@ -138,10 +225,14 @@ def copy_file(
     source_relative_path: str,
     bundle_relative_path: str | None = None,
 ) -> None:
-    source = source_root / source_relative_path
+    source = resolve_source_path(source_root, source_relative_path, field_name="source")
     if not source.is_file():
         raise FileNotFoundError(f"Missing candidate file: {source_relative_path}")
-    target = bundle_root / (bundle_relative_path or source_relative_path)
+    target = resolve_target_path(
+        bundle_root,
+        bundle_relative_path or source_relative_path,
+        field_name="target",
+    )
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, target)
 
@@ -155,10 +246,10 @@ def ignore_noise(_: str, names: list[str]) -> set[str]:
 
 
 def copy_dir(source_root: Path, bundle_root: Path, relative_path: str) -> None:
-    source = source_root / relative_path
+    source = resolve_source_path(source_root, relative_path, field_name="source directory")
     if not source.is_dir():
         raise FileNotFoundError(f"Missing candidate directory: {relative_path}")
-    target = bundle_root / relative_path
+    target = resolve_target_path(bundle_root, relative_path, field_name="target directory")
     if target.exists():
         shutil.rmtree(target)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -399,10 +490,12 @@ def write_zip(bundle_root: Path) -> Path:
     archive_root = Path(bundle_root.name)
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in bundle_files(bundle_root) + [bundle_root / HASH_MANIFEST_FILE]:
-            archive.write(
-                path,
-                (archive_root / path.relative_to(bundle_root)).as_posix(),
-            )
+            arcname = (archive_root / path.relative_to(bundle_root)).as_posix()
+            info = zipfile.ZipInfo(arcname)
+            info.date_time = DETERMINISTIC_ZIP_DATETIME
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = DETERMINISTIC_FILE_MODE
+            archive.writestr(info, path.read_bytes())
     return zip_path
 
 
@@ -438,6 +531,7 @@ def write_latest_paths(
 def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
     failures: list[str] = forbidden_bundle_paths(bundle_root, manifest)
     failures.extend(forbidden_bundle_text(bundle_root, manifest))
+    failures.extend(check_root_file_map_pairs(bundle_root, manifest))
     readme = bundle_root / "README.md"
     if not readme.is_file():
         failures.append("missing README.md")
@@ -539,6 +633,233 @@ def check_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
         relative_path = path.relative_to(bundle_root).as_posix()
         if relative_path not in seen_paths:
             failures.append(f"file missing from {HASH_MANIFEST_FILE}: {relative_path}")
+    failures.extend(check_profile_specific_bundle(bundle_root, manifest))
+    return failures
+
+
+def check_root_file_map_pairs(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
+    failures: list[str] = []
+    for entry in manifest.get("root_file_map", []):
+        source_relative = entry.get("source") if isinstance(entry, dict) else None
+        target_relative = entry.get("target") if isinstance(entry, dict) else None
+        if not isinstance(source_relative, str) or not isinstance(target_relative, str):
+            failures.append("root_file_map entries must contain source and target paths")
+            continue
+        try:
+            source = resolve_target_path(
+                bundle_root,
+                source_relative,
+                field_name="root_file_map source",
+            )
+            target = resolve_target_path(
+                bundle_root,
+                target_relative,
+                field_name="root_file_map target",
+            )
+        except ValueError as error:
+            failures.append(str(error))
+            continue
+        if not source.is_file():
+            failures.append(f"missing mapped source file: {source_relative}")
+            continue
+        if not target.is_file():
+            failures.append(f"missing mapped target file: {target_relative}")
+            continue
+        if sha256_bytes(source) != sha256_bytes(target):
+            failures.append(
+                f"mapped target differs from source: {source_relative} -> {target_relative}"
+            )
+    return failures
+
+
+def check_profile_specific_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
+    if manifest.get("id") == "prc_v2_6_gate_c_candidate_bundle_v0_1":
+        return check_v2_6_gate_c_candidate_bundle(bundle_root, manifest)
+    if manifest.get("id") == "prc_v2_7_gate_c_candidate_bundle_v0_1":
+        return check_v2_7_gate_c_candidate_bundle(bundle_root, manifest)
+    if manifest.get("id") == "prc_v2_7_public_theorem_preflight_bundle_v1_0":
+        return check_v2_7_public_theorem_preflight_bundle(bundle_root, manifest)
+    if manifest.get("id") == "prc_v2_7_public_theorem_release_bundle_v1_0":
+        return check_v2_7_public_theorem_release_bundle(bundle_root, manifest)
+    return []
+
+
+def check_v2_6_gate_c_candidate_bundle(
+    bundle_root: Path,
+    manifest: dict[str, Any],
+) -> list[str]:
+    failures: list[str] = []
+    candidate_manifest_path = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "prc_v2_6_gate_c_candidate_manifest_v0_1.json"
+    )
+    if not candidate_manifest_path.is_file():
+        failures.append("missing v2.6 Gate C candidate manifest")
+        return failures
+    try:
+        candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        failures.append(f"invalid v2.6 Gate C candidate manifest: {exc}")
+        return failures
+    artifacts = candidate_manifest.get("artifacts")
+    if not isinstance(artifacts, dict):
+        failures.append("v2.6 Gate C candidate manifest artifacts must be an object")
+        return failures
+    for key in (
+        "canonical_note",
+        "checker",
+        "workflow",
+        "bundle_builder",
+        "bundle_manifest",
+    ):
+        relative_path = artifacts.get(key)
+        if not isinstance(relative_path, str):
+            failures.append(f"v2.6 Gate C candidate manifest artifact {key} must be a path")
+            continue
+        if not (bundle_root / relative_path).is_file():
+            failures.append(
+                f"v2.6 Gate C candidate manifest artifact missing: {relative_path}"
+            )
+    canonical_note = artifacts.get("canonical_note")
+    if isinstance(canonical_note, str):
+        canonical_path = bundle_root / canonical_note
+        theorem_note = bundle_root / "THEOREM_NOTE.md"
+        if canonical_path.is_file() and theorem_note.is_file():
+            if sha256_bytes(canonical_path) != sha256_bytes(theorem_note):
+                failures.append("THEOREM_NOTE.md does not match canonical note")
+    return failures
+
+
+def check_v2_7_gate_c_candidate_bundle(
+    bundle_root: Path,
+    manifest: dict[str, Any],
+) -> list[str]:
+    failures: list[str] = []
+    candidate_manifest_path = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "prc_v2_7_gate_c_candidate_manifest_v0_1.json"
+    )
+    if not candidate_manifest_path.is_file():
+        failures.append("missing v2.7 Gate C candidate manifest")
+        return failures
+    try:
+        candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        failures.append(f"invalid v2.7 Gate C candidate manifest: {exc}")
+        return failures
+    artifacts = candidate_manifest.get("artifacts")
+    if not isinstance(artifacts, dict):
+        failures.append("v2.7 Gate C candidate manifest artifacts must be an object")
+        return failures
+    for key in (
+        "canonical_note",
+        "theorem_checker",
+        "exact_audit",
+        "gate_c_checker",
+        "workflow",
+        "bundle_builder",
+        "bundle_manifest",
+        "support_csv",
+    ):
+        relative_path = artifacts.get(key)
+        if not isinstance(relative_path, str):
+            failures.append(f"v2.7 Gate C candidate manifest artifact {key} must be a path")
+            continue
+        if not (bundle_root / relative_path).is_file():
+            failures.append(
+                f"v2.7 Gate C candidate manifest artifact missing: {relative_path}"
+            )
+    canonical_note = artifacts.get("canonical_note")
+    if isinstance(canonical_note, str):
+        canonical_path = bundle_root / canonical_note
+        theorem_note = bundle_root / "THEOREM_NOTE.md"
+        if canonical_path.is_file() and theorem_note.is_file():
+            if sha256_bytes(canonical_path) != sha256_bytes(theorem_note):
+                failures.append("THEOREM_NOTE.md does not match canonical note")
+    return failures
+
+
+def check_v2_7_public_theorem_preflight_bundle(
+    bundle_root: Path,
+    manifest: dict[str, Any],
+) -> list[str]:
+    failures: list[str] = []
+    public_manifest_path = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "public_theorem_preflight_manifest_v2_7_v1_0.json"
+    )
+    if not public_manifest_path.is_file():
+        failures.append("missing v2.7 public theorem preflight manifest")
+        return failures
+    try:
+        public_manifest = json.loads(public_manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        failures.append(f"invalid v2.7 public theorem preflight manifest: {exc}")
+        return failures
+    if public_manifest.get("doi_state") != "not_assigned":
+        failures.append("v2.7 public theorem preflight manifest doi_state must be not_assigned")
+    if public_manifest.get("github_release_url"):
+        failures.append("v2.7 public theorem preflight manifest must not set GitHub Release URL")
+    if public_manifest.get("zenodo_version_doi"):
+        failures.append("v2.7 public theorem preflight manifest must not set Zenodo version DOI")
+
+    canonical_note = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md"
+    )
+    theorem_note = bundle_root / "THEOREM_NOTE.md"
+    if canonical_note.is_file() and theorem_note.is_file():
+        if sha256_bytes(canonical_note) != sha256_bytes(theorem_note):
+            failures.append("THEOREM_NOTE.md does not match canonical v2.7 theorem note")
+    else:
+        failures.append("missing canonical/root v2.7 theorem note pair")
+    return failures
+
+
+def check_v2_7_public_theorem_release_bundle(
+    bundle_root: Path,
+    manifest: dict[str, Any],
+) -> list[str]:
+    failures: list[str] = []
+    public_manifest_path = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "public_theorem_release_manifest_v2_7_v1_0.json"
+    )
+    if not public_manifest_path.is_file():
+        failures.append("missing v2.7 public theorem release manifest")
+        return failures
+    try:
+        public_manifest = json.loads(public_manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        failures.append(f"invalid v2.7 public theorem release manifest: {exc}")
+        return failures
+    if public_manifest.get("public_release") is not True:
+        failures.append("v2.7 public theorem release manifest public_release must be true")
+    if public_manifest.get("doi_state") != "not_assigned":
+        failures.append("v2.7 public theorem release manifest doi_state must be not_assigned before DOI finalization")
+    if public_manifest.get("zenodo_version_doi"):
+        failures.append("v2.7 public theorem release manifest must not set Zenodo version DOI before finalization")
+    if (bundle_root / "DRAFT_CITATION.cff").exists():
+        failures.append("v2.7 public theorem release bundle must not include DRAFT_CITATION.cff")
+    if not (bundle_root / "CITATION.cff").is_file():
+        failures.append("v2.7 public theorem release bundle missing root CITATION.cff")
+
+    canonical_note = (
+        bundle_root
+        / "research/experiments/critical_radius_birth_dynamics/"
+        "notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md"
+    )
+    theorem_note = bundle_root / "THEOREM_NOTE.md"
+    if canonical_note.is_file() and theorem_note.is_file():
+        if sha256_bytes(canonical_note) != sha256_bytes(theorem_note):
+            failures.append("THEOREM_NOTE.md does not match canonical v2.7 theorem note")
+    else:
+        failures.append("missing canonical/root v2.7 theorem note pair")
     return failures
 
 
@@ -579,6 +900,9 @@ def main() -> int:
         manifest = load_manifest(source_root, manifest_path)
     except FileNotFoundError:
         print(f"FAIL: {missing_manifest_hint(manifest_path)}")
+        return 1
+    except ValueError as error:
+        print(f"FAIL: {error}")
         return 1
     name = args.name if args.name is not None else manifest["default_name"]
 

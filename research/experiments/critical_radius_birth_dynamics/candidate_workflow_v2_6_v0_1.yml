@@ -1,223 +1,80 @@
-candidate_id: prc_v2_6_gate_r_starter
-status: source_only_gate_r_starter
+candidate_id: prc_v2_6_necessary_only_proof_note
+status: gate_c_candidate_local
 public_release: false
 base_public_release: v2.5.0-prc-public-theorem
 goal: >
-  Start v2.6 as a source-only Gate R research line while keeping the v2.5 public
-  theorem release fixed. The current main route is special point obstruction:
-  forbidden special remainders, central endpoint obstruction, and mod 6 ancestry
-  diagnostics. B8 feasibility remains a separate deferred route.
-readiness:
-  starter_baseline_completion_percent: "35"
-  current_theorem_note_draft_readiness_percent: "98-99"
-  reusable_workflow_percent: "90"
-  estimated_slices_to_gate_r_checkpoint: "0.2-0.3"
+  Keep v2.6 as a minimal Gate C proof-note candidate. No public release, DOI,
+  GitHub Release, B8 theorem,
+  predictor, registry entry, or asymptotic-law claim is made here.
 
 gates:
-  v2-6-feasibility:
-    description: v2.6 B8 feasibility and route-start audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
-        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0, mode=read_only"
-  v2-6-boundary:
-    description: v2.6 boundary audit for non-claims and v2.5 public release separation
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
-          - --boundary-only
-        expected_stdout: "check_v2_6_b8_feasibility: checks=6, failed=0, mode=read_only"
-  v2-6-special-point-obstruction:
-    description: v2.6 special point obstruction Gate R audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_obstruction.py
-        expected_stdout: "check_v2_6_special_point_obstruction: checks=10, failed=0, route=continue_special_point_obstruction, mod6_theorem=defer"
-  v2-6-special-point-lemma-formalization:
-    description: v2.6 special point lemma formalization readiness audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_lemma_formalization.py
-        expected_stdout: "check_v2_6_special_point_lemma_formalization: checks=8, failed=0, route=formalize_special_point_lemmas, proof_status=candidate"
-  v2-6-special-point-gate-r-review:
-    description: v2.6 special point Gate R review readiness audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
-        expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
-  v2-6-endpoint-distance-proof-obligation:
-    description: v2.6 endpoint-distance proof-obligation readiness audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_endpoint_distance_proof_obligation.py
-        expected_stdout: "check_v2_6_endpoint_distance_proof_obligation: checks=8, failed=0, proof_status=candidate, public_theorem=defer"
-  v2-6-gate-r-local-first-process:
-    description: v2.6 Gate R local-first process boundary audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_local_first_process.py
-        expected_stdout: "check_v2_6_gate_r_local_first_process: checks=5, failed=0, gate_r=local_first"
-  v2-6-special-point-theorem-note-decision:
-    description: v2.6 special point theorem-note promote/defer decision audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_decision.py
-        expected_stdout: "check_v2_6_special_point_theorem_note_decision: checks=7, failed=0, source_theorem_note=promote_candidate"
-  v2-6-special-point-theorem-note-candidate:
-    description: v2.6 special point source-only theorem-note candidate audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_candidate.py
-        expected_stdout: "check_v2_6_special_point_theorem_note_candidate: checks=8, failed=0, source_theorem_note=promote_candidate"
-  v2-6-mod6-ancestry-diagnostic:
-    description: v2.6 mod 6 ancestry diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
-        expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
-  v2-6-k2-multigap-dilution-diagnostic:
-    description: v2.6 k=2 multi-gap dilution diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
-        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
-  v2-6-single-gap-grid-containment-diagnostic:
-    description: v2.6 single-gap q-grid containment diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
-        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"
-  v2-6-capacity-false-positive-decomposition:
-    description: v2.6 capacity false-positive decomposition diagnostic audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
-        expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
-  v2-6-general-lemma-readiness:
-    description: v2.6 general lemma readiness boundary audit
-    commands:
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
-        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
   v2-6-single-gap-theorem-note-draft:
-    description: v2.6 single-gap source-only theorem-note draft audit
+    description: v2.6 necessary-only proof-note audit
     commands:
       - cwd: research
         command:
           - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_theorem_note_draft.py
-        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=8, failed=0, theorem_note_draft=continue, public_theorem=defer"
-  v2-6-gate-r-theorem-note-review:
-    description: v2.6 local-only Gate R theorem-note review audit
+        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=5, failed=0"
+  v2-6-gate-c-candidate:
+    description: v2.6 minimal Gate C candidate audit
     commands:
       - cwd: research
         command:
           - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_theorem_note_review.py
-        expected_stdout: "check_v2_6_gate_r_theorem_note_review: checks=7, failed=0, gate_r=local_only, theorem_note_review=continue, public_theorem=defer"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_theorem_note_draft.py
+        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=5, failed=0"
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --profile
+          - v2_6_gate_c_candidate
+          - --out
+          - "{tmp}/primeclock-v26-gate-c-candidate"
+          - --zip
+        expected_stdout: "candidate package directory:"
+      - cwd: research/experiments/critical_radius_birth_dynamics
+        command:
+          - "{python}"
+          - candidate_bundle.py
+          - --profile
+          - v2_6_gate_c_candidate
+          - --check
+          - "{tmp}/primeclock-v26-gate-c-candidate/PrimeClock-v2.6-gate-c-candidate-v0.1"
+        expected_stdout: "OK:"
+      - cwd: "{tmp}/primeclock-v26-gate-c-candidate"
+        command:
+          - unzip
+          - -t
+          - PrimeClock-v2.6-gate-c-candidate-v0.1.zip
+        expected_stdout: "No errors detected"
+      - cwd: "{tmp}/primeclock-v26-gate-c-candidate/PrimeClock-v2.6-gate-c-candidate-v0.1"
+        command:
+          - "{python}"
+          - research/experiments/critical_radius_birth_dynamics/check_v2_6_gate_c_candidate.py
+        expected_stdout: "check_v2_6_gate_c_candidate: checks=9, failed=0, gate_c=candidate_ready, public_theorem=defer"
+      - cwd: research
+        command:
+          - "{python}"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_c_candidate.py
+          - --bundle-root
+          - "{tmp}/primeclock-v26-gate-c-candidate/PrimeClock-v2.6-gate-c-candidate-v0.1"
+          - --zip
+          - "{tmp}/primeclock-v26-gate-c-candidate/PrimeClock-v2.6-gate-c-candidate-v0.1.zip"
+          - --reproducible-zip
+          - --negative-tests
+        expected_stdout: "check_v2_6_gate_c_candidate: checks=9, failed=0, gate_c=candidate_ready, public_theorem=defer"
   quick:
-    description: Lightweight v2.6 Gate R starter checks; does not build a B8 full graph
+    description: Minimal v2.6 Gate C proof-note candidate check
     commands:
       - cwd: research
         command:
           - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_b8_feasibility.py
-        expected_stdout: "check_v2_6_b8_feasibility: checks=8, failed=0, mode=read_only"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_obstruction.py
-        expected_stdout: "check_v2_6_special_point_obstruction: checks=10, failed=0, route=continue_special_point_obstruction, mod6_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_lemma_formalization.py
-        expected_stdout: "check_v2_6_special_point_lemma_formalization: checks=8, failed=0, route=formalize_special_point_lemmas, proof_status=candidate"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_gate_r_review.py
-        expected_stdout: "check_v2_6_special_point_gate_r_review: checks=7, failed=0, gate_r=continue_special_point_obstruction"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_endpoint_distance_proof_obligation.py
-        expected_stdout: "check_v2_6_endpoint_distance_proof_obligation: checks=8, failed=0, proof_status=candidate, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_local_first_process.py
-        expected_stdout: "check_v2_6_gate_r_local_first_process: checks=5, failed=0, gate_r=local_first"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_decision.py
-        expected_stdout: "check_v2_6_special_point_theorem_note_decision: checks=7, failed=0, source_theorem_note=promote_candidate"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_special_point_theorem_note_candidate.py
-        expected_stdout: "check_v2_6_special_point_theorem_note_candidate: checks=8, failed=0, source_theorem_note=promote_candidate"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_mod6_ancestry_diagnostic.py
-        expected_stdout: "check_v2_6_mod6_ancestry_diagnostic: checks=7, failed=0, mod6_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_k2_multigap_dilution_diagnostic.py
-        expected_stdout: "check_v2_6_k2_multigap_dilution_diagnostic: checks=8, failed=0, k2_multigap_dilution=continue, mod6_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_grid_containment_diagnostic.py
-        expected_stdout: "check_v2_6_single_gap_grid_containment_diagnostic: checks=9, failed=0, single_gap_grid_containment=continue, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_capacity_false_positive_decomposition.py
-        expected_stdout: "check_v2_6_capacity_false_positive_decomposition: checks=8, failed=0, capacity=false_positive_filter_only, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_general_lemma_readiness.py
-        expected_stdout: "check_v2_6_general_lemma_readiness: checks=7, failed=0, general_lemma_readiness=continue, public_theorem=defer"
-      - cwd: research
-        command:
-          - "{python}"
           - experiments/critical_radius_birth_dynamics/check_v2_6_single_gap_theorem_note_draft.py
-        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=8, failed=0, theorem_note_draft=continue, public_theorem=defer"
+        expected_stdout: "check_v2_6_single_gap_theorem_note_draft: checks=5, failed=0"
       - cwd: research
         command:
           - "{python}"
-          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_r_theorem_note_review.py
-        expected_stdout: "check_v2_6_gate_r_theorem_note_review: checks=7, failed=0, gate_r=local_only, theorem_note_review=continue, public_theorem=defer"
+          - experiments/critical_radius_birth_dynamics/check_v2_6_gate_c_candidate.py
+        expected_stdout: "check_v2_6_gate_c_candidate: checks=9, failed=0, gate_c=candidate_ready, public_theorem=defer"

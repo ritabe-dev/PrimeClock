@@ -1,0 +1,53 @@
+{
+  "id": "prc_v2_7_gate_c_candidate_bundle_v0_1",
+  "default_name": "PrimeClock-v2.7-gate-c-candidate-v0.1",
+  "candidate_name_prefix": "PrimeClock-v2.7-gate-c-candidate-",
+  "links_title": "PrimeClock v2.7 Gate C Candidate Links",
+  "root_file_map": [
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_gate_c_candidate_readme_v0_1.md",
+      "target": "README.md"
+    },
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md",
+      "target": "THEOREM_NOTE.md"
+    },
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_gate_c_candidate_verify_v0_1.md",
+      "target": "VERIFY.md"
+    }
+  ],
+  "root_files": [
+    "LICENSE",
+    "scripts/verify_candidate_workflow.py"
+  ],
+  "research_files": [
+    "research/experiments/critical_radius_birth_dynamics/candidate_bundle.py",
+    "research/experiments/critical_radius_birth_dynamics/candidate_workflow_v2_7_v0_1.yml",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_general_single_gap_aperture_theorem_note.py",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_strict_single_gap_aperture_exact_audit.py",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_gate_c_candidate.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_gate_c_candidate_readme_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_gate_c_candidate_verify_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/prc_v2_7_gate_c_candidate_manifest_v0_1.json",
+    "research/experiments/critical_radius_birth_dynamics/gate_c_candidate_bundle_manifest_v2_7_v0_1.json"
+  ],
+  "research_dirs": [],
+  "required_readme_phrases": [
+    "PrimeClock v2.7 Gate C Candidate",
+    "THEOREM_NOTE.md",
+    "General q-Prime",
+    "not a public theorem release",
+    "not a DOI artifact",
+    "finite-universe completeness audit"
+  ],
+  "forbidden_path_markers": [
+    "release/public/release_registry.json",
+    "CITATION.cff",
+    "public_theorem_release_manifest_v2_5",
+    "public_theorem_release_workflow_v2_5",
+    "review_packages"
+  ]
+}
