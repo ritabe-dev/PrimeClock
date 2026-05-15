@@ -22,6 +22,18 @@ REPO_ONLY_BUNDLE_WORKFLOW_PHRASES = [
     "release/public/release_registry.json",
     "public-theorem-doi-integrity",
 ]
+
+
+def term(*parts: str) -> str:
+    return "".join(parts)
+
+
+PUBLIC_SURFACE_FORBIDDEN_PATTERNS = [
+    re.compile(rf"\b{term('co', 'dex/')}", re.IGNORECASE),
+    re.compile(rf"\b{term('Chat', 'GPT')}\b", re.IGNORECASE),
+    re.compile(rf"\b{term('AI', '-generated')}\b", re.IGNORECASE),
+    re.compile(rf"\b{term('review ', 'package')}\b", re.IGNORECASE),
+]
 STAGED_FORBIDDEN_PATTERNS = [
     re.compile(r"(^|/)\.DS_Store$"),
     re.compile(r"(^|/)node_modules/"),
@@ -102,6 +114,7 @@ def run_release_doi_checks(repo_root: Path, entries: list[dict[str, Any]], *, py
 
 
 def run_hash_and_release_script_checks(repo_root: Path, *, python: str) -> None:
+    run([python, "scripts/render_public_surface.py", "--check"], cwd=repo_root)
     run([python, "scripts/update_public_hashes.py", "--check"], cwd=repo_root)
     run(
         [
@@ -177,6 +190,21 @@ def check_release_metadata_boundaries(repo_root: Path, entries: list[dict[str, A
                         f"{entry['release_id']}: bundle-local workflow "
                         f"{bundle_workflow_path} contains repo-only phrase {phrase!r}"
                     )
+
+        public_paths = (
+            entry["readme_paths"]
+            + entry["release_notes_paths"]
+            + entry["citation_paths"]
+            + [entry["manifest_path"], entry["workflow_path"]]
+        )
+        for public_path in sorted(set(public_paths)):
+            public_text = read_text(repo_root, public_path)
+            for pattern in PUBLIC_SURFACE_FORBIDDEN_PATTERNS:
+                if pattern.search(public_text):
+                    failures.append(
+                        f"{entry['release_id']}: public release surface {public_path} "
+                        f"contains forbidden public marker {pattern.pattern!r}"
+                    )
     return failures
 
 
@@ -205,6 +233,24 @@ def check_staged_junk(repo_root: Path) -> list[str]:
     return failures
 
 
+def check_remote_branch_hygiene(repo_root: Path) -> list[str]:
+    failures: list[str] = []
+    result = subprocess.run(
+        ["git", "branch", "-r"],
+        cwd=repo_root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return ["could not inspect remote branches for public release hygiene"]
+    for line in result.stdout.splitlines():
+        branch = line.strip()
+        if branch.startswith(term("origin/co", "dex/")):
+            failures.append(f"remote public branch uses forbidden prefix: {branch}")
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, help="Repository root to check")
@@ -222,6 +268,7 @@ def main() -> int:
     failures = check_release_metadata_boundaries(repo_root, entries)
     if args.check_staged:
         failures.extend(check_staged_junk(repo_root))
+        failures.extend(check_remote_branch_hygiene(repo_root))
     if failures:
         print("verify_public_release_execution_preflight: failed")
         for failure in failures:

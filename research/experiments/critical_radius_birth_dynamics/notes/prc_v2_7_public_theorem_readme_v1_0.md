@@ -1,6 +1,6 @@
-# PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem
+# PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem
 
-Status: Gate P preflight README text for `v2.7.0-prc-general-q-prime-theorem`.
+Status: Gate P preflight README text for `v2.7.1-prc-general-q-prime-theorem`.
 This is not a GitHub Release, not a DOI artifact, and not a Zenodo archive.
 
 ## What Is Proved

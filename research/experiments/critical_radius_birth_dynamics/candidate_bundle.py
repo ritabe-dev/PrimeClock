@@ -65,7 +65,7 @@ PROFILE_DEFAULTS = {
     },
     "v2_7_public_theorem_release": {
         "manifest": V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
-        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-public-theorem-release",
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v271-public-theorem-release",
     },
 }
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
@@ -932,7 +932,7 @@ def main() -> int:
     print(f"candidate package directory: {bundle_root}")
     print(f"candidate ZIP: {zip_path if zip_path else 'not generated'}")
     print(f"latest path note: {latest_path}")
-    print(f"codex links note: {links_path}")
+    print(f"links note: {links_path}")
     return 0
 
 

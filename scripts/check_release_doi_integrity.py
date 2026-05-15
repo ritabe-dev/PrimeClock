@@ -19,7 +19,9 @@ PENDING_PATTERNS = [
     "pending Zenodo publication",
     "do not cite a Zenodo DOI until a Zenodo archive exists",
     "DOI is pending",
+    "DOI pending",
 ]
+ROOT_FIXED_CHECKED_RE = re.compile(r"check_release_doi_integrity:\s*checked=\d+")
 ROOT_README_FORBIDDEN_PHRASES = [
     "## Development App",
     "## Version-Line Workflow",
@@ -105,9 +107,19 @@ def check_registered_texts(repo_root: Path, entry: dict[str, Any], failures: lis
     for relative_path in seen_paths:
         text = read_text(repo_root, relative_path)
         if entry["doi_state"] == "assigned":
-            for stale in PENDING_PATTERNS + entry["forbidden_phrases"]:
+            if relative_path not in {"README.md", "VERSION_MAP.md"}:
+                stale_patterns = PENDING_PATTERNS + entry["forbidden_phrases"]
+            else:
+                stale_patterns = [
+                    phrase
+                    for phrase in entry["forbidden_phrases"]
+                    if phrase not in PENDING_PATTERNS
+                ]
+            for stale in stale_patterns:
                 if stale and stale in text:
-                    failures.append(f"{entry['release_id']}: {relative_path} contains stale DOI phrase {stale!r}")
+                    failures.append(
+                        f"{entry['release_id']}: {relative_path} contains stale DOI phrase {stale!r}"
+                    )
         else:
             if VERSION_DOI_LINE_RE.search(text):
                 failures.append(f"{entry['release_id']}: {relative_path} contains version DOI before assignment")
@@ -190,8 +202,46 @@ def latest_assigned_release(entries: list[dict[str, Any]]) -> dict[str, Any]:
     return assigned[-1]
 
 
+def latest_registered_public_release(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    releases = [
+        entry
+        for entry in entries
+        if entry["release_kind"] == "doi_release"
+    ]
+    if not releases:
+        raise ValueError("release_registry has no public release")
+    return releases[-1]
+
+
+def require_release_metadata(
+    *,
+    relative_path: str,
+    text: str,
+    entry: dict[str, Any],
+    label: str,
+    failures: list[str],
+) -> None:
+    for needle in [
+        entry["release_id"],
+        entry["tag"],
+        entry["title"],
+        entry["asset_name"],
+        entry["github_release_url"],
+    ]:
+        if needle and needle not in text:
+            failures.append(f"{relative_path} missing {label} metadata {needle!r}")
+    if entry["doi_state"] == "assigned":
+        if entry["zenodo_version_doi"] and entry["zenodo_version_doi"] not in text:
+            failures.append(
+                f"{relative_path} missing {label} DOI {entry['zenodo_version_doi']!r}"
+            )
+    elif not any(pattern in text for pattern in PENDING_PATTERNS):
+        failures.append(f"{relative_path} missing {label} DOI pending wording")
+
+
 def check_repository_freshness(repo_root: Path, entries: list[dict[str, Any]]) -> list[str]:
-    latest = latest_assigned_release(entries)
+    latest_public = latest_registered_public_release(entries)
+    latest_assigned = latest_assigned_release(entries)
     failures: list[str] = []
     root_readme = read_text(repo_root, "README.md")
     version_map = read_text(repo_root, "VERSION_MAP.md")
@@ -202,15 +252,23 @@ def check_repository_freshness(repo_root: Path, entries: list[dict[str, Any]]) -
         "README.md": root_readme,
         "VERSION_MAP.md": version_map,
     }.items():
-        for needle in [
-            latest["release_id"],
-            latest["tag"],
-            latest["title"],
-            latest["zenodo_version_doi"],
-            latest["asset_name"],
-        ]:
-            if needle and needle not in text:
-                failures.append(f"{relative_path} missing latest release metadata {needle!r}")
+        require_release_metadata(
+            relative_path=relative_path,
+            text=text,
+            entry=latest_public,
+            label="current public release",
+            failures=failures,
+        )
+        if latest_assigned["release_id"] != latest_public["release_id"]:
+            require_release_metadata(
+                relative_path=relative_path,
+                text=text,
+                entry=latest_assigned,
+                label="latest DOI-backed release",
+                failures=failures,
+            )
+        if ROOT_FIXED_CHECKED_RE.search(text):
+            failures.append(f"{relative_path} contains fixed check_release_doi_integrity count")
     if "The current public release target is:" in version_map:
         failures.append("VERSION_MAP.md still uses singular stale current public release wording")
     if "## Current Release Target" in root_readme:

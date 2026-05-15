@@ -27,11 +27,11 @@ PUBLIC_BUNDLE_WORKFLOW_REL = (
 )
 PUBLIC_RELEASE_MANIFEST_REL = EXPERIMENT_REL / "public_theorem_release_manifest_v2_7_v1_0.json"
 REGISTRY_REL = Path("release/public/release_registry.json")
-RELEASE_ID = "v2.7.0-prc-general-q-prime-theorem"
-ASSET_NAME = "PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip"
+RELEASE_ID = "v2.7.1-prc-general-q-prime-theorem"
+ASSET_NAME = "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip"
 
 REQUIRED_PUBLIC_TEXT = (
-    "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem",
+    "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
     "direct one-prime q-lift",
     "recorded birth rows consistency audit",
     "committed recorded birth rows in the finite next-prime support CSV",
@@ -57,7 +57,7 @@ FORBIDDEN_PUBLIC_TEXT = (
     "Version DOI: `10.5281/zenodo.",
     "Version DOI: 10.5281/zenodo.",
     "doi: \"10.5281/zenodo.",
-    "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem",
+    "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
     "B8 theorem proven",
     "general predictor theorem",
     "asymptotic law theorem",
@@ -192,7 +192,7 @@ def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
     expected = {
         "version": RELEASE_ID,
         "tag": RELEASE_ID,
-        "title": "PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem",
+        "title": "PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem",
         "release_kind": "doi_release",
         "doi_state": "not_assigned",
         "zenodo_concept_doi": "",

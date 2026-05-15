@@ -2,10 +2,10 @@ candidate_id: prc_v2_7_public_theorem_release
 status: public_theorem_release_review
 public_release: true
 base_public_release: v2.5.0-prc-public-theorem
-github_release_tag: v2.7.0-prc-general-q-prime-theorem
-github_release_url: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem
+github_release_tag: v2.7.1-prc-general-q-prime-theorem
+github_release_url: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem
 zenodo_version_doi: ""
-release_asset_name: PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip
+release_asset_name: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 goal: >
   Package v2.7 for final public theorem release review before creating a tag,
   GitHub Release, Zenodo archive, DOI, or public push.
@@ -18,7 +18,7 @@ public_theorem_review:
 
 gates:
   public-theorem-integrity:
-    description: v2.7 public theorem release boundary checks
+    description: v2.7.1 public theorem release boundary checks
     commands:
       - cwd: .
         command:
@@ -26,17 +26,17 @@ gates:
           - research/experiments/critical_radius_birth_dynamics/check_v2_7_public_theorem_release.py
         expected_stdout: "check_v2_7_public_theorem_release: checks=8, failed=0"
   public-theorem-doi-integrity:
-    description: v2.7 registry draft and DOI non-assignment checks
+    description: v2.7.1 registry draft and DOI non-assignment checks
     commands:
       - cwd: .
         command:
           - "{python}"
           - scripts/check_release_doi_integrity.py
           - --release-id
-          - v2.7.0-prc-general-q-prime-theorem
+          - v2.7.1-prc-general-q-prime-theorem
         expected_stdout: "check_release_doi_integrity: checked=1, failed=0"
   public-theorem-bundle:
-    description: v2.7 public theorem release bundle build and self-check
+    description: v2.7.1 public theorem release bundle build and self-check
     commands:
       - cwd: .
         command:
@@ -45,7 +45,7 @@ gates:
           - --profile
           - v2_7_public_theorem_release
           - --out
-          - "{tmp}/primeclock-v27-public-release"
+          - "{tmp}/primeclock-v271-public-release"
           - --zip
         expected_stdout: "candidate ZIP:"
       - cwd: .
@@ -55,13 +55,13 @@ gates:
           - --profile
           - v2_7_public_theorem_release
           - --check
-          - "{tmp}/primeclock-v27-public-release/PrimeClock-v2.7-general-q-prime-theorem-v1.0"
+          - "{tmp}/primeclock-v271-public-release/PrimeClock-v2.7.1-general-q-prime-theorem-v1.0"
         expected_stdout: "OK:"
       - cwd: "."
         command:
           - unzip
           - -t
-          - "{tmp}/primeclock-v27-public-release/PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip"
+          - "{tmp}/primeclock-v271-public-release/PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip"
         expected_stdout: "No errors detected"
   public-theorem-review:
     description: Combined v2.7 public theorem preflight gate.

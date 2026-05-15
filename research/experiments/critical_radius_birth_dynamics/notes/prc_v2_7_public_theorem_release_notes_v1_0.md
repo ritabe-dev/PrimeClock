@@ -1,25 +1,25 @@
 # PRC v2.7 Public Theorem Preflight Release Notes
 
-Status: Gate P preflight release notes for `v2.7.0-prc-general-q-prime-theorem`.
+Status: Gate P preflight release notes for `v2.7.1-prc-general-q-prime-theorem`.
 Version DOI: not assigned.
 GitHub Release: not created.
 
 ## Release Title
 
 ```text
-PRC v2.7: General q-Prime Single-Gap Aperture Classification Theorem
+PRC v2.7.1: General q-Prime Single-Gap Aperture Classification Theorem
 ```
 
 ## Proposed Tag
 
 ```text
-v2.7.0-prc-general-q-prime-theorem
+v2.7.1-prc-general-q-prime-theorem
 ```
 
 ## Proposed Release Asset
 
 ```text
-PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip
+PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 ```
 
 ## Summary
