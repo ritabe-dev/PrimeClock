@@ -26,7 +26,8 @@ The result is a direct one-prime q-lift theorem over the old prefix. For
 `q != p_{k+1}`, it does not claim that intermediate sequential PRC transitions
 are skipped or unchanged. The exact audit is a recorded birth rows consistency
 audit, not a full finite-universe completeness audit and not the proof of the
-general q-prime theorem.
+general q-prime theorem; the theorem proof is the geometric argument in the
+theorem note.
 
 Read these current release files first:
 

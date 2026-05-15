@@ -38,9 +38,7 @@
         "does not claim an asymptotic law",
         "does not include `B_8`"
       ],
-      "forbidden_phrases": [
-        "pending Zenodo publication"
-      ]
+      "forbidden_phrases": []
     },
     {
       "release_id": "v2.5.0-prc-public-theorem",
@@ -79,10 +77,7 @@
         "no general predictor",
         "no asymptotic law"
       ],
-      "forbidden_phrases": [
-        "do not cite a Zenodo DOI until a Zenodo archive exists",
-        "pending Zenodo publication"
-      ]
+      "forbidden_phrases": []
     },
     {
       "release_id": "v2.7.1-prc-general-q-prime-theorem",
@@ -95,7 +90,7 @@
       "zenodo_version_doi": "10.5281/zenodo.20209528",
       "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
       "asset_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip",
-      "release_asset_sha256": "9feaa074a0dd780648a66922d12c1ef7ae13970a775a3dd5eacb4651ea4f24ee",
+      "release_asset_sha256": "6ba8e6b3ee8ab84eecdc8568613e6d06e0ab9cecfe4788ac647ab65dce2c974d",
       "bundle_profile": "v2_7_public_theorem_release",
       "bundle_workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_bundle_workflow_v2_7_v1_0.yml",
       "release_notes_primary": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md",

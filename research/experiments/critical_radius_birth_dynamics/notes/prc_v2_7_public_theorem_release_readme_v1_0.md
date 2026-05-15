@@ -37,6 +37,7 @@ check_v2_7_public_theorem_release: checks=8, failed=0
 The exact audit is a recorded birth rows consistency audit for the committed
 recorded birth rows in the finite next-prime support CSV. It is not a full
 finite-universe completeness audit and is not the proof of the theorem.
+The theorem proof is the geometric argument in `THEOREM_NOTE.md`.
 
 DOI and registry integrity checks are full-repository release-execution checks only.
 They depend on `scripts/check_release_doi_integrity.py` and

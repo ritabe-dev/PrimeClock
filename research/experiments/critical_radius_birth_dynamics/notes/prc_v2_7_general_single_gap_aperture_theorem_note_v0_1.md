@@ -1,6 +1,6 @@
 # PRC v2.7 General q-Prime Single-Gap Aperture Classification Theorem
 
-**Status:** public theorem release text, v1.0. DOI pending Zenodo publication.
+**Status:** public theorem release text, v1.0. Zenodo version DOI assigned.
 **Scope:** PRC circular-arc model, general over all old residues and all later odd prime moduli `q>p_k`.
 **Non-claim:** this note is not a mechanically verified proof, not a predictor, not an asymptotic law, and not a claim about prime gaps outside the stated PRC model.
 

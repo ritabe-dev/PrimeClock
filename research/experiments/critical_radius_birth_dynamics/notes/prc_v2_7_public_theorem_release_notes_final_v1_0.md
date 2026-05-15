@@ -35,7 +35,8 @@ check_v2_7_public_theorem_release: checks=8, failed=0
 The exact audit is a recorded birth rows consistency audit for the committed
 recorded birth rows in the finite next-prime support CSV. It is not a full
 finite-universe completeness audit and is implementation evidence, not the
-proof of the general q-prime theorem.
+proof of the general q-prime theorem. The theorem proof is the geometric
+argument in the theorem note.
 
 DOI and registry integrity checks remain full-repository release-execution
 checks and are not required for extracted-bundle verification.

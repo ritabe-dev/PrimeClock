@@ -34,7 +34,7 @@ REQUIRED_SECTIONS = (
     "## 14. Public Theorem Boundary",
 )
 REQUIRED_PHRASES = (
-    "public theorem release text, v1.0. DOI pending Zenodo publication.",
+    "public theorem release text, v1.0. Zenodo version DOI assigned.",
     "General q-Prime Single-Gap Aperture Classification",
     "general over all old residues and all later odd prime moduli q>p_k",
     "Fix k >= 3",
@@ -142,6 +142,7 @@ FORBIDDEN_PHRASES = (
     "q-closed",
     term("Gate", " C Boundary"),
     "Public Theorem Preflight Boundary",
+    "DOI pending Zenodo publication",
 )
 
 

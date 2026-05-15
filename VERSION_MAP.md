@@ -111,6 +111,7 @@ package; it is intentionally separate from the PrimeClock public release lines.
 
 The top-level `CITATION.cff` uses the v2.3 Zenodo concept DOI as its top-level
 DOI. The current theorem release uses release-specific citation metadata and is
-waiting for a Zenodo version DOI. Until that DOI exists, the latest DOI-backed
-theorem release uses release-specific citation metadata and version DOI
+The current theorem release has an assigned Zenodo version DOI and uses
+release-specific citation metadata. The latest DOI-backed theorem release
+is the same release: `v2.7.1-prc-general-q-prime-theorem` with version DOI
 `10.5281/zenodo.20209528`.

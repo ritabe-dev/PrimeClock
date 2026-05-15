@@ -68,6 +68,22 @@ def citation_note(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
     )
 
 
+def version_map_citation_note(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
+    if current["release_id"] == doi_backed["release_id"]:
+        return (
+            "The current theorem release has an assigned Zenodo version DOI and uses\n"
+            "release-specific citation metadata. The latest DOI-backed theorem release\n"
+            f"is the same release: `{doi_backed['release_id']}` with version DOI\n"
+            f"`{doi_backed['zenodo_version_doi']}`."
+        )
+    return (
+        "The current theorem release uses release-specific citation metadata and is\n"
+        "waiting for a Zenodo version DOI. Until that DOI exists, the latest DOI-backed\n"
+        "theorem release uses release-specific citation metadata and version DOI\n"
+        f"`{doi_backed['zenodo_version_doi']}`."
+    )
+
+
 def release_line_rows(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
     if current["release_id"] == doi_backed["release_id"]:
         return (
@@ -115,7 +131,8 @@ The result is a direct one-prime q-lift theorem over the old prefix. For
 `q != p_{{k+1}}`, it does not claim that intermediate sequential PRC transitions
 are skipped or unchanged. The exact audit is a recorded birth rows consistency
 audit, not a full finite-universe completeness audit and not the proof of the
-general q-prime theorem.
+general q-prime theorem; the theorem proof is the geometric argument in the
+theorem note.
 
 Read these current release files first:
 
@@ -383,9 +400,7 @@ package; it is intentionally separate from the PrimeClock public release lines.
 
 The top-level `CITATION.cff` uses the v2.3 Zenodo concept DOI as its top-level
 DOI. The current theorem release uses release-specific citation metadata and is
-waiting for a Zenodo version DOI. Until that DOI exists, the latest DOI-backed
-theorem release uses release-specific citation metadata and version DOI
-`{doi_backed["zenodo_version_doi"]}`.
+{version_map_citation_note(current, doi_backed)}
 """
 
 
