@@ -1933,6 +1933,12 @@ def _write_registry_fixture(tmp_path: Path, *, doi_state: str = "assigned") -> P
 def test_release_doi_integrity_checks_registered_source_releases():
     repo_root = Path(__file__).parents[2]
     checker = repo_root / "scripts" / "check_release_doi_integrity.py"
+    registry = json.loads(
+        (repo_root / "release" / "public" / "release_registry.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    releases = registry["releases"]
 
     result = subprocess.run(
         [sys.executable, str(checker), "--all"],
@@ -1943,10 +1949,9 @@ def test_release_doi_integrity_checks_registered_source_releases():
     )
 
     assert result.returncode == 0
-    assert "checked=3" in result.stdout
-    assert "v2.3.0" in result.stdout
-    assert "v2.5.0-prc-public-theorem" in result.stdout
-    assert "v2.7.0-prc-general-q-prime-theorem" in result.stdout
+    assert f"checked={len(releases)}" in result.stdout
+    for entry in releases:
+        assert entry["release_id"] in result.stdout
 
 
 def test_release_doi_integrity_rejects_stale_pending_text_for_assigned_release(tmp_path: Path):
