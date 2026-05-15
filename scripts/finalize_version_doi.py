@@ -42,7 +42,14 @@ def replace_version_doi_text(text: str, version_doi: str) -> str:
 
 def replace_citation_doi(text: str, version_doi: str) -> str:
     if re.search(r'^doi:\s*"?[^"\n]+"?\s*$', text, re.MULTILINE):
-        return re.sub(r'^doi:\s*"?[^"\n]+"?\s*$', f'doi: "{version_doi}"', text, count=1, flags=re.MULTILINE)
+        updated = re.sub(
+            r'^doi:\s*"?[^"\n]+"?\s*$',
+            f'doi: "{version_doi}"',
+            text,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        return updated if updated.endswith("\n") else updated + "\n"
     return text + f'\ndoi: "{version_doi}"\n'
 
 

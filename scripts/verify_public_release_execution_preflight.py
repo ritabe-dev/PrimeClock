@@ -15,7 +15,8 @@ from release_registry import REGISTRY_PATH, load_release_registry, release_entri
 
 
 RELEASE_SCRIPT_TEST_SELECTOR = (
-    "public_release or publish_public_release or release_version or finalize_release"
+    "public_release or publish_public_release or release_version or "
+    "finalize_release or complete_zenodo"
 )
 REPO_ONLY_BUNDLE_WORKFLOW_PHRASES = [
     "scripts/check_release_doi_integrity.py",
@@ -51,7 +52,23 @@ def repo_root_from_script() -> Path:
 
 def python_executable(repo_root: Path) -> str:
     venv_python = repo_root / "research" / ".venv" / "bin" / "python"
-    return str(venv_python) if venv_python.is_file() else sys.executable
+    if venv_python.is_file():
+        return str(venv_python)
+    result = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=repo_root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode == 0:
+        common_dir = Path(result.stdout.strip())
+        if not common_dir.is_absolute():
+            common_dir = repo_root / common_dir
+        primary_worktree_python = common_dir.parent / "research" / ".venv" / "bin" / "python"
+        if primary_worktree_python.is_file():
+            return str(primary_worktree_python)
+    return sys.executable
 
 
 def run(command: list[str], *, cwd: Path, expected_stdout: str | None = None) -> str:
@@ -131,6 +148,30 @@ def run_hash_and_release_script_checks(repo_root: Path, *, python: str) -> None:
     )
 
 
+def run_doi_completion_dry_run_validations(
+    repo_root: Path,
+    entries: list[dict[str, Any]],
+    *,
+    python: str,
+) -> None:
+    for entry in entries:
+        if entry["doi_state"] != "assigned" or not entry["zenodo_version_doi"]:
+            continue
+        run(
+            [
+                python,
+                "scripts/complete_zenodo_doi_release.py",
+                "--release-id",
+                entry["release_id"],
+                "--version-doi",
+                entry["zenodo_version_doi"],
+                "--dry-run-validate",
+            ],
+            cwd=repo_root,
+            expected_stdout="complete_zenodo_doi_release: dry_run_validate=passed",
+        )
+
+
 def workflow_supports_public_theorem_review(text: str) -> bool:
     return "public-theorem-review" in text and "public-theorem-integrity" in text
 
@@ -182,6 +223,14 @@ def check_release_metadata_boundaries(repo_root: Path, entries: list[dict[str, A
         if not entry["manifest_path"].endswith(".json"):
             continue
         manifest = load_json(repo_root, entry["manifest_path"])
+        if entry.get("bundle_workflow_path"):
+            bundle_workflow_text = read_text(repo_root, entry["bundle_workflow_path"])
+            for phrase in REPO_ONLY_BUNDLE_WORKFLOW_PHRASES:
+                if phrase in bundle_workflow_text:
+                    failures.append(
+                        f"{entry['release_id']}: registry bundle-local workflow "
+                        f"{entry['bundle_workflow_path']} contains repo-only phrase {phrase!r}"
+                    )
         for bundle_workflow_path in candidate_bundle_manifest_bundle_workflows(manifest):
             bundle_workflow_text = read_text(repo_root, bundle_workflow_path)
             for phrase in REPO_ONLY_BUNDLE_WORKFLOW_PHRASES:
@@ -284,6 +333,7 @@ def main() -> int:
 
     run_release_doi_checks(repo_root, entries, python=python)
     run_hash_and_release_script_checks(repo_root, python=python)
+    run_doi_completion_dry_run_validations(repo_root, entries, python=python)
     run_registered_workflows(repo_root, entries, python=python)
     check_release_assets(repo_root, entries)
 

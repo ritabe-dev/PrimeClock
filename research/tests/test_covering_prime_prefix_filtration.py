@@ -1910,6 +1910,10 @@ def _write_registry_fixture(tmp_path: Path, *, doi_state: str = "assigned") -> P
                 "zenodo_version_doi": version_doi,
                 "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v9.9.9-test",
                 "asset_name": "PrimeClock-v9.9.9-test.zip",
+                "release_asset_sha256": "0" * 64,
+                "bundle_profile": "v9_9_public_release",
+                "bundle_workflow_path": "",
+                "release_notes_primary": "notes/RELEASE.md",
                 "manifest_path": "docs/manifest.json",
                 "workflow_path": "docs/workflow.yml",
                 "readme_paths": ["docs/README.md"],
@@ -2080,3 +2084,94 @@ def test_finalize_version_doi_updates_only_registered_paths(tmp_path: Path):
         encoding="utf-8"
     )
     assert unrelated.read_text(encoding="utf-8") == "Version DOI: `10.5281/zenodo.20000000`\n"
+
+
+def test_complete_zenodo_doi_release_dry_run_lists_registry_driven_actions(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="not_assigned")
+    repo_root = Path(__file__).parents[2]
+    completer = repo_root / "scripts" / "complete_zenodo_doi_release.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(completer),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--release-id",
+            "v9.9.9-test",
+            "--version-doi",
+            "10.5281/zenodo.29999999",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 0
+    assert "planned file updates:" in result.stdout
+    assert "bundle rebuild:" in result.stdout
+    assert "gh release edit v9.9.9-test --notes-file notes/RELEASE.md" in result.stdout
+    assert "dry-run: pass --execute" in result.stdout
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    assert registry["releases"][0]["doi_state"] == "not_assigned"
+
+
+def test_complete_zenodo_doi_release_rejects_remote_flags_without_execute(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="not_assigned")
+    repo_root = Path(__file__).parents[2]
+    completer = repo_root / "scripts" / "complete_zenodo_doi_release.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(completer),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--release-id",
+            "v9.9.9-test",
+            "--version-doi",
+            "10.5281/zenodo.29999999",
+            "--publish-github",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 1
+    assert "--publish-github and --verify-remote require --execute" in result.stdout
+
+
+def test_complete_zenodo_doi_release_dry_run_validate_passes_assigned_fixture(tmp_path: Path):
+    registry_path = _write_registry_fixture(tmp_path, doi_state="assigned")
+    repo_root = Path(__file__).parents[2]
+    completer = repo_root / "scripts" / "complete_zenodo_doi_release.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(completer),
+            "--repo-root",
+            str(tmp_path),
+            "--registry",
+            str(registry_path),
+            "--release-id",
+            "v9.9.9-test",
+            "--version-doi",
+            "10.5281/zenodo.29999999",
+            "--dry-run-validate",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=RELEASE_SUBPROCESS_TIMEOUT_SECONDS,
+    )
+
+    assert result.returncode == 0
+    assert "complete_zenodo_doi_release: dry_run_validate=passed" in result.stdout

@@ -54,13 +54,13 @@ jobs:
         working-directory: research
         run: |
           python -m pytest tests/test_covering_prime_prefix_filtration.py -q \
-            -k "not public_release and not publish_public_release and not release_version and not finalize_release" \
+            -k "not public_release and not publish_public_release and not release_version and not finalize_release and not complete_zenodo" \
             --durations=20
       - name: Run C4/B5 public release-script tests
         working-directory: research
         run: |
           python -m pytest tests/test_covering_prime_prefix_filtration.py -q \
-            -k "public_release or publish_public_release or release_version or finalize_release" \
+            -k "public_release or publish_public_release or release_version or finalize_release or complete_zenodo" \
             --durations=20
       - name: Run v2.3.0 public checkers
         working-directory: research

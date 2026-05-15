@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -191,6 +192,34 @@ def check_manifest_fields(repo_root: Path, entry: dict[str, Any], failures: list
             failures.append(f"{entry['release_id']}: {manifest_path} missing registry value {needle!r}")
 
 
+def check_release_asset_metadata(repo_root: Path, entry: dict[str, Any], failures: list[str]) -> None:
+    if entry["release_notes_primary"] not in entry["release_notes_paths"]:
+        failures.append(f"{entry['release_id']}: release_notes_primary is not registered")
+    if entry["bundle_workflow_path"]:
+        try:
+            read_text(repo_root, entry["bundle_workflow_path"])
+        except FileNotFoundError:
+            failures.append(
+                f"{entry['release_id']}: missing bundle_workflow_path {entry['bundle_workflow_path']}"
+            )
+    if entry["bundle_profile"] and entry["release_kind"] != "doi_release":
+        failures.append(f"{entry['release_id']}: bundle_profile is only supported for DOI releases")
+    if not entry["release_asset_sha256"]:
+        failures.append(f"{entry['release_id']}: missing release_asset_sha256")
+        return
+    if not re.fullmatch(r"[0-9a-f]{64}", entry["release_asset_sha256"]):
+        failures.append(f"{entry['release_id']}: release_asset_sha256 is not lowercase SHA256 hex")
+        return
+    asset_path = repo_root / "review_packages" / entry["asset_name"]
+    if asset_path.is_file():
+        actual = hashlib.sha256(asset_path.read_bytes()).hexdigest()
+        if actual != entry["release_asset_sha256"]:
+            failures.append(
+                f"{entry['release_id']}: local asset SHA256 {actual} "
+                f"does not match registry {entry['release_asset_sha256']}"
+            )
+
+
 def latest_assigned_release(entries: list[dict[str, Any]]) -> dict[str, Any]:
     assigned = [
         entry
@@ -285,6 +314,7 @@ def check_entry(repo_root: Path, entry: dict[str, Any]) -> list[str]:
     check_registered_texts(repo_root, entry, failures)
     check_citations(repo_root, entry, failures)
     check_manifest_fields(repo_root, entry, failures)
+    check_release_asset_metadata(repo_root, entry, failures)
     return failures
 
 

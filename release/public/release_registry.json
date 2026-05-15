@@ -12,6 +12,10 @@
       "zenodo_version_doi": "10.5281/zenodo.20119473",
       "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.3.0",
       "asset_name": "PrimeClock-2.3.0.zip",
+      "release_asset_sha256": "d17e9f82203559cf77cd5b382282e97cec84a78ffd59f0ec90256b65921390c0",
+      "bundle_profile": "",
+      "bundle_workflow_path": "",
+      "release_notes_primary": "RELEASE_NOTES_v2_3_0.md",
       "manifest_path": "release/public/release_config.json",
       "workflow_path": "release/public/verify.yml",
       "readme_paths": [
@@ -49,6 +53,10 @@
       "zenodo_version_doi": "10.5281/zenodo.20154561",
       "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.5.0-prc-public-theorem",
       "asset_name": "PrimeClock-v2.5-public-theorem-v1.0.zip",
+      "release_asset_sha256": "fd0bf243971373439c7b9e2d70177f7e7480b0b66b9ac4564b29fa64aea99c83",
+      "bundle_profile": "v2_5_public_theorem_release",
+      "bundle_workflow_path": "",
+      "release_notes_primary": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_5_public_theorem_release_notes_v1_0.md",
       "manifest_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_5_v1_0.json",
       "workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_5_v1_0.yml",
       "readme_paths": [
@@ -87,6 +95,10 @@
       "zenodo_version_doi": "10.5281/zenodo.20209528",
       "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc-general-q-prime-theorem",
       "asset_name": "PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip",
+      "release_asset_sha256": "9feaa074a0dd780648a66922d12c1ef7ae13970a775a3dd5eacb4651ea4f24ee",
+      "bundle_profile": "v2_7_public_theorem_release",
+      "bundle_workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_bundle_workflow_v2_7_v1_0.yml",
+      "release_notes_primary": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md",
       "manifest_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_7_v1_0.json",
       "workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_7_v1_0.yml",
       "readme_paths": [

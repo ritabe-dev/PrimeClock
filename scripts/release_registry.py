@@ -72,6 +72,10 @@ def validate_release_registry(registry: dict[str, Any]) -> None:
         "zenodo_version_doi",
         "github_release_url",
         "asset_name",
+        "release_asset_sha256",
+        "bundle_profile",
+        "bundle_workflow_path",
+        "release_notes_primary",
         "manifest_path",
         "workflow_path",
         "readme_paths",
@@ -99,6 +103,13 @@ def validate_release_registry(registry: dict[str, Any]) -> None:
             raise ValueError(
                 f"{release_id}: citation_doi_policy must be concept_doi, version_doi, or none"
             )
+        if entry["release_asset_sha256"] and (
+            len(entry["release_asset_sha256"]) != 64
+            or not all(char in "0123456789abcdef" for char in entry["release_asset_sha256"])
+        ):
+            raise ValueError(f"{release_id}: release_asset_sha256 must be lowercase SHA256 hex")
+        if entry["release_notes_primary"] not in entry["release_notes_paths"]:
+            raise ValueError(f"{release_id}: release_notes_primary must be in release_notes_paths")
         for list_key in [
             "readme_paths",
             "release_notes_paths",
