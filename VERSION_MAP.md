@@ -56,8 +56,7 @@ versions separate. Multi-version release metadata is tracked in
 | `v2.3.0` | immutable foundational public DOI release for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or a maintenance patch release if corrections are needed. |
 | `maintenance/v2.3.1` | reserved maintenance patch line | Use only for errata or docs clarification rooted at `v2.3.0`. |
 | `v2.4.x` | source-only bridge from v2.3.0 to the v2.5 theorem line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal evidence only. |
-| `v2.7.1-prc-general-q-prime-theorem` | latest DOI-backed scoped public theorem release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
-| `v2.7.1-prc-general-q-prime-theorem` | current public theorem release, DOI pending | General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |
+| `v2.7.1-prc-general-q-prime-theorem` | current and latest DOI-backed public theorem release | General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |
 
 Historical release corrections are governed by
 `release/public/MAINTENANCE_POLICY.md`. The short rule is: published tags and

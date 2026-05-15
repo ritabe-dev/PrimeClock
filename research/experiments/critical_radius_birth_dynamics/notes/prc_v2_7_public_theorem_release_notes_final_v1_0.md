@@ -51,7 +51,6 @@ This release does not claim:
 - no prime-gap theorem outside PRC model;
 - not a full finite-universe completeness audit.
 
-## DOI Finalization
+## DOI
 
-The release is prepared for a Zenodo version DOI. The DOI must be added only
-after the GitHub Release exists and Zenodo has minted the version record.
+The Zenodo version DOI for this release is `10.5281/zenodo.20209528`.

@@ -49,8 +49,7 @@ GitHub Release: https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.1-prc
 Release asset: PrimeClock-v2.7.1-general-q-prime-theorem-v1.0.zip
 ```
 
-This remains the theorem citation to use when a Zenodo version DOI is required
-and the current public theorem release is still DOI pending.
+This is the same release as the current public theorem release.
 
 ## Foundational Public Release
 
@@ -166,9 +165,7 @@ python3 scripts/verify_public_release.py --out "${TMPDIR:-/tmp}/primeclock-publi
 
 ## Citation and License
 
-Use the current release-specific `CITATION.cff` after Zenodo assigns the current
-version DOI. Until then, the latest DOI-backed theorem release-specific
-`CITATION.cff` remains the theorem citation for DOI-backed references.
+Use the current release-specific `CITATION.cff` for DOI-backed references.
 
 The top-level `CITATION.cff` remains the v2.3.0 citation metadata. Its
 top-level DOI is the Zenodo concept DOI for the v2.3 release series:

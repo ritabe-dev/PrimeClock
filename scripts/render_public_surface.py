@@ -47,6 +47,41 @@ def entry_doi_text(entry: dict[str, Any]) -> str:
     return "pending Zenodo publication"
 
 
+def doi_backed_readme_note(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
+    if current["release_id"] == doi_backed["release_id"]:
+        return "This is the same release as the current public theorem release."
+    return (
+        "This remains the theorem citation to use when a Zenodo version DOI is required\n"
+        "and the current public theorem release is still DOI pending."
+    )
+
+
+def citation_note(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
+    if current["release_id"] == doi_backed["release_id"]:
+        return (
+            "Use the current release-specific `CITATION.cff` for DOI-backed references."
+        )
+    return (
+        "Use the current release-specific `CITATION.cff` after Zenodo assigns the current\n"
+        "version DOI. Until then, the latest DOI-backed theorem release-specific\n"
+        "`CITATION.cff` remains the theorem citation for DOI-backed references."
+    )
+
+
+def release_line_rows(current: dict[str, Any], doi_backed: dict[str, Any]) -> str:
+    if current["release_id"] == doi_backed["release_id"]:
+        return (
+            f"| `{current['release_id']}` | current and latest DOI-backed public theorem release | "
+            "General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |"
+        )
+    return (
+        f"| `{doi_backed['release_id']}` | latest DOI-backed scoped public theorem release | "
+        "Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |\n"
+        f"| `{current['release_id']}` | current public theorem release, DOI pending | "
+        "General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |"
+    )
+
+
 def render_readme(registry: dict[str, Any]) -> str:
     current = current_public_release(registry)
     doi_backed = latest_doi_backed_release(registry)
@@ -103,8 +138,7 @@ GitHub Release: {doi_backed["github_release_url"]}
 Release asset: {doi_backed["asset_name"]}
 ```
 
-This remains the theorem citation to use when a Zenodo version DOI is required
-and the current public theorem release is still DOI pending.
+{doi_backed_readme_note(current, doi_backed)}
 
 ## Foundational Public Release
 
@@ -220,9 +254,7 @@ python3 scripts/verify_public_release.py --out "${{TMPDIR:-/tmp}}/primeclock-pub
 
 ## Citation and License
 
-Use the current release-specific `CITATION.cff` after Zenodo assigns the current
-version DOI. Until then, the latest DOI-backed theorem release-specific
-`CITATION.cff` remains the theorem citation for DOI-backed references.
+{citation_note(current, doi_backed)}
 
 The top-level `CITATION.cff` remains the v2.3.0 citation metadata. Its
 top-level DOI is the Zenodo concept DOI for the v2.3 release series:
@@ -296,8 +328,7 @@ versions separate. Multi-version release metadata is tracked in
 | `v2.3.0` | immutable foundational public DOI release for critical-radius and gap-aperture finite claims | Do not rewrite after publication; use `ERRATA.md` or a maintenance patch release if corrections are needed. |
 | `maintenance/v2.3.1` | reserved maintenance patch line | Use only for errata or docs clarification rooted at `v2.3.0`. |
 | `v2.4.x` | source-only bridge from v2.3.0 to the v2.5 theorem line | No public release, DOI, or candidate ZIP. Preserve useful diagnostics as internal evidence only. |
-| `{doi_backed["release_id"]}` | latest DOI-backed scoped public theorem release | Finite exact aperture-orbit separator theorem for recorded `B4->B5`, `B5->B6`, and `B6->B7` scopes. |
-| `{current["release_id"]}` | current public theorem release, DOI pending | General q-prime single-gap aperture classification theorem for the PRC circular-arc model. |
+{release_line_rows(current, doi_backed)}
 
 Historical release corrections are governed by
 `release/public/MAINTENANCE_POLICY.md`. The short rule is: published tags and

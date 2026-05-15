@@ -223,9 +223,16 @@ def staged_paths(repo_root: Path) -> list[str]:
     return [line.strip() for line in output.splitlines() if line.strip()]
 
 
-def check_staged_junk(repo_root: Path) -> list[str]:
+def registered_release_asset_paths(entries: list[dict[str, Any]]) -> set[str]:
+    return {f"review_packages/{entry['asset_name']}" for entry in entries}
+
+
+def check_staged_junk(repo_root: Path, entries: list[dict[str, Any]]) -> list[str]:
     failures: list[str] = []
+    allowed_assets = registered_release_asset_paths(entries)
     for relative_path in staged_paths(repo_root):
+        if relative_path in allowed_assets:
+            continue
         for pattern in STAGED_FORBIDDEN_PATTERNS:
             if pattern.search(relative_path):
                 failures.append(f"staged forbidden release path: {relative_path}")
@@ -267,7 +274,7 @@ def main() -> int:
 
     failures = check_release_metadata_boundaries(repo_root, entries)
     if args.check_staged:
-        failures.extend(check_staged_junk(repo_root))
+        failures.extend(check_staged_junk(repo_root, entries))
         failures.extend(check_remote_branch_hygiene(repo_root))
     if failures:
         print("verify_public_release_execution_preflight: failed")
