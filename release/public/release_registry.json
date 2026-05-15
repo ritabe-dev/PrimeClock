@@ -85,7 +85,7 @@
       "doi_state": "not_assigned",
       "zenodo_concept_doi": "",
       "zenodo_version_doi": "",
-      "github_release_url": "",
+      "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem",
       "asset_name": "PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip",
       "manifest_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_manifest_v2_7_v1_0.json",
       "workflow_path": "research/experiments/critical_radius_birth_dynamics/public_theorem_release_workflow_v2_7_v1_0.yml",

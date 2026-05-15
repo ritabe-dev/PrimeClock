@@ -3,7 +3,8 @@
 Status: public theorem release text for `v2.7.0-prc-general-q-prime-theorem`.
 Version DOI: pending Zenodo publication for the GitHub
 `v2.7.0-prc-general-q-prime-theorem` release.
-GitHub Release: pending creation for tag `v2.7.0-prc-general-q-prime-theorem`.
+GitHub Release:
+https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem
 
 ## What Is Proved
 

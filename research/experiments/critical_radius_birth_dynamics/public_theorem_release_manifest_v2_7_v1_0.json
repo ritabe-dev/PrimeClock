@@ -4,7 +4,7 @@
   "public_release": true,
   "base_public_release": "v2.5.0-prc-public-theorem",
   "github_release_tag": "v2.7.0-prc-general-q-prime-theorem",
-  "github_release_url": "",
+  "github_release_url": "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem",
   "doi_state": "not_assigned",
   "zenodo_version_doi": "",
   "default_name": "PrimeClock-v2.7-general-q-prime-theorem-v1.0",

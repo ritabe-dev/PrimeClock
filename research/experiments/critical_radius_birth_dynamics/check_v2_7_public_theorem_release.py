@@ -28,6 +28,7 @@ RELEASE_BUNDLE_WORKFLOW_REL = (
 REGISTRY_REL = Path("release/public/release_registry.json")
 RELEASE_ID = "v2.7.0-prc-general-q-prime-theorem"
 ASSET_NAME = "PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip"
+RELEASE_URL = "https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem"
 DOI_RE = re.compile(r"10\.5281/zenodo\.\d+")
 
 REQUIRED_PUBLIC_TEXT = (
@@ -44,6 +45,7 @@ REQUIRED_PUBLIC_TEXT = (
     "no asymptotic law",
     "no prime-gap theorem outside PRC model",
     "CITATION.cff",
+    RELEASE_URL,
     "DOI and registry integrity checks are full-repository release-execution checks only",
 )
 FORBIDDEN_PUBLIC_TEXT = (
@@ -157,7 +159,7 @@ def check_release_manifest(repo_root: Path, failures: list[str]) -> None:
         "public_release": True,
         "base_public_release": "v2.5.0-prc-public-theorem",
         "github_release_tag": RELEASE_ID,
-        "github_release_url": "",
+        "github_release_url": RELEASE_URL,
         "doi_state": "not_assigned",
         "zenodo_version_doi": "",
         "default_name": "PrimeClock-v2.7-general-q-prime-theorem-v1.0",
@@ -196,7 +198,7 @@ def check_registry_entry(repo_root: Path, failures: list[str]) -> None:
         "doi_state": "not_assigned",
         "zenodo_concept_doi": "",
         "zenodo_version_doi": "",
-        "github_release_url": "",
+        "github_release_url": RELEASE_URL,
         "asset_name": ASSET_NAME,
         "manifest_path": str(RELEASE_MANIFEST_REL),
         "workflow_path": str(RELEASE_WORKFLOW_REL),

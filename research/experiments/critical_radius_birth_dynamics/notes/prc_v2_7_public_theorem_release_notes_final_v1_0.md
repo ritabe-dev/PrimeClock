@@ -2,7 +2,8 @@
 
 Version DOI: pending Zenodo publication for the GitHub
 `v2.7.0-prc-general-q-prime-theorem` release.
-GitHub Release: pending creation for tag `v2.7.0-prc-general-q-prime-theorem`.
+GitHub Release:
+https://github.com/ritabe-dev/PrimeClock/releases/tag/v2.7.0-prc-general-q-prime-theorem
 Release asset: `PrimeClock-v2.7-general-q-prime-theorem-v1.0.zip`.
 
 ## Summary
