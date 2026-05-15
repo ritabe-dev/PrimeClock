@@ -1943,9 +1943,10 @@ def test_release_doi_integrity_checks_registered_source_releases():
     )
 
     assert result.returncode == 0
-    assert "checked=2" in result.stdout
+    assert "checked=3" in result.stdout
     assert "v2.3.0" in result.stdout
     assert "v2.5.0-prc-public-theorem" in result.stdout
+    assert "v2.7.0-prc-general-q-prime-theorem" in result.stdout
 
 
 def test_release_doi_integrity_rejects_stale_pending_text_for_assigned_release(tmp_path: Path):
