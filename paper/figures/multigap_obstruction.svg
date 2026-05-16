@@ -12,5 +12,6 @@
   <path d="M 535 85 L 518 78 M 535 85 L 519 93" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
   <text x="232" y="38" font-family="Arial, sans-serif" font-size="20" fill="#222222">one q-arc has length 1/q</text>
   <text x="235" y="178" font-family="Arial, sans-serif" font-size="20" fill="#222222">covered component length at least 1/p_k</text>
-  <text x="110" y="210" font-family="Arial, sans-serif" font-size="18" fill="#444444">Since q &gt; p_k, 1/q &lt; 1/p_k, so one q-arc cannot contain both residual gaps.</text>
+  <text x="110" y="210" font-family="Arial, sans-serif" font-size="18" fill="#444444">Since q &gt; p_k, 1/q &lt; 1/p_k.</text>
+  <text x="110" y="235" font-family="Arial, sans-serif" font-size="18" fill="#444444">One q-arc cannot contain both residual gaps.</text>
 </svg>
