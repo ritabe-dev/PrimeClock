@@ -32,6 +32,20 @@ mix `v2.4` data, notes, or claims into a `v2.2.x` or `v2.3.x` patch. After the
 patch is complete, forward-port only the relevant correction to `main` or the
 active research line.
 
+Public release branches use human-readable purpose names:
+
+```text
+public/<release-id>       clean artifact/source-archive branch
+release/<release-line>    temporary release preparation branch
+maintenance/<version>     patch release branch from a historical tag
+research/<topic>          active research branch before release gating
+```
+
+Do not use worker- or tool-branded branch names for public release work. After a
+release preparation branch has been merged and verified, delete it. Keep the
+matching `public/<release-id>` branch when it is the clean public artifact
+source for a GitHub Release.
+
 ## Release Config Rule
 
 `release/public/release_config.json` is switched to a patch version only while
