@@ -38,6 +38,9 @@ V2_7_PUBLIC_THEOREM_PREFLIGHT_MANIFEST_REL = (
 V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
     f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_7_v1_0.json"
 )
+V2_7_1_PAPER_REVIEW_MANIFEST_REL = (
+    f"{EXPERIMENT_REL}/paper_review_bundle_manifest_v2_7_1_v1_0.json"
+)
 PROFILE_DEFAULTS = {
     "v2_5_candidate": {
         "manifest": V2_5_CANDIDATE_MANIFEST_REL,
@@ -66,6 +69,10 @@ PROFILE_DEFAULTS = {
     "v2_7_public_theorem_release": {
         "manifest": V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
         "output_parent": Path(tempfile.gettempdir()) / "primeclock-v271-public-theorem-release",
+    },
+    "v2_7_1_paper_review": {
+        "manifest": V2_7_1_PAPER_REVIEW_MANIFEST_REL,
+        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v271-paper-review",
     },
 }
 LATEST_PATHS_FILE = "LATEST_CANDIDATE_PATHS.txt"
@@ -187,6 +194,7 @@ def missing_manifest_hint(manifest_path: str | Path) -> str:
         "--profile v2_5_public_theorem, --profile v2_5_public_theorem_release, "
         "for v2.7, pass --profile v2_7_public_theorem_preflight or "
         "--profile v2_7_public_theorem_release, "
+        "for v2.7.1 paper reading materials pass --profile v2_7_1_paper_review, "
         f"for later {gate_c_label} candidates pass the matching gate-c profile, "
         "or an explicit --manifest path."
     )

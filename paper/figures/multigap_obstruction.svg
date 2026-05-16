@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="260" viewBox="0 0 760 260" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-gap obstruction</title>
+  <desc id="desc">A short q-arc cannot bridge a covered component separating two residual gaps.</desc>
+  <rect width="760" height="260" fill="#ffffff"/>
+  <line x1="80" y1="135" x2="680" y2="135" stroke="#222222" stroke-width="3"/>
+  <line x1="120" y1="135" x2="220" y2="135" stroke="#d1495b" stroke-width="16" stroke-linecap="round"/>
+  <line x1="240" y1="135" x2="430" y2="135" stroke="#4776b4" stroke-width="20" stroke-linecap="round"/>
+  <line x1="455" y1="135" x2="560" y2="135" stroke="#d1495b" stroke-width="16" stroke-linecap="round"/>
+  <line x1="585" y1="135" x2="650" y2="135" stroke="#4776b4" stroke-width="20" stroke-linecap="round"/>
+  <path d="M 140 85 C 230 45, 445 45, 535 85" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 140 85 L 154 78 M 140 85 L 158 91" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 535 85 L 518 78 M 535 85 L 519 93" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <text x="232" y="38" font-family="Arial, sans-serif" font-size="20" fill="#222222">one q-arc has length 1/q</text>
+  <text x="235" y="178" font-family="Arial, sans-serif" font-size="20" fill="#222222">covered component length at least 1/p_k</text>
+  <text x="110" y="210" font-family="Arial, sans-serif" font-size="18" fill="#444444">Since q &gt; p_k, 1/q &lt; 1/p_k, so one q-arc cannot contain both residual gaps.</text>
+</svg>

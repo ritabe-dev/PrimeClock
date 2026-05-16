@@ -1,0 +1,61 @@
+{
+  "id": "prc_v2_7_1_paper_review_bundle_v1_0",
+  "status": "paper_review_bundle_manifest",
+  "default_name": "PrimeClock-v2.7.1-paper-review-v1.0",
+  "candidate_name_prefix": "PrimeClock-v2.7.1-paper-review-",
+  "links_title": "PRC v2.7.1 Paper Review Links",
+  "hash_manifest": "SHA256SUMS",
+  "root_file_map": [
+    {
+      "source": "paper/README_FOR_REVIEWERS.md",
+      "target": "README.md"
+    },
+    {
+      "source": "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md",
+      "target": "THEOREM_NOTE.md"
+    }
+  ],
+  "root_files": [
+    "LICENSE"
+  ],
+  "research_files": [
+    "paper/README_FOR_REVIEWERS.md",
+    "paper/primeclock_prc_single_gap_aperture_classification.md",
+    "paper/figures/old_arcs_residual_gaps.svg",
+    "paper/figures/multigap_obstruction.svg",
+    "paper/figures/single_gap_aperture_window.svg",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_1_paper_review_package.py",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_general_single_gap_aperture_theorem_note.py",
+    "research/experiments/critical_radius_birth_dynamics/check_v2_7_strict_single_gap_aperture_exact_audit.py",
+    "research/experiments/critical_radius_birth_dynamics/data/prc_prime_prefix_birth_dynamics_k5_k7_v0_1.csv",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_notes_final_v1_0.md",
+    "research/experiments/critical_radius_birth_dynamics/notes/prc_v2_7_public_theorem_release_readme_v1_0.md",
+    "research/experiments/critical_radius_birth_dynamics/paper_review_bundle_manifest_v2_7_1_v1_0.json"
+  ],
+  "research_dirs": [],
+  "required_readme_phrases": [
+    "README for Reviewers",
+    "direct one-prime q-lift",
+    "30-minute read path",
+    "geometric proof",
+    "recorded birth rows consistency audit",
+    "not a full finite-universe completeness audit",
+    "no prime-gap theorem outside PRC model"
+  ],
+  "allowed_path_markers": [
+    "check_v2_7",
+    "prc_v2_7",
+    "v2_7",
+    "paper",
+    "figures"
+  ],
+  "forbidden_path_markers": [
+    "release/public/release_registry.json",
+    "DRAFT_CITATION.cff",
+    "review_packages"
+  ],
+  "allowed_text_markers": [
+    "reviewer"
+  ]
+}
