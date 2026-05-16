@@ -56,5 +56,4 @@ verification and are not included in this release ZIP.
 ## Citation
 
 Use the release-specific `CITATION.cff` in this bundle. The Zenodo version DOI
-is finalized only after the GitHub Release is created and Zenodo mints the
-version record.
+for this release is `10.5281/zenodo.20209528`.
