@@ -1,9 +1,0 @@
-key,value,status,notes
-v2_5_public_manifest_b8_path_hits,0,pass,public theorem release manifest paths contain no B8 material artifacts
-v2_5_public_manifest_forbidden_artifact_hits,0,pass,public theorem release manifest excludes B8 stress-control probe and predictor artifacts
-existing_b8_source_artifact_count,0,info,no B8 source-only stress-control artifacts are present on the default public branch
-b8_family_count_estimate,pending,blocked_before_full_graph,required before B8 finite extension can continue
-b8_lift_row_estimate,pending,blocked_before_full_graph,required before B8 finite extension can continue
-b8_runtime_estimate,pending,blocked_before_full_graph,required before B8 finite extension can continue
-b8_disk_size_estimate,pending,blocked_before_full_graph,required before B8 finite extension can continue
-forbidden_positive_b8_claims,0,pass,v2.6 seed and workflow do not call B8 coverage recall holdout theorem or public claim

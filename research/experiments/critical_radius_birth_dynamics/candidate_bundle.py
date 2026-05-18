@@ -26,15 +26,6 @@ V2_5_PUBLIC_THEOREM_MANIFEST_REL = (
 V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
     f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_5_v1_0.json"
 )
-V2_6_GATE_C_CANDIDATE_MANIFEST_REL = (
-    f"{EXPERIMENT_REL}/gate_c_candidate_bundle_manifest_v2_6_v0_1.json"
-)
-V2_7_GATE_C_CANDIDATE_MANIFEST_REL = (
-    f"{EXPERIMENT_REL}/gate_c_candidate_bundle_manifest_v2_7_v0_1.json"
-)
-V2_7_PUBLIC_THEOREM_PREFLIGHT_MANIFEST_REL = (
-    f"{EXPERIMENT_REL}/public_theorem_preflight_bundle_manifest_v2_7_v1_0.json"
-)
 V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL = (
     f"{EXPERIMENT_REL}/public_theorem_release_manifest_v2_7_v1_0.json"
 )
@@ -53,18 +44,6 @@ PROFILE_DEFAULTS = {
     "v2_5_public_theorem_release": {
         "manifest": V2_5_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
         "output_parent": Path(tempfile.gettempdir()) / "primeclock-v25-public-theorem-release",
-    },
-    "v2_6_gate_c_candidate": {
-        "manifest": V2_6_GATE_C_CANDIDATE_MANIFEST_REL,
-        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v26-gate-c-candidate",
-    },
-    "v2_7_gate_c_candidate": {
-        "manifest": V2_7_GATE_C_CANDIDATE_MANIFEST_REL,
-        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-gate-c-candidate",
-    },
-    "v2_7_public_theorem_preflight": {
-        "manifest": V2_7_PUBLIC_THEOREM_PREFLIGHT_MANIFEST_REL,
-        "output_parent": Path(tempfile.gettempdir()) / "primeclock-v27-public-theorem-preflight",
     },
     "v2_7_public_theorem_release": {
         "manifest": V2_7_PUBLIC_THEOREM_RELEASE_MANIFEST_REL,
@@ -187,15 +166,12 @@ def validate_manifest_schema(manifest: object) -> list[str]:
 
 
 def missing_manifest_hint(manifest_path: str | Path) -> str:
-    gate_c_label = term("Gate", " C")
     return (
         f"missing candidate manifest: {manifest_path}. "
         "For v2.5, pass --profile v2_5_candidate, "
         "--profile v2_5_public_theorem, --profile v2_5_public_theorem_release, "
-        "for v2.7, pass --profile v2_7_public_theorem_preflight or "
-        "--profile v2_7_public_theorem_release, "
+        "for v2.7.1, pass --profile v2_7_public_theorem_release, "
         "for v2.7.1 paper reading materials pass --profile v2_7_1_paper_review, "
-        f"for later {gate_c_label} candidates pass the matching gate-c profile, "
         "or an explicit --manifest path."
     )
 
@@ -683,153 +659,9 @@ def check_root_file_map_pairs(bundle_root: Path, manifest: dict[str, Any]) -> li
 
 
 def check_profile_specific_bundle(bundle_root: Path, manifest: dict[str, Any]) -> list[str]:
-    if manifest.get("id") == "prc_v2_6_gate_c_candidate_bundle_v0_1":
-        return check_v2_6_gate_c_candidate_bundle(bundle_root, manifest)
-    if manifest.get("id") == "prc_v2_7_gate_c_candidate_bundle_v0_1":
-        return check_v2_7_gate_c_candidate_bundle(bundle_root, manifest)
-    if manifest.get("id") == "prc_v2_7_public_theorem_preflight_bundle_v1_0":
-        return check_v2_7_public_theorem_preflight_bundle(bundle_root, manifest)
     if manifest.get("id") == "prc_v2_7_public_theorem_release_bundle_v1_0":
         return check_v2_7_public_theorem_release_bundle(bundle_root, manifest)
     return []
-
-
-def check_v2_6_gate_c_candidate_bundle(
-    bundle_root: Path,
-    manifest: dict[str, Any],
-) -> list[str]:
-    failures: list[str] = []
-    gate_c_label = term("Gate", " C")
-    candidate_manifest_path = (
-        bundle_root
-        / "research/experiments/critical_radius_birth_dynamics/"
-        "prc_v2_6_gate_c_candidate_manifest_v0_1.json"
-    )
-    if not candidate_manifest_path.is_file():
-        failures.append(f"missing v2.6 {gate_c_label} candidate manifest")
-        return failures
-    try:
-        candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        failures.append(f"invalid v2.6 {gate_c_label} candidate manifest: {exc}")
-        return failures
-    artifacts = candidate_manifest.get("artifacts")
-    if not isinstance(artifacts, dict):
-        failures.append(f"v2.6 {gate_c_label} candidate manifest artifacts must be an object")
-        return failures
-    for key in (
-        "canonical_note",
-        "checker",
-        "workflow",
-        "bundle_builder",
-        "bundle_manifest",
-    ):
-        relative_path = artifacts.get(key)
-        if not isinstance(relative_path, str):
-            failures.append(f"v2.6 {gate_c_label} candidate manifest artifact {key} must be a path")
-            continue
-        if not (bundle_root / relative_path).is_file():
-            failures.append(
-                f"v2.6 {gate_c_label} candidate manifest artifact missing: {relative_path}"
-            )
-    canonical_note = artifacts.get("canonical_note")
-    if isinstance(canonical_note, str):
-        canonical_path = bundle_root / canonical_note
-        theorem_note = bundle_root / "THEOREM_NOTE.md"
-        if canonical_path.is_file() and theorem_note.is_file():
-            if sha256_bytes(canonical_path) != sha256_bytes(theorem_note):
-                failures.append("THEOREM_NOTE.md does not match canonical note")
-    return failures
-
-
-def check_v2_7_gate_c_candidate_bundle(
-    bundle_root: Path,
-    manifest: dict[str, Any],
-) -> list[str]:
-    failures: list[str] = []
-    gate_c_label = term("Gate", " C")
-    candidate_manifest_path = (
-        bundle_root
-        / "research/experiments/critical_radius_birth_dynamics/"
-        "prc_v2_7_gate_c_candidate_manifest_v0_1.json"
-    )
-    if not candidate_manifest_path.is_file():
-        failures.append(f"missing v2.7 {gate_c_label} candidate manifest")
-        return failures
-    try:
-        candidate_manifest = json.loads(candidate_manifest_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        failures.append(f"invalid v2.7 {gate_c_label} candidate manifest: {exc}")
-        return failures
-    artifacts = candidate_manifest.get("artifacts")
-    if not isinstance(artifacts, dict):
-        failures.append(f"v2.7 {gate_c_label} candidate manifest artifacts must be an object")
-        return failures
-    for key in (
-        "canonical_note",
-        "theorem_checker",
-        "exact_audit",
-        "gate_c_checker",
-        "workflow",
-        "bundle_builder",
-        "bundle_manifest",
-        "support_csv",
-    ):
-        relative_path = artifacts.get(key)
-        if not isinstance(relative_path, str):
-            failures.append(f"v2.7 {gate_c_label} candidate manifest artifact {key} must be a path")
-            continue
-        if not (bundle_root / relative_path).is_file():
-            failures.append(
-                f"v2.7 {gate_c_label} candidate manifest artifact missing: {relative_path}"
-            )
-    canonical_note = artifacts.get("canonical_note")
-    if isinstance(canonical_note, str):
-        canonical_path = bundle_root / canonical_note
-        theorem_note = bundle_root / "THEOREM_NOTE.md"
-        if canonical_path.is_file() and theorem_note.is_file():
-            if sha256_bytes(canonical_path) != sha256_bytes(theorem_note):
-                failures.append("THEOREM_NOTE.md does not match canonical note")
-    return failures
-
-
-def check_v2_7_public_theorem_preflight_bundle(
-    bundle_root: Path,
-    manifest: dict[str, Any],
-) -> list[str]:
-    failures: list[str] = []
-    public_manifest_path = (
-        bundle_root
-        / "research/experiments/critical_radius_birth_dynamics/"
-        "public_theorem_preflight_manifest_v2_7_v1_0.json"
-    )
-    if not public_manifest_path.is_file():
-        failures.append("missing v2.7 public theorem preflight manifest")
-        return failures
-    try:
-        public_manifest = json.loads(public_manifest_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        failures.append(f"invalid v2.7 public theorem preflight manifest: {exc}")
-        return failures
-    if public_manifest.get("doi_state") != "not_assigned":
-        failures.append("v2.7 public theorem preflight manifest doi_state must be not_assigned")
-    if public_manifest.get("github_release_url"):
-        failures.append("v2.7 public theorem preflight manifest must not set GitHub Release URL")
-    if public_manifest.get("zenodo_version_doi"):
-        failures.append("v2.7 public theorem preflight manifest must not set Zenodo version DOI")
-
-    canonical_note = (
-        bundle_root
-        / "research/experiments/critical_radius_birth_dynamics/"
-        "notes/prc_v2_7_general_single_gap_aperture_theorem_note_v0_1.md"
-    )
-    theorem_note = bundle_root / "THEOREM_NOTE.md"
-    if canonical_note.is_file() and theorem_note.is_file():
-        if sha256_bytes(canonical_note) != sha256_bytes(theorem_note):
-            failures.append("THEOREM_NOTE.md does not match canonical v2.7 theorem note")
-    else:
-        failures.append("missing canonical/root v2.7 theorem note pair")
-    return failures
 
 
 def check_v2_7_public_theorem_release_bundle(

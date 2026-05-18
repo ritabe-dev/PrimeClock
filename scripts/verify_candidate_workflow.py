@@ -46,9 +46,6 @@ MODES = {
     "public-theorem-doi-integrity",
     "public-theorem-integrity",
     "public-theorem-review",
-    "v2-6-gate-c-candidate",
-    "v2-6-single-gap-theorem-note-draft",
-    "v2-7-gate-c-candidate",
     "v2-7-general-single-gap-aperture-theorem-note",
     "all",
 }
@@ -741,26 +738,6 @@ def main() -> int:
             run_gate(config, "public-theorem-doi-integrity", repo_root=repo_root, variables=variables)
         if args.mode in {"public-theorem-bundle", "all"}:
             run_gate(config, "public-theorem-bundle", repo_root=repo_root, variables=variables)
-        if args.mode == "v2-6-single-gap-theorem-note-draft" or (
-            args.mode == "all"
-            and "v2-6-single-gap-theorem-note-draft" in config.get("gates", {})
-        ):
-            run_gate(
-                config,
-                "v2-6-single-gap-theorem-note-draft",
-                repo_root=repo_root,
-                variables=variables,
-            )
-        if args.mode == "v2-6-gate-c-candidate" or (
-            args.mode == "all"
-            and "v2-6-gate-c-candidate" in config.get("gates", {})
-        ):
-            run_gate(
-                config,
-                "v2-6-gate-c-candidate",
-                repo_root=repo_root,
-                variables=variables,
-            )
         if args.mode == "v2-7-general-single-gap-aperture-theorem-note" or (
             args.mode == "all"
             and "v2-7-general-single-gap-aperture-theorem-note" in config.get("gates", {})
@@ -768,16 +745,6 @@ def main() -> int:
             run_gate(
                 config,
                 "v2-7-general-single-gap-aperture-theorem-note",
-                repo_root=repo_root,
-                variables=variables,
-            )
-        if args.mode == "v2-7-gate-c-candidate" or (
-            args.mode == "all"
-            and "v2-7-gate-c-candidate" in config.get("gates", {})
-        ):
-            run_gate(
-                config,
-                "v2-7-gate-c-candidate",
                 repo_root=repo_root,
                 variables=variables,
             )

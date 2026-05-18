@@ -267,9 +267,20 @@ def check_release_assets(repo_root: Path, entries: list[dict[str, Any]]) -> None
         run(["shasum", "-a", "256", str(asset_path)], cwd=repo_root)
 
 
-def staged_paths(repo_root: Path) -> list[str]:
-    output = run(["git", "diff", "--cached", "--name-only"], cwd=repo_root)
-    return [line.strip() for line in output.splitlines() if line.strip()]
+def staged_path_statuses(repo_root: Path) -> list[tuple[str, str]]:
+    output = run(["git", "diff", "--cached", "--name-status"], cwd=repo_root)
+    statuses: list[tuple[str, str]] = []
+    for line in output.splitlines():
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        status = parts[0]
+        if status.startswith("R") and len(parts) >= 3:
+            statuses.append((status, parts[2]))
+            continue
+        if len(parts) >= 2:
+            statuses.append((status, parts[1]))
+    return statuses
 
 
 def registered_release_asset_paths(entries: list[dict[str, Any]]) -> set[str]:
@@ -279,7 +290,9 @@ def registered_release_asset_paths(entries: list[dict[str, Any]]) -> set[str]:
 def check_staged_junk(repo_root: Path, entries: list[dict[str, Any]]) -> list[str]:
     failures: list[str] = []
     allowed_assets = registered_release_asset_paths(entries)
-    for relative_path in staged_paths(repo_root):
+    for status, relative_path in staged_path_statuses(repo_root):
+        if status == "D":
+            continue
         if relative_path in allowed_assets:
             continue
         for pattern in STAGED_FORBIDDEN_PATTERNS:
